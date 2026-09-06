@@ -1,0 +1,19 @@
+{
+	"Name": "Scissors",
+
+	"ModelPath": "Asset/Models/Item/Scissors/Scissors.gltf",
+
+	"IconPath": "Asset/Textures/Icon/Scissors.png",
+
+	"Action": "Cut",
+
+	"Target": "Flower",
+
+	"WorldScale": [ 1.0, 1.0, 1.0 ],
+
+	"HandOffset": [ 0.20, -0.18, 0.42 ],
+
+	"HandRotation": [ -15, 30, 0 ],
+
+	"HandScale": [ 1.0, 1.0, 1.0 ]
+}

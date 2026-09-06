@@ -1,0 +1,19 @@
+{
+	"Name": "Tape",
+
+	"ModelPath": "Asset/Models/Item/Tape/Tape.gltf",
+
+	"IconPath": "Asset/Textures/Icon/Tape.png",
+
+	"Action": "Repair",
+
+	"Target": "Flower",
+
+	"WorldScale": [ 3.0, 3.0, 3.0 ],
+
+	"HandOffset": [ 0.20, -0.18, 0.42 ],
+
+	"HandRotation": [ -15, 30, 0 ],
+
+	"HandScale": [ 3.0, 3.0, 3.0 ]
+}

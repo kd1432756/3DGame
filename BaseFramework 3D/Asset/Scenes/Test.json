@@ -1,0 +1,287 @@
+{
+    "Objects": [
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Name": "Player_1",
+            "Position": [
+                -2.3889479637145996,
+                0.4000000059604645,
+                -3.699997663497925
+            ],
+            "Rotation": [
+                90.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                0.20000000298023224,
+                0.20000004768371582,
+                0.20000000298023224
+            ],
+            "Type": "Player"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ItemPath": "Asset\\Items\\Stone.item",
+            "ModelPath": "Asset/Models/Item/Stone/Stone.gltf",
+            "Name": "Item_0",
+            "Position": [
+                2.0,
+                0.0,
+                1.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                0.15000003576278687,
+                0.15000003576278687,
+                0.15000003576278687
+            ],
+            "Type": "Item"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ItemPath": "Asset\\Items\\Scissors.item",
+            "ModelPath": "Asset/Models/Item/Scissors/Scissors.gltf",
+            "Name": "Item_1",
+            "Position": [
+                2.0,
+                0.0,
+                -2.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "Item"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Props/Flower/Flower.gltf",
+            "Name": "Flower",
+            "Owner": "",
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                180.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "Flower"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ItemPath": "Asset\\Items\\Tape.item",
+            "ModelPath": "Asset/Models/Item/Tape/Tape.gltf",
+            "Name": "Item_2",
+            "Position": [
+                2.0,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                3.0,
+                3.0,
+                3.0
+            ],
+            "Type": "Item"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Props/Hose/HoseModel.gltf",
+            "Name": "Hose",
+            "Owner": "",
+            "Position": [
+                1.7000000476837158,
+                0.0,
+                -4.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Hose"
+        },
+        {
+            "Color": [
+                0.0,
+                0.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Props/Flower/Flower.gltf",
+            "Name": "Flower_0",
+            "Owner": "",
+            "Position": [
+                6.0,
+                0.0,
+                3.0
+            ],
+            "Rotation": [
+                0.0,
+                180.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "Flower"
+        },
+        {
+            "Color": [
+                0.0,
+                1.0,
+                0.0
+            ],
+            "ModelPath": "Asset/Models/Props/Flower/Flower.gltf",
+            "Name": "Flower_1",
+            "Owner": "",
+            "Position": [
+                6.0,
+                0.0,
+                4.0
+            ],
+            "Rotation": [
+                0.0,
+                180.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "Flower"
+        },
+        {
+            "Color": [
+                1.0,
+                0.0,
+                0.0
+            ],
+            "ModelPath": "Asset/Models/Props/Flower/Flower.gltf",
+            "Name": "Flower_2",
+            "Owner": "",
+            "Position": [
+                6.0,
+                0.0,
+                5.0
+            ],
+            "Rotation": [
+                0.0,
+                180.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "Flower"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Props/PaintCan/PaintCan.gltf",
+            "Name": "PaintCan",
+            "Owner": "",
+            "Position": [
+                0.0,
+                0.0,
+                -4.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                3.0,
+                3.0,
+                3.0
+            ],
+            "Type": "PaintCan"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_0",
+            "Position": [
+                0.0,
+                -1.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                10.0,
+                1.0,
+                10.0
+            ],
+            "Type": "Ground"
+        }
+    ]
+}

@@ -1,0 +1,19 @@
+{
+	"Name": "Hammer",
+
+	"ModelPath": "Asset/Models/Item/Hammer/Hammer2.gltf",
+
+	"IconPath": "Asset/Textures/Icon/Hammer.png",
+
+	"Action": "Break",
+
+	"Target": "WoodenFence",
+
+	"WorldScale": [ 1.0, 1.0, 1.0 ],
+
+	"HandOffset": [ 0.20, -0.18, 0.42 ],
+
+	"HandRotation": [ -15, 30, 0 ],
+
+	"HandScale": [ 1.0, 1.0, 1.0 ]
+}

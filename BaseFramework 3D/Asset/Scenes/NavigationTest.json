@@ -1,0 +1,104 @@
+{
+    "Objects": [
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_0",
+            "Position": [
+                0.0,
+                0.0,
+                -4.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_1",
+            "Position": [
+                4.0,
+                0.0,
+                -4.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset\\Models\\Props\\TrashCan\\TrashCan.gltf",
+            "Name": "TrashCan",
+            "Position": [
+                0.1715584397315979,
+                0.4999997615814209,
+                -4.7920098304748535
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset\\Models\\Props\\TrashCan\\TrashCan.gltf",
+            "Name": "TrashCan",
+            "Position": [
+                4.07101583480835,
+                0.499997615814209,
+                -3.2112197875976563
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "StaticMeshObject"
+        }
+    ]
+}

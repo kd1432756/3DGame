@@ -1,0 +1,1232 @@
+﻿#include "Police.h"
+
+#include "../../../../System/Node/AStarNode/AStarNodeManager.h"
+#include "../../../../System/Navigation/NavMesh/NavMeshManager.h"
+
+#include "../../../../Scene/SceneManager.h"
+
+#include "../../../Effect/AlertIcon/AlertIcon.h"
+
+void Police::Init()
+{
+	EnemyBase::Init();
+
+	m_spModel->SetModelData(
+		"Asset/Models/Character/Police/Police2.gltf"
+	);
+
+	m_spAnimator = std::make_shared<KdAnimator>();
+	m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Idle"));
+
+	m_pCollider = std::make_unique<KdCollider>();
+
+	m_pCollider->RegisterCollisionShape(
+		"Police",
+		m_spModel,
+		KdCollider::TypeEditor
+	);
+
+	//============================================================
+	// A* Node Manager
+	//============================================================
+
+	m_pNodeManager =
+		&AStarNodeManager::Instance();
+
+	//============================================================
+	// NavMesh Manager
+	//============================================================
+
+	m_pNavMeshManager =
+		&NavMeshManager::Instance();
+
+	//============================================================
+	// Path
+	//============================================================
+
+	FindPatrolPath();
+
+	//============================================================
+	// Alert Icon
+	//============================================================
+
+	m_spAlertIcon = std::make_shared<AlertIcon>();
+
+	m_spAlertIcon->Init();
+
+	m_spAlertIcon->SetIconScale(m_sceneScale);
+
+	m_spAlertIcon->SetOwner(
+		std::dynamic_pointer_cast<CharacterBase>(
+			shared_from_this()
+		)
+	);
+
+	SceneManager::Instance().AddObject(m_spAlertIcon);
+
+	//============================================================
+	// State
+	//============================================================
+
+	ApplyStateSettings();
+}
+
+void Police::UpdateBehavior()
+{
+	switch (m_state)
+	{
+	case State::Patrol:
+		UpdatePatrol();
+		break;
+
+	case State::Chase:
+		UpdateChase();
+		break;
+
+	case State::LastSeen:
+		UpdateLastSeen();
+		break;
+
+	case State::Search:
+		UpdateSearch();
+		break;
+
+	case State::Return:
+		UpdateReturn();
+		break;
+	}
+}
+
+void Police::UpdatePatrol()
+{
+	// Playerを発見したらChase
+	if (SearchTarget())
+	{
+		ChangeState(State::Chase);
+		return;
+	}
+
+	MoveToNextPathNode();
+}
+
+void Police::UpdateChase()
+{
+	auto target = m_wpTarget.lock();
+
+	if (!target)
+	{
+		ChangeState(State::LastSeen);
+
+		m_navPath.clear();
+		m_navPathIndex = 0;
+
+		m_loseSightTimer = 0.0f;
+
+		return;
+	}
+
+	//============================================================
+	// ターゲットとの距離
+	//============================================================
+
+	Math::Vector3 toTarget =
+		target->GetPos() - m_pos;
+
+	toTarget.y = 0.0f;
+
+	float distance =
+		toTarget.Length();
+
+	//============================================================
+	// 追跡範囲
+	//============================================================
+
+	const float chaseDistance =
+		10.0f * m_sceneScale;
+
+	if (distance > chaseDistance)
+	{
+		//========================================================
+		// 追跡範囲外
+		//========================================================
+
+		m_loseSightTimer += 1.0f / 60.0f;
+
+		if (m_loseSightTimer >= m_loseSightTime)
+		{
+			ChangeState(State::LastSeen);
+
+			m_navPath.clear();
+			m_navPathIndex = 0;
+
+			m_loseSightTimer = 0.0f;
+
+			return;
+		}
+	}
+	else if (CanSeeTarget(target))
+	{
+		//========================================================
+		// Playerを見ている
+		//========================================================
+
+		m_loseSightTimer = 0.0f;
+
+		// 最後に見たPlayer位置を更新
+		m_lastTargetPos =
+			target->GetPos();
+	}
+	else
+	{
+		//========================================================
+		// Playerが見えない
+		//========================================================
+
+		m_loseSightTimer += 1.0f / 60.0f;
+
+		if (m_loseSightTimer >= m_loseSightTime)
+		{
+			ChangeState(State::LastSeen);
+
+			m_navPath.clear();
+			m_navPathIndex = 0;
+
+			m_loseSightTimer = 0.0f;
+
+			return;
+		}
+	}
+
+	//============================================================
+	// Path更新
+	//============================================================
+
+	m_pathUpdateTimer += 1.0f / 60.0f;
+
+	if (m_navPath.empty() ||
+		m_pathUpdateTimer >= m_pathUpdateInterval)
+	{
+		m_pathUpdateTimer = 0.0f;
+
+		FindChasePath();
+	}
+
+	//============================================================
+	// NavMesh Pathを進む
+	//============================================================
+
+	MoveToNextNavPathPoint();
+}
+
+
+void Police::UpdateLastSeen()
+{	
+	//============================================================
+	// Playerを再発見したらChase
+	//============================================================
+
+	if (SearchTarget())
+	{
+		ChangeState(State::Chase);
+
+		m_navPath.clear();
+		m_navPathIndex = 0;
+
+		m_searchTimer = 0.0f;
+
+		return;
+	}
+	//============================================================
+	// LastSeen Pathがない場合
+	//============================================================
+
+	if (m_navPath.empty())
+	{
+		if (!m_pNavMeshManager)
+		{
+			ChangeState(State::Return);
+			return;
+		}
+
+		m_navPath =
+			m_navMeshPathfinder.FindPathPoints(
+				*m_pNavMeshManager,
+				m_pos,
+				m_lastTargetPos
+			);
+
+		m_navPathIndex = 0;
+
+		//========================================================
+		// Pathが作れない
+		//========================================================
+
+		if (m_navPath.empty())
+		{
+			ChangeState(State::Return);
+
+			return;
+		}
+	}
+
+	//============================================================
+	// 最後に見た場所へ移動
+	//============================================================
+
+	if (MoveToNextNavPathPoint())
+	{
+		return;
+	}
+
+	//============================================================
+	// LastSeen到着
+	//============================================================
+
+	m_navPath.clear();
+	m_navPathIndex = 0;
+
+	//============================================================
+	// 到着したのでSearchへ
+	//============================================================
+
+	ChangeState(State::Search);
+
+}
+
+void Police::UpdateSearch()
+{
+	//============================================================
+	// Playerを再発見したらChase
+	//============================================================
+
+	if (SearchTarget())
+	{
+		m_searchTimer = 0.0f;
+		m_searchPhaseTimer = 0.0f;
+
+		ChangeState(State::Chase);
+
+		return;
+	}
+
+	//============================================================
+	// Timer
+	//============================================================
+
+	const float deltaTime = 1.0f / 60.0f;
+
+	m_searchTimer += deltaTime;
+	m_searchPhaseTimer += deltaTime;
+
+	//============================================================
+	// Search終了
+	//============================================================
+
+	if (m_searchTimer >= m_searchTime)
+	{
+		m_searchTimer = 0.0f;
+		m_searchPhaseTimer = 0.0f;
+
+		m_wpTarget.reset();
+
+		ChangeState(State::Return);
+
+		return;
+	}
+
+	//============================================================
+	// 見回す
+	//============================================================
+
+	float targetRotY = m_searchStartRotY;
+
+	switch (m_searchPhase)
+	{
+	case SearchPhase::LookLeft:
+
+		targetRotY =
+			m_searchStartRotY - 45.0f;
+
+		break;
+
+	case SearchPhase::LookRight:
+
+		targetRotY =
+			m_searchStartRotY + 45.0f;
+
+		break;
+
+	case SearchPhase::LookCenter:
+
+		targetRotY =
+			m_searchStartRotY;
+
+		break;
+	}
+
+	//============================================================
+	// 角度を方向に変換
+	//============================================================
+
+	const float rad =
+		DirectX::XMConvertToRadians(targetRotY);
+
+	Math::Vector3 lookDir;
+
+	lookDir.x = -sinf(rad);
+	lookDir.y = 0.0f;
+	lookDir.z = -cosf(rad);
+
+	//============================================================
+	// 回転
+	//============================================================
+
+	RotateToMoveDirection(lookDir);
+
+	// ★重要
+	// Search中の視界方向も現在の向きに合わせる
+	m_moveDir = lookDir;
+	m_moveDir.Normalize();
+
+	//============================================================
+	// Phase変更
+	//============================================================
+
+	if (m_searchPhaseTimer >= 1.0f)
+	{
+		m_searchPhaseTimer = 0.0f;
+
+		switch (m_searchPhase)
+		{
+		case SearchPhase::LookLeft:
+
+			m_searchPhase =
+				SearchPhase::LookRight;
+
+			break;
+
+		case SearchPhase::LookRight:
+
+			m_searchPhase =
+				SearchPhase::LookCenter;
+
+			break;
+
+		case SearchPhase::LookCenter:
+
+			if (SearchTarget())
+			{
+				ChangeState(State::Chase);
+				return;
+			}
+
+			m_searchPhase =
+				SearchPhase::LookLeft;
+
+			break;
+		}
+	}
+}
+
+void Police::UpdateReturn()
+{	
+	//============================================================
+	// Playerを再発見したらChase
+	//============================================================
+
+	if (SearchTarget())
+	{
+		m_searchTimer = 0.0f;
+
+		ChangeState(State::Chase);
+
+		return;
+	}
+
+	//============================================================
+	// Return Pathがない場合
+	//============================================================
+
+	if (m_navPath.empty())
+	{
+		if (!m_pNavMeshManager)
+		{
+			ChangeState(State::Patrol);
+			return;
+		}
+
+		//========================================================
+		// 現在位置に一番近いPatrol Node
+		//========================================================
+
+		int nearestNode =
+			FindNearestPatrolNode(m_pos);
+
+		if (nearestNode < 0)
+		{
+			ChangeState(State::Patrol);
+			return;
+		}
+
+		auto node =
+			m_pNodeManager->FindNode(nearestNode);
+
+		if (!node)
+		{
+			ChangeState(State::Patrol);
+			return;
+		}
+
+		//========================================================
+		// Patrol NodeへNavMeshで移動
+		//========================================================
+
+		m_navPath =
+			m_navMeshPathfinder.FindPathPoints(
+				*m_pNavMeshManager,
+				m_pos,
+				node->GetPos()
+			);
+
+		m_navPathIndex = 0;
+
+		// Path作成失敗
+		if (m_navPath.empty())
+		{
+			m_currentStartNode =
+				nearestNode;
+
+			ChangeState(State::Patrol);
+
+			FindPatrolPath();
+
+			return;
+		}
+	}
+
+	//============================================================
+	// Patrol Nodeへ移動
+	//============================================================
+
+	if (MoveToNextNavPathPoint())
+	{
+		return;
+	}
+
+	//============================================================
+	// Return完了
+	//============================================================
+
+	m_navPath.clear();
+	m_navPathIndex = 0;
+
+	//============================================================
+	// 現在位置に一番近いPatrol Node
+	//============================================================
+
+	int nearestNode =
+		FindNearestPatrolNode(m_pos);
+
+	if (nearestNode >= 0)
+	{
+		m_currentStartNode =
+			nearestNode;
+	}
+
+	//============================================================
+	// Patrolへ復帰
+	//============================================================
+
+	ChangeState(State::Patrol);
+
+	FindPatrolPath();
+}
+
+void Police::FindPatrolPath()
+{
+	if (!m_pNodeManager)
+	{
+		return;
+	}
+
+	const auto& nodes =
+		m_pNodeManager->GetNodes();
+
+	if (nodes.empty())
+	{
+		return;
+	}
+
+	//============================================================
+	// Start Node
+	//============================================================
+
+	int startID =
+		m_currentStartNode;
+
+	// 初回は現在位置に一番近いNode
+	if (startID < 0)
+	{
+		startID =
+			FindNearestPatrolNode(m_pos);
+	}
+
+	if (startID < 0)
+	{
+		return;
+	}
+
+	//============================================================
+	// Goal候補
+	//============================================================
+
+	std::vector<int> candidates;
+
+	for (const auto& node : nodes)
+	{
+		if (!node)
+		{
+			continue;
+		}
+
+		const int nodeID =
+			node->GetID();
+
+		// 現在のNodeは除外
+		if (nodeID == startID)
+		{
+			continue;
+		}
+
+		candidates.push_back(nodeID);
+	}
+
+
+	if (candidates.empty())
+	{
+		return;
+	}
+
+	//============================================================
+	// ランダムにGoalを選択
+	//============================================================
+
+	static std::random_device rd;
+	static std::mt19937 gen(rd());
+
+	std::uniform_int_distribution<int> dist(
+		0,
+		static_cast<int>(candidates.size()) - 1
+	);
+
+	const int goalID =
+		candidates[dist(gen)];
+
+
+	//============================================================
+	// A*
+	//============================================================
+
+	m_currentPath =
+		m_pathfinder.FindPath(
+			*m_pNodeManager,
+			startID,
+			goalID
+		);
+
+	m_currentPathIndex = 0;
+}
+
+int Police::FindNearestPatrolNode(
+	const Math::Vector3& pos)
+{
+	if (!m_pNodeManager)
+	{
+		return -1;
+	}
+
+	const auto& nodes =
+		m_pNodeManager->GetNodes();
+
+	if (nodes.empty())
+	{
+		return -1;
+	}
+
+
+	//============================================================
+	// 最近傍Node
+	//============================================================
+
+	int nearestNodeID = -1;
+
+	float nearestDistanceSq =
+		std::numeric_limits<float>::max();
+
+
+	for (const auto& node : nodes)
+	{
+		if (!node)
+		{
+			continue;
+		}
+
+
+		//========================================================
+		// Nodeとの距離
+		//========================================================
+
+		Math::Vector3 diff =
+			node->GetPos() - pos;
+
+		diff.y = 0.0f;
+
+		float distanceSq =
+			diff.LengthSquared();
+
+
+		//========================================================
+		// 最短
+		//========================================================
+
+		if (distanceSq < nearestDistanceSq)
+		{
+			nearestDistanceSq = distanceSq;
+
+			nearestNodeID =
+				node->GetID();
+		}
+	}
+
+	return nearestNodeID;
+}
+
+bool Police::MoveToNextPathNode()
+{
+	if (!m_pNodeManager)
+	{
+		return false;
+	}
+
+	if (m_currentPath.empty())
+	{
+		return false;
+	}
+
+	if (m_currentPathIndex >=
+		static_cast<int>(m_currentPath.size()))
+	{
+		return false;
+	}
+
+
+	//============================================================
+	// 現在のTarget Node
+	//============================================================
+
+	const int nodeID =
+		m_currentPath[m_currentPathIndex];
+
+	auto node =
+		m_pNodeManager->FindNode(nodeID);
+
+	if (!node)
+	{
+		return false;
+	}
+
+
+	//============================================================
+	// Nodeへの方向
+	//============================================================
+
+	Math::Vector3 dir =
+		node->GetPos() - m_pos;
+
+	dir.y = 0.0f;
+
+
+	//============================================================
+	// 到着
+	//============================================================
+
+	const float arriveDistance = 0.2f * m_sceneScale;
+
+	if (dir.LengthSquared() <=
+		arriveDistance * arriveDistance)
+	{
+		m_currentPathIndex++;
+
+		//========================================================
+		// Pathの途中
+		//========================================================
+
+		if (m_currentPathIndex <
+			static_cast<int>(m_currentPath.size()))
+		{
+			return true;
+		}
+
+
+		//========================================================
+		// Patrol Point到着
+		//========================================================
+
+		m_currentStartNode =
+			m_currentPath.back();
+
+
+		//========================================================
+		// 次のPathを探索
+		//========================================================
+
+		FindPatrolPath();
+
+		return true;
+	}
+
+
+	//============================================================
+	// 移動
+	//============================================================
+
+	SetMoveDirection(dir);
+
+	return true;
+}
+
+void Police::FindChasePath()
+{
+	if (!m_pNavMeshManager)
+	{
+		return;
+	}
+
+	auto target = m_wpTarget.lock();
+
+	if (!target)
+	{
+		return;
+	}
+
+
+	//============================================================
+	// 現在位置
+	//============================================================
+
+	const Math::Vector3 start =
+		m_pos;
+
+
+	//============================================================
+	// Player位置
+	//============================================================
+
+	const Math::Vector3 goal =
+		target->GetPos();
+
+
+	//============================================================
+	// NavMesh Path探索
+	//============================================================
+
+	m_navPath =
+		m_navMeshPathfinder.FindPathPoints(
+			*m_pNavMeshManager,
+			start,
+			goal
+		);
+
+
+	//============================================================
+	// Path開始
+	//============================================================
+
+	m_navPathIndex = 0;
+}
+
+bool Police::MoveToNextNavPathPoint()
+{
+	if (m_navPath.empty())
+	{
+		return false;
+	}
+
+	if (m_navPathIndex >=
+		static_cast<int>(m_navPath.size()))
+	{
+		return false;
+	}
+
+
+	//============================================================
+	// 現在のTarget Point
+	//============================================================
+
+	const Math::Vector3 targetPoint =
+		m_navPath[m_navPathIndex];
+
+
+	//============================================================
+	// 移動方向
+	//============================================================
+
+	Math::Vector3 dir =
+		targetPoint - m_pos;
+
+	dir.y = 0.0f;
+
+
+	//============================================================
+	// 到着判定
+	//============================================================
+
+	const float arriveDistance = 0.2f * m_sceneScale;
+
+	if (dir.LengthSquared() <=
+		arriveDistance * arriveDistance)
+	{
+		m_navPathIndex++;
+
+		return true;
+	}
+
+
+	//============================================================
+	// 移動
+	//============================================================
+
+	SetMoveDirection(dir);
+
+	return true;
+}
+
+bool Police::SearchTarget()
+{
+	auto& objList =
+		SceneManager::Instance().GetObjList();
+
+	for (auto& obj : objList)
+	{
+		if (!obj)
+		{
+			continue;
+		}
+
+		auto character =
+			std::dynamic_pointer_cast<CharacterBase>(obj);
+
+		if (!character)
+		{
+			continue;
+		}
+
+		// 自分自身
+		if (character.get() == this)
+		{
+			continue;
+		}
+
+		// Policeは対象外
+		if (std::dynamic_pointer_cast<Police>(character))
+		{
+			continue;
+		}
+
+		//========================================================
+		// 視認できるか
+		//========================================================
+
+		if (!CanSeeTarget(character))
+		{
+			continue;
+		}
+
+		//========================================================
+		// Target発見
+		//========================================================
+
+		m_wpTarget = character;
+
+		m_lastTargetPos =
+			character->GetPos();
+
+		return true;
+	}
+
+	return false;
+}
+
+bool Police::CanSeeTarget(
+	const std::shared_ptr<CharacterBase>& target)
+{
+	if (!target)
+	{
+		return false;
+	}
+
+	//============================================================
+	// 距離
+	//============================================================
+
+	const float searchDistance =
+		8.0f * m_sceneScale;
+
+	Math::Vector3 toTarget =
+		target->GetPos() - m_pos;
+
+	toTarget.y = 0.0f;
+
+	const float distanceSq =
+		toTarget.LengthSquared();
+
+	if (distanceSq >
+		searchDistance * searchDistance)
+	{
+		return false;
+	}
+
+	if (distanceSq <= 0.0001f)
+	{
+		return false;
+	}
+
+	//============================================================
+	// Policeの正面方向
+	//============================================================
+
+	Math::Vector3 forward =
+		m_mWorld.Backward();
+
+	forward.y = 0.0f;
+	forward.Normalize();
+
+	//============================================================
+	// Target方向
+	//============================================================
+
+	toTarget.Normalize();
+
+	const float viewAngle = 90.0f;
+
+	const float cosViewAngle =
+		std::cos(
+			DirectX::XMConvertToRadians(
+				viewAngle * 0.5f
+			)
+		);
+
+	float dot =
+		forward.Dot(toTarget);
+
+	dot =
+		std::clamp(dot, -1.0f, 1.0f);
+
+	if (dot < cosViewAngle)
+	{
+		return false;
+	}
+
+	//============================================================
+	// Ray
+	//============================================================
+
+	KdCollider::RayInfo ray;
+
+	ray.m_type =
+		KdCollider::TypeGround |
+		KdCollider::TypeBump;
+
+	ray.m_pos =
+		m_pos;
+
+	ray.m_dir =
+		target->GetPos() - ray.m_pos;
+
+	float rayDistance =
+		ray.m_dir.Length();
+
+	if (rayDistance <= 0.000001f)
+	{
+		return false;
+	}
+
+	ray.m_dir.Normalize();
+
+	ray.m_range =
+		rayDistance;
+
+	//============================================================
+	// Ray判定
+	//============================================================
+
+	std::list<KdCollider::CollisionResult> retRayList;
+
+	for (auto& obj :
+		SceneManager::Instance().GetObjList())
+	{
+		if (!obj)
+		{
+			continue;
+		}
+
+		// Target自身は遮蔽物にしない
+		if (obj.get() == target.get())
+		{
+			continue;
+		}
+
+		// 自分自身も除外
+		if (obj.get() == this)
+		{
+			continue;
+		}
+
+		obj->Intersects(
+			ray,
+			&retRayList
+		);
+	}
+
+	// 遮蔽物あり
+	if (!retRayList.empty())
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void Police::ChangeState(State newState)
+{
+	if (m_state == newState)
+	{
+		return;
+	}
+
+	m_state = newState;
+
+	if (m_state == State::Chase)
+	{
+		m_loseSightTimer = 0.0f;
+	}
+
+	if (m_state == State::Search)
+	{
+		m_searchTimer = 0.0f;
+		m_searchPhaseTimer = 0.0f;
+
+		m_searchPhase =
+			SearchPhase::LookLeft;
+
+		// Search開始時の角度を保存
+		m_searchStartRotY = m_rot.y;
+	}
+
+	ApplyStateSettings();
+
+	if (!m_spAlertIcon)
+	{
+		return;
+	}
+
+	switch (m_state)
+	{
+	case State::Patrol:
+
+		m_spAlertIcon->SetIcon(
+			AlertIcon::IconType::None
+		);
+
+		break;
+
+	case State::Chase:
+
+		m_spAlertIcon->SetIcon(
+			AlertIcon::IconType::Exclamation
+		);
+
+		break;
+
+	case State::LastSeen:
+
+		m_spAlertIcon->SetIcon(
+			AlertIcon::IconType::Question
+		);
+
+		break;
+
+	case State::Search:
+
+		m_spAlertIcon->SetIcon(
+			AlertIcon::IconType::Question
+		);
+
+		break;
+
+	case State::Return:
+
+		m_spAlertIcon->SetIcon(
+			AlertIcon::IconType::None
+		);
+
+		break;
+	}
+}
+
+void Police::ApplyStateSettings()
+{
+	switch (m_state)
+	{
+	case State::Patrol:
+
+		SetMoveSpeed(m_patrolSpeed);
+
+		m_spAnimator->SetAnimation(
+			m_spModel->GetAnimation("Armature|Walk")
+		);
+
+		break;
+
+
+	case State::Chase:
+
+		SetMoveSpeed(m_chaseSpeed);
+
+		m_spAnimator->SetAnimation(
+			m_spModel->GetAnimation("Armature|Sprint")
+		);
+
+		break;
+
+	case State::LastSeen:
+
+		SetMoveSpeed(m_returnSpeed);
+
+		m_spAnimator->SetAnimation(
+			m_spModel->GetAnimation("Armature|Walk")
+		);
+
+		break;
+
+	case State::Search:
+
+		SetMoveSpeed(0.0f);
+
+		m_spAnimator->SetAnimation(
+			m_spModel->GetAnimation("Armature|Idle")
+		);
+
+		break;
+
+	case State::Return:
+
+		SetMoveSpeed(m_returnSpeed);
+
+		m_spAnimator->SetAnimation(
+			m_spModel->GetAnimation("Armature|Walk")
+		);
+
+		break;
+	}
+}
