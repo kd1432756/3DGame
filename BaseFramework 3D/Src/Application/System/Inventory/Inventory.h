@@ -42,7 +42,7 @@ public:
 
 	bool IsEmpty() const
 	{
-		return m_items.empty();
+		return GetItemCount() == 0;
 	}
 
 	int CountItems(const std::string& itemPath);

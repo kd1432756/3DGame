@@ -8,9 +8,25 @@
 class NavMeshManager;
 
 class Item;
+
 #include "../../../Object/StaticMeshObject/Item/ItemData.h"
 
 class InteractiveObject;
+
+//============================================================
+// Move Result
+//============================================================
+
+enum class MoveResult
+{
+	Moving,
+	Arrived,
+	Failed
+};
+
+//============================================================
+// Neighbor
+//============================================================
 
 class Neighbor : public EnemyBase
 {
@@ -28,15 +44,53 @@ public:
 		return ObjectCategory::Character;
 	}
 
+
 	//============================================================
-		// State
-		//============================================================
+	// FSM State
+	//============================================================
 
 	enum class State
 	{
 		Task,
 		Prank,
 		Repair
+	};
+
+	//============================================================
+	// Utility Action
+	//============================================================
+
+	enum class Action
+	{
+		Task,
+		Prank,
+		Repair
+	};
+
+	//============================================================
+	// Prank Candidate
+	//============================================================
+
+	struct PrankCandidate
+	{
+		std::shared_ptr<InteractiveObject> target;
+
+		int inventoryIndex = -1;
+
+		float utility = 0.0f;
+	};
+
+	//============================================================
+	// Repair Candidate
+	//============================================================
+
+	struct RepairCandidate
+	{
+		std::shared_ptr<InteractiveObject> target;
+
+		int inventoryIndex = -1;
+
+		float utility = 0.0f;
 	};
 
 	//============================================================
@@ -58,6 +112,7 @@ public:
 	{
 		return m_currentItemData;
 	}
+
 
 	//============================================================
 	// Prank Target
@@ -82,10 +137,26 @@ protected:
 private:
 
 	//============================================================
+	// Utility AI
+	//============================================================
+
+	void UpdateUtility();
+
+	Action DecideAction();
+
+	float EvaluateTask();
+
+	float EvaluatePrank();
+
+	float EvaluateRepair();
+
+
+	//============================================================
 	// Task
 	//============================================================
 
 	void UpdateTask();
+
 
 	//============================================================
 	// Prank
@@ -93,11 +164,16 @@ private:
 
 	void UpdatePrank();
 
-	bool MoveToPrankTarget();
+	bool FindBestPrankCandidate(
+		PrankCandidate& outCandidate);
 
-	void TryStartPrank();
+	float EvaluatePrankCandidate(
+		const std::shared_ptr<InteractiveObject>& target,
+		const ItemData& itemData);
 
-	std::shared_ptr<InteractiveObject> SearchPrankTarget();
+	void SelectPrankCandidate(
+		const PrankCandidate& candidate);
+
 
 	//============================================================
 	// Repair
@@ -105,23 +181,61 @@ private:
 
 	void UpdateRepair();
 
+	bool FindBestRepairCandidate(
+		RepairCandidate& outCandidate);
+
+	float EvaluateRepairCandidate(
+		const std::shared_ptr<InteractiveObject>& target,
+		const ItemData& itemData);
+
+	void SelectRepairCandidate(
+		const RepairCandidate& candidate);
+
 	//============================================================
-	// 移動（NavMesh）
+	// Movement
 	//============================================================
 
-	void FindPathTo(const Math::Vector3& goal);
+	void FindPathTo(
+		const Math::Vector3& goal);
 
-	bool MoveToNextNavPathPoint();
+	MoveResult MoveToNextNavPathPoint();
+
+	MoveResult MoveToPrankTarget();
+
+	MoveResult MoveToRepairTarget();
 
 	//============================================================
 	// State
 	//============================================================
 
-	void ChangeState(State newState);
+	void ChangeState(
+		State newState);
 
 	void ApplyStateSettings();
 
-private:
+
+	//============================================================
+	// Utility
+	//============================================================
+
+	float m_utilityUpdateTimer = 0.0f;
+
+	// Utilityを再評価する間隔
+	float m_utilityUpdateInterval = 1.0f;
+
+
+	//============================================================
+	// Utility Debug
+	//============================================================
+
+	float m_taskUtility = 0.0f;
+
+	float m_prankUtility = 0.0f;
+
+	float m_repairUtility = 0.0f;
+
+	Action m_currentAction = Action::Task;
+
 
 	//============================================================
 	// Owner
@@ -129,12 +243,15 @@ private:
 
 	std::string m_owner;
 
+
 	//============================================================
 	// Inventory
 	//============================================================
 
 	Inventory m_inventory;
+
 	ItemData m_currentItemData;
+
 
 	//============================================================
 	// State
@@ -142,13 +259,17 @@ private:
 
 	State m_state = State::Task;
 
+
 	//============================================================
 	// State Settings
 	//============================================================
 
 	float m_taskSpeed = 0.006f;
+
 	float m_prankSpeed = 0.01f;
+
 	float m_repairSpeed = 0.01f;
+
 
 	//============================================================
 	// NavMesh
@@ -162,33 +283,44 @@ private:
 
 	int m_navPathIndex = 0;
 
+
+	//============================================================
+	// Use
+	//============================================================
+
+	bool m_isInteracting = false;
+
+	float m_interactTimer = 0.0f;
+
 	//============================================================
 	// Prank
 	//============================================================
 
 	std::weak_ptr<InteractiveObject> m_wpPrankTarget;
 
-	// いたずら実行を試みるまでの間隔（Task中に加算）
-	float m_prankCheckTimer = 0.0f;
+	// Utility評価で選ばれたPrank候補
+	PrankCandidate m_bestPrankCandidate;
 
-	float m_prankCheckInterval = 10.0f;
+	// 実際にPrankで使用するInventoryスロット
+	int m_prankInventoryIndex = -1;
 
-	// いたずら実行の確率（0.0～1.0）
-	float m_prankChance = 0.3f;
+	float m_prankDesire = 0.3f;
 
-	// Prank対象を検索する半径
 	float m_prankSearchRadius = 8.0f;
 
 	float m_prankInteractDistance = 1.5f;
 
-	// ターゲットに到着後、Use()を呼ぶまでのインタラクト待機
-	bool m_isInteracting = false;
-
-	float m_interactTimer = 0.0f;
-
 	//============================================================
-	// Repair（未実装・遷移口のみ）
+	// Repair
 	//============================================================
 
 	std::weak_ptr<InteractiveObject> m_wpRepairTarget;
+
+	RepairCandidate m_bestRepairCandidate;
+
+	int m_repairInventoryIndex = -1;
+
+	float m_repairInteractDistance = 1.5f;
+
+	float m_repairSearchRadius = 8.0f;
 };
