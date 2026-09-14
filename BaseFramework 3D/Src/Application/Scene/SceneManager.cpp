@@ -202,9 +202,9 @@ SceneManager::StageData SceneManager::GetStageData() const
 	case StageType::Stage2:
 		return
 		{
-			"Asset/Stage2/scene.json",
-			"Asset/Stage2/astarnode.json",
-			"Asset/Stage2/navmesh.json"
+			"Asset/Stage/Stage2/scene.json",
+			"Asset/Stage/Stage2/astarnode.json",
+			"Asset/Stage/Stage2/navmesh.json"
 		};
 	}
 

@@ -8,9 +8,9 @@
             ],
             "Name": "Player_1",
             "Position": [
-                -2.3889479637145996,
                 0.0,
-                -3.699997663497925
+                1.2850000858306885,
+                0.0
             ],
             "Rotation": [
                 -0.0,
@@ -10248,6 +10248,712 @@
                 0.9999527931213379
             ],
             "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_1187",
+            "Position": [
+                -24.0,
+                0.0,
+                -48.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_1188",
+            "Position": [
+                -16.0,
+                0.0,
+                -48.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_1189",
+            "Position": [
+                -20.0,
+                0.0,
+                -48.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_1190",
+            "Position": [
+                -12.0,
+                0.0,
+                -48.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_1191",
+            "Position": [
+                -8.0,
+                0.0,
+                -48.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_1192",
+            "Position": [
+                -4.0,
+                0.0,
+                -48.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_1193",
+            "Position": [
+                -4.0,
+                0.0,
+                -52.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_1194",
+            "Position": [
+                -8.0,
+                0.0,
+                -52.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_1195",
+            "Position": [
+                -12.0,
+                0.0,
+                -52.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_1196",
+            "Position": [
+                -16.0,
+                0.0,
+                -52.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_1197",
+            "Position": [
+                -24.0,
+                0.0,
+                -52.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_1198",
+            "Position": [
+                -20.0,
+                0.0,
+                -52.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_1199",
+            "Position": [
+                -24.0,
+                0.0,
+                -56.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_1200",
+            "Position": [
+                -20.0,
+                0.0,
+                -56.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_1201",
+            "Position": [
+                -16.0,
+                0.0,
+                -56.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_1202",
+            "Position": [
+                -12.0,
+                0.0,
+                -56.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_1203",
+            "Position": [
+                -8.0,
+                0.0,
+                -56.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_1204",
+            "Position": [
+                -4.0,
+                0.0,
+                -56.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset\\Models\\Props\\House\\House01.gltf",
+            "Name": "House01_0",
+            "Position": [
+                -8.5856351852417,
+                0.5,
+                -52.72068786621094
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                5.0,
+                5.0,
+                5.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Props/Flower/Flower.gltf",
+            "Name": "Flower_0",
+            "Owner": "",
+            "Position": [
+                -21.5,
+                0.6000000238418579,
+                -48.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Flower"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Props/Flower/Flower.gltf",
+            "Name": "Flower_1",
+            "Owner": "",
+            "Position": [
+                -20.5,
+                0.6000000238418579,
+                -48.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Flower"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Props/Flower/Flower.gltf",
+            "Name": "Flower_2",
+            "Owner": "",
+            "Position": [
+                -19.5,
+                0.6000000238418579,
+                -48.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Flower"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset\\Models\\Props\\FlowerBed\\FlowerBed.gltf",
+            "Name": "FlowerBed_0",
+            "Position": [
+                -19.819095611572266,
+                0.62041175365448,
+                -48.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Props/Flower/Flower.gltf",
+            "Name": "Flower_3",
+            "Owner": "",
+            "Position": [
+                -18.5,
+                0.6000000238418579,
+                -48.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Flower"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Name": "Neighbor_0",
+            "Position": [
+                0.0,
+                1.2850000858306885,
+                0.0
+            ],
+            "Rotation": [
+                90.0,
+                90.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "Neighbor"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Props/Flower/Flower.gltf",
+            "Name": "Flower_4",
+            "Owner": "",
+            "Position": [
+                -2.7581706047058105,
+                0.5,
+                5.111670970916748
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "Flower"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Props/Flower/Flower.gltf",
+            "Name": "Flower_5",
+            "Owner": "",
+            "Position": [
+                -0.811439037322998,
+                0.5,
+                5.111670970916748
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "Flower"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ModelPath": "Asset/Models/Props/Flower/Flower.gltf",
+            "Name": "Flower_6",
+            "Owner": "",
+            "Position": [
+                1.1327731609344482,
+                0.5,
+                5.111670970916748
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "Flower"
         }
     ]
 }

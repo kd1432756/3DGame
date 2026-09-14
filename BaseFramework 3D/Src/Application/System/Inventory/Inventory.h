@@ -47,6 +47,8 @@ public:
 
 	int CountItems(const std::string& itemPath);
 
+	void Clear();
+
 private:
 
 	std::array<InventoryItem, MaxItem> m_items;

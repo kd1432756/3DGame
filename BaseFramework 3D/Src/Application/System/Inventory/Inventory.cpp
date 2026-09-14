@@ -2,12 +2,25 @@
 
 bool Inventory::AddItem(const std::string& itemPath)
 {
+	for (size_t i = 0; i < m_items.size(); ++i)
+	{
+
+		if (m_items[i].itemPath.empty())
+		{
+			m_items[i].itemPath = itemPath;
+
+			return true;
+		}
+	}
+
+	return false;
 	for (auto& item : m_items)
 	{
 		if (item.itemPath.empty())
 		{
 			item.itemPath = itemPath;
 			return true;
+
 		}
 	}
 
@@ -101,4 +114,14 @@ int Inventory::CountItems(const std::string& itemPath)
 	}
 
 	return count;
+}
+
+void Inventory::Clear()
+{
+	for (auto& item : m_items)
+	{
+		item.itemPath.clear();
+	}
+
+	m_selectIndex = -1;
 }

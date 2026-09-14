@@ -52,6 +52,7 @@ public:
 	enum class State
 	{
 		Task,
+		SearchItem,
 		Prank,
 		Repair
 	};
@@ -63,8 +64,20 @@ public:
 	enum class Action
 	{
 		Task,
+		SearchItem,
 		Prank,
 		Repair
+	};
+
+	//============================================================
+	// Search Item Candidate
+	//============================================================
+
+	struct SearchItemCandidate
+	{
+		std::shared_ptr<Item> item;
+
+		float utility = 0.0f;
 	};
 
 	//============================================================
@@ -113,6 +126,7 @@ public:
 		return m_currentItemData;
 	}
 
+	bool HasInventoryItem(const std::string& itemPath) const;
 
 	//============================================================
 	// Prank Target
@@ -146,6 +160,8 @@ private:
 
 	float EvaluateTask();
 
+	float EvaluateSearchItem();
+
 	float EvaluatePrank();
 
 	float EvaluateRepair();
@@ -157,6 +173,27 @@ private:
 
 	void UpdateTask();
 
+	//============================================================
+	// Search Item
+	//============================================================
+
+	void UpdateSearchItem();
+
+	bool FindBestSearchItem(
+		SearchItemCandidate& outCandidate);
+
+	float EvaluateSearchItemCandidate(
+		const std::shared_ptr<Item>& item);
+
+	void SelectSearchItemCandidate(
+		const SearchItemCandidate& candidate);
+
+	MoveResult MoveToSearchItem();
+
+	void PickupSearchItem();
+
+	bool CanUseItemForPrank(const ItemData& itemData) const;
+	bool CanUseItemForRepair(const ItemData& itemData) const;
 
 	//============================================================
 	// Prank
@@ -230,6 +267,8 @@ private:
 
 	float m_taskUtility = 0.0f;
 
+	float m_searchItemUtility = 0.0f;
+
 	float m_prankUtility = 0.0f;
 
 	float m_repairUtility = 0.0f;
@@ -266,6 +305,8 @@ private:
 
 	float m_taskSpeed = 0.006f;
 
+	float m_searchItemSpeed = 0.01f;
+
 	float m_prankSpeed = 0.01f;
 
 	float m_repairSpeed = 0.01f;
@@ -291,6 +332,18 @@ private:
 	bool m_isInteracting = false;
 
 	float m_interactTimer = 0.0f;
+
+	//============================================================
+	// Search Item
+	//============================================================
+
+	SearchItemCandidate m_bestSearchItemCandidate;
+
+	std::weak_ptr<Item> m_wpSearchItem;
+
+	float m_searchItemRadius = 15.0f;
+
+	float m_searchItemInteractDistance = 1.2f;
 
 	//============================================================
 	// Prank

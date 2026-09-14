@@ -11,6 +11,8 @@ enum class ItemMode
 	Dropped         // 世界に落ちている
 };
 
+class Inventory;
+
 class ItemSpawner;
 
 class Item : public StaticMeshObject
@@ -81,6 +83,8 @@ public:
 	{
 		m_mode = mode;
 	}
+
+	bool Pickup(Inventory& inventory);
 
 	void Drop(
 		const Math::Vector3& pos,

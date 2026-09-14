@@ -75,12 +75,48 @@ bool Item::LoadItem(const std::string& path)
 
 void Item::Interact(std::shared_ptr<Player> player)
 {
-	if (!player) return;
-
-	if (!player->GetInventory().AddItem(GetItemPath()))
+	if (!player)
 	{
 		return;
 	}
+
+	Pickup(player->GetInventory());
+}
+
+bool Item::Pickup(Inventory& inventory)
+{
+	//============================================================
+	// すでに取得済み
+	//============================================================
+
+	if (m_mode == ItemMode::InInventory)
+	{
+		return false;
+	}
+
+	//============================================================
+	// ItemPathが無効
+	//============================================================
+
+	const std::string& itemPath = GetItemPath();
+
+	if (itemPath.empty())
+	{
+		return false;
+	}
+
+	//============================================================
+	// Inventoryに追加
+	//============================================================
+
+	if (!inventory.AddItem(itemPath))
+	{
+		return false;
+	}
+
+	//============================================================
+	// SpawnedアイテムならSpawnerに再出現を要求
+	//============================================================
 
 	if (m_mode == ItemMode::Spawned)
 	{
@@ -92,7 +128,13 @@ void Item::Interact(std::shared_ptr<Player> player)
 		}
 	}
 
+	//============================================================
+	// Itemをワールドから削除
+	//============================================================
+
 	Destroy();
+
+	return true;
 }
 
 void Item::Drop(const Math::Vector3& pos, const Math::Vector3& dir)

@@ -57,12 +57,20 @@ void Neighbor::Init()
 	ApplyStateSettings();
 
 	//============================================================
+	// Inventory初期化
+	//============================================================
+
+	m_inventory.Clear();
+
+	m_currentItemData = ItemData();
+
+	//============================================================
 	// 仮アイテム
 	//============================================================
 
-	AddInventoryItem("Asset/Data/Item/Scissors.json");
-
-	AddInventoryItem("Asset/Data/Item/Hammer.json");
+	AddInventoryItem("Asset/Items/Scissors.item");
+	
+	AddInventoryItem("Asset/Items/Hammer.item");
 
 	SelectInventory(0);
 }
@@ -105,6 +113,39 @@ void Neighbor::SelectInventory(int index)
 }
 
 //============================================================
+// Inventory
+//============================================================
+
+bool Neighbor::HasInventoryItem(
+	const std::string& itemPath) const
+{
+	if (itemPath.empty())
+	{
+		return false;
+	}
+
+	const auto& items =
+		m_inventory.GetItems();
+
+	for (int i = 0;
+		i < Inventory::MaxItem;
+		++i)
+	{
+		if (items[i].IsEmpty())
+		{
+			continue;
+		}
+
+		if (items[i].itemPath == itemPath)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//============================================================
 // AI
 //============================================================
 
@@ -131,13 +172,17 @@ void Neighbor::UpdateBehavior()
 
 		break;
 
+	case State::SearchItem:
+
+		UpdateSearchItem();
+
+		break;
 
 	case State::Prank:
 
 		UpdatePrank();
 
 		break;
-
 
 	case State::Repair:
 
@@ -170,6 +215,8 @@ void Neighbor::UpdateUtility()
 
 	m_taskUtility = EvaluateTask();
 
+	m_searchItemUtility = EvaluateSearchItem();
+
 	m_prankUtility = EvaluatePrank();
 
 	m_repairUtility = EvaluateRepair();
@@ -181,7 +228,22 @@ void Neighbor::UpdateUtility()
 	Action nextAction = DecideAction();
 
 	m_currentAction = nextAction;
+	char buffer[256];
 
+	_snprintf_s(
+		buffer,
+		sizeof(buffer),
+		_TRUNCATE,
+		"Utility: Task=%.1f Search=%.1f Prank=%.1f Repair=%.1f\n",
+		m_taskUtility,
+		m_searchItemUtility,
+		m_prankUtility,
+		m_repairUtility
+	);
+	if (GetName() == "NPC 01")
+	{
+		OutputDebugStringA(buffer);
+	}
 	//============================================================
 	// Utility → FSM
 	//============================================================
@@ -193,6 +255,22 @@ void Neighbor::UpdateUtility()
 		ChangeState(State::Task);
 
 		break;
+
+	case Action::SearchItem:
+	{
+		if (!m_bestSearchItemCandidate.item)
+		{
+			ChangeState(State::Task);
+
+			return;
+		}
+
+		SelectSearchItemCandidate(m_bestSearchItemCandidate);
+
+		ChangeState(State::SearchItem);
+
+		break;
+	}
 
 	case Action::Prank:
 	{
@@ -253,6 +331,17 @@ Neighbor::Action Neighbor::DecideAction()
 	float highestUtility = m_taskUtility;
 
 	Action bestAction = Action::Task;
+	
+	//------------------------------------------------------------
+	// Search Item
+	//------------------------------------------------------------
+
+	if (m_searchItemUtility > highestUtility)
+	{
+		highestUtility = m_searchItemUtility;
+
+		bestAction = Action::SearchItem;
+	}
 
 	//------------------------------------------------------------
 	// Prank
@@ -288,6 +377,24 @@ float Neighbor::EvaluateTask()
 	// 常に最低限の行動としてTaskを残す
 	return 10.0f;
 }
+
+//============================================================
+// Serach Item Utility
+//============================================================
+
+float Neighbor::EvaluateSearchItem()
+{
+	m_bestSearchItemCandidate = SearchItemCandidate();
+
+	if (!FindBestSearchItem(
+		m_bestSearchItemCandidate))
+	{
+		return 0.0f;
+	}
+
+	return m_bestSearchItemCandidate.utility;
+}
+
 
 //============================================================
 // Prank Utility
@@ -363,6 +470,492 @@ void Neighbor::UpdateTask()
 	// ・アイテムを拾う
 	//
 	// などをここに追加する
+}
+
+//============================================================
+// Search Item
+//============================================================
+
+void Neighbor::UpdateSearchItem()
+{
+	auto item = m_wpSearchItem.lock();
+
+	//============================================================
+	// アイテムが消えた
+	//============================================================
+
+	if (!item)
+	{
+		m_wpSearchItem.reset();
+
+		ChangeState(State::Task);
+
+		return;
+	}
+
+	//============================================================
+	// すでにインベントリに入っている
+	//============================================================
+
+	const ItemData& itemData = item->GetItemData();
+
+	if (HasInventoryItem(itemData.GetItemPath()))
+	{
+		m_wpSearchItem.reset();
+
+		ChangeState(State::Task);
+
+		return;
+	}
+
+	//============================================================
+	// アイテムまで移動
+	//============================================================
+
+	MoveResult moveResult = MoveToSearchItem();
+
+	//============================================================
+	// 移動中
+	//============================================================
+
+	if (moveResult == MoveResult::Moving)
+	{
+		m_spAnimator->SetAnimation(
+			m_spModel->GetAnimation(
+				"Armature|Sprint"
+			)
+		);
+
+		return;
+	}
+
+	//============================================================
+	// 移動失敗
+	//============================================================
+
+	if (moveResult == MoveResult::Failed)
+	{
+		m_wpSearchItem.reset();
+
+		ChangeState(State::Task);
+
+		return;
+	}
+
+	//============================================================
+	// 到着
+	//============================================================
+	
+	PickupSearchItem();
+}
+
+//============================================================
+// Find Best Serach Item Candidate
+//============================================================
+
+bool Neighbor::FindBestSearchItem(SearchItemCandidate & outCandidate)
+{
+	outCandidate = SearchItemCandidate();
+
+	auto& objList = SceneManager::Instance().GetObjList();
+
+	const float searchRadius = m_searchItemRadius * m_sceneScale;
+
+	const float searchDistanceSq = searchRadius * searchRadius;
+
+	float bestUtility = 0.0f;
+
+	for (auto& obj : objList)
+	{
+		if (!obj)
+		{
+			continue;
+		}
+
+		auto item = std::dynamic_pointer_cast<Item>(obj);
+
+		if (!item)
+		{
+			continue;
+		}
+
+		//========================================================
+		// 距離
+		//========================================================
+
+		Math::Vector3 diff = item->GetPos() - m_pos;
+
+		diff.y = 0.0f;
+
+		if (diff.LengthSquared() > searchDistanceSq)
+		{
+			continue;
+		}
+
+		//========================================================
+		// すでにインベントリにあるアイテムなら不要
+		//========================================================
+
+		const ItemData& itemData = item->GetItemData();
+
+		if (HasInventoryItem(itemData.GetItemPath()))
+		{
+			continue;
+		}
+
+		//========================================================
+		// このアイテムを拾う価値
+		//========================================================
+
+		float utility = EvaluateSearchItemCandidate(item);
+
+		if (utility <= bestUtility)
+		{
+			continue;
+		}
+
+		bestUtility = utility;
+
+		outCandidate.item = item;
+
+		outCandidate.utility = utility;
+	}
+
+	return outCandidate.item != nullptr;
+}
+
+//============================================================
+// Evaluate Search Item Candidate
+//============================================================
+
+float Neighbor::EvaluateSearchItemCandidate(const std::shared_ptr<Item>& item)
+{
+	if (!item)
+	{
+		return 0.0f;
+	}
+
+	const ItemData& itemData = item->GetItemData();
+
+	//============================================================
+	// 使えないItem
+	//============================================================
+
+	if (itemData.GetAction() == ItemAction::None)
+	{
+		return 0.0f;
+	}
+
+	//============================================================
+	// Itemまでの距離
+	//============================================================
+
+	Math::Vector3 itemDiff = item->GetPos() - m_pos;
+
+	itemDiff.y = 0.0f;
+
+	float itemDistance = itemDiff.Length();
+
+	float searchRadius = m_searchItemRadius * m_sceneScale;
+
+	float itemDistanceScore =
+		1.0f -
+		std::clamp(
+			itemDistance / searchRadius,
+			0.0f,
+			1.0f
+		);
+
+	//============================================================
+	// 基本Utility
+	//============================================================
+
+	float utility = 20.0f;
+
+	utility += itemDistanceScore * 20.0f;
+
+	//============================================================
+	// Prankに使える
+	//============================================================
+
+	if (CanUseItemForPrank(itemData))
+	{
+		utility += 50.0f;
+	}
+
+	//============================================================
+	// Repairに使える
+	//============================================================
+
+	if (CanUseItemForRepair(itemData))
+	{
+		utility += 40.0f;
+	}
+
+	return utility;
+}
+
+//============================================================
+// Select Search Item Candidate
+//============================================================
+
+void Neighbor::SelectSearchItemCandidate(const SearchItemCandidate& candidate)
+{
+	if (!candidate.item)
+	{
+		return;
+	}
+
+	//============================================================
+	// ターゲット保存
+	//============================================================
+
+	m_wpSearchItem = candidate.item;
+
+	//============================================================
+	// 古いPathを破棄
+	//============================================================
+
+	m_navPath.clear();
+
+	m_navPathIndex = 0;
+}
+
+//============================================================
+// Move To Search Item
+//============================================================
+
+MoveResult Neighbor::MoveToSearchItem()
+{
+	auto item = m_wpSearchItem.lock();
+
+	//============================================================
+	// アイテムが存在しない
+	//============================================================
+
+	if (!item)
+	{
+		return MoveResult::Failed;
+	}
+
+	Math::Vector3 toItem = item->GetPos() - m_pos;
+
+	toItem.y = 0.0f;
+
+	const float interactDistance = m_searchItemInteractDistance * m_sceneScale;
+
+	//============================================================
+	// 到着判定
+	//============================================================
+
+	if (toItem.LengthSquared() <= interactDistance * interactDistance)
+	{
+		m_navPath.clear();
+
+		m_navPathIndex = 0;
+
+		SetMoveDirection(Math::Vector3::Zero);
+
+		return MoveResult::Arrived;
+	}
+
+	//============================================================
+	// Pathがない
+	//============================================================
+
+	if (m_navPath.empty())
+	{
+		FindPathTo(item->GetPos());
+
+		//========================================================
+		// Path生成失敗
+		//========================================================
+
+		if (m_navPath.empty())
+		{
+			return MoveResult::Failed;
+		}
+	}
+
+	//============================================================
+	// NavMesh上を移動
+	//============================================================
+
+	return MoveToNextNavPathPoint();
+}
+
+void Neighbor::PickupSearchItem()
+{
+	auto item = m_wpSearchItem.lock();
+
+	//============================================================
+	// アイテムが存在しない
+	//============================================================
+
+	if (!item)
+	{
+		m_wpSearchItem.reset();
+
+		ChangeState(State::Task);
+
+		return;
+	}
+
+	//============================================================
+	// 念のため、拾う直前にも確認
+	//============================================================
+
+	const ItemData& itemData = item->GetItemData();
+	
+	if (HasInventoryItem(itemData.GetItemPath()))
+	{
+		m_wpSearchItem.reset();
+
+		ChangeState(State::Task);
+
+		return;
+	}
+
+	//============================================================
+	// ItemをInventoryに追加
+	//============================================================
+
+	if (!item->Pickup(m_inventory))
+	{
+		m_wpSearchItem.reset();
+
+		ChangeState(State::Task);
+
+		return;
+	}
+
+	//============================================================
+	// アイテム取得成功
+	//============================================================
+
+	m_wpSearchItem.reset();
+
+	//============================================================
+	// 取得したアイテムを選択
+	//============================================================
+
+	const auto& items = m_inventory.GetItems();
+
+	for (int i = 0;
+		i < Inventory::MaxItem;
+		++i)
+	{
+		if (items[i].itemPath == itemData.GetItemPath())
+		{
+			SelectInventory(i);
+			break;
+		}
+	}
+
+	//============================================================
+	// 次の行動を決める
+	//============================================================
+
+	ChangeState(State::Task);
+}
+
+bool Neighbor::CanUseItemForPrank(const ItemData & itemData) const
+{
+/*	ただ、ここで一つ問題があります。
+
+	今の
+
+		CanUseItemForPrank()
+
+		は、
+
+		使えるターゲットが世界のどこかに一つでもある
+
+		だけです。
+
+		でも、
+
+		ハサミ
+		↓
+		花
+		↓
+		100m先
+
+		だったら、
+
+		ハサミを拾う価値はあるのか？
+
+		という問題があります。*/
+
+/*そこで最終的には、
+
+EvaluateSearchItemCandidate()
+
+の中で、
+
+Item
+ ↓
+対応するInteractiveObject
+ ↓
+ターゲットまでの距離
+ ↓
+Utility
+
+まで見るのがおすすめです。*/
+
+	auto& objList = SceneManager::Instance().GetObjList();
+
+	for (auto& obj : objList)
+	{
+		auto target =
+			std::dynamic_pointer_cast<InteractiveObject>(obj);
+
+		if (!target)
+		{
+			continue;
+		}
+
+		if (target->GetOwner() == m_owner)
+		{
+			continue;
+		}
+
+		if (target->CanNPCUse(itemData))
+		{
+			return true;
+		}
+	}
+
+	return false;
+
+}
+
+bool Neighbor::CanUseItemForRepair(const ItemData& itemData) const
+{
+	auto& objList = SceneManager::Instance().GetObjList();
+
+	for (auto& obj : objList)
+	{
+		auto target = 
+			std::dynamic_pointer_cast<InteractiveObject>(obj);
+
+		if (!target)
+		{
+			continue;
+		}
+
+		if (target->GetOwner() != m_owner)
+		{
+			continue;
+		}
+
+		if (target->CanNPCUse(itemData))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 //============================================================
@@ -570,6 +1163,9 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 {
 	outCandidate = PrankCandidate();
 
+	OutputDebugStringA(
+		"=== FindBestPrankCandidate START ===\n"
+	);
 	//============================================================
 	// Scene Object
 	//============================================================
@@ -608,23 +1204,48 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 
 		if (inventoryItem.IsEmpty())
 		{
+			OutputDebugStringA(
+				"Prank: Inventory slot EMPTY\n"
+			);
 			continue;
 		}
 
 		//========================================================
 		// ItemData
 		//========================================================
-
+		
 		ItemData itemData;
 
 		itemData.Load(inventoryItem.itemPath);
+		{
+			std::string log =
+				"Prank: Inventory[" +
+				std::to_string(inventoryIndex) +
+				"] Path=[" +
+				inventoryItem.itemPath +
+				"] Action=" +
+				std::to_string(
+					static_cast<int>(
+						itemData.GetAction()
+						)
+				) +
+				" Target=[" +
+				itemData.GetTarget() +
+				"]\n";
 
+			OutputDebugStringA(
+				log.c_str()
+			);
+		}
 		//========================================================
 		// Repairは無視
 		//========================================================
 
 		if (itemData.GetAction() == ItemAction::Repair)
 		{
+			OutputDebugStringA(
+				"Prank: SKIP - Repair item\n"
+			);
 			continue;
 		}
 
@@ -649,16 +1270,46 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 			//====================================================
 			// 自分の所有物にはいたずらしない
 			//====================================================
+			{
+				std::string log =
+					"Prank: Target Owner=[" +
+					target->GetOwner() +
+					"] NeighborOwner=[" +
+					m_owner +
+					"]\n";
 
+				OutputDebugStringA(
+					log.c_str()
+				);
+			}
 			if (target->GetOwner() == m_owner)
 			{
+				OutputDebugStringA(
+					"Prank: SKIP - Same Owner\n"
+				);
 				continue;
 			}
 
 			//====================================================
 			// このItemでいたずら可能か
 			//====================================================
+			const bool canNPCUse =
+				target->CanNPCUse(itemData);
 
+			{
+				std::string log =
+					"Prank: CanNPCUse=" +
+					std::string(
+						canNPCUse
+						? "TRUE"
+						: "FALSE"
+					) +
+					"\n";
+
+				OutputDebugStringA(
+					log.c_str()
+				);
+			}
 			if (!target->CanNPCUse(itemData))
 			{
 				continue;
@@ -671,7 +1322,21 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 			Math::Vector3 diff = target->GetPos() - m_pos;
 
 			diff.y = 0.0f;
+			const float distanceSq =
+				diff.LengthSquared();
 
+			{
+				std::string log =
+					"Prank: DistanceSq=" +
+					std::to_string(distanceSq) +
+					" SearchDistanceSq=" +
+					std::to_string(searchDistanceSq) +
+					"\n";
+
+				OutputDebugStringA(
+					log.c_str()
+				);
+			}
 			if (diff.LengthSquared() > searchDistanceSq)
 			{
 				continue;
@@ -686,13 +1351,26 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 					target,
 					itemData
 				);
+			{
+				std::string log =
+					"Prank: Candidate Utility=" +
+					std::to_string(utility) +
+					"\n";
 
+				OutputDebugStringA(
+					log.c_str()
+				);
+			}
 			//====================================================
 			// より高いUtilityなら更新
 			//====================================================
 
 			if (utility <= bestUtility)
 			{
+				OutputDebugStringA(
+					"Prank: SKIP - Utility not higher\n"
+				);
+
 				continue;
 			}
 
@@ -703,8 +1381,27 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 			outCandidate.inventoryIndex = inventoryIndex;
 
 			outCandidate.utility = utility;
+			OutputDebugStringA(
+				"Prank: *** CANDIDATE SELECTED ***\n"
+			);
 		}
 	}
+
+	if (outCandidate.target)
+	{
+		OutputDebugStringA(
+			"=== FindBestPrankCandidate: FOUND ===\n"
+		);
+
+		return true;
+	}
+
+	OutputDebugStringA(
+		"=== FindBestPrankCandidate: NOT FOUND ===\n"
+	);
+
+	return false;
+
 
 	return outCandidate.target != nullptr;
 }
@@ -1158,8 +1855,7 @@ float Neighbor::EvaluateRepairCandidate(
 
 	diff.y = 0.0f;
 
-	float distance =
-		diff.Length();
+	float distance = diff.Length();
 
 	float searchRadius = m_repairSearchRadius * m_sceneScale;
 
@@ -1204,11 +1900,9 @@ void Neighbor::SelectRepairCandidate(
 	// ターゲットを保存
 	//============================================================
 
-	m_wpRepairTarget =
-		candidate.target;
+	m_wpRepairTarget = candidate.target;
 
-	m_repairInventoryIndex =
-		candidate.inventoryIndex;
+	m_repairInventoryIndex = candidate.inventoryIndex;
 }
 
 //============================================================
@@ -1313,8 +2007,7 @@ MoveResult Neighbor::MoveToNextNavPathPoint()
 // State
 //============================================================
 
-void Neighbor::ChangeState(
-	State newState)
+void Neighbor::ChangeState(State newState)
 {
 	if (m_state == newState)
 	{
@@ -1353,6 +2046,18 @@ void Neighbor::ApplyStateSettings()
 		m_spAnimator->SetAnimation(
 			m_spModel->GetAnimation(
 				"Armature|Idle"
+			)
+		);
+
+		break;
+
+	case State::SearchItem:
+
+		SetMoveSpeed(m_searchItemSpeed);
+
+		m_spAnimator->SetAnimation(
+			m_spModel->GetAnimation(
+				"Armature|Sprint"
 			)
 		);
 

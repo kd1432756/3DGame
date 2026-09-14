@@ -15,7 +15,7 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"FlowerBed3"
+			"name":"FlowerBed2"
 		},
 		{
 			"children":[
@@ -26,20 +26,20 @@
 	],
 	"materials":[
 		{
-			"name":"ConcreteFlowerBed3",
+			"name":"ConcreteFlowerBed2.001",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
-					0.17529229819774628,
-					0.17222537100315094,
-					0.1292819082736969,
+					0.09723398089408875,
+					0.09558966755867004,
+					0.07249269634485245,
 					1
 				],
-				"metallicFactor":0.30000001192092896,
-				"roughnessFactor":0.699999988079071
+				"metallicFactor":0.4000000059604645,
+				"roughnessFactor":0.27216553688049316
 			}
 		},
 		{
-			"name":"GroundFlowerBed3",
+			"name":"GroundFlowerBed5.001",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
 					0.01850022003054619,
@@ -47,14 +47,14 @@
 					0.0030352710746228695,
 					1
 				],
-				"metallicFactor":0,
-				"roughnessFactor":0.8199042081832886
+				"metallicFactor":0.4000000059604645,
+				"roughnessFactor":0.27216553688049316
 			}
 		}
 	],
 	"meshes":[
 		{
-			"name":"FlowerBed3",
+			"name":"FlowerBed2.001",
 			"primitives":[
 				{
 					"attributes":{
@@ -81,125 +81,125 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":252,
+			"count":52,
 			"max":[
-				1.701488733291626,
-				0.12689527869224548,
-				1.701488733291626
+				2.3280444145202637,
+				0.06972146779298782,
+				0.5919859409332275
 			],
 			"min":[
-				-1.701488733291626,
-				-0.37663546204566956,
-				-1.701488733291626
+				-2.3280444145202637,
+				-0.14100785553455353,
+				-0.5919859409332275
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":252,
+			"count":52,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":252,
+			"count":52,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":390,
+			"count":78,
 			"type":"SCALAR"
 		},
 		{
 			"bufferView":4,
 			"componentType":5126,
-			"count":12,
+			"count":4,
 			"max":[
-				1.3527076244354248,
-				-0.017373651266098022,
-				1.3527076244354248
+				2.0395150184631348,
+				0.001564921229146421,
+				0.4094121754169464
 			],
 			"min":[
-				-1.3527076244354248,
-				-0.017373651266098022,
-				-1.3527076244354248
+				-2.0395150184631348,
+				0.001564921229146421,
+				-0.4094121754169464
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":5,
 			"componentType":5126,
-			"count":12,
+			"count":4,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":6,
 			"componentType":5126,
-			"count":12,
+			"count":4,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":7,
 			"componentType":5123,
-			"count":30,
+			"count":6,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":3024,
+			"byteLength":624,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":3024,
-			"byteOffset":3024,
+			"byteLength":624,
+			"byteOffset":624,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2016,
-			"byteOffset":6048,
+			"byteLength":416,
+			"byteOffset":1248,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":780,
-			"byteOffset":8064,
+			"byteLength":156,
+			"byteOffset":1664,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":144,
-			"byteOffset":8844,
+			"byteLength":48,
+			"byteOffset":1820,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":144,
-			"byteOffset":8988,
+			"byteLength":48,
+			"byteOffset":1868,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":96,
-			"byteOffset":9132,
+			"byteLength":32,
+			"byteOffset":1916,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":60,
-			"byteOffset":9228,
+			"byteLength":12,
+			"byteOffset":1948,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":9288,
+			"byteLength":1960,
 			"uri":"FlowerBed.bin"
 		}
 	]
