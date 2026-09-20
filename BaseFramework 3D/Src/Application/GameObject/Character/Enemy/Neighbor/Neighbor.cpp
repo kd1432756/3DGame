@@ -194,7 +194,7 @@ void Neighbor::UpdateBehavior()
 
 //============================================================
 // Utility AI
-//============================================================
+//=================================H===========================
 
 void Neighbor::UpdateUtility()
 {
@@ -240,7 +240,7 @@ void Neighbor::UpdateUtility()
 		m_prankUtility,
 		m_repairUtility
 	);
-	if (GetName() == "NPC 01")
+	if (GetName() == "Neighbor_0")
 	{
 		OutputDebugStringA(buffer);
 	}
@@ -453,6 +453,63 @@ float Neighbor::EvaluateRepair()
 }
 
 //============================================================
+// 
+//============================================================
+
+bool Neighbor::CalculatePathDistance(
+	const Math::Vector3& goal,
+	float& outDistance) const
+{
+	outDistance = 0.0f;
+
+	if (!m_pNavMeshManager)
+	{
+		return false;
+	}
+
+	//============================================================
+	// Utility計算専用のPathを取得
+	// m_navPathは変更しない
+	//============================================================
+
+	const auto path =
+		m_navMeshPathfinder.FindPathPoints(
+			*m_pNavMeshManager,
+			m_pos,
+			goal
+		);
+
+	//============================================================
+	// Pathが存在しない
+	//============================================================
+
+	if (path.empty())
+	{
+		return false;
+	}
+
+	//============================================================
+	// Path距離を計算
+	//============================================================
+
+	float distance = 0.0f;
+
+	for (size_t i = 1; i < path.size(); ++i)
+	{
+		Math::Vector3 diff =
+			path[i] - path[i - 1];
+
+		diff.y = 0.0f;
+
+		distance += diff.Length();
+	}
+
+	outDistance = distance;
+
+	return true;
+}
+
+//============================================================
 // Task
 //============================================================
 
@@ -557,6 +614,15 @@ bool Neighbor::FindBestSearchItem(SearchItemCandidate & outCandidate)
 {
 	outCandidate = SearchItemCandidate();
 
+	//============================================================
+	// インベントリが満杯なら探さない
+	//============================================================
+
+	if (!m_inventory.HasEmptySlot())
+	{
+		return false;
+	}
+
 	auto& objList = SceneManager::Instance().GetObjList();
 
 	const float searchRadius = m_searchItemRadius * m_sceneScale;
@@ -575,6 +641,15 @@ bool Neighbor::FindBestSearchItem(SearchItemCandidate & outCandidate)
 		auto item = std::dynamic_pointer_cast<Item>(obj);
 
 		if (!item)
+		{
+			continue;
+		}
+
+		//========================================================
+		// インベントリ内のItemは拾えない
+		//========================================================
+
+		if (item->GetMode() == ItemMode::InInventory)
 		{
 			continue;
 		}
@@ -915,7 +990,7 @@ Utility
 			continue;
 		}
 
-		if (target->GetOwner() == m_owner)
+		if (target->GetOwner() == GetName())
 		{
 			continue;
 		}
@@ -944,7 +1019,7 @@ bool Neighbor::CanUseItemForRepair(const ItemData& itemData) const
 			continue;
 		}
 
-		if (target->GetOwner() != m_owner)
+		if (target->GetOwner() != GetName())
 		{
 			continue;
 		}
@@ -1001,7 +1076,8 @@ void Neighbor::UpdatePrank()
 			// いたずら実行
 			//====================================================
 
-			target->NPCUse(itemData);
+			target->NPCUse(itemData, std::dynamic_pointer_cast<Neighbor>(
+				shared_from_this()));
 
 			//====================================================
 			// いたずら終了
@@ -1275,14 +1351,14 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 					"Prank: Target Owner=[" +
 					target->GetOwner() +
 					"] NeighborOwner=[" +
-					m_owner +
+					GetName() +
 					"]\n";
 
 				OutputDebugStringA(
 					log.c_str()
 				);
 			}
-			if (target->GetOwner() == m_owner)
+			if (target->GetOwner() == GetName())
 			{
 				OutputDebugStringA(
 					"Prank: SKIP - Same Owner\n"
@@ -1342,6 +1418,27 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 				continue;
 			}
 
+			//============================================================
+			// ここまで来た候補だけPathfinding
+			//============================================================
+
+			float pathDistance = 0.0f;
+
+			const bool hasPath =
+				CalculatePathDistance(
+					target->GetPos(),
+					pathDistance
+				);
+
+			//============================================================
+			// 到達不能なら候補から除外
+			//============================================================
+
+			if (!hasPath)
+			{
+				continue;
+			}
+
 			//====================================================
 			// Candidate Utility
 			//====================================================
@@ -1349,7 +1446,8 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 			float utility =
 				EvaluatePrankCandidate(
 					target,
-					itemData
+					itemData,
+					pathDistance
 				);
 			{
 				std::string log =
@@ -1384,6 +1482,12 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 			OutputDebugStringA(
 				"Prank: *** CANDIDATE SELECTED ***\n"
 			);
+
+			outCandidate.hasPath =
+				hasPath;
+
+			outCandidate.pathDistance =
+				pathDistance;
 		}
 	}
 
@@ -1412,7 +1516,8 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 
 float Neighbor::EvaluatePrankCandidate(
 	const std::shared_ptr<InteractiveObject>& target,
-	const ItemData& itemData)
+	const ItemData& itemData,
+	float pathDistance)
 {
 	if (!target)
 	{
@@ -1451,7 +1556,17 @@ float Neighbor::EvaluatePrankCandidate(
 			1.0f
 		);
 
-	utility += distanceScore * 20.0f;
+	utility += distanceScore * 10.0f;
+
+	float pathScore =
+		1.0f -
+		std::clamp(
+			pathDistance / searchRadius,
+			0.0f,
+			1.0f
+		);
+
+	utility += pathScore * 30.0f;
 
 	return utility;
 }
@@ -1535,7 +1650,8 @@ void Neighbor::UpdateRepair()
 			// RepairもInteractiveObjectから見ればUse
 			//====================================================
 
-			target->NPCUse(itemData);
+			target->NPCUse(itemData, std::dynamic_pointer_cast<Neighbor>(
+				shared_from_this()));
 
 			//====================================================
 			// 修復終了
@@ -1769,11 +1885,18 @@ bool Neighbor::FindBestRepairCandidate(
 			// 自分の所有物のみ修復する
 			//====================================================
 
-			if (target->GetOwner() != m_owner)
+			if (target->GetOwner() != GetName())
 			{
 				continue;
 			}
 
+			OutputDebugStringA(
+				("Repair: Target Owner=[" +
+					target->GetOwner() +
+					"] NeighborOwner=[" +
+					GetName() +
+					"]\n").c_str()
+			);
 			//====================================================
 			// このアイテムでUse可能か
 			//====================================================
@@ -1782,6 +1905,21 @@ bool Neighbor::FindBestRepairCandidate(
 			{
 				continue;
 			}
+			OutputDebugStringA(
+				("Repair: CanNPCUse=" +
+					std::string(target->CanNPCUse(itemData) ? "TRUE" : "FALSE") +
+					"\n").c_str()
+			); OutputDebugStringA(
+				("Repair: Item Path=[" +
+					inventoryItem.itemPath +
+					"] Action=" +
+					std::to_string(
+						static_cast<int>(itemData.GetAction())
+					) +
+					" Target=[" +
+					itemData.GetTarget() +
+					"]\n").c_str()
+			);
 
 			//====================================================
 			// 距離

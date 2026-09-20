@@ -56,4 +56,13 @@ protected:
 	virtual void RegisterCollider();
 
 	std::string m_modelPath;
+
+	bool m_collisionEnabled = true;
+
+	void SetCollisionEnabled(bool enabled);
+
+	bool IsCollisionEnabled() const
+	{
+		return m_collisionEnabled;
+	}
 };

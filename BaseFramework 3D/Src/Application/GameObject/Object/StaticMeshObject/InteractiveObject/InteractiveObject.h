@@ -6,6 +6,7 @@
 #include "../Item/ItemData.h"
 
 class Player;
+class Neighbor;
 
 enum class InteractiveState
 {
@@ -74,7 +75,8 @@ public:
 		const ItemData& item) const override;
 
 	void NPCUse(
-		const ItemData& item) override;
+		const ItemData& item,
+		const std::shared_ptr<Neighbor>& npc) override;
 
 	float GetNPCUseTime(
 		const ItemData& itemData) const;

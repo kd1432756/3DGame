@@ -84,6 +84,11 @@ public:
 		m_mode = mode;
 	}
 
+	ItemMode GetMode() const
+	{
+		return m_mode;
+	}
+
 	bool Pickup(Inventory& inventory);
 
 	void Drop(

@@ -410,65 +410,6 @@ void Player::DropItem()
 	EquipItem("");
 }
 
-/*void Player::Interact()
-{
-	if (!(GetAsyncKeyState('E') & 0x0001))
-	{
-		return;
-	}
-
-	auto camera = m_camera.lock();
-
-	if (!camera)
-	{
-		return;
-	}
-
-	KdCollider::RayInfo ray;
-
-	ray.m_type = KdCollider::TypeEditor;
-	ray.m_range = 5.0f;
-
-	ray.m_pos = camera->GetEyePosition();
-	ray.m_dir = camera->GetForward();;
-
-	std::list<KdCollider::CollisionResult> retRayList;
-
-	float nearest = FLT_MAX;
-
-	std::shared_ptr<KdGameObject> hitObj;
-
-	for (auto& obj : SceneManager::Instance().GetObjList())
-	{
-		if (!obj) continue;
-
-		if (obj.get() == this) continue;
-
-		std::list<KdCollider::CollisionResult> retList;
-
-		obj->Intersects(ray, &retList);
-
-		for (auto& ret : retList)
-		{
-			if (ret.m_overlapDistance < nearest)
-			{
-				nearest = ret.m_overlapDistance;
-				hitObj = obj;
-			}
-		}
-	}
-
-	auto interact =
-		std::dynamic_pointer_cast<Interactable>(hitObj);
-
-	if (interact)
-	{
-		interact->Interact(
-			std::dynamic_pointer_cast<Player>(
-				shared_from_this()));
-	}
-}*/
-
 void Player::UpdateHandItem()
 {
 	if (!m_handItem)

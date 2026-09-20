@@ -29,7 +29,9 @@ public:
 	enum class State
 	{
 		Patrol,
-		Chase,
+		Chase, 
+		Arrest,
+		Escort,
 		LastSeen,
 		Search,
 		Return

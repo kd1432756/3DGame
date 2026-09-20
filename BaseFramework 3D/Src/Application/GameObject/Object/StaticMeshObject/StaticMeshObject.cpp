@@ -65,7 +65,10 @@ void StaticMeshObject::ReloadModel()
 	m_spModel =
 		KdAssets::Instance().m_modeldatas.GetData(m_modelPath);
 
-	RegisterCollider();
+	if (m_collisionEnabled)
+	{
+		RegisterCollider();
+	}
 }
 
 void StaticMeshObject::RegisterCollider()
@@ -79,4 +82,23 @@ void StaticMeshObject::RegisterCollider()
 		"StaticMeshObject",
 		m_spModel,
 		KdCollider::TypeEditor | KdCollider::TypeBump);
+}
+
+void StaticMeshObject::SetCollisionEnabled(bool enabled)
+{
+	m_collisionEnabled = enabled;
+
+	// OFFにした場合はCollider自体を破棄
+	if (!m_collisionEnabled)
+	{
+		m_pCollider.reset();
+
+		return;
+	}
+
+	// ONにした場合は再登録
+	if (m_spModel)
+	{
+		RegisterCollider();
+	}
 }

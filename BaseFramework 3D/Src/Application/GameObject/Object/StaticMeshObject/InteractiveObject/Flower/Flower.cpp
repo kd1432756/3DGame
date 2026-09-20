@@ -30,8 +30,10 @@ void Flower::Init()
 		80,
 		"Flower Repair!",
 		"Asset/Models/Props/Flower/FlowerTape.gltf",
-		false
+		true
 		});
+
+	SetCollisionEnabled(false);
 
 	StaticMeshObject::Init();
 }

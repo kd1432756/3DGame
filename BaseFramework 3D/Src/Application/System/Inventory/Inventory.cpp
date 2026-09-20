@@ -2,7 +2,7 @@
 
 bool Inventory::AddItem(const std::string& itemPath)
 {
-	for (size_t i = 0; i < m_items.size(); ++i)
+	for (int i = 0; i < m_items.size(); ++i)
 	{
 
 		if (m_items[i].itemPath.empty())
@@ -10,17 +10,6 @@ bool Inventory::AddItem(const std::string& itemPath)
 			m_items[i].itemPath = itemPath;
 
 			return true;
-		}
-	}
-
-	return false;
-	for (auto& item : m_items)
-	{
-		if (item.itemPath.empty())
-		{
-			item.itemPath = itemPath;
-			return true;
-
 		}
 	}
 

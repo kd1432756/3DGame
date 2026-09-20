@@ -45,6 +45,11 @@ public:
 		return GetItemCount() == 0;
 	}
 
+	bool HasEmptySlot() const
+	{
+		return GetItemCount() < MaxItem;
+	}
+
 	int CountItems(const std::string& itemPath);
 
 	void Clear();

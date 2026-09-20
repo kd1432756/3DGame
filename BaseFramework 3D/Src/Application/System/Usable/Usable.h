@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 class Player;
+class Neighbor;
 
 class ItemData;
 
@@ -19,7 +20,8 @@ public:
 	}
 
 	virtual void NPCUse(
-		const ItemData& item)
+		const ItemData& item,
+		const std::shared_ptr<Neighbor>& npc)
 	{}
 
 	virtual float GetUseTime(const std::shared_ptr<Player>& player) const

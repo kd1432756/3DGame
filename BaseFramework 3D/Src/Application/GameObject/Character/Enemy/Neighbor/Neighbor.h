@@ -91,6 +91,10 @@ public:
 		int inventoryIndex = -1;
 
 		float utility = 0.0f;
+
+		bool hasPath = false;
+
+		float pathDistance = 0.0f;
 	};
 
 	//============================================================
@@ -166,6 +170,9 @@ private:
 
 	float EvaluateRepair();
 
+	bool CalculatePathDistance(
+		const Math::Vector3& goal,
+		float& outDistance) const;
 
 	//============================================================
 	// Task
@@ -206,7 +213,8 @@ private:
 
 	float EvaluatePrankCandidate(
 		const std::shared_ptr<InteractiveObject>& target,
-		const ItemData& itemData);
+		const ItemData& itemData,
+		float pathDistance);
 
 	void SelectPrankCandidate(
 		const PrankCandidate& candidate);

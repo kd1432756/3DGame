@@ -1,5 +1,6 @@
 ﻿#include "InteractiveObject.h"
 #include "../../../Character/Player/Player.h"
+#include "../../../Character/Enemy/Neighbor/Neighbor.h"
 
 #include "../Item/Item.h"
 
@@ -70,6 +71,28 @@ InteractiveObject::FindNPCAction(
 {
 	for (const auto& action : m_actions)
 	{
+		OutputDebugStringA(
+			("NPCAction Check: " +
+				std::string("fromState=") +
+				std::to_string(
+					static_cast<int>(action.fromState)) +
+				" currentState=" +
+				std::to_string(
+					static_cast<int>(m_state)) +
+				" npcCanUse=" +
+				std::to_string(action.npcCanUse) +
+				" action=" +
+				std::to_string(
+					static_cast<int>(action.action)) +
+				" itemAction=" +
+				std::to_string(
+					static_cast<int>(item.GetAction())) +
+				" target=[" +
+				action.target +
+				"] itemTarget=[" +
+				item.GetTarget() +
+				"]\n").c_str()
+		);
 		if (action.fromState != m_state)
 		{
 			continue;
@@ -173,7 +196,8 @@ bool InteractiveObject::CanNPCUse(
 }
 
 void InteractiveObject::NPCUse(
-	const ItemData& item)
+	const ItemData& item,
+	const std::shared_ptr<Neighbor>& npc)
 {
 	const auto* action =
 		FindNPCAction(item);
@@ -188,6 +212,13 @@ void InteractiveObject::NPCUse(
 	if (!action->modelPath.empty())
 	{
 		SetModelPath(action->modelPath);
+	}
+
+	if (action->score > 0)
+	{
+		npc->OnPrankSuccess(
+			action->score,
+			action->message);
 	}
 
 	OnAction(*action, nullptr);
