@@ -152,6 +152,15 @@ bool Neighbor::HasInventoryItem(
 void Neighbor::UpdateBehavior()
 {
 	//============================================================
+	// 確保中は行動しない
+	//============================================================
+
+	if (m_isArrested)
+	{
+		return;
+	}
+
+	//============================================================
 	// Utility AI
 	//============================================================
 
@@ -2139,6 +2148,113 @@ MoveResult Neighbor::MoveToNextNavPathPoint()
 	SetMoveDirection(dir);
 
 	return MoveResult::Moving;
+}
+
+//============================================================
+// Arrested
+//============================================================
+
+void Neighbor::OnArrested(const std::shared_ptr<Police>& police)
+{
+	CharacterBase::OnArrested(police);
+
+	//============================================================
+	// 進行中の行動を全部中断
+	//============================================================
+
+	m_wpSearchItem.reset();
+	m_wpPrankTarget.reset();
+	m_wpRepairTarget.reset();
+
+	m_prankInventoryIndex = -1;
+	m_repairInventoryIndex = -1;
+
+	m_isInteracting = false;
+	m_interactTimer = 0.0f;
+
+	m_navPath.clear();
+	m_navPathIndex = 0;
+
+	SetMoveDirection(Math::Vector3::Zero);
+	SetMoveSpeed(0.0f);
+
+	m_spAnimator->SetAnimation(
+		m_spModel->GetAnimation("Armature|Idle")
+	);
+}
+
+void Neighbor::OnReleased()
+{
+	CharacterBase::OnReleased();
+
+	//============================================================
+	// 解放直後は強制的にTaskから再評価させる
+	//============================================================
+
+	m_state = State::Task;
+
+	// 次のUpdateUtilityですぐ評価し直すようタイマーをリセット
+	m_utilityUpdateTimer = m_utilityUpdateInterval;
+
+	ApplyStateSettings();
+}
+
+bool Neighbor::HasPrankItem() const
+{
+	for (const auto& item : m_inventory.GetItems())
+	{
+		if (item.IsEmpty())
+		{
+			continue;
+		}
+
+		ItemData itemData;
+
+		if (!itemData.Load(item.itemPath))
+		{
+			continue;
+		}
+
+		// Repair以外(いたずら用)を1つでも持っていたら該当
+		if (itemData.GetAction() != ItemAction::Repair &&
+			itemData.GetAction() != ItemAction::None)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Neighbor::ConfiscatePrankItems()
+{
+	const auto& items = m_inventory.GetItems();
+
+	for (int i = 0; i < Inventory::MaxItem; ++i)
+	{
+		if (items[i].IsEmpty())
+		{
+			continue;
+		}
+
+		ItemData itemData;
+		itemData.Load(items[i].itemPath);
+
+		// いたずらアイテムのみ没収(Repairアイテムは残す)
+		if (itemData.GetAction() != ItemAction::Repair &&
+			itemData.GetAction() != ItemAction::None)
+		{
+			m_inventory.RemoveItem(i);
+		}
+	}
+
+	// 選択中アイテムが没収された場合はクリア
+	const InventoryItem* current = m_inventory.GetCurrentItem();
+
+	if (!current)
+	{
+		SelectInventory(-1);
+	}
 }
 
 //============================================================

@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+class Police;
+
 class CharacterBase : public KdGameObject
 {
 public:
@@ -24,6 +26,20 @@ public:
 	{
 		return m_score;
 	}
+	
+	// 警察に確保された
+	virtual void OnArrested(const std::shared_ptr<Police>& police);
+
+	// 解放された
+	virtual void OnReleased();
+
+	// いたずらに使うアイテムを持っているか(警察の追跡条件)
+	virtual bool HasPrankItem() const { return false; }
+
+	// いたずらアイテムを没収する
+	virtual void ConfiscatePrankItems() {}
+
+	bool IsArrested() const { return m_isArrested; }
 
 protected:
 	void CheckStep(
@@ -55,6 +71,8 @@ protected:
 	float m_angle = 0.0f;
 
 	int m_score = 0;
+
+	bool m_isArrested = false;
 
 	// ===== ray =====
 	

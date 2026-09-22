@@ -47,6 +47,10 @@ public:
 		return m_spModel;
 	}
 
+	bool IsCollisionEnabled() const
+	{
+		return m_collisionEnabled;
+	}
 
 protected:
 
@@ -61,8 +65,4 @@ protected:
 
 	void SetCollisionEnabled(bool enabled);
 
-	bool IsCollisionEnabled() const
-	{
-		return m_collisionEnabled;
-	}
 };

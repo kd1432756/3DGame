@@ -49,6 +49,13 @@ void Player::Init()
 
 void Player::Update()
 {
+	if (m_isArrested)
+	{
+		ApplyGravity();
+		UpdateWorldMatrix();
+		return;
+	}
+
 	Move();
 
 	//Jump();
@@ -447,29 +454,6 @@ void Player::UpdateHandItem()
 	m_handItem->SetMatrix(world);
 }
 
-void Player::CheckBush()
-{
-	m_isInBush = false;
-
-	KdCollider::SphereInfo sphere;
-	sphere.m_sphere.Center = m_pos;
-	sphere.m_sphere.Center.y += 1.0f;   // 胴体付近
-	sphere.m_sphere.Radius = 1.0f;
-	sphere.m_type = KdCollider::TypeBush;
-
-	std::list<KdCollider::CollisionResult> retList;
-
-	for (auto& obj : SceneManager::Instance().GetObjList())
-	{
-		if (!obj) continue;
-		if (obj.get() == this) continue;
-
-		obj->Intersects(sphere, &retList);
-	}
-
-	m_isInBush = !retList.empty();
-}
-
 bool Player::CanHighlight()
 {
 	auto obj = m_focusObject.lock();
@@ -495,4 +479,115 @@ bool Player::CanHighlight()
 	}
 
 	return false;
+}
+
+void Player::CheckBush()
+{
+	m_isInBush = false;
+
+	KdCollider::SphereInfo sphere;
+	sphere.m_sphere.Center = m_pos;
+	sphere.m_sphere.Center.y += 1.0f;   // 胴体付近
+	sphere.m_sphere.Radius = 1.0f;
+	sphere.m_type = KdCollider::TypeBush;
+
+	std::list<KdCollider::CollisionResult> retList;
+
+	for (auto& obj : SceneManager::Instance().GetObjList())
+	{
+		if (!obj) continue;
+		if (obj.get() == this) continue;
+
+		obj->Intersects(sphere, &retList);
+	}
+
+	m_isInBush = !retList.empty();
+}
+
+void Player::OnArrested(const std::shared_ptr<Police>& police)
+{
+	CharacterBase::OnArrested(police);
+
+	// いたずら/インタラクト中の状態をキャンセル
+	m_isUsing = false;
+	m_useTimer = 0.0f;
+	m_useObject.reset();
+
+	// フォーカス解除(ハイライトが残らないように)
+	auto oldObj = m_focusObject.lock();
+
+	if (oldObj)
+	{
+		auto usable = std::dynamic_pointer_cast<Usable>(oldObj);
+
+		if (usable)
+		{
+			usable->SetFocused(false);
+		}
+	}
+
+	m_focusObject.reset();
+}
+
+bool Player::HasPrankItem() const
+{
+	for (const auto& item : m_inventory.GetItems())
+	{
+		if (item.IsEmpty())
+		{
+			continue;
+		}
+
+		ItemData itemData;
+
+		if (!itemData.Load(item.itemPath))
+		{
+			continue;
+		}
+
+		// Repair以外(いたずら用)を1つでも持っていたら該当
+		if (itemData.GetAction() != ItemAction::Repair &&
+			itemData.GetAction() != ItemAction::None)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Player::ConfiscatePrankItems()
+{
+	const auto& items = m_inventory.GetItems();
+
+	for (int i = 0; i < Inventory::MaxItem; ++i)
+	{
+		if (items[i].IsEmpty())
+		{
+			continue;
+		}
+
+		ItemData itemData;
+		itemData.Load(items[i].itemPath);
+
+		// いたずらアイテムのみ没収(Repairアイテムは残す)
+		if (itemData.GetAction() != ItemAction::Repair &&
+			itemData.GetAction() != ItemAction::None)
+		{
+			m_inventory.RemoveItem(i);
+		}
+	}
+
+	if (m_handItem)
+	{
+		const ItemData& handData = m_handItem->GetItemData();
+
+		if (handData.GetAction() != ItemAction::Repair &&
+			handData.GetAction() != ItemAction::None)
+		{
+			m_handItem->Destroy();
+			m_handItem.reset();
+			m_inventory.SelectIndex(-1);
+		}
+	}
 }

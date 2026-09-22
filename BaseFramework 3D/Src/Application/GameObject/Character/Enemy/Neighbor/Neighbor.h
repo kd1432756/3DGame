@@ -142,6 +142,17 @@ public:
 		m_wpPrankTarget = target;
 	}
 
+	//============================================================
+	// Arrested
+	//============================================================
+
+	void OnArrested(const std::shared_ptr<Police>& police) override;
+
+	void OnReleased() override;
+
+	bool HasPrankItem() const override;
+
+	void ConfiscatePrankItems() override;
 
 protected:
 

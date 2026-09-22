@@ -4,6 +4,8 @@
 
 #include "../../System/Score/ScoreManager.h"
 
+#include "../Object/StaticMeshObject/InteractiveObject/InteractiveObject.h"
+
 void CharacterBase::Init()
 {
 	m_sceneScale = SceneManager::Instance().GetSceneScale();
@@ -283,6 +285,14 @@ void CharacterBase::ResolveCollision(const Math::Vector3& moveDir)
 				continue;
 			}
 
+			if (auto mesh = std::dynamic_pointer_cast<StaticMeshObject>(obj))
+			{
+				if (mesh->IsCollisionEnabled() == false)
+				{
+					continue;
+				}
+			}
+
 			obj->Intersects(
 				sphere,
 				&collisionList
@@ -518,4 +528,14 @@ void CharacterBase::UpdateAnimation()
 
 	m_spAnimator->AdvanceTime(m_spModel->WorkNodes());
 	m_spModel->CalcNodeMatrices();
+}
+
+void CharacterBase::OnArrested(const std::shared_ptr<Police>& police)
+{
+	m_isArrested = true;
+}
+
+void CharacterBase::OnReleased()
+{
+	m_isArrested = false;
 }

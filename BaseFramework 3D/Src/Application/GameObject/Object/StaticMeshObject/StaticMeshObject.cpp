@@ -65,10 +65,7 @@ void StaticMeshObject::ReloadModel()
 	m_spModel =
 		KdAssets::Instance().m_modeldatas.GetData(m_modelPath);
 
-	if (m_collisionEnabled)
-	{
-		RegisterCollider();
-	}
+	RegisterCollider();
 }
 
 void StaticMeshObject::RegisterCollider()

@@ -83,6 +83,14 @@ void Police::UpdateBehavior()
 		UpdateChase();
 		break;
 
+	case State::Arrest:
+		UpdateArrest();
+		break;
+
+	case State::Escort:
+		UpdateEscort();
+		break;
+
 	case State::LastSeen:
 		UpdateLastSeen();
 		break;
@@ -136,6 +144,36 @@ void Police::UpdateChase()
 
 	float distance =
 		toTarget.Length();
+
+	//============================================================
+	// いたずらアイテムを持っていないなら追跡終了
+	//============================================================
+
+	if (!target->HasPrankItem())
+	{
+		m_wpTarget.reset();
+
+		m_navPath.clear();
+		m_navPathIndex = 0;
+
+		ChangeState(State::Return);
+		return;
+	}
+
+	//============================================================
+	// 確保判定
+	//============================================================
+
+	if (CanArrestTarget(target))
+	{
+		m_wpArrested = target;
+
+		m_navPath.clear();
+		m_navPathIndex = 0;
+
+		ChangeState(State::Arrest);
+		return;
+	}
 
 	//============================================================
 	// 追跡範囲
@@ -218,6 +256,116 @@ void Police::UpdateChase()
 	MoveToNextNavPathPoint();
 }
 
+void Police::UpdateArrest()
+{
+	auto target = m_wpArrested.lock();
+
+	// 相手が消えた
+	if (!target)
+	{
+		ChangeState(State::Return);
+		return;
+	}
+
+	//============================================================
+	// 相手の方を向く(移動はしない)
+	//============================================================
+
+	Math::Vector3 dir = target->GetPos() - m_pos;
+	dir.y = 0.0f;
+
+	if (dir.LengthSquared() > 0.0001f)
+	{
+		dir.Normalize();
+		RotateToMoveDirection(dir);
+	}
+
+	//============================================================
+	// 確保時間
+	//============================================================
+
+	m_arrestTimer += 1.0f / 60.0f;
+
+	if (m_arrestTimer < m_arrestTime)
+	{
+		return;
+	}
+
+	m_arrestTimer = 0.0f;
+
+	//============================================================
+	// 確保確定 → 連行開始
+	//============================================================
+
+	BeginEscort(target);
+}
+
+void Police::UpdateEscort()
+{
+	auto arrested = m_wpArrested.lock();
+
+	// 連行相手が消えた
+	if (!arrested)
+	{
+		EndEscort(false);
+		ChangeState(State::Return);
+		return;
+	}
+
+	//============================================================
+	// 連行相手を警察の背後に追従させる
+	//============================================================
+
+	{
+		Math::Vector3 back = m_mWorld.Forward(); // Backwardが正面なのでForwardが背後
+		back.y = 0.0f;
+		back.Normalize();
+
+		const float followDist = 0.8f * m_sceneScale;
+
+		Math::Vector3 pos = m_pos + back * followDist;
+		pos.y = arrested->GetPos().y;
+
+		arrested->SetPos(pos);
+	}
+
+	//============================================================
+	// Pathがなければ作る
+	//============================================================
+
+	if (m_navPath.empty())
+	{
+		FindPolicePostPath();
+
+		// 交番へ行けない → その場で没収して解放
+		if (m_navPath.empty())
+		{
+			EndEscort(true);
+			ChangeState(State::Return);
+			return;
+		}
+	}
+
+	//============================================================
+	// 交番へ移動
+	//============================================================
+
+	if (MoveToNextNavPathPoint())
+	{
+		return;
+	}
+
+	//============================================================
+	// 交番に到着 → 没収して解放
+	//============================================================
+
+	m_navPath.clear();
+	m_navPathIndex = 0;
+
+	EndEscort(true);
+
+	ChangeState(State::Return);
+}
 
 void Police::UpdateLastSeen()
 {	
@@ -933,6 +1081,18 @@ bool Police::SearchTarget()
 			continue;
 		}
 
+		// すでに確保されている相手は対象外(二重連行防止)
+		if (character->IsArrested())
+		{
+			continue;
+		}
+
+		// いたずらアイテムを持っていない相手は対象外
+		if (!character->HasPrankItem())
+		{
+			continue;
+		}
+
 		//========================================================
 		// 視認できるか
 		//========================================================
@@ -1097,6 +1257,78 @@ bool Police::CanSeeTarget(
 	return true;
 }
 
+bool Police::CanArrestTarget(
+	const std::shared_ptr<CharacterBase>& target) const
+{
+	if (!target)
+	{
+		return false;
+	}
+
+	if (target->IsArrested())
+	{
+		return false;
+	}
+
+	Math::Vector3 diff = target->GetPos() - m_pos;
+	diff.y = 0.0f;
+
+	const float dist = m_arrestDistance * m_sceneScale;
+
+	return diff.LengthSquared() <= dist * dist;
+}
+
+void Police::BeginEscort(const std::shared_ptr<CharacterBase>& target)
+{
+	target->OnArrested(
+		std::dynamic_pointer_cast<Police>(shared_from_this())
+	);
+
+	m_wpTarget.reset();
+
+	m_navPath.clear();
+	m_navPathIndex = 0;
+
+	ChangeState(State::Escort);
+
+	FindPolicePostPath();
+}
+
+void Police::EndEscort(bool confiscate)
+{
+	auto arrested = m_wpArrested.lock();
+
+	if (arrested)
+	{
+		if (confiscate)
+		{
+			arrested->ConfiscatePrankItems();
+		}
+
+		arrested->OnReleased();
+	}
+
+	m_wpArrested.reset();
+	m_arrestTimer = 0.0f;
+}
+
+void Police::FindPolicePostPath()
+{
+	if (!m_pNavMeshManager)
+	{
+		return;
+	}
+	Math::Vector3 policePostPos{};
+	m_navPath =
+		m_navMeshPathfinder.FindPathPoints(
+			*m_pNavMeshManager,
+			m_pos,
+			policePostPos//交番の位置を入れる。
+		);
+
+	m_navPathIndex = 0;
+}
+	
 void Police::ChangeState(State newState)
 {
 	if (m_state == newState)
@@ -1133,43 +1365,25 @@ void Police::ChangeState(State newState)
 	switch (m_state)
 	{
 	case State::Patrol:
-
-		m_spAlertIcon->SetIcon(
-			AlertIcon::IconType::None
-		);
-
+		m_spAlertIcon->SetIcon(AlertIcon::IconType::None);
 		break;
-
 	case State::Chase:
-
-		m_spAlertIcon->SetIcon(
-			AlertIcon::IconType::Exclamation
-		);
-
+		m_spAlertIcon->SetIcon(AlertIcon::IconType::Exclamation);
 		break;
-
+	case State::Arrest:
+		m_spAlertIcon->SetIcon(AlertIcon::IconType::Exclamation);
+		break;
+	case State::Escort:
+		m_spAlertIcon->SetIcon(AlertIcon::IconType::None);
+		break;
 	case State::LastSeen:
-
-		m_spAlertIcon->SetIcon(
-			AlertIcon::IconType::Question
-		);
-
+		m_spAlertIcon->SetIcon(AlertIcon::IconType::Question);
 		break;
-
 	case State::Search:
-
-		m_spAlertIcon->SetIcon(
-			AlertIcon::IconType::Question
-		);
-
+		m_spAlertIcon->SetIcon(AlertIcon::IconType::Question);
 		break;
-
 	case State::Return:
-
-		m_spAlertIcon->SetIcon(
-			AlertIcon::IconType::None
-		);
-
+		m_spAlertIcon->SetIcon(AlertIcon::IconType::None);
 		break;
 	}
 }
@@ -1179,54 +1393,32 @@ void Police::ApplyStateSettings()
 	switch (m_state)
 	{
 	case State::Patrol:
-
 		SetMoveSpeed(m_patrolSpeed);
-
-		m_spAnimator->SetAnimation(
-			m_spModel->GetAnimation("Armature|Walk")
-		);
-
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Walk"));
 		break;
-
-
 	case State::Chase:
-
 		SetMoveSpeed(m_chaseSpeed);
-
-		m_spAnimator->SetAnimation(
-			m_spModel->GetAnimation("Armature|Sprint")
-		);
-
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Sprint"));
 		break;
-
-	case State::LastSeen:
-
-		SetMoveSpeed(m_returnSpeed);
-
-		m_spAnimator->SetAnimation(
-			m_spModel->GetAnimation("Armature|Walk")
-		);
-
-		break;
-
-	case State::Search:
-
+	case State::Arrest:
 		SetMoveSpeed(0.0f);
-
-		m_spAnimator->SetAnimation(
-			m_spModel->GetAnimation("Armature|Idle")
-		);
-
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Idle"));
 		break;
-
-	case State::Return:
-
+	case State::Escort:
+		SetMoveSpeed(m_escortSpeed);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Walk"));
+		break;
+	case State::LastSeen:
 		SetMoveSpeed(m_returnSpeed);
-
-		m_spAnimator->SetAnimation(
-			m_spModel->GetAnimation("Armature|Walk")
-		);
-
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Walk"));
+		break;
+	case State::Search:
+		SetMoveSpeed(0.0f);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Idle"));
+		break;
+	case State::Return:
+		SetMoveSpeed(m_returnSpeed);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Walk"));
 		break;
 	}
 }

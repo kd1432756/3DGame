@@ -77,6 +77,11 @@ public:
 		return m_isInBush;
 	}
 
+	void OnArrested(const std::shared_ptr<Police>& police) override;
+
+	bool HasPrankItem() const override;
+	void ConfiscatePrankItems() override;
+
 private:
 
 	void Move();
@@ -109,7 +114,6 @@ private:
 	float m_useTime = 0.0f;
 
 	std::weak_ptr<Usable> m_useObject;
-
 
 	bool m_isInBush = false;
 };

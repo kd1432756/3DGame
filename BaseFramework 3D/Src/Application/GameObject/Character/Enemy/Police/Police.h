@@ -60,6 +60,18 @@ private:
 	void UpdateChase();
 
 	//============================================================
+	// Arrest
+	//============================================================
+
+	void UpdateArrest();
+
+	//============================================================
+	// Escort
+	//============================================================
+
+	void UpdateEscort();
+
+	//============================================================
 	// Last Seen
 	//============================================================
 
@@ -101,6 +113,22 @@ private:
 	bool CanSeeTarget(const std::shared_ptr<CharacterBase>& target);
 
 	//============================================================
+	// Arrest
+	//============================================================
+
+	bool CanArrestTarget(const std::shared_ptr<CharacterBase>& target) const;
+
+	//============================================================
+	// Escort
+	//============================================================
+
+	void BeginEscort(const std::shared_ptr<CharacterBase>& target);
+
+	void EndEscort(bool confiscate);       // 連行終了(解放処理)
+
+	void FindPolicePostPath();
+
+	//============================================================
 	// State
 	//============================================================
 
@@ -123,6 +151,7 @@ private:
 	float m_patrolSpeed = 0.006f;
 	float m_chaseSpeed = 0.016f;
 	float m_returnSpeed = 0.01f;
+	float m_escortSpeed = 0.012f;
 
 	//============================================================
 	// A*
@@ -168,6 +197,18 @@ private:
 
 	Math::Vector3 m_lastTargetPos =
 		Math::Vector3::Zero;
+
+	//============================================================
+	// Arrest
+	//============================================================
+
+	std::weak_ptr<CharacterBase> m_wpArrested;
+
+	float m_arrestTimer = 0.0f;
+
+	float m_arrestTime = 0.8f;
+
+	float m_arrestDistance = 0.0f;
 
 	//============================================================
 	// lose sight
