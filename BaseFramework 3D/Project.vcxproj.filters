@@ -253,6 +253,9 @@
     <Filter Include="Library\Clipper2lib\src">
       <UniqueIdentifier>{10b1863f-2734-4a0c-a254-736f7fb96219}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\System\Location">
+      <UniqueIdentifier>{c05fe1a5-9745-4512-8405-4176034abd63}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -645,6 +648,21 @@
     <ClInclude Include="Src\Application\System\Navigation\NavMesh\NavMeshCDT.h">
       <Filter>Src\Application\System\Navigation\NavMesh</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\System\Location\LocationTag.h">
+      <Filter>Src\Application\System\Location</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\Location\LocationPoint.h">
+      <Filter>Src\Application\System\Location</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\Location\LocationPointManager.h">
+      <Filter>Src\Application\System\Location</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\Location\LocationPointSerializer.h">
+      <Filter>Src\Application\System\Location</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Editor\Windows\LocationEditorWindow.h">
+      <Filter>Src\Application\Editor\Windows</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1001,6 +1019,15 @@
     </ClCompile>
     <ClCompile Include="..\Library\Clipper2Lib\src\clipper.triangulation.cpp">
       <Filter>Library\Clipper2lib\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\Location\LocationPointManager.cpp">
+      <Filter>Src\Application\System\Location</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\Location\LocationPointSerializer.cpp">
+      <Filter>Src\Application\System\Location</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Editor\Windows\LocationEditorWindow.cpp">
+      <Filter>Src\Application\Editor\Windows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

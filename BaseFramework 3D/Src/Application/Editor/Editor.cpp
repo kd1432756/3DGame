@@ -16,6 +16,8 @@
 #include "../System/Navigation/NavMesh/NavMeshPolygonBuilder.h"
 #include "../System/Navigation/NavMesh/NavMeshCDT.h"
 
+#include "../System/Location/LocationPointSerializer.h"
+
 void Editor::Init()
 {
 	m_editorCamera = std::make_shared<EditorCamera>();
@@ -39,6 +41,9 @@ void Editor::Update()
 		break;
 	case EditMode::Navigation:
 		UpdateNavigationMode();
+		break;
+	case EditMode::Location:
+		UpdateLocationMode();
 		break;
 	}
 }
@@ -140,6 +145,24 @@ void Editor::UpdateNavigationMode()
 
 	// SceneWindow側からクリックされた場所を
 	// ここで受け取る仕組みにする
+}
+
+void Editor::UpdateLocationMode()
+{
+	if (m_locationEditorWindow.GetMode() ==
+		LocationEditorWindow::Mode::Select)
+	{
+		auto point =
+			m_locationPointManager.FindPoint(
+				m_locationEditorWindow.GetSelectedPointID());
+
+		if (point && ImGui::IsKeyPressed(ImGuiKey_Delete))
+		{
+			m_locationPointManager.DeletePoint(point->GetID());
+
+			m_locationEditorWindow.SetSelectedPoint(-1);
+		}
+	}
 }
 
 void Editor::UpdateStagePreviewPos()
@@ -259,6 +282,17 @@ void Editor::ApplyNavigationLayout()
 		{ 250, 700 });
 }
 
+void Editor::ApplyLocationLayout()
+{
+	m_sceneWindow.SetLayout(
+		{ 0, 20 },
+		{ 1030, 700 });
+
+	m_locationEditorWindow.SetLayout(
+		{ 1030, 20 },
+		{ 250, 700 });
+}
+
 void Editor::Draw()
 {
 	if (!m_isOpen) return;
@@ -277,6 +311,10 @@ void Editor::Draw()
 
 	case EditMode::Navigation:
 		ApplyNavigationLayout();
+		break;
+
+	case EditMode::Location:
+		ApplyLocationLayout();
 		break;
 	}
 
@@ -317,6 +355,12 @@ void Editor::Draw()
 	case EditMode::Navigation:
 
 		m_navigationEditorWindow.Draw(m_nodeEditorWindow);
+
+		break;
+
+	case EditMode::Location:
+
+		m_locationEditorWindow.Draw();
 
 		break;
 	}
@@ -453,6 +497,11 @@ void Editor::DrawDebug()
 			m_pDebugWire->Draw();
 		}
 	}
+
+	if (m_editMode == EditMode::Location)
+	{
+		DrawLocationPoints();
+	}
 }
 
 std::string Editor::GetNavigationDirectory() const
@@ -523,6 +572,16 @@ void Editor::SaveNavMesh()
 	}
 }
 
+void Editor::SaveLocation()
+{
+	if (!LocationPointSerializer::Save(
+		"Asset/Data/location.json",
+		m_locationPointManager))
+	{
+		assert(false && "Location Save Failed");
+	}
+}
+
 void Editor::LoadScene()
 {
 	if (!SceneSerializer::Load(m_currentScenePath))
@@ -563,6 +622,18 @@ void Editor::LoadNavMesh()
 	}
 
 	ClearNavMeshPath();
+}
+
+void Editor::LoadLocation()
+{
+	if (!LocationPointSerializer::Load(
+		"Asset/Data/location.json",
+		m_locationPointManager))
+	{
+		assert(false && "Location Load Failed");
+	}
+
+	m_locationEditorWindow.SetSelectedPoint(-1);
 }
 
 void Editor::DrawGrid()
@@ -880,6 +951,63 @@ void Editor::DrawNavMesh()
 	}
 
 	m_pDebugWire->Draw();
+}
+
+void Editor::DrawLocationPoints()
+{
+	if (!m_pDebugWire)
+	{
+		return;
+	}
+
+	for (auto& point : m_locationPointManager.GetPoints())
+	{
+		if (!point)
+		{
+			continue;
+		}
+
+		Math::Color color = kGreenColor;
+
+		if (point->GetID() == m_locationEditorWindow.GetSelectedPointID())
+		{
+			color = kYellowColor;
+		}
+
+		m_pDebugWire->AddDebugSphere(
+			point->GetPos(),
+			0.3f,
+			color);
+	}
+
+	m_pDebugWire->Draw();
+
+	// Node IDと同じ要領でタグ名テキストも描画する場合はここに追加
+	for (auto& point : m_locationPointManager.GetPoints())
+	{
+		if (!point)
+		{
+			continue;
+		}
+
+		Math::Vector3 worldPos = point->GetPos();
+
+		worldPos.y += 0.5f;
+
+		Math::Vector3 screenPos = Math::Vector3::Zero;
+
+		if (!m_editorCamera->ConvertWorldToScreenDetail(worldPos, screenPos))
+		{
+			continue;
+		}
+
+		KdShaderManager::Instance().m_spriteShader.DrawFont(
+			{ screenPos.x, screenPos.y },
+			&kWhiteColor,
+			{ 0.5f, 0.5f },
+			FontID::Future16,
+			LocationTagToString(point->GetTag()));
+	}
 }
 
 bool Editor::ExistsStageTile(const Math::Vector3& pos)
@@ -2219,6 +2347,85 @@ Editor::FindNavMeshPolygon(
 	return nullptr;
 }
 
+void Editor::OnLocationClick(const Math::Vector3& pos)
+{
+	constexpr float SELECT_RADIUS = 1.0f;
+
+	std::shared_ptr<LocationPoint> nearest = nullptr;
+
+	float nearestDistanceSq = SELECT_RADIUS * SELECT_RADIUS;
+
+	for (auto& point : m_locationPointManager.GetPoints())
+	{
+		if (!point)
+		{
+			continue;
+		}
+
+		Math::Vector3 diff = point->GetPos() - pos;
+
+		float distSq = diff.LengthSquared();
+
+		if (distSq <= nearestDistanceSq)
+		{
+			nearestDistanceSq = distSq;
+			nearest = point;
+		}
+	}
+
+	auto mode = m_locationEditorWindow.GetMode();
+
+	//------------------------------------------------
+	// Select
+	//------------------------------------------------
+
+	if (mode == LocationEditorWindow::Mode::Select)
+	{
+		if (nearest)
+		{
+			m_locationEditorWindow.SetSelectedPoint(nearest->GetID());
+		}
+		else
+		{
+			m_locationEditorWindow.SetSelectedPoint(-1);
+		}
+
+		return;
+	}
+
+	//------------------------------------------------
+	// Create
+	//------------------------------------------------
+
+	if (mode == LocationEditorWindow::Mode::Create)
+	{
+		if (!nearest)
+		{
+			auto point =
+				m_locationPointManager.CreatePoint(
+					m_locationEditorWindow.GetCreateTag(),
+					pos);
+
+			m_locationEditorWindow.SetSelectedPoint(point->GetID());
+		}
+
+		return;
+	}
+
+	//------------------------------------------------
+	// Erase
+	//------------------------------------------------
+
+	if (mode == LocationEditorWindow::Mode::Erase)
+	{
+		if (nearest)
+		{
+			m_locationPointManager.DeletePoint(nearest->GetID());
+
+			m_locationEditorWindow.SetSelectedPoint(-1);
+		}
+	}
+}
 
 void Editor::DrawMenuBar()
 {
@@ -2229,6 +2436,7 @@ void Editor::DrawMenuBar()
 			bool objectMode = m_editMode == EditMode::Object;
 			bool stageMode = m_editMode == EditMode::Stage;
 			bool nodeMode = m_editMode == EditMode::Navigation;
+			bool locationMode = m_editMode == EditMode::Location;
 
 			if (ImGui::MenuItem("Object", nullptr, objectMode))
 			{
@@ -2243,6 +2451,11 @@ void Editor::DrawMenuBar()
 			if (ImGui::MenuItem("Navigation", nullptr, nodeMode))
 			{
 				m_editMode = EditMode::Navigation;
+			}
+
+			if (ImGui::MenuItem("Location", nullptr, locationMode))
+			{
+				m_editMode = EditMode::Location;
 			}
 
 			ImGui::EndMenu();
@@ -2293,6 +2506,24 @@ void Editor::DrawMenuBar()
 					if (ImGui::MenuItem("Load NavMesh"))
 					{
 						LoadNavMesh();
+					}
+
+					ImGui::EndMenu();
+				}
+			}
+
+			if (m_editMode == EditMode::Location)
+			{
+				if (ImGui::BeginMenu("Location"))
+				{
+					if (ImGui::MenuItem("Save"))
+					{
+						SaveLocation();
+					}
+
+					if (ImGui::MenuItem("Load"))
+					{
+						LoadLocation();
 					}
 
 					ImGui::EndMenu();

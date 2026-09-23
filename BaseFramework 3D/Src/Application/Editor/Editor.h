@@ -16,6 +16,8 @@
 #include "../System/Navigation/NavMesh/NavMeshPathfinder.h"
 #include "Windows/NavigationEditorWindow.h"
 
+#include "../System/Location/LocationPointManager.h"
+#include "Windows/LocationEditorWindow.h"
 
 class Editor
 {
@@ -57,7 +59,8 @@ public:
 	{
 		Object,
 		Stage,
-		Navigation
+		Navigation,
+		Location,
 	};
 
 	EditMode GetEditMode() const
@@ -107,6 +110,10 @@ public:
 
 	void CalculateNavMeshPointPath();
 
+	LocationPointManager& GetLocationPointManager() { return m_locationPointManager; }
+
+	void OnLocationClick(const Math::Vector3& pos);
+
 private:
 
 	Editor() = default;
@@ -118,6 +125,7 @@ private:
 	void UpdateObjectMode();
 	void UpdateStageMode();
 	void UpdateNavigationMode();
+	void UpdateLocationMode();
 
 	std::vector<std::shared_ptr<KdGameObject>> m_objects;
 	std::shared_ptr<KdGameObject> m_selectObject = nullptr;
@@ -296,4 +304,14 @@ private:
 		0.5f, 0.1f, 0.9f, 1.0f
 	};
 
+	// ===== location editor =====
+
+	LocationEditorWindow m_locationEditorWindow;
+	LocationPointManager m_locationPointManager;
+
+	void ApplyLocationLayout();
+	void DrawLocationPoints();
+
+	void SaveLocation();
+	void LoadLocation();
 };

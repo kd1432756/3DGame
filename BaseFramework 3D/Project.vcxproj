@@ -278,6 +278,7 @@
     <ClInclude Include="Src\Application\Editor\Windows\AssetBrowserWindow.h" />
     <ClInclude Include="Src\Application\Editor\Windows\HierarchyWindow.h" />
     <ClInclude Include="Src\Application\Editor\Windows\InspectorWindow.h" />
+    <ClInclude Include="Src\Application\Editor\Windows\LocationEditorWindow.h" />
     <ClInclude Include="Src\Application\Editor\Windows\NavigationEditorWIndow.h" />
     <ClInclude Include="Src\Application\Editor\Windows\NodeEditorWindow.h" />
     <ClInclude Include="Src\Application\Editor\Windows\SceneWindow.h" />
@@ -330,6 +331,10 @@
     <ClInclude Include="Src\Application\System\DayCycle\DayCycle.h" />
     <ClInclude Include="Src\Application\System\Interact\Interact.h" />
     <ClInclude Include="Src\Application\System\Inventory\Inventory.h" />
+    <ClInclude Include="Src\Application\System\Location\LocationPoint.h" />
+    <ClInclude Include="Src\Application\System\Location\LocationPointManager.h" />
+    <ClInclude Include="Src\Application\System\Location\LocationPointSerializer.h" />
+    <ClInclude Include="Src\Application\System\Location\LocationTag.h" />
     <ClInclude Include="Src\Application\System\Navigation\NavMesh\NavMeshCDT.h" />
     <ClInclude Include="Src\Application\System\Navigation\NavMesh\NavMeshGenerator.h" />
     <ClInclude Include="Src\Application\System\Navigation\NavMesh\NavMeshGrid.h" />
@@ -407,6 +412,7 @@
     <ClCompile Include="Src\Application\Editor\Windows\AssetBrowserWindow.cpp" />
     <ClCompile Include="Src\Application\Editor\Windows\HierarchyWindow.cpp" />
     <ClCompile Include="Src\Application\Editor\Windows\InspectorWindow.cpp" />
+    <ClCompile Include="Src\Application\Editor\Windows\LocationEditorWindow.cpp" />
     <ClCompile Include="Src\Application\Editor\Windows\NavigationEditorWIndow.cpp" />
     <ClCompile Include="Src\Application\Editor\Windows\NodeEditorWindow.cpp" />
     <ClCompile Include="Src\Application\Editor\Windows\SceneWindow.cpp" />
@@ -459,6 +465,8 @@
     <ClCompile Include="Src\Application\System\DayCycle\DayCycle.cpp" />
     <ClCompile Include="Src\Application\System\Interact\Interact.cpp" />
     <ClCompile Include="Src\Application\System\Inventory\Inventory.cpp" />
+    <ClCompile Include="Src\Application\System\Location\LocationPointManager.cpp" />
+    <ClCompile Include="Src\Application\System\Location\LocationPointSerializer.cpp" />
     <ClCompile Include="Src\Application\System\Navigation\NavMesh\NavMeshCDT.cpp" />
     <ClCompile Include="Src\Application\System\Navigation\NavMesh\NavMeshGenerator.cpp" />
     <ClCompile Include="Src\Application\System\Navigation\NavMesh\NavMeshGrid.cpp" />

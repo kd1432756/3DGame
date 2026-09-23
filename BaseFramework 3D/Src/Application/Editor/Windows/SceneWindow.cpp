@@ -104,6 +104,14 @@ void SceneWindow::Draw(
 
 				break;
 			}
+			case Editor::EditMode::Location:
+
+				Math::Vector3 pos =
+					GetDropPosition(editorCamera);
+
+				Editor::Instance().OnLocationClick(pos);
+
+				break;
 			}
 		}
 	}
