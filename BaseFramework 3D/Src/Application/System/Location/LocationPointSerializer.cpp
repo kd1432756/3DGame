@@ -91,3 +91,48 @@ bool LocationPointSerializer::Load(
 
 	return true;
 }
+
+bool LocationPointSerializer::LoadWithScale(const std::string& path, LocationPointManager& manager, float scale)
+{
+	std::ifstream ifs(path);
+
+	if (!ifs.is_open())
+	{
+		return false;
+	}
+
+	json j;
+
+	ifs >> j;
+
+	manager.Clear();
+
+	if (!j.contains("points"))
+	{
+		return true; // 空ファイルは許容
+	}
+
+	for (auto& p : j["points"])
+	{
+		int id = p.value("id", -1);
+
+		LocationTag tag =
+			static_cast<LocationTag>(
+				p.value("tag", 0));
+
+		Math::Vector3 pos = Math::Vector3::Zero;
+
+		if (p.contains("pos") && p["pos"].is_array() && p["pos"].size() == 3)
+		{
+			pos.x = p["pos"][0];
+			pos.y = p["pos"][1];
+			pos.z = p["pos"][2];
+
+			pos *= scale;
+		}
+
+		manager.CreatePointWithID(id, tag, pos);
+	}
+
+	return true;
+}

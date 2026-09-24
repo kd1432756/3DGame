@@ -29,7 +29,27 @@ void CameraBase::SetTarget(const std::shared_ptr<KdGameObject>& target)
 }
 
 void CameraBase::UpdateRotateByMouse()
-{
+{    
+	// Tabキーを押した瞬間にカメラロックを切り替える
+	static bool prevTab = false;
+
+	bool nowTab = (GetAsyncKeyState(VK_TAB) & 0x8000) != 0;
+
+	if (nowTab && !prevTab)
+	{
+		m_mouseLock = !m_mouseLock;
+
+		// ロック解除時にカーソルを中央へ戻す
+		if (!m_mouseLock)
+		{
+			SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
+		}
+	}
+
+	prevTab = nowTab;
+
+
+
 	if (!m_mouseLock)
 	{
 		return;

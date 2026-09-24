@@ -12,4 +12,9 @@ public:
 	static bool Load(
 		const std::string& path,
 		LocationPointManager& manager);
+
+	static bool LoadWithScale(
+		const std::string& path,
+		LocationPointManager& manager,
+		float scale);
 };

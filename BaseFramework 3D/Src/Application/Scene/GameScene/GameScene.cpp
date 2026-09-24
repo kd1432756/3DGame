@@ -9,6 +9,7 @@
 #include "../SceneSerializer/SceneSerializer.h"
 #include "../../System/Node/AStarNode/AStarNodeSerializer.h"
 #include "../../System/Navigation/NavMesh/NavMeshSerializer.h"
+#include "../../System/Location/LocationPointSerializer.h"
 
 #include "../../GameObject/Camera/FPSCamera/FPSCamera.h"
 #include "../../GameObject/Character/Player/Player.h"
@@ -123,6 +124,11 @@ void GameScene::Start()
 
 	SceneSerializer::LoadWithScale(
 		stage.scenePath,
+		scale);
+
+	LocationPointSerializer::LoadWithScale(
+		stage.locationPointPath,
+		LocationPointManager::Instance(),
 		scale);
 
 	m_dayCycle = std::make_shared<DayCycle>();

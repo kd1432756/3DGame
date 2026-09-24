@@ -1,8 +1,11 @@
 ﻿#include "InspectorWindow.h"
 
+#include "../../Scene/SceneManager.h"
+
 #include "../../GameObject/Object/StaticMeshObject/StaticMeshObject.h"
 #include "../../GameObject/Object/StaticMeshObject/InteractiveObject/InteractiveObject.h"
 #include "../../GameObject/Object/StaticMeshObject/Item/Item.h"
+#include "../../GameObject/Character/Enemy/Neighbor/Neighbor.h"
 
 void InspectorWindow::Draw(std::shared_ptr<KdGameObject> obj)
 {
@@ -79,6 +82,14 @@ void InspectorWindow::Draw(std::shared_ptr<KdGameObject> obj)
 		DrawItem(item);
 	}
 
+	auto neighbor =
+		std::dynamic_pointer_cast<Neighbor>(obj);
+
+	if (neighbor)
+	{
+		DrawNeighbor(neighbor);
+	}
+
 	ImGui::End();
 }
 
@@ -121,11 +132,61 @@ void InspectorWindow::DrawInteractive(std::shared_ptr<InteractiveObject> obj)
 {
 	ImGui::SeparatorText("Interactive");
 
-	std::string owner = obj->GetOwner();
+	// 現在設定されているOwner
+	std::string currentOwner = obj->GetOwner();
 
-	if (ImGui::InputText("Owner", &owner))
+	// Comboに表示する名前
+	const char* previewName =
+		currentOwner.empty() ? "None" : currentOwner.c_str();
+
+	if (ImGui::BeginCombo("Owner", previewName))
 	{
-		obj->SetOwner(owner);
+		// 現在存在しているCharacterBaseの一覧を取得
+		const auto& characters =
+			SceneManager::Instance().FindObjects<CharacterBase>();
+
+		// Ownerなし
+		bool isNoneSelected = currentOwner.empty();
+
+		if (ImGui::Selectable("None", isNoneSelected))
+		{
+			obj->SetOwner("");
+		}
+
+		if (isNoneSelected)
+		{
+			ImGui::SetItemDefaultFocus();
+		}
+
+		// Character一覧
+		for (const auto& character : characters)
+		{
+			if (!character)
+			{
+				continue;
+			}
+
+			const std::string& name =
+				character->GetName();
+
+			bool isSelected =
+				(currentOwner == name);
+
+			if (ImGui::Selectable(
+				name.c_str(),
+				isSelected))
+			{
+				// Characterの名前をOwnerに設定
+				obj->SetOwner(name);
+			}
+
+			if (isSelected)
+			{
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+
+		ImGui::EndCombo();
 	}
 }
 
@@ -169,4 +230,47 @@ void InspectorWindow::DrawItem(std::shared_ptr<Item> obj)
 
 	ImGui::Text("Name : %s", data.GetName().c_str());
 	ImGui::Text("Action : %d", (int)data.GetAction());
+}
+
+void InspectorWindow::DrawNeighbor(std::shared_ptr<Neighbor> obj)
+{
+	ImGui::SeparatorText("Neighbor");
+
+	LocationTag currentTag = obj->GetHouseTag();
+
+	const char* currentName =
+		LocationTagToString(currentTag);
+
+	if (ImGui::BeginCombo("House Tag", currentName))
+	{
+		for (int i = 0; i < static_cast<int>(LocationTag::Max); ++i)
+		{
+			LocationTag tag = static_cast<LocationTag>(i);
+
+			//============================================================
+			// 家として使えるTagのみ表示
+			//============================================================
+
+			if (tag != LocationTag::NeighborHouse1 &&
+				tag != LocationTag::NeighborHouse2 &&
+				tag != LocationTag::NeighborHouse3)
+			{
+				continue;
+			}
+
+			bool isSelected = (tag == currentTag);
+
+			if (ImGui::Selectable(LocationTagToString(tag), isSelected))
+			{
+				obj->SetHouseTag(tag);
+			}
+
+			if (isSelected)
+			{
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+
+		ImGui::EndCombo();
+	}
 }

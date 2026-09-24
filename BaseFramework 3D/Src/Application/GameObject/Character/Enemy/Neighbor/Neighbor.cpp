@@ -2,6 +2,8 @@
 
 #include "../../../../System/Navigation/NavMesh/NavMeshManager.h"
 
+#include "../../../../System/Location/LocationPointManager.h"
+
 #include "../../../../Scene/SceneManager.h"
 
 #include "../../../../System/Score/ScoreManager.h"
@@ -51,6 +53,12 @@ void Neighbor::Init()
 	m_pNavMeshManager = &NavMeshManager::Instance();
 
 	//============================================================
+	// Location Point Manager
+	//============================================================
+
+	m_pLocationPointManager = &LocationPointManager::Instance();
+
+	//============================================================
 	// State
 	//============================================================
 
@@ -70,7 +78,7 @@ void Neighbor::Init()
 
 	AddInventoryItem("Asset/Items/Scissors.item");
 	
-	AddInventoryItem("Asset/Items/Hammer.item");
+	//AddInventoryItem("Asset/Items/Hammer.item");
 
 	SelectInventory(0);
 }
@@ -237,22 +245,18 @@ void Neighbor::UpdateUtility()
 	Action nextAction = DecideAction();
 
 	m_currentAction = nextAction;
-	char buffer[256];
 
-	_snprintf_s(
-		buffer,
-		sizeof(buffer),
-		_TRUNCATE,
-		"Utility: Task=%.1f Search=%.1f Prank=%.1f Repair=%.1f\n",
-		m_taskUtility,
-		m_searchItemUtility,
-		m_prankUtility,
-		m_repairUtility
-	);
-	if (GetName() == "Neighbor_0")
-	{
-		OutputDebugStringA(buffer);
-	}
+	m_debugInfo.actionName = ActionToString(m_currentAction);
+
+	//============================================================
+	// ImGui用に保存
+	//============================================================
+
+	m_debugInfo.taskUtility = m_taskUtility;
+	m_debugInfo.searchItemUtility = m_searchItemUtility;
+	m_debugInfo.prankUtility = m_prankUtility;
+	m_debugInfo.repairUtility = m_repairUtility;
+
 	//============================================================
 	// Utility → FSM
 	//============================================================
@@ -462,7 +466,7 @@ float Neighbor::EvaluateRepair()
 }
 
 //============================================================
-// 
+// Utility用 path距離計算
 //============================================================
 
 bool Neighbor::CalculatePathDistance(
@@ -524,18 +528,247 @@ bool Neighbor::CalculatePathDistance(
 
 void Neighbor::UpdateTask()
 {
+	auto destPoint = m_wpTaskDestination.lock();
+
+	if (!destPoint)
+	{
+		destPoint = SelectTaskDestination();
+
+		if (!destPoint)
+		{
+			m_debugInfo.hasTaskDestination = false;
+			m_debugInfo.taskDestinationName = "None";
+			m_debugInfo.taskMoveStatus = "Idle";
+			return;
+		}
+
+		m_wpTaskDestination = destPoint;
+
+		m_navPath.clear();
+		m_navPathIndex = 0;
+
+		m_debugInfo.taskDestinationName =
+			LocationTagToString(destPoint->GetTag());
+	}
+
 	//============================================================
-	// 現在は通常行動のみ
+	// Debug情報更新
 	//============================================================
 
-	// 今後、
-	//
-	// ・家へ帰る
-	// ・公園へ行く
-	// ・アイテムを探す
-	// ・アイテムを拾う
-	//
-	// などをここに追加する
+	Math::Vector3 diff = destPoint->GetPos() - m_pos;
+
+	diff.y = 0.0f;
+
+	m_debugInfo.taskDestinationDistance = diff.Length();
+
+	//============================================================
+	// 移動処理
+	//============================================================
+
+	MoveResult moveResult = MoveToTaskDestination(destPoint);
+
+	if (moveResult == MoveResult::Moving)
+	{
+		m_debugInfo.taskMoveStatus = "Moving";
+
+		m_spAnimator->SetAnimation(
+			m_spModel->GetAnimation("Armature|Walk")
+		);
+
+		return;
+	}
+
+	if (moveResult == MoveResult::Failed)
+	{
+		m_debugInfo.taskMoveStatus = "Failed";
+	}
+	else
+	{
+		m_debugInfo.taskMoveStatus = "Arrived";
+	}
+
+	m_wpTaskDestination.reset();
+
+	m_navPath.clear();
+	m_navPathIndex = 0;
+
+	SetMoveDirection(Math::Vector3::Zero);
+
+	m_spAnimator->SetAnimation(
+		m_spModel->GetAnimation("Armature|Idle")
+	);
+}
+
+MoveResult Neighbor::MoveToTaskDestination(const std::shared_ptr<LocationPoint>& destPoint)
+{
+	if (!destPoint)
+	{
+		return MoveResult::Failed;
+	}
+
+	Math::Vector3 toDest = destPoint->GetPos() - m_pos;
+
+	toDest.y = 0.0f;
+
+	const float arriveDistance = m_taskArriveDistance * m_sceneScale;
+
+	if (toDest.LengthSquared() <= arriveDistance * arriveDistance)
+	{
+		m_navPath.clear();
+		m_navPathIndex = 0;
+
+		return MoveResult::Arrived;
+	}
+
+	if (m_navPath.empty())
+	{
+		FindPathTo(destPoint->GetPos());
+
+		if (m_navPath.empty())
+		{
+			return MoveResult::Failed;
+		}
+	}
+
+	return MoveToNextNavPathPoint();
+}
+
+//============================================================
+// Task目的地の選定
+//============================================================
+
+std::shared_ptr<LocationPoint> Neighbor::SelectTaskDestination()
+{
+	const bool hasEmptySlot = m_inventory.HasEmptySlot();
+
+	const bool hasPrankItem = HasPrankItem();
+
+	bool hasRepairItem = HasRepairItem();
+
+	//============================================================
+	// 優先度: 空きスロット > いたずら > 修復 > ランダム徘徊
+	//============================================================
+
+	if (hasEmptySlot)
+	{
+		return SelectItemAreaPoint();
+	}
+
+	if (hasPrankItem)
+	{
+		return SelectOtherHousePoint();
+	}
+
+	if (hasRepairItem)
+	{
+		return SelectOwnHousePoint();
+	}
+
+	return SelectRandomPoint();
+}
+
+//============================================================
+// アイテムエリア（公園・工事現場・ゴミ捨て場）から1つ選択
+//============================================================
+
+std::shared_ptr<LocationPoint> Neighbor::SelectItemAreaPoint()
+{
+	std::vector<std::shared_ptr<LocationPoint>> candidates;
+
+	static const LocationTag itemAreaTags[] =
+	{
+		LocationTag::Park,
+		LocationTag::ConstructionSite,
+		LocationTag::TrashDump,
+	};
+
+	for (auto tag : itemAreaTags)
+	{
+		auto points = m_pLocationPointManager->FindAllByTag(tag);
+
+		candidates.insert(
+			candidates.end(),
+			points.begin(),
+			points.end()
+		);
+	}
+
+	if (candidates.empty())
+	{
+		return nullptr;
+	}
+
+	int index = rand() % static_cast<int>(candidates.size());
+
+	return candidates[index];
+}
+
+//============================================================
+// 他人の家から1つ選択（自分の家Tagは除外）
+//============================================================
+
+std::shared_ptr<LocationPoint> Neighbor::SelectOtherHousePoint()
+{
+	static const LocationTag houseTags[] =
+	{
+		LocationTag::PlayerHouse,
+		LocationTag::NeighborHouse1,
+		LocationTag::NeighborHouse2,
+		LocationTag::NeighborHouse3,
+	};
+
+	std::vector<std::shared_ptr<LocationPoint>> candidates;
+
+	for (auto tag : houseTags)
+	{
+		if (tag == m_myHouseTag)
+		{
+			continue;
+		}
+
+		auto point = m_pLocationPointManager->FindByTag(tag);
+
+		if (point)
+		{
+			candidates.push_back(point);
+		}
+	}
+
+	if (candidates.empty())
+	{
+		return nullptr;
+	}
+
+	int index = rand() % static_cast<int>(candidates.size());
+
+	return candidates[index];
+}
+
+//============================================================
+// 自分の家を選択
+//============================================================
+
+std::shared_ptr<LocationPoint> Neighbor::SelectOwnHousePoint()
+{
+	return m_pLocationPointManager->FindByTag(m_myHouseTag);
+}
+
+//============================================================
+// 全地点からランダムに1つ選択（純粋な徘徊）
+//============================================================
+
+std::shared_ptr<LocationPoint> Neighbor::SelectRandomPoint()
+{
+	const auto& points = m_pLocationPointManager->GetPoints();
+
+	if (points.empty())
+	{
+		return nullptr;
+	}
+
+	int index = KdRandom::GetInt(0, points.size() - 1);
+
+	return points[index];
 }
 
 //============================================================
@@ -1248,9 +1481,8 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 {
 	outCandidate = PrankCandidate();
 
-	OutputDebugStringA(
-		"=== FindBestPrankCandidate START ===\n"
-	);
+	m_debugInfo.prankCandidateLog.clear();
+
 	//============================================================
 	// Scene Object
 	//============================================================
@@ -1289,9 +1521,6 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 
 		if (inventoryItem.IsEmpty())
 		{
-			OutputDebugStringA(
-				"Prank: Inventory slot EMPTY\n"
-			);
 			continue;
 		}
 
@@ -1301,36 +1530,17 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 		
 		ItemData itemData;
 
-		itemData.Load(inventoryItem.itemPath);
+		if (!itemData.Load(inventoryItem.itemPath))
 		{
-			std::string log =
-				"Prank: Inventory[" +
-				std::to_string(inventoryIndex) +
-				"] Path=[" +
-				inventoryItem.itemPath +
-				"] Action=" +
-				std::to_string(
-					static_cast<int>(
-						itemData.GetAction()
-						)
-				) +
-				" Target=[" +
-				itemData.GetTarget() +
-				"]\n";
-
-			OutputDebugStringA(
-				log.c_str()
-			);
+			continue;
 		}
+		
 		//========================================================
 		// Repairは無視
 		//========================================================
 
 		if (itemData.GetAction() == ItemAction::Repair)
 		{
-			OutputDebugStringA(
-				"Prank: SKIP - Repair item\n"
-			);
 			continue;
 		}
 
@@ -1353,25 +1563,23 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 			}
 
 			//====================================================
+			// Debug Log
+			//====================================================
+
+			DebugInfo::PrankLog log;
+			log.itemPath = inventoryItem.itemPath;
+			log.targetOwner = target->GetOwner();
+			log.utility = 0.0f;
+			log.canNPCUse = false;
+			log.selected = false;
+
+			//====================================================
 			// 自分の所有物にはいたずらしない
 			//====================================================
-			{
-				std::string log =
-					"Prank: Target Owner=[" +
-					target->GetOwner() +
-					"] NeighborOwner=[" +
-					GetName() +
-					"]\n";
-
-				OutputDebugStringA(
-					log.c_str()
-				);
-			}
+		
 			if (target->GetOwner() == GetName())
 			{
-				OutputDebugStringA(
-					"Prank: SKIP - Same Owner\n"
-				);
+				m_debugInfo.prankCandidateLog.push_back(log);
 				continue;
 			}
 
@@ -1381,22 +1589,11 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 			const bool canNPCUse =
 				target->CanNPCUse(itemData);
 
-			{
-				std::string log =
-					"Prank: CanNPCUse=" +
-					std::string(
-						canNPCUse
-						? "TRUE"
-						: "FALSE"
-					) +
-					"\n";
+			log.canNPCUse = canNPCUse;
 
-				OutputDebugStringA(
-					log.c_str()
-				);
-			}
-			if (!target->CanNPCUse(itemData))
+			if (!canNPCUse)
 			{
+				m_debugInfo.prankCandidateLog.push_back(log);
 				continue;
 			}
 
@@ -1407,23 +1604,13 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 			Math::Vector3 diff = target->GetPos() - m_pos;
 
 			diff.y = 0.0f;
+
 			const float distanceSq =
 				diff.LengthSquared();
 
-			{
-				std::string log =
-					"Prank: DistanceSq=" +
-					std::to_string(distanceSq) +
-					" SearchDistanceSq=" +
-					std::to_string(searchDistanceSq) +
-					"\n";
-
-				OutputDebugStringA(
-					log.c_str()
-				);
-			}
 			if (diff.LengthSquared() > searchDistanceSq)
 			{
+				m_debugInfo.prankCandidateLog.push_back(log);
 				continue;
 			}
 
@@ -1445,6 +1632,7 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 
 			if (!hasPath)
 			{
+				m_debugInfo.prankCandidateLog.push_back(log);
 				continue;
 			}
 
@@ -1458,26 +1646,17 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 					itemData,
 					pathDistance
 				);
-			{
-				std::string log =
-					"Prank: Candidate Utility=" +
-					std::to_string(utility) +
-					"\n";
 
-				OutputDebugStringA(
-					log.c_str()
-				);
-			}
+			log.utility = utility;
+
+			m_debugInfo.prankCandidateLog.push_back(log);
+
 			//====================================================
 			// より高いUtilityなら更新
 			//====================================================
 
 			if (utility <= bestUtility)
 			{
-				OutputDebugStringA(
-					"Prank: SKIP - Utility not higher\n"
-				);
-
 				continue;
 			}
 
@@ -1487,34 +1666,33 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 
 			outCandidate.inventoryIndex = inventoryIndex;
 
-			outCandidate.utility = utility;
-			OutputDebugStringA(
-				"Prank: *** CANDIDATE SELECTED ***\n"
-			);
-
 			outCandidate.hasPath =
 				hasPath;
 
 			outCandidate.pathDistance =
 				pathDistance;
+
+			outCandidate.utility = utility;
 		}
 	}
 
+	// 一番Utilityが高かった候補にだけselectedフラグを立て直す
 	if (outCandidate.target)
 	{
-		OutputDebugStringA(
-			"=== FindBestPrankCandidate: FOUND ===\n"
-		);
-
-		return true;
+		for (auto& log :
+			m_debugInfo.prankCandidateLog)
+		{
+			log.selected =
+				log.itemPath == items[outCandidate.inventoryIndex].itemPath &&
+				log.targetOwner == outCandidate.target->GetOwner() &&
+				log.utility == outCandidate.utility;
+		}
 	}
 
-	OutputDebugStringA(
-		"=== FindBestPrankCandidate: NOT FOUND ===\n"
-	);
-
-	return false;
-
+	m_debugInfo.bestPrankTarget =
+		outCandidate.target
+		? outCandidate.target->GetName()
+		: "None";
 
 	return outCandidate.target != nullptr;
 }
@@ -1814,6 +1992,8 @@ bool Neighbor::FindBestRepairCandidate(
 {
 	outCandidate = RepairCandidate();
 
+	m_debugInfo.repairCandidateLog.clear();
+
 	//============================================================
 	// Scene Object
 	//============================================================
@@ -1891,45 +2071,42 @@ bool Neighbor::FindBestRepairCandidate(
 			}
 
 			//====================================================
+			// Debug Log
+			//====================================================
+
+			DebugInfo::RepairLog log;
+
+			log.itemPath = inventoryItem.itemPath;
+			log.targetOwner = target->GetOwner();
+			log.utility = 0.0f;
+			log.canNPCUse = false;
+			log.selected = false;
+
+			//====================================================
 			// 自分の所有物のみ修復する
 			//====================================================
 
 			if (target->GetOwner() != GetName())
 			{
+				m_debugInfo.repairCandidateLog.push_back(log);
 				continue;
 			}
 
-			OutputDebugStringA(
-				("Repair: Target Owner=[" +
-					target->GetOwner() +
-					"] NeighborOwner=[" +
-					GetName() +
-					"]\n").c_str()
-			);
 			//====================================================
 			// このアイテムでUse可能か
 			//====================================================
 
-			if (!target->CanNPCUse(itemData))
+			const bool canNPCUse =
+				target->CanNPCUse(itemData);
+
+			log.canNPCUse = canNPCUse;
+
+			if (!canNPCUse)
 			{
+				m_debugInfo.repairCandidateLog.push_back(log);
 				continue;
 			}
-			OutputDebugStringA(
-				("Repair: CanNPCUse=" +
-					std::string(target->CanNPCUse(itemData) ? "TRUE" : "FALSE") +
-					"\n").c_str()
-			); OutputDebugStringA(
-				("Repair: Item Path=[" +
-					inventoryItem.itemPath +
-					"] Action=" +
-					std::to_string(
-						static_cast<int>(itemData.GetAction())
-					) +
-					" Target=[" +
-					itemData.GetTarget() +
-					"]\n").c_str()
-			);
-
+			
 			//====================================================
 			// 距離
 			//====================================================
@@ -1940,6 +2117,29 @@ bool Neighbor::FindBestRepairCandidate(
 
 			if (diff.LengthSquared() > searchDistanceSq)
 			{
+				m_debugInfo.repairCandidateLog.push_back(log);
+				continue;
+			}
+
+			//============================================================
+			// ここまで来た候補だけPathfinding
+			//============================================================
+
+			float pathDistance = 0.0f;
+
+			const bool hasPath =
+				CalculatePathDistance(
+					target->GetPos(),
+					pathDistance
+				);
+
+			//============================================================
+			// 到達不能なら候補から除外
+			//============================================================
+
+			if (!hasPath)
+			{
+				m_debugInfo.repairCandidateLog.push_back(log);
 				continue;
 			}
 
@@ -1952,6 +2152,10 @@ bool Neighbor::FindBestRepairCandidate(
 					target,
 					itemData
 				);
+
+			log.utility = utility;
+
+			m_debugInfo.repairCandidateLog.push_back(log);
 
 			//====================================================
 			// より高いUtilityなら更新
@@ -1969,6 +2173,18 @@ bool Neighbor::FindBestRepairCandidate(
 			outCandidate.inventoryIndex = inventoryIndex;
 
 			outCandidate.utility = utility;
+		}
+	}
+
+	if (outCandidate.target)
+	{
+		for (auto& log :
+			m_debugInfo.repairCandidateLog)
+		{
+			log.selected =
+				log.itemPath == items[outCandidate.inventoryIndex].itemPath &&
+				log.targetOwner == outCandidate.target->GetOwner() &&
+				log.utility == outCandidate.utility;
 		}
 	}
 
@@ -2226,6 +2442,32 @@ bool Neighbor::HasPrankItem() const
 	return false;
 }
 
+bool Neighbor::HasRepairItem() const
+{
+	for (const auto& item : m_inventory.GetItems())
+	{
+		if (item.IsEmpty())
+		{
+			continue;
+		}
+
+		ItemData itemData;
+
+		if (!itemData.Load(item.itemPath))
+		{
+			continue;
+		}
+
+		// Repair以外(いたずら用)を1つでも持っていたら該当
+		if (itemData.GetAction() == ItemAction::Repair)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void Neighbor::ConfiscatePrankItems()
 {
 	const auto& items = m_inventory.GetItems();
@@ -2281,6 +2523,8 @@ void Neighbor::ChangeState(State newState)
 	m_isInteracting = false;
 
 	m_interactTimer = 0.0f;
+
+	m_debugInfo.stateName = StateToString(m_state);
 
 	ApplyStateSettings();
 }
@@ -2341,4 +2585,231 @@ void Neighbor::ApplyStateSettings()
 
 		break;
 	}
+}
+
+void Neighbor::DrawDebugUI()
+{
+	if (ImGui::Begin("Neighbor AI Debug"))
+	{
+		ImGui::PushID(this);
+
+		if (ImGui::CollapsingHeader(GetName().c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::Text("State  : %s", m_debugInfo.stateName.c_str());
+			ImGui::Text("Action : %s", m_debugInfo.actionName.c_str());
+
+			ImGui::Separator();
+			ImGui::Text("Utility");
+			ImGui::Text(" Task       : %.1f", m_debugInfo.taskUtility);
+			ImGui::Text(" SearchItem : %.1f", m_debugInfo.searchItemUtility);
+			ImGui::Text(" Prank      : %.1f", m_debugInfo.prankUtility);
+			ImGui::Text(" Repair     : %.1f", m_debugInfo.repairUtility);
+
+			ImGui::Separator();
+			ImGui::Text("Task Destination  : %s", m_debugInfo.taskDestinationName.c_str());
+			ImGui::Text(" Distance  : %.2f", m_debugInfo.taskDestinationDistance);
+			ImGui::Text(" Status    : %s", m_debugInfo.taskMoveStatus.c_str());
+
+			ImGui::Separator();
+
+			if (ImGui::TreeNodeEx("Inventory", ImGuiTreeNodeFlags_DefaultOpen))
+			{
+				const auto& items = m_inventory.GetItems();
+
+				for (int i = 0; i < Inventory::MaxItem; ++i)
+				{
+					if (items[i].IsEmpty())
+					{
+						ImGui::Text("[%d] (empty)", i);
+						continue;
+					}
+
+					std::filesystem::path path(items[i].itemPath);
+					std::string itemName = path.stem().string();
+
+					bool isSelected =
+						(m_inventory.GetCurrentItem() == &items[i]);
+
+					ImGui::Text(
+						"[%d] %s%s",
+						i,
+						itemName.c_str(),
+						isSelected ? "  <- Selected" : ""
+					);
+				}
+
+				ImGui::TreePop();
+			}
+
+			ImGui::Separator();
+
+			{
+				auto searchTarget = m_wpSearchItem.lock();
+
+				if (searchTarget)
+				{
+					const ItemData& targetData = searchTarget->GetItemData();
+
+					std::filesystem::path path(targetData.GetItemPath());
+					std::string itemName = path.stem().string();
+
+					Math::Vector3 diff = searchTarget->GetPos() - m_pos;
+					diff.y = 0.0f;
+
+					bool alreadyHave = HasInventoryItem(targetData.GetItemPath());
+
+					ImGui::Text("Search Target : %s", itemName.c_str());
+					ImGui::Text(" Distance     : %.2f", diff.Length());
+
+					if (alreadyHave)
+					{
+						ImGui::TextColored(
+							ImVec4(1.0f, 0.3f, 0.3f, 1.0f),
+							" WARNING: Already in inventory!"
+						);
+					}
+				}
+				else
+				{
+					ImGui::Text("Search Target : None");
+				}
+			}
+
+			ImGui::Separator();
+			ImGui::Text("Best Prank Target : %s", m_debugInfo.bestPrankTarget.c_str());
+			ImGui::Text("Best Repair Target: %s", m_debugInfo.bestRepairTarget.c_str());
+
+			if (ImGui::TreeNodeEx("Prank Candidates",
+				ImGuiTreeNodeFlags_DefaultOpen))
+			{
+				if (ImGui::BeginTable("PrankTable", 4, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
+				{
+					ImGui::TableSetupColumn("Item");
+					ImGui::TableSetupColumn("Owner");
+					ImGui::TableSetupColumn("CanUse");
+					ImGui::TableSetupColumn("Utility");
+					ImGui::TableHeadersRow();
+
+					for (const auto& log : m_debugInfo.prankCandidateLog)
+					{
+						ImGui::TableNextRow();
+
+						if (log.selected)
+						{
+							ImGui::TableSetBgColor(
+								ImGuiTableBgTarget_RowBg0,
+								ImGui::GetColorU32(ImVec4(0.2f, 0.6f, 0.2f, 0.5f))
+							);
+						}
+
+						std::filesystem::path path(log.itemPath);
+						std::string itemName = path.stem().string();
+
+						std::string ownerName = log.targetOwner;
+
+						if (ownerName.empty())
+						{
+							ownerName = "None";
+						}
+						else if (ownerName == GetName())
+						{
+							ownerName = "Self";
+						}
+
+						ImGui::TableNextColumn(); ImGui::TextUnformatted(itemName.c_str());
+						ImGui::TableNextColumn(); ImGui::TextUnformatted(ownerName.c_str());
+						ImGui::TableNextColumn(); ImGui::TextUnformatted(log.canNPCUse ? "true" : "false");
+						ImGui::TableNextColumn(); ImGui::Text("%.1f", log.utility);
+					}
+
+					ImGui::EndTable();
+				}
+				ImGui::TreePop();
+			}
+
+			if (ImGui::TreeNodeEx("Repair Candidates",
+				ImGuiTreeNodeFlags_DefaultOpen))
+			{
+				if (ImGui::BeginTable("RepairTable", 4, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
+				{
+					ImGui::TableSetupColumn("Item");
+					ImGui::TableSetupColumn("Owner");
+					ImGui::TableSetupColumn("CanUse");
+					ImGui::TableSetupColumn("Utility");
+
+					ImGui::TableHeadersRow();
+
+					for (const auto& log :
+						m_debugInfo.repairCandidateLog)
+					{
+						ImGui::TableNextRow();
+
+						if (log.selected)
+						{
+							ImGui::TableSetBgColor(
+								ImGuiTableBgTarget_RowBg0,
+								ImGui::GetColorU32(
+									ImVec4(
+										0.2f,
+										0.6f,
+										0.2f,
+										0.5f
+									)
+								)
+							);
+						}
+
+						std::filesystem::path path(
+							log.itemPath
+						);
+
+						std::string itemName =
+							path.stem().string();
+
+						std::string ownerName =
+							log.targetOwner;
+
+						if (ownerName.empty())
+						{
+							ownerName = "None";
+						}
+						else if (ownerName == GetName())
+						{
+							ownerName = "Self";
+						}
+
+						ImGui::TableNextColumn();
+						ImGui::TextUnformatted(
+							itemName.c_str()
+						);
+
+						ImGui::TableNextColumn();
+						ImGui::TextUnformatted(
+							ownerName.c_str()
+						);
+
+						ImGui::TableNextColumn();
+						ImGui::TextUnformatted(
+							log.canNPCUse
+							? "true"
+							: "false"
+						);
+
+						ImGui::TableNextColumn();
+						ImGui::Text(
+							"%.1f",
+							log.utility
+						);
+					}
+
+					ImGui::EndTable();
+				}
+
+				ImGui::TreePop();
+			}
+		}
+
+		ImGui::PopID();
+	}
+	ImGui::End();
 }

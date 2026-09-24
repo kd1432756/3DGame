@@ -10979,6 +10979,32 @@
                 4.0
             ],
             "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "ItemPath": "Asset\\Items\\Scissors.item",
+            "ModelPath": "Asset/Models/Item/Scissors/Scissors.gltf",
+            "Name": "Item_0",
+            "Position": [
+                -5.453255653381348,
+                0.4999995231628418,
+                6.00485897064209
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "Item"
         }
     ]
 }

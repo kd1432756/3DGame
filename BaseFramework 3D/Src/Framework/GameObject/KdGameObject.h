@@ -34,6 +34,8 @@ public:
 	virtual void DrawBright() {}
 	virtual void DrawSprite() {}
 	virtual void DrawDebug();
+	// 追加
+	virtual void DrawDebugUI() {}
 
 	virtual void SetAsset(const std::string&) {}
 

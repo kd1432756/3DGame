@@ -168,6 +168,14 @@ void BaseScene::DrawDebug()
 	KdShaderManager::Instance().m_StandardShader.EndUnLit();
 }
 
+void BaseScene::DrawDebugUI()
+{
+	for (auto& obj : m_objList)
+	{
+		obj->DrawDebugUI();
+	}
+}
+
 void BaseScene::Start()
 {
 

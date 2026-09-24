@@ -2,12 +2,15 @@
 
 bool Inventory::AddItem(const std::string& itemPath)
 {
+	std::string normalizedPath = itemPath;
+
+	std::replace(normalizedPath.begin(), normalizedPath.end(), '\\', '/');
+
 	for (int i = 0; i < m_items.size(); ++i)
 	{
-
 		if (m_items[i].itemPath.empty())
 		{
-			m_items[i].itemPath = itemPath;
+			m_items[i].itemPath = normalizedPath;
 
 			return true;
 		}

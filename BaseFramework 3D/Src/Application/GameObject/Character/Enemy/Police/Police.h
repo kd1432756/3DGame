@@ -7,6 +7,7 @@
 
 class AStarNodeManager;
 class NavMeshManager;
+class LocationPointManager;
 
 class AlertIcon;
 
@@ -184,6 +185,12 @@ private:
 	std::vector<Math::Vector3> m_navPath;
 
 	int m_navPathIndex = 0;
+
+	//============================================================
+	// Location Point
+	//============================================================
+
+	LocationPointManager* m_pLocationPointManager = nullptr;
 
 	//============================================================
 	// Chase

@@ -33,4 +33,12 @@ private:
 	std::vector<std::shared_ptr<LocationPoint>> m_points;
 
 	int m_nextID = 0;
+
+public:
+	// シングルトンパターン
+	static LocationPointManager& Instance()
+	{
+		static LocationPointManager instance;
+		return instance;
+	}
 };

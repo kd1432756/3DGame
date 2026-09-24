@@ -74,6 +74,29 @@ void LoadingScene::Event()
 
 		m_loadingUI->SetProgress(0.2f);
 
+		m_loadStep = LoadStep::LocationPoint;
+
+		return;
+	}
+
+	//------------------------------------------------------------
+	// LocationPoint
+	//------------------------------------------------------------
+
+	if (m_loadStep == LoadStep::LocationPoint)
+	{
+		m_loadingUI->SetCurrentPath(
+			"LocationPoint"
+		);
+
+		NavMeshSerializer::LoadWithScale(
+			stage.navMeshPath,
+			NavMeshManager::Instance(),
+			SceneManager::Instance().GetSceneScale()
+		);
+
+		m_loadingUI->SetProgress(0.3f);
+
 		m_loadStep = LoadStep::Model;
 
 		return;
@@ -102,7 +125,7 @@ void LoadingScene::Event()
 
 			++m_modelIndex;
 
-			// 20% ～ 100% をモデルロードに割り当てる
+			// 30% ～ 100% をモデルロードに割り当てる
 			float modelProgress = 0.0f;
 
 			if (!m_modelPaths.empty())
@@ -114,7 +137,7 @@ void LoadingScene::Event()
 			}
 
 			float progress =
-				0.2f + modelProgress * 0.8f;
+				0.3f + modelProgress * 0.7f;
 
 			m_loadingUI->SetProgress(progress);
 

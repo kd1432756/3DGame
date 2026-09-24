@@ -3,6 +3,7 @@
 class StaticMeshObject;
 class InteractiveObject;
 class Item;
+class Neighbor;
 
 class InspectorWindow
 {
@@ -24,6 +25,7 @@ private:
 	void DrawStaticMesh(std::shared_ptr<StaticMeshObject> obj);
 	void DrawInteractive(std::shared_ptr<InteractiveObject> obj);
 	void DrawItem(std::shared_ptr<Item> obj);
+	void DrawNeighbor(std::shared_ptr<Neighbor> obj);
 
 	ImVec2 m_windowPos = { 1030, 20 };
 	ImVec2 m_windowSize = { 250, 500 };

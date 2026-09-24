@@ -6,7 +6,11 @@ using json = nlohmann::json;
 
 bool ItemData::Load(const std::string& path)
 {
-	std::ifstream ifs(path);
+	std::string normalizedPath = path;
+
+	std::replace(normalizedPath.begin(), normalizedPath.end(), '\\', '/');
+
+	std::ifstream ifs(normalizedPath);
 
 	if (!ifs)
 	{
@@ -16,7 +20,7 @@ bool ItemData::Load(const std::string& path)
 	json j;
 	ifs >> j;
 
-	m_itemPath = path;
+	m_itemPath = normalizedPath;
 
 	m_name = j.value("Name", "");
 

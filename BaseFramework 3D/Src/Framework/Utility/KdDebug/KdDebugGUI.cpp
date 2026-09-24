@@ -1,7 +1,7 @@
 ﻿#include "../../../Application/main.h"
 
 #include "KdDebugGUI.h"
-
+#include "../../../Application/Scene/SceneManager.h"
 #include "../../../Application/Editor/Editor.h"
 
 KdDebugGUI::KdDebugGUI()
@@ -64,12 +64,17 @@ void KdDebugGUI::GuiProcess(Application::AppMode mode)
 
 	// ログウィンドウ
 	//m_uqLog->Draw("Log Window");
+	// もともとあったログwindowは消すので、コメントアウトする
 
+	// 追加
 	if (mode == Application::AppMode::Editor)
 	{
 		Editor::Instance().Update();
 		Editor::Instance().Draw();
 	}
+
+	// 追加
+	SceneManager::Instance().DrawDebugUI();
 
 	//=====================================================
 	// ログ出力 ・・・ AddLog("～") で追加

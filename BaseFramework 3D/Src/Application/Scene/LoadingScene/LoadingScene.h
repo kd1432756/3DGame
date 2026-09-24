@@ -23,6 +23,7 @@ private:
 		AStarNode,
 		NavMeshStart,
 		NavMesh,
+		LocationPoint,
 		Model,
 		Finished
 	};

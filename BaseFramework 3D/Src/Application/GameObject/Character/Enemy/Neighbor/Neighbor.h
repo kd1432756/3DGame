@@ -6,6 +6,10 @@
 #include "../../../../System/Inventory/Inventory.h"
 
 class NavMeshManager;
+class LocationPointManager;
+class LocationPoint;
+
+#include "../../../../System/Location/LocationTag.h"
 
 class Item;
 
@@ -57,6 +61,18 @@ public:
 		Repair
 	};
 
+	inline const char* StateToString(Neighbor::State state)
+	{
+		switch (state)
+		{
+		case Neighbor::State::Task:       return "Task";
+		case Neighbor::State::SearchItem: return "SearchItem";
+		case Neighbor::State::Prank:      return "Prank";
+		case Neighbor::State::Repair:     return "Repair";
+		default:                          return "Unknown";
+		}
+	}
+
 	//============================================================
 	// Utility Action
 	//============================================================
@@ -69,6 +85,18 @@ public:
 		Repair
 	};
 
+	inline const char* ActionToString(Neighbor::Action action)
+	{
+		switch (action)
+		{
+		case Neighbor::Action::Task:       return "Task";
+		case Neighbor::Action::SearchItem: return "SearchItem";
+		case Neighbor::Action::Prank:      return "Prank";
+		case Neighbor::Action::Repair:     return "Repair";
+		default:                           return "Unknown";
+		}
+	}
+	
 	//============================================================
 	// Search Item Candidate
 	//============================================================
@@ -133,6 +161,20 @@ public:
 	bool HasInventoryItem(const std::string& itemPath) const;
 
 	//============================================================
+	// House Tag
+	//============================================================
+
+	void SetHouseTag(LocationTag tag)
+	{
+		m_myHouseTag = tag;
+	}
+
+	LocationTag GetHouseTag() const
+	{
+		return m_myHouseTag;
+	}
+
+	//============================================================
 	// Prank Target
 	//============================================================
 
@@ -151,8 +193,10 @@ public:
 	void OnReleased() override;
 
 	bool HasPrankItem() const override;
-
+		
 	void ConfiscatePrankItems() override;
+
+	bool HasRepairItem() const;
 
 protected:
 
@@ -190,6 +234,13 @@ private:
 	//============================================================
 
 	void UpdateTask();
+
+	std::shared_ptr<LocationPoint> SelectTaskDestination();
+
+	std::shared_ptr<LocationPoint> SelectItemAreaPoint();
+	std::shared_ptr<LocationPoint> SelectOtherHousePoint();
+	std::shared_ptr<LocationPoint> SelectOwnHousePoint();
+	std::shared_ptr<LocationPoint> SelectRandomPoint();
 
 	//============================================================
 	// Search Item
@@ -256,6 +307,9 @@ private:
 
 	MoveResult MoveToNextNavPathPoint();
 
+	MoveResult MoveToTaskDestination(
+		const std::shared_ptr<LocationPoint>& destPoint);
+
 	MoveResult MoveToPrankTarget();
 
 	MoveResult MoveToRepairTarget();
@@ -269,6 +323,7 @@ private:
 
 	void ApplyStateSettings();
 
+private:
 
 	//============================================================
 	// Utility
@@ -294,13 +349,11 @@ private:
 
 	Action m_currentAction = Action::Task;
 
-
 	//============================================================
 	// Owner
 	//============================================================
 
 	std::string m_owner;
-
 
 	//============================================================
 	// Inventory
@@ -310,13 +363,11 @@ private:
 
 	ItemData m_currentItemData;
 
-
 	//============================================================
 	// State
 	//============================================================
 
 	State m_state = State::Task;
-
 
 	//============================================================
 	// State Settings
@@ -330,7 +381,6 @@ private:
 
 	float m_repairSpeed = 0.01f;
 
-
 	//============================================================
 	// NavMesh
 	//============================================================
@@ -343,6 +393,13 @@ private:
 
 	int m_navPathIndex = 0;
 
+	//============================================================
+	// Location Point
+	//============================================================
+
+	LocationPointManager* m_pLocationPointManager = nullptr;
+
+	LocationTag m_myHouseTag = LocationTag::NeighborHouse1;
 
 	//============================================================
 	// Use
@@ -363,6 +420,14 @@ private:
 	float m_searchItemRadius = 15.0f;
 
 	float m_searchItemInteractDistance = 1.2f;
+
+	//============================================================
+	// Task
+	//============================================================
+
+	std::weak_ptr<LocationPoint> m_wpTaskDestination;
+
+	float m_taskArriveDistance = 2.0f;
 
 	//============================================================
 	// Prank
@@ -395,4 +460,60 @@ private:
 	float m_repairInteractDistance = 1.5f;
 
 	float m_repairSearchRadius = 8.0f;
+
+private:
+
+	// デバッグ用スナップショット
+	struct DebugInfo
+	{
+		// Utility
+		float taskUtility = 0.0f;
+		float searchItemUtility = 0.0f;
+		float prankUtility = 0.0f;
+		float repairUtility = 0.0f;
+
+		// 現在のState
+		std::string stateName = "None";
+		std::string actionName = "None";
+
+		std::string taskDestinationName = "None";
+		bool hasTaskDestination = false;
+		float taskDestinationDistance = 0.0f;
+		std::string taskMoveStatus = "Idle";
+
+		// Prank候補の探索ログ（直近フレーム分だけ保持）
+		struct PrankLog
+		{
+			std::string itemPath;
+			std::string targetOwner;
+			bool canNPCUse = false;
+			float distanceSq = 0.0f;
+			float utility = 0.0f;
+			bool selected = false;
+		};
+		std::vector<PrankLog> prankCandidateLog;
+
+		struct RepairLog
+		{
+			std::string itemPath;
+			std::string targetOwner;
+			bool canNPCUse = false;
+			float utility = 0.0f;
+			bool selected = false;
+		};
+		std::vector<RepairLog> repairCandidateLog;
+
+		// 選ばれた結果
+		std::string bestPrankTarget = "None";
+		std::string bestRepairTarget = "None";
+	};
+
+	DebugInfo m_debugInfo;
+
+
+public:
+
+	void DrawDebugUI() override;
+	const DebugInfo& GetDebugInfo() const { return m_debugInfo; }
+
 };

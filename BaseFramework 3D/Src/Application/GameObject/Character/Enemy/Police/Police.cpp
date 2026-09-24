@@ -2,6 +2,7 @@
 
 #include "../../../../System/Node/AStarNode/AStarNodeManager.h"
 #include "../../../../System/Navigation/NavMesh/NavMeshManager.h"
+#include "../../../../System/Location/LocationPointManager.h"
 
 #include "../../../../Scene/SceneManager.h"
 
@@ -39,6 +40,13 @@ void Police::Init()
 
 	m_pNavMeshManager =
 		&NavMeshManager::Instance();
+
+	//============================================================
+	// Location Point Manager
+	//============================================================
+
+	m_pLocationPointManager =
+		&LocationPointManager::Instance();
 
 	//============================================================
 	// Path
@@ -1318,12 +1326,15 @@ void Police::FindPolicePostPath()
 	{
 		return;
 	}
-	Math::Vector3 policePostPos{};
+
+	Math::Vector3 policeStationPos = 
+		m_pLocationPointManager->FindByTag(LocationTag::PoliceStation)->GetPos();
+
 	m_navPath =
 		m_navMeshPathfinder.FindPathPoints(
 			*m_pNavMeshManager,
 			m_pos,
-			policePostPos//交番の位置を入れる。
+			policeStationPos
 		);
 
 	m_navPathIndex = 0;

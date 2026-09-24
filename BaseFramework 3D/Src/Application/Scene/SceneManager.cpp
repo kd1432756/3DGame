@@ -59,6 +59,11 @@ void SceneManager::DrawDebug()
 	m_currentScene->DrawDebug();
 }
 
+void SceneManager::DrawDebugUI()
+{
+	m_currentScene->DrawDebugUI();
+}
+
 const std::list<std::shared_ptr<KdGameObject>>& SceneManager::GetObjList()
 {
 	return m_currentScene->GetObjList();
@@ -196,7 +201,8 @@ SceneManager::StageData SceneManager::GetStageData() const
 		{
 			"Asset/Stage/Stage1/scene.json",
 			"Asset/Stage/Stage1/astarnode.json",
-			"Asset/Stage/Stage1/navmesh.json"
+			"Asset/Stage/Stage1/navmesh.json",
+			"Asset/Stage/Stage1/location.json"
 		};
 
 	case StageType::Stage2:
@@ -204,7 +210,8 @@ SceneManager::StageData SceneManager::GetStageData() const
 		{
 			"Asset/Stage/Stage2/scene.json",
 			"Asset/Stage/Stage2/astarnode.json",
-			"Asset/Stage/Stage2/navmesh.json"
+			"Asset/Stage/Stage2/navmesh.json",
+			"Asset/Stage/Stage2/location.json"
 		};
 	}
 

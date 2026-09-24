@@ -23,6 +23,8 @@ public :
 	void Draw();
 	void DrawSprite();
 	void DrawDebug();
+	// 追加
+	void DrawDebugUI();
 
 	// 次のシーンをセット (次のフレームから切り替わる)
 	void SetNextScene(SceneType _nextScene)
@@ -76,6 +78,26 @@ public :
 		return nullptr;
 	}
 
+	// 追加 
+	template<class T>
+	std::vector<std::shared_ptr<T>> FindObjects()
+	{
+		std::vector<std::shared_ptr<T>> result;
+
+		for (auto& obj : GetObjList())
+		{
+			auto cast =
+				std::dynamic_pointer_cast<T>(obj);
+
+			if (cast)
+			{
+				result.push_back(cast);
+			}
+		}
+
+		return result;
+	}
+
 	// 追加
 	int CountItems(const std::string& itemPath) const;
 
@@ -100,6 +122,7 @@ public :
 		std::string scenePath;
 		std::string astarPath;
 		std::string navMeshPath;
+		std::string locationPointPath;
 	};
 
 	void SetStage(StageType stage)
