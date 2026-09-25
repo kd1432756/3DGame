@@ -39,6 +39,8 @@ void CameraBase::UpdateRotateByMouse()
 	{
 		m_mouseLock = !m_mouseLock;
 
+		ShowCursor(!m_mouseLock);
+
 		// ロック解除時にカーソルを中央へ戻す
 		if (!m_mouseLock)
 		{
@@ -47,8 +49,6 @@ void CameraBase::UpdateRotateByMouse()
 	}
 
 	prevTab = nowTab;
-
-
 
 	if (!m_mouseLock)
 	{

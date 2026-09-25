@@ -181,6 +181,106 @@ bool NavMeshPolygon::ContainsPoint(
 }
 
 //============================================================
+// GetClosestPoint
+//============================================================
+//
+// XZ平面上で、指定Pointからこのポリゴンへの最近傍点を求める。
+// ポリゴン内ならそのまま、外なら一番近い辺上の点を返す。
+//
+//============================================================
+
+Math::Vector3 NavMeshPolygon::GetClosestPoint(
+	const Math::Vector3& point) const
+{
+	//--------------------------------------------------------
+	// ポリゴン内ならそのまま返す
+	//--------------------------------------------------------
+
+	if (ContainsPoint(point))
+	{
+		return point;
+	}
+
+	//--------------------------------------------------------
+	// 頂点が2つ未満なら計算不可
+	//--------------------------------------------------------
+
+	if (m_vertices.size() < 2)
+	{
+		return m_center;
+	}
+
+	//--------------------------------------------------------
+	// 各辺への最近点を総当たり
+	//--------------------------------------------------------
+
+	Math::Vector3 bestPoint = m_vertices[0];
+
+	float bestDistSq = FLT_MAX;
+
+	const size_t vertexCount = m_vertices.size();
+
+	for (size_t i = 0; i < vertexCount; ++i)
+	{
+		const Math::Vector3& a = m_vertices[i];
+
+		const Math::Vector3& b =
+			m_vertices[(i + 1) % vertexCount];
+
+		//------------------------------------------------
+		// 辺 a → b への射影（XZ平面）
+		//------------------------------------------------
+
+		Math::Vector3 edge = b - a;
+
+		edge.y = 0.0f;
+
+		const float edgeLengthSq =
+			edge.x * edge.x + edge.z * edge.z;
+
+		Math::Vector3 closestOnEdge;
+
+		if (edgeLengthSq <= 0.000001f)
+		{
+			closestOnEdge = a;
+		}
+		else
+		{
+			Math::Vector3 toPoint = point - a;
+
+			toPoint.y = 0.0f;
+
+			float t =
+				(toPoint.x * edge.x + toPoint.z * edge.z) /
+				edgeLengthSq;
+
+			t = std::clamp(t, 0.0f, 1.0f);
+
+			closestOnEdge = a + edge * t;
+		}
+
+		//------------------------------------------------
+		// XZ距離で比較
+		//------------------------------------------------
+
+		Math::Vector3 diff = closestOnEdge - point;
+
+		diff.y = 0.0f;
+
+		const float distSq = diff.LengthSquared();
+
+		if (distSq < bestDistSq)
+		{
+			bestDistSq = distSq;
+
+			bestPoint = closestOnEdge;
+		}
+	}
+
+	return bestPoint;
+}
+
+//============================================================
 // 2つのPolygonが辺を共有しているか
 //============================================================
 //

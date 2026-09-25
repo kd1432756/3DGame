@@ -281,7 +281,6 @@ private:
 	void SelectPrankCandidate(
 		const PrankCandidate& candidate);
 
-
 	//============================================================
 	// Repair
 	//============================================================
@@ -304,6 +303,8 @@ private:
 
 	void FindPathTo(
 		const Math::Vector3& goal);
+
+	Math::Vector3 SnapToNavMesh(const Math::Vector3& point) const;
 
 	MoveResult MoveToNextNavPathPoint();
 
@@ -331,9 +332,7 @@ private:
 
 	float m_utilityUpdateTimer = 0.0f;
 
-	// Utilityを再評価する間隔
 	float m_utilityUpdateInterval = 1.0f;
-
 
 	//============================================================
 	// Utility Debug
@@ -392,6 +391,8 @@ private:
 	std::vector<Math::Vector3> m_navPath;
 
 	int m_navPathIndex = 0;
+
+	static constexpr float m_navSnapRadius = 2.0f;
 
 	//============================================================
 	// Location Point

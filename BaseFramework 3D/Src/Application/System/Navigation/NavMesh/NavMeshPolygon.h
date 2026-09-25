@@ -171,6 +171,8 @@ public:
 	bool ContainsPoint(
 		const Math::Vector3& point) const;
 
+	Math::Vector3 GetClosestPoint(const Math::Vector3& point) const;
+
 private:
 
 	//============================================================

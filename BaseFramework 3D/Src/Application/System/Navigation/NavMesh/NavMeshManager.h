@@ -93,6 +93,14 @@ public:
 			const Math::Vector3& point) const;
 
 	//============================================================
+	// FindNearestPoint
+	//============================================================
+
+	Math::Vector3 FindNearestPoint(
+		const Math::Vector3& point,
+		float maxSearchRadius = -1.0f) const;
+
+	//============================================================
 	// ID
 	//============================================================
 
@@ -114,6 +122,7 @@ public:
 	{
 		m_isLoaded = loaded;
 	}
+
 
 private:
 

@@ -377,3 +377,68 @@ NavMeshManager::FindPolygonFromPoint(
 	return nullptr;
 }
 
+//============================================================
+// FindNearestPoint
+//============================================================
+//
+// pointが属するPolygonが無い場合に、
+// 全Polygonの中からXZ平面上で最も近い点を返す。
+//
+// maxSearchRadius <= 0 の場合は距離制限なし。
+// 見つからない、または範囲外の場合はpointをそのまま返す。
+//
+//============================================================
+
+Math::Vector3 NavMeshManager::FindNearestPoint(
+	const Math::Vector3& point,
+	float maxSearchRadius) const
+{
+	Math::Vector3 bestPoint = point;
+
+	float bestDistSq = FLT_MAX;
+
+	bool found = false;
+
+	for (const auto& polygon : m_polygons)
+	{
+		if (!polygon)
+		{
+			continue;
+		}
+
+		Math::Vector3 closest =
+			polygon->GetClosestPoint(point);
+
+		Math::Vector3 diff = closest - point;
+
+		diff.y = 0.0f;
+
+		const float distSq = diff.LengthSquared();
+
+		if (distSq < bestDistSq)
+		{
+			bestDistSq = distSq;
+
+			bestPoint = closest;
+
+			found = true;
+		}
+	}
+
+	if (!found)
+	{
+		return point;
+	}
+
+	//--------------------------------------------------------
+	// 範囲外なら補正しない
+	//--------------------------------------------------------
+
+	if (maxSearchRadius > 0.0f &&
+		bestDistSq > maxSearchRadius * maxSearchRadius)
+	{
+		return point;
+	}
+
+	return bestPoint;
+}
