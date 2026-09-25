@@ -2,6 +2,8 @@
 
 class Police;
 
+#include "../Object/StaticMeshObject/InteractiveObject/InteractiveObject.h"
+
 class CharacterBase : public KdGameObject
 {
 public:
@@ -26,6 +28,12 @@ public:
 	{
 		return m_score;
 	}
+
+	// いたずらされた
+	virtual void OnPranked(
+		const std::shared_ptr<InteractiveObject>& object, 
+		const InteractiveAction& action)
+	{}
 	
 	// 警察に確保された
 	virtual void OnArrested(const std::shared_ptr<Police>& police);

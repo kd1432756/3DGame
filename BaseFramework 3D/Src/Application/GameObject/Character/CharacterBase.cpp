@@ -4,8 +4,6 @@
 
 #include "../../System/Score/ScoreManager.h"
 
-#include "../Object/StaticMeshObject/InteractiveObject/InteractiveObject.h"
-
 void CharacterBase::Init()
 {
 	m_sceneScale = SceneManager::Instance().GetSceneScale();

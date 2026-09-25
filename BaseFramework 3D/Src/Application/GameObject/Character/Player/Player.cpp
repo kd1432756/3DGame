@@ -8,6 +8,7 @@
 #include "../../../System/Score/ScoreManager.h"
 
 #include "../../Object/StaticMeshObject/Item/Item.h"
+#include "../../Object/StaticMeshObject/InteractiveObject/InteractiveObject.h"
 #include "../../../System/Interact/Interact.h"
 #include "../../../System/Usable/Usable.h"
 
@@ -114,6 +115,19 @@ void Player::OnPrankSuccess(int score, const std::string& message)
 
 	floatingText->SetText(
 		message + "  + " + std::to_string(score)
+	);
+
+	floatingText->SetPosition({ 0, 100 });
+
+	SceneManager::Instance().AddObject(floatingText);
+}
+
+void Player::OnPranked(const std::shared_ptr<InteractiveObject>& object, const InteractiveAction& action)
+{
+	auto floatingText = std::make_shared<FloatingTextUI>();
+
+	floatingText->SetText(
+		action.ownerMessage.c_str()
 	);
 
 	floatingText->SetPosition({ 0, 100 });

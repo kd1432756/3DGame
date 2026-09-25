@@ -7,6 +7,7 @@
 
 class Player;
 class Neighbor;
+class CharacterBase;
 
 enum class InteractiveState
 {
@@ -29,6 +30,8 @@ struct InteractiveAction
 
 	int score = 0;
 	std::string message;
+
+	std::string ownerMessage;
 
 	std::string modelPath;
 
@@ -89,6 +92,8 @@ protected:
 
 	bool IsOwner(const std::shared_ptr<Player>& player) const;
 
+	std::shared_ptr<CharacterBase>FindOwner() const;
+
 	// アクション登録
 	void RegisterAction(
 		const InteractiveAction& action);
@@ -104,6 +109,8 @@ protected:
 
 	const InteractiveAction* FindNPCAction(
 		const ItemData& item) const;
+
+	void NotifyOwner(const InteractiveAction& action);
 
 	// 現在の状態
 	InteractiveState m_state = InteractiveState::Normal;

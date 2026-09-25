@@ -1,4 +1,7 @@
 ﻿#include "InteractiveObject.h"
+
+#include "../../../../Scene/SceneManager.h"
+
 #include "../../../Character/Player/Player.h"
 #include "../../../Character/Enemy/Neighbor/Neighbor.h"
 
@@ -71,28 +74,6 @@ InteractiveObject::FindNPCAction(
 {
 	for (const auto& action : m_actions)
 	{
-		OutputDebugStringA(
-			("NPCAction Check: " +
-				std::string("fromState=") +
-				std::to_string(
-					static_cast<int>(action.fromState)) +
-				" currentState=" +
-				std::to_string(
-					static_cast<int>(m_state)) +
-				" npcCanUse=" +
-				std::to_string(action.npcCanUse) +
-				" action=" +
-				std::to_string(
-					static_cast<int>(action.action)) +
-				" itemAction=" +
-				std::to_string(
-					static_cast<int>(item.GetAction())) +
-				" target=[" +
-				action.target +
-				"] itemTarget=[" +
-				item.GetTarget() +
-				"]\n").c_str()
-		);
 		if (action.fromState != m_state)
 		{
 			continue;
@@ -151,6 +132,8 @@ void InteractiveObject::Use(
 			action->score,
 			action->message);
 	}
+
+	NotifyOwner(*action);
 
 	// 個別特殊処理
 	OnAction(*action, player);
@@ -221,6 +204,8 @@ void InteractiveObject::NPCUse(
 			action->message);
 	}
 
+	NotifyOwner(*action);
+
 	OnAction(*action, nullptr);
 }
 
@@ -246,4 +231,50 @@ bool InteractiveObject::IsOwner(const std::shared_ptr<Player>& player) const
 	}
 
 	return m_owner == player->GetName();
+}
+
+std::shared_ptr<CharacterBase>
+InteractiveObject::FindOwner() const
+{
+	if (m_owner.empty())
+	{
+		return nullptr;
+	}
+
+	const auto& characters =
+		SceneManager::Instance().FindObjects<CharacterBase>();
+
+	for (const auto& character : characters)
+	{
+		if (!character)
+		{
+			continue;
+		}
+
+		if (character->GetName() == m_owner)
+		{
+			return character;
+		}
+	}
+
+	return nullptr;
+}
+
+void InteractiveObject::NotifyOwner(const InteractiveAction& action)
+{
+	if (action.ownerMessage.empty())
+	{
+		return;
+	}
+
+	auto owner = FindOwner();
+
+	if (!owner)
+	{
+		return;
+	}
+
+	owner->OnPranked(
+		std::dynamic_pointer_cast<InteractiveObject>(shared_from_this()),
+		action);
 }

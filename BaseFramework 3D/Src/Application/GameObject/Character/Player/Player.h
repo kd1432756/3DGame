@@ -34,6 +34,10 @@ public:
 		int score,
 		const std::string& message) override;
 
+	void OnPranked(
+		const std::shared_ptr<InteractiveObject>& object,
+		const InteractiveAction& action) override;
+
 	void SetCamera(std::shared_ptr<CameraBase> _camera) { m_camera = _camera; }
 
 	Inventory& GetInventory()

@@ -17,6 +17,7 @@ void Flower::Init()
 		1.5f,
 		200,
 		"Flower Cut!",
+		"Your Flower was Cut!",
 		"Asset/Models/Props/Flower/FlowerCut.gltf",
 		true
 		});
@@ -29,6 +30,7 @@ void Flower::Init()
 		3.0f,
 		80,
 		"Flower Repair!",
+		"",
 		"Asset/Models/Props/Flower/FlowerTape.gltf",
 		true
 		});
