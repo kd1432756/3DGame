@@ -18,6 +18,8 @@ public:
 
 	bool AddItem(const std::string& itemPath);
 
+	void ReplaceItem(int index, const std::string& itemPath);
+
 	void RemoveItem(int index);
 
 	void SelectNext();

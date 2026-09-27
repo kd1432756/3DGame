@@ -395,6 +395,76 @@ void Player::UpdateUse()
 	}
 }
 
+void Player::SwapItem(
+	const std::shared_ptr<Item>& newItem,
+	int index)
+{
+	if (!newItem)
+	{
+		return;
+	}
+
+	if (index < 0 || index >= Inventory::MaxItem)
+	{
+		return;
+	}
+
+	auto camera = m_camera.lock();
+
+	if (!camera)
+	{
+		return;
+	}
+
+	//============================================================
+	// 交換対象（今そのスロットにあるアイテム）をワールドへ落とす
+	//============================================================
+
+	const std::string oldPath = m_inventory.GetItems()[index].itemPath;
+
+	if (!oldPath.empty())
+	{
+		auto dropItem = std::make_shared<Item>();
+		dropItem->Init();
+		dropItem->LoadItem(oldPath);
+		dropItem->Drop(
+			camera->GetMatrix().Translation(),
+			camera->GetMatrix().Backward());
+		dropItem->SetScale(
+			dropItem->GetItemData().GetWorldScale() * m_sceneScale);
+
+		SceneManager::Instance().AddObject(dropItem);
+	}
+
+	//============================================================
+	// 手持ちモデルだった場合は先に破棄
+	//============================================================
+
+	if (m_handItem && m_inventory.GetSelectIndex() == index)
+	{
+		m_handItem->Destroy();
+		m_handItem.reset();
+	}
+
+	//============================================================
+	// 新アイテムをそのスロットに上書きして拾う
+	//============================================================
+
+	if (!newItem->PickupReplace(m_inventory, index))
+	{
+		return;
+	}
+
+	//============================================================
+	// 選択中スロットなら手持ちを更新
+	//============================================================
+
+	if (m_inventory.GetSelectIndex() == index)
+	{
+		EquipItem(m_inventory.GetItems()[index].itemPath);
+	}
+}
+
 void Player::DropItem()
 {
 	if (!m_handItem)

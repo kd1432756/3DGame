@@ -211,7 +211,7 @@ void Neighbor::UpdateBehavior()
 
 //============================================================
 // Utility AI
-//=================================H===========================
+//============================================================
 
 void Neighbor::UpdateUtility()
 {
@@ -238,6 +238,8 @@ void Neighbor::UpdateUtility()
 
 	m_repairUtility = EvaluateRepair();
 
+	m_urgentRepairUtility = EvaluateUrgentRepair();
+
 	//============================================================
 	// 一番Utilityの高い行動を選択
 	//============================================================
@@ -256,6 +258,7 @@ void Neighbor::UpdateUtility()
 	m_debugInfo.searchItemUtility = m_searchItemUtility;
 	m_debugInfo.prankUtility = m_prankUtility;
 	m_debugInfo.repairUtility = m_repairUtility;
+	m_debugInfo.urgentRepairUtility = m_urgentRepairUtility;
 
 	//============================================================
 	// Utility → FSM
@@ -332,6 +335,79 @@ void Neighbor::UpdateUtility()
 
 		break;
 	}
+
+	case Action::UrgentRepair:
+	{
+		auto target = m_wpSelectedUrgentRepairTarget.lock();
+
+		if (!target)
+		{
+			ChangeState(State::Task);
+
+			return;
+		}
+
+		const auto& items = m_inventory.GetItems();
+
+		bool found = false;
+
+		for (int i = 0; i < Inventory::MaxItem; ++i)
+		{
+			if (items[i].IsEmpty())
+			{
+				continue;
+			}
+
+			ItemData itemData;
+
+			if (!itemData.Load(items[i].itemPath))
+			{
+				continue;
+			}
+
+			if (itemData.GetAction() != ItemAction::Repair)
+			{
+				continue;
+			}
+
+			if (!target->CanNPCUse(itemData))
+			{
+				continue;
+			}
+
+			SelectInventory(i);
+
+			m_wpRepairTarget = target;
+
+			m_repairInventoryIndex = i;
+
+			ChangeState(State::Repair);
+
+			found = true;
+
+			break;
+		}
+
+		if (found)
+		{
+			break;
+		}
+
+		SearchItemCandidate candidate;
+
+		if (FindRepairItemForTarget(target, candidate))
+		{
+			SelectSearchItemCandidate(candidate);
+
+			ChangeState(State::SearchItem);
+		}
+		else
+		{
+			ChangeState(State::Task);
+		}
+
+		break;
+	}
 	}
 }
 
@@ -378,6 +454,16 @@ Neighbor::Action Neighbor::DecideAction()
 		bestAction = Action::Repair;
 	}
 
+	//------------------------------------------------------------
+	// Urgent Repair
+	//------------------------------------------------------------
+
+	if (m_urgentRepairUtility > highestUtility)
+	{
+		highestUtility = m_urgentRepairUtility;
+		bestAction = Action::UrgentRepair;
+	}
+
 	return bestAction;
 }
 
@@ -388,7 +474,7 @@ Neighbor::Action Neighbor::DecideAction()
 float Neighbor::EvaluateTask()
 {
 	// 常に最低限の行動としてTaskを残す
-	return 10.0f;
+	return m_taskBaseUtility;
 }
 
 //============================================================
@@ -463,6 +549,62 @@ float Neighbor::EvaluateRepair()
 	//============================================================
 
 	return m_bestRepairCandidate.utility;
+}
+
+//============================================================
+// Urgent Repair Utility
+//============================================================
+
+float Neighbor::EvaluateUrgentRepair()
+{
+	CleanupUrgentRepairTargets();
+
+	OutputDebugStringA(
+		("EvaluateUrgentRepair: queue size after cleanup = " +
+			std::to_string(m_urgentRepairTargets.size()) + "\n").c_str()
+	);
+
+	m_debugInfo.urgentRepairQueueSize =
+		static_cast<int>(m_urgentRepairTargets.size());
+
+	if (m_urgentRepairTargets.empty())
+	{
+		m_wpSelectedUrgentRepairTarget.reset();
+
+		m_debugInfo.bestUrgentRepairTarget = "None";
+
+		return 0.0f;
+	}
+
+	auto best = SelectBestUrgentRepairTarget();
+
+	if (!best)
+	{
+		OutputDebugStringA("  -> SelectBestUrgentRepairTarget returned null\n");
+		m_wpSelectedUrgentRepairTarget.reset();
+
+		m_debugInfo.bestUrgentRepairTarget = "None";
+
+		return 0.0f;
+	}
+	OutputDebugStringA(
+		("  m_urgentRepairUtility (member) = " +
+			std::to_string(m_urgentRepairUtility) + "\n").c_str()
+	);
+
+	m_wpSelectedUrgentRepairTarget = best;
+
+	OutputDebugStringA(
+		("  -> selected, utility = " +
+			std::to_string(m_urgentRepairUtility) + "\n").c_str()
+	);
+	m_debugInfo.bestUrgentRepairTarget = best->GetName();
+
+	OutputDebugStringA(
+		("  -> selected, utility = " +
+			std::to_string(m_urgentRepairUtility) + "\n").c_str()
+	);
+	return m_urgentRepairBaseUtility;
 }
 
 //============================================================
@@ -1140,44 +1282,86 @@ void Neighbor::PickupSearchItem()
 	}
 
 	//============================================================
-	// ItemをInventoryに追加
+	// 拾う（空きがあれば通常、満杯なら緊急修復時のみ交換）
 	//============================================================
 
-	if (!item->Pickup(m_inventory))
+	bool pickedUp = false;
+
+	int pickedIndex = -1;
+
+	if (m_inventory.HasEmptySlot())
 	{
-		m_wpSearchItem.reset();
+		pickedUp = item->Pickup(m_inventory);
+	}
+	else if (m_wpSelectedUrgentRepairTarget.lock())
+	{
+		//========================================================
+		// 交換先スロットを決定（選択中スロット優先、無ければ0番）
+		//========================================================
 
-		ChangeState(State::Task);
+		int swapIndex = m_inventory.GetSelectIndex();
 
-		return;
+		if (swapIndex < 0)
+		{
+			swapIndex = 0;
+		}
+
+		//========================================================
+		// 交換されるアイテムをワールドへ落とす
+		//========================================================
+
+		const std::string oldPath =
+			m_inventory.GetItems()[swapIndex].itemPath;
+
+		if (!oldPath.empty())
+		{
+			auto dropItem = std::make_shared<Item>();
+			dropItem->Init();
+			dropItem->LoadItem(oldPath);
+
+			dropItem->Drop(m_pos, GetMatrix().Forward());
+
+			dropItem->SetScale(
+				dropItem->GetItemData().GetWorldScale() * m_sceneScale);
+
+			SceneManager::Instance().AddObject(dropItem);
+		}
+
+		pickedUp = item->PickupReplace(m_inventory, swapIndex);
+
+		pickedIndex = swapIndex;
 	}
 
-	//============================================================
-	// アイテム取得成功
-	//============================================================
+	if (!pickedUp)
+	{
+		m_wpSearchItem.reset();
+		ChangeState(State::Task);
+		return;
+	}
 
 	m_wpSearchItem.reset();
 
 	//============================================================
-	// 取得したアイテムを選択
+	// 拾った/交換したアイテムを選択
 	//============================================================
 
-	const auto& items = m_inventory.GetItems();
-
-	for (int i = 0;
-		i < Inventory::MaxItem;
-		++i)
+	if (pickedIndex >= 0)
 	{
-		if (items[i].itemPath == itemData.GetItemPath())
+		SelectInventory(pickedIndex);
+	}
+	else
+	{
+		const auto& items = m_inventory.GetItems();
+
+		for (int i = 0; i < Inventory::MaxItem; ++i)
 		{
-			SelectInventory(i);
-			break;
+			if (items[i].itemPath == itemData.GetItemPath())
+			{
+				SelectInventory(i);
+				break;
+			}
 		}
 	}
-
-	//============================================================
-	// 次の行動を決める
-	//============================================================
 
 	ChangeState(State::Task);
 }
@@ -1839,12 +2023,31 @@ void Neighbor::UpdateRepair()
 
 			//====================================================
 			// 修復実行
-			//
-			// RepairもInteractiveObjectから見ればUse
 			//====================================================
 
 			target->NPCUse(itemData, std::dynamic_pointer_cast<Neighbor>(
 				shared_from_this()));
+
+			//====================================================
+			// 緊急修復キューから該当対象を除去
+			//====================================================
+
+			m_urgentRepairTargets.erase(
+				std::remove_if(
+					m_urgentRepairTargets.begin(),
+					m_urgentRepairTargets.end(),
+					[&target](const std::weak_ptr<InteractiveObject>& wp)
+					{
+						return wp.lock() == target;
+					}
+				),
+				m_urgentRepairTargets.end()
+			);
+
+			if (m_wpSelectedUrgentRepairTarget.lock() == target)
+			{
+				m_wpSelectedUrgentRepairTarget.reset();
+			}
 
 			//====================================================
 			// 修復終了
@@ -2194,6 +2397,11 @@ bool Neighbor::FindBestRepairCandidate(
 		}
 	}
 
+	m_debugInfo.bestRepairTarget =
+		outCandidate.target
+		? outCandidate.target->GetName()
+		: "None";
+
 	return outCandidate.target != nullptr;
 }
 
@@ -2431,6 +2639,7 @@ void Neighbor::OnArrested(const std::shared_ptr<Police>& police)
 	m_wpSearchItem.reset();
 	m_wpPrankTarget.reset();
 	m_wpRepairTarget.reset();
+	m_wpSelectedUrgentRepairTarget.reset();
 
 	m_prankInventoryIndex = -1;
 	m_repairInventoryIndex = -1;
@@ -2549,6 +2758,203 @@ void Neighbor::ConfiscatePrankItems()
 	}
 }
 
+void Neighbor::OnPranked(
+	const std::shared_ptr<InteractiveObject>& target,
+	const InteractiveAction& action)
+{
+	OutputDebugStringA(("OnPranked called: " + GetName() + "\n").c_str());
+
+	if (!target)
+	{
+		OutputDebugStringA("  -> target is null\n");
+		return;
+	}
+
+	OutputDebugStringA(
+		("  target owner = [" + target->GetOwner() +
+			"], GetName() = [" + GetName() + "]\n").c_str()
+	);
+	if (target->GetOwner() != GetName())
+	{
+		OutputDebugStringA("  -> owner mismatch, ignored\n");
+		return;
+	}
+
+	for (const auto& wp : m_urgentRepairTargets)
+	{
+		if (wp.lock() == target)
+		{
+			OutputDebugStringA("  -> already in queue\n");
+			return;
+		}
+	}
+
+	m_urgentRepairTargets.push_back(target);
+
+	OutputDebugStringA(
+		("  -> pushed. queue size = " +
+			std::to_string(m_urgentRepairTargets.size()) + "\n").c_str()
+	);
+}
+
+//============================================================
+// Cleanup Urgent Repair Targets
+//============================================================
+
+void Neighbor::CleanupUrgentRepairTargets()
+{
+	m_urgentRepairTargets.erase(
+		std::remove_if(
+			m_urgentRepairTargets.begin(),
+			m_urgentRepairTargets.end(),
+			[this](const std::weak_ptr<InteractiveObject>& wp)
+			{
+				auto sp = wp.lock();
+
+				if (!sp)
+				{
+					return true;
+				}
+
+				if (sp->GetOwner() != GetName())
+				{
+					return true;
+				}
+
+				return false;
+			}
+		),
+		m_urgentRepairTargets.end()
+	);
+}
+
+bool Neighbor::FindRepairItemForTarget(
+	const std::shared_ptr<InteractiveObject>& target,
+	SearchItemCandidate& outCandidate)
+{
+	outCandidate = SearchItemCandidate();
+
+	if (!target)
+	{
+		return false;
+	}
+
+	auto& objList = SceneManager::Instance().GetObjList();
+
+	const float searchRadius = m_urgentRepairSearchRadius * m_sceneScale;
+
+	const float searchDistanceSq = searchRadius * searchRadius;
+
+	float bestUtility = 0.0f;
+
+	for (auto& obj : objList)
+	{
+		if (!obj)
+		{
+			continue;
+		}
+
+		auto item = std::dynamic_pointer_cast<Item>(obj);
+
+		if (!item)
+		{
+			continue;
+		}
+
+		if (item->GetMode() == ItemMode::InInventory)
+		{
+			continue;
+		}
+
+		const ItemData& itemData = item->GetItemData();
+
+		if (itemData.GetAction() != ItemAction::Repair)
+		{
+			continue;
+		}
+
+		if (!target->CanNPCUse(itemData))
+		{
+			continue;
+		}
+
+		if (HasInventoryItem(itemData.GetItemPath()))
+		{
+			continue;
+		}
+
+		Math::Vector3 diff = item->GetPos() - m_pos;
+
+		diff.y = 0.0f;
+
+		if (diff.LengthSquared() > searchDistanceSq)
+		{
+			continue;
+		}
+
+		float distance = diff.Length();
+
+		float distanceScore =
+			1.0f -
+			std::clamp(
+				distance / searchRadius,
+				0.0f,
+				1.0f
+			);
+
+		float utility = 20.0f + distanceScore * 20.0f;
+
+		if (utility <= bestUtility)
+		{
+			continue;
+		}
+
+		bestUtility = utility;
+
+		outCandidate.item = item;
+
+		outCandidate.utility = utility;
+	}
+
+	return outCandidate.item != nullptr;
+}
+
+//============================================================
+// Select Best Urgent Repair Target
+//============================================================
+
+std::shared_ptr<InteractiveObject> Neighbor::SelectBestUrgentRepairTarget()
+{
+	std::shared_ptr<InteractiveObject> best;
+
+	float bestDistanceSq = FLT_MAX;
+
+	for (const auto& wp : m_urgentRepairTargets)
+	{
+		auto sp = wp.lock();
+
+		if (!sp)
+		{
+			continue;
+		}
+
+		Math::Vector3 diff = sp->GetPos() - m_pos;
+
+		diff.y = 0.0f;
+
+		float distSq = diff.LengthSquared();
+
+		if (distSq < bestDistanceSq)
+		{
+			bestDistanceSq = distSq;
+
+			best = sp;
+		}
+	}
+
+	return best;
+}
+
 //============================================================
 // State
 //============================================================
@@ -2650,10 +3056,11 @@ void Neighbor::DrawDebugUI()
 
 			ImGui::Separator();
 			ImGui::Text("Utility");
-			ImGui::Text(" Task       : %.1f", m_debugInfo.taskUtility);
-			ImGui::Text(" SearchItem : %.1f", m_debugInfo.searchItemUtility);
-			ImGui::Text(" Prank      : %.1f", m_debugInfo.prankUtility);
-			ImGui::Text(" Repair     : %.1f", m_debugInfo.repairUtility);
+			ImGui::Text(" Task         : %.1f", m_debugInfo.taskUtility);
+			ImGui::Text(" SearchItem   : %.1f", m_debugInfo.searchItemUtility);
+			ImGui::Text(" Prank        : %.1f", m_debugInfo.prankUtility);
+			ImGui::Text(" Repair       : %.1f", m_debugInfo.repairUtility);
+			ImGui::Text(" UrgentRepair : %.1f", m_debugInfo.urgentRepairUtility);
 
 			ImGui::Separator();
 			ImGui::Text("Task Destination  : %s", m_debugInfo.taskDestinationName.c_str());
@@ -2728,6 +3135,12 @@ void Neighbor::DrawDebugUI()
 			ImGui::Separator();
 			ImGui::Text("Best Prank Target : %s", m_debugInfo.bestPrankTarget.c_str());
 			ImGui::Text("Best Repair Target: %s", m_debugInfo.bestRepairTarget.c_str());
+
+			ImGui::Separator();
+			ImGui::Text("Urgent Repair Queue : %d", m_debugInfo.urgentRepairQueueSize);
+			ImGui::Text("Selected Target     : %s", m_debugInfo.bestUrgentRepairTarget.c_str());
+
+			ImGui::Separator();
 
 			if (ImGui::TreeNodeEx("Prank Candidates",
 				ImGuiTreeNodeFlags_DefaultOpen))

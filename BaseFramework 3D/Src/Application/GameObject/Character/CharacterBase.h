@@ -50,6 +50,9 @@ public:
 	bool IsArrested() const { return m_isArrested; }
 
 protected:
+
+	Math::Vector3 GetForward() const;
+
 	void CheckStep(
 		const Math::Vector3& moveDir);
 

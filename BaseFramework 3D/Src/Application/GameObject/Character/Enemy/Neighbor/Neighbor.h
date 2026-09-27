@@ -82,7 +82,8 @@ public:
 		Task,
 		SearchItem,
 		Prank,
-		Repair
+		Repair,
+		UrgentRepair
 	};
 
 	inline const char* ActionToString(Neighbor::Action action)
@@ -93,6 +94,7 @@ public:
 		case Neighbor::Action::SearchItem: return "SearchItem";
 		case Neighbor::Action::Prank:      return "Prank";
 		case Neighbor::Action::Repair:     return "Repair";
+		case Neighbor::Action::UrgentRepair: return "UrgentRepair";
 		default:                           return "Unknown";
 		}
 	}
@@ -198,6 +200,15 @@ public:
 
 	bool HasRepairItem() const;
 
+	//============================================================
+	// On Pranked
+	//============================================================
+
+	void OnPranked(
+		const std::shared_ptr<InteractiveObject>& target,
+		const InteractiveAction& action) override;
+
+
 protected:
 
 	//============================================================
@@ -296,6 +307,20 @@ private:
 
 	void SelectRepairCandidate(
 		const RepairCandidate& candidate);
+
+	//============================================================
+	// Urgent Repair
+	//============================================================
+
+	bool FindRepairItemForTarget(
+		const std::shared_ptr<InteractiveObject>& target,
+		SearchItemCandidate& outCandidate);
+
+	float EvaluateUrgentRepair();
+
+	void CleanupUrgentRepairTargets();
+
+	std::shared_ptr<InteractiveObject> SelectBestUrgentRepairTarget();
 
 	//============================================================
 	// Movement
@@ -430,6 +455,8 @@ private:
 
 	float m_taskArriveDistance = 2.0f;
 
+	float m_taskBaseUtility = 10.0f;
+
 	//============================================================
 	// Prank
 	//============================================================
@@ -462,6 +489,22 @@ private:
 
 	float m_repairSearchRadius = 8.0f;
 
+	private:
+
+	//============================================================
+	// Urgent Repair
+	//============================================================
+		
+	std::vector<std::weak_ptr<InteractiveObject>> m_urgentRepairTargets;
+	
+	std::weak_ptr<InteractiveObject> m_wpSelectedUrgentRepairTarget;
+
+	float m_urgentRepairUtility = 70.0f;
+
+	float m_urgentRepairBaseUtility = 70.0f;
+
+	float m_urgentRepairSearchRadius = 30.0f;
+
 private:
 
 	// デバッグ用スナップショット
@@ -472,6 +515,7 @@ private:
 		float searchItemUtility = 0.0f;
 		float prankUtility = 0.0f;
 		float repairUtility = 0.0f;
+		float urgentRepairUtility = 0.0f;
 
 		// 現在のState
 		std::string stateName = "None";
@@ -507,6 +551,10 @@ private:
 		// 選ばれた結果
 		std::string bestPrankTarget = "None";
 		std::string bestRepairTarget = "None";
+
+		// Urgent Repair
+		std::string bestUrgentRepairTarget = "None";
+		int urgentRepairQueueSize = 0;
 	};
 
 	DebugInfo m_debugInfo;

@@ -80,7 +80,35 @@ void Item::Interact(std::shared_ptr<Player> player)
 		return;
 	}
 
-	Pickup(player->GetInventory());
+	Inventory& inventory = player->GetInventory();
+
+	//============================================================
+	// 空きスロットがあれば通常通り拾う
+	//============================================================
+
+	if (inventory.HasEmptySlot())
+	{
+		Pickup(inventory);
+
+		return;
+	}
+
+	//============================================================
+	// 満杯 → 選択中スロットと交換
+	//============================================================
+
+	int selectIndex = inventory.GetSelectIndex();
+
+	if (selectIndex < 0)
+	{
+		// 何も選択していない場合は交換不可（拾えない）
+		return;
+	}
+
+	player->SwapItem(
+		std::dynamic_pointer_cast<Item>(shared_from_this()),
+		selectIndex
+	);
 }
 
 bool Item::Pickup(Inventory& inventory)
@@ -131,6 +159,42 @@ bool Item::Pickup(Inventory& inventory)
 	//============================================================
 	// Itemをワールドから削除
 	//============================================================
+
+	Destroy();
+
+	return true;
+}
+
+bool Item::PickupReplace(Inventory& inventory, int index)
+{
+	if (m_mode == ItemMode::InInventory)
+	{
+		return false;
+	}
+
+	const std::string& itemPath = GetItemPath();
+
+	if (itemPath.empty())
+	{
+		return false;
+	}
+
+	if (index < 0 || index >= Inventory::MaxItem)
+	{
+		return false;
+	}
+
+	inventory.ReplaceItem(index, itemPath);
+
+	if (m_mode == ItemMode::Spawned)
+	{
+		auto spawner = m_spawner.lock();
+
+		if (spawner)
+		{
+			spawner->StartRespawn();
+		}
+	}
 
 	Destroy();
 

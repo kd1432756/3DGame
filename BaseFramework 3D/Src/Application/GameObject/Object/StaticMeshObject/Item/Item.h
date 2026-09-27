@@ -91,6 +91,8 @@ public:
 
 	bool Pickup(Inventory& inventory);
 
+	bool PickupReplace(Inventory& inventory, int index);
+
 	void Drop(
 		const Math::Vector3& pos,
 		const Math::Vector3& dir);

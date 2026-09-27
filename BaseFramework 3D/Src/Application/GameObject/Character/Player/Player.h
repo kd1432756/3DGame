@@ -47,6 +47,10 @@ public:
 
 	void EquipItem(const std::string& itemPath);
 
+	void SwapItem(
+		const std::shared_ptr<Item>& newItem,
+		int index);
+
 	void SelectInventory(int index);
 
 	bool CanHighlight();
@@ -99,7 +103,6 @@ private:
 	void DropItem();
 
 	void UpdateHandItem();
-
 
 	void CheckBush();
 

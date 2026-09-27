@@ -15,6 +15,16 @@ bool Inventory::AddItem(const std::string& itemPath)
 	return false;
 }
 
+void Inventory::ReplaceItem(int index, const std::string& itemPath)
+{
+	if (index < 0 || index >= MaxItem)
+	{
+		return;
+	}
+
+	m_items[index].itemPath = itemPath;
+}
+
 void Inventory::RemoveItem(int index)
 {
 	if (index < 0 || index >= MaxItem)
