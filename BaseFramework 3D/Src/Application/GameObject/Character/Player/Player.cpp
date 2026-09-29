@@ -8,11 +8,21 @@
 #include "../../../System/Score/ScoreManager.h"
 
 #include "../../Object/StaticMeshObject/Item/Item.h"
+#include "../../Object/StaticMeshObject/Item/ItemManager.h"
+
 #include "../../Object/StaticMeshObject/InteractiveObject/InteractiveObject.h"
 #include "../../../System/Interact/Interact.h"
 #include "../../../System/Usable/Usable.h"
 
+#include "../../../System/Skillcheck/SkillCheckFactory.h"
+
+#include "../../../System/DayCycle/DayCycle.h"
+
 #include "../../UI/FloatingTextUI/FloatingTextUI.h"
+#include "../../UI/SlideTextUI/SlideTextUI.h"
+
+// いたずら、修復時にアクションを追加（スキルチェックかなにか）。
+// それが終わってからカウントダウンを開始する。
 
 void Player::Init()
 {
@@ -107,6 +117,14 @@ void Player::DrawLit()
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
 }
 
+void Player::DrawSprite()
+{
+	if (m_usePhase == UsePhase::SkillCheck && m_skillCheck)
+	{
+		m_skillCheck->Draw();
+	}
+}
+
 void Player::OnPrankSuccess(int score, const std::string& message)
 {
 	AddScore(score);
@@ -124,15 +142,12 @@ void Player::OnPrankSuccess(int score, const std::string& message)
 
 void Player::OnPranked(const std::shared_ptr<InteractiveObject>& object, const InteractiveAction& action)
 {
-	auto floatingText = std::make_shared<FloatingTextUI>();
+	auto slideText = std::make_shared<SlideTextUI>();
 
-	floatingText->SetText(
-		action.ownerMessage.c_str()
-	);
+	slideText->SetText(action.ownerMessage);
+	slideText->SetPosition({ -500, 100 });
 
-	floatingText->SetPosition({ 0, 100 });
-
-	SceneManager::Instance().AddObject(floatingText);
+	SceneManager::Instance().AddObject(slideText);
 }
 
 void Player::EquipItem(const std::string& itemPath)
@@ -155,6 +170,17 @@ void Player::EquipItem(const std::string& itemPath)
 	m_handItem->LoadItem(itemPath);
 	m_handItem->SetScale(m_handItem->GetItemData().GetHandScale() * m_sceneScale);
 	SceneManager::Instance().AddObject(m_handItem);
+}
+
+void Player::OnItemsConfiscated()
+{
+	// 手持ちが没収されて選択が外れていたら、手持ちモデルを消す
+	if (m_handItem && !m_inventory.GetCurrentItem())
+	{
+		m_handItem->Destroy();
+		m_handItem.reset();
+		m_inventory.SelectIndex(-1);
+	}
 }
 
 void Player::SelectInventory(int index)
@@ -368,9 +394,23 @@ void Player::StartUse()
 	m_isUsing = true;
 	m_useObject = usable;
 	m_useTime = usable->GetUseTime(std::dynamic_pointer_cast<Player>(shared_from_this()));
-	m_useTimer = m_useTime;
+	m_useTimer = 0.0f;
+	m_useTotal = 0.0f;
 
-	//usable->Use(std::dynamic_pointer_cast<Player>(shared_from_this()));
+	// スキルチェック開始(種類は抽選)
+	m_skillResult = SkillResult::None;
+
+	m_skillCheck = SkillCheckFactory::Create(
+		IsUsingRepairItem(),
+		m_lastSkillType,
+		DayCycle::Instance().GetTimeProgress());
+
+	m_lastSkillType = static_cast<int>(m_skillCheck->GetType());
+
+	// 難易度: 修復は易しめ、いたずらは標準
+	m_skillCheck->Start(IsUsingRepairItem() ? 0.8f : 1.0f);
+
+	m_usePhase = UsePhase::SkillCheck;
 }
 
 void Player::UpdateUse()
@@ -380,19 +420,71 @@ void Player::UpdateUse()
 		return;
 	}
 
-	m_useTimer -= 1 / 60.0f;
+	auto self = std::dynamic_pointer_cast<Player>(shared_from_this());
 
-	if (m_useTimer <= 0)
+	// 対象が消えた / 他キャラに先に修復された等で使用不能になったら中断
+	auto obj = m_useObject.lock();
+
+	if (!obj || !obj->CanUse(self))
 	{
-		auto obj = m_useObject.lock();
-
-		if (obj)
-		{
-			obj->Use(std::dynamic_pointer_cast<Player>(shared_from_this()));
-		}
-
-		m_isUsing = false;
+		CancelUse();
+		return;
 	}
+
+	// キャンセル操作(右クリック)。警察が来たら逃げる、の駆け引き用
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x0001)
+	{
+		CancelUse();
+		return;
+	}
+
+	switch (m_usePhase)
+	{
+	case UsePhase::SkillCheck:
+	{
+		m_skillCheck->Update();
+
+		if (m_skillCheck->IsFinished())
+		{
+			m_skillResult = m_skillCheck->GetResult();
+			m_skillCheck.reset();
+
+			// 結果でカウント時間を補正(Perfect短縮 / Miss延長)
+			m_useTotal = m_useTime * TimeRate(m_skillResult);
+			m_useTimer = m_useTotal;
+			m_usePhase = UsePhase::Counting;
+		}
+		break;
+	}
+
+	case UsePhase::Counting:
+	{
+		m_useTimer -= 1 / 60.0f;
+
+		if (m_useTimer <= 0)
+		{
+			// Use() の中で GetSkillResult() を見てスコア倍率などを変える
+			obj->Use(self);
+
+			CancelUse();
+		}
+		break;
+	}
+
+	default:
+		CancelUse();
+		break;
+	}
+}
+
+void Player::CancelUse()
+{
+	m_isUsing = false;
+	m_usePhase = UsePhase::None;
+	m_useTimer = 0.0f;
+	m_useTotal = 0.0f;
+	m_useObject.reset();
+	m_skillCheck.reset();
 }
 
 void Player::SwapItem(
@@ -424,16 +516,10 @@ void Player::SwapItem(
 
 	if (!oldPath.empty())
 	{
-		auto dropItem = std::make_shared<Item>();
-		dropItem->Init();
-		dropItem->LoadItem(oldPath);
-		dropItem->Drop(
-			camera->GetMatrix().Translation(),
-			camera->GetMatrix().Backward());
-		dropItem->SetScale(
-			dropItem->GetItemData().GetWorldScale() * m_sceneScale);
+		Math::Vector3 pos = camera->GetMatrix().Translation();
+		Math::Vector3 dir = camera->GetMatrix().Backward();
 
-		SceneManager::Instance().AddObject(dropItem);
+		ItemManager::Instance().SpawnDropped(oldPath, pos, dir);
 	}
 
 	//============================================================
@@ -450,7 +536,7 @@ void Player::SwapItem(
 	// 新アイテムをそのスロットに上書きして拾う
 	//============================================================
 
-	if (!newItem->PickupReplace(m_inventory, index))
+	if (!newItem->Pickup(m_inventory, index))
 	{
 		return;
 	}
@@ -474,15 +560,11 @@ void Player::DropItem()
 
 	auto camera = m_camera.lock();
 
-	auto dropItem = std::make_shared<Item>();
-	dropItem->Init();
-	dropItem->LoadItem(m_handItem->GetItemPath());
-	dropItem->Drop(
-		camera->GetMatrix().Translation(),
-		camera->GetMatrix().Backward());
-	dropItem->SetScale(m_handItem->GetItemData().GetWorldScale() * m_sceneScale);
+	std::string path = m_handItem->GetItemPath();
+	Math::Vector3 pos = camera->GetMatrix().Translation();
+	Math::Vector3 dir = camera->GetMatrix().Backward();
 
-	SceneManager::Instance().AddObject(dropItem);
+	ItemManager::Instance().SpawnDropped(path, pos, dir);
 
 	m_inventory.RemoveItem(m_inventory.GetSelectIndex());
 
@@ -592,10 +674,8 @@ void Player::OnArrested(const std::shared_ptr<Police>& police)
 {
 	CharacterBase::OnArrested(police);
 
-	// いたずら/インタラクト中の状態をキャンセル
-	m_isUsing = false;
-	m_useTimer = 0.0f;
-	m_useObject.reset();
+	// いたずら/インタラクト/スキルチェック中の状態をキャンセル
+	CancelUse();
 
 	// フォーカス解除(ハイライトが残らないように)
 	auto oldObj = m_focusObject.lock();
@@ -613,65 +693,12 @@ void Player::OnArrested(const std::shared_ptr<Police>& police)
 	m_focusObject.reset();
 }
 
-bool Player::HasPrankItem() const
+bool Player::IsUsingRepairItem() const
 {
-	for (const auto& item : m_inventory.GetItems())
+	if (!m_handItem)
 	{
-		if (item.IsEmpty())
-		{
-			continue;
-		}
-
-		ItemData itemData;
-
-		if (!itemData.Load(item.itemPath))
-		{
-			continue;
-		}
-
-		// Repair以外(いたずら用)を1つでも持っていたら該当
-		if (itemData.GetAction() != ItemAction::Repair &&
-			itemData.GetAction() != ItemAction::None)
-		{
-			return true;
-		}
+		return false;
 	}
 
-	return false;
-}
-
-void Player::ConfiscatePrankItems()
-{
-	const auto& items = m_inventory.GetItems();
-
-	for (int i = 0; i < Inventory::MaxItem; ++i)
-	{
-		if (items[i].IsEmpty())
-		{
-			continue;
-		}
-
-		ItemData itemData;
-		itemData.Load(items[i].itemPath);
-
-		// いたずらアイテムのみ没収(Repairアイテムは残す)
-		if (itemData.GetAction() != ItemAction::Repair &&
-			itemData.GetAction() != ItemAction::None)
-		{
-			m_inventory.RemoveItem(i);
-		}
-	}
-
-	if (m_handItem)
-	{
-		const ItemData& handData = m_handItem->GetItemData();
-
-		if (handData.GetAction() != ItemAction::Repair &&
-			handData.GetAction() != ItemAction::None)
-		{
-			m_handItem->Destroy();
-			m_handItem.reset();
-			m_inventory.SelectIndex(-1);
-		}
-	}
+	return m_handItem->GetItemData().GetAction() == ItemAction::Repair;
 }

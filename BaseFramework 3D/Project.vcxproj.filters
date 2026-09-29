@@ -256,6 +256,27 @@
     <Filter Include="Src\Application\System\Location">
       <UniqueIdentifier>{c05fe1a5-9745-4512-8405-4176034abd63}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\UI\SlideTextUI">
+      <UniqueIdentifier>{32bb2234-12ac-4f78-b318-ff139dc52ab9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\SkillCheck">
+      <UniqueIdentifier>{cd9919fd-9c9b-41ca-adf0-72f1f8b57fe8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\SkillCheck\GaugeStop">
+      <UniqueIdentifier>{61f200fc-f9fc-4465-acf7-25081145c4b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\SkillCheck\Mash">
+      <UniqueIdentifier>{b21add33-1b65-4f89-9fb2-12d8b4a2e147}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\SkillCheck\Reaction">
+      <UniqueIdentifier>{317df904-3729-45c3-acba-713512e405d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\SkillCheck\Arrow">
+      <UniqueIdentifier>{561cefe4-f553-4094-95e2-eea2d97692be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\SkillCheck\HoldRelease">
+      <UniqueIdentifier>{feb9fde2-410c-43c8-9735-6916b2996def}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -663,6 +684,33 @@
     <ClInclude Include="Src\Application\Editor\Windows\LocationEditorWindow.h">
       <Filter>Src\Application\Editor\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\SlideTextUI\SlideTextUI.h">
+      <Filter>Src\Application\GameObject\UI\SlideTextUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\SkillCheck\SkillCheckBase.h">
+      <Filter>Src\Application\System\SkillCheck</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\SkillCheck\GaugeStop\SkillCheckGaugeStop.h">
+      <Filter>Src\Application\System\SkillCheck\GaugeStop</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\SkillCheck\SkillCheckFactory.h">
+      <Filter>Src\Application\System\SkillCheck</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\SkillCheck\Mash\SkillCheckMash.h">
+      <Filter>Src\Application\System\SkillCheck\Mash</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\SkillCheck\Reaction\SkillCheckReaction.h">
+      <Filter>Src\Application\System\SkillCheck\Reaction</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\SkillCheck\Arrow\SkillCheckArrow.h">
+      <Filter>Src\Application\System\SkillCheck\Arrow</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\SkillCheck\HoldRelease\SkillCheckHoldRelease.h">
+      <Filter>Src\Application\System\SkillCheck\HoldRelease</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\Item\ItemManager.h">
+      <Filter>Src\Application\GameObject\Object\StaticMeshObject\Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1028,6 +1076,33 @@
     </ClCompile>
     <ClCompile Include="Src\Application\Editor\Windows\LocationEditorWindow.cpp">
       <Filter>Src\Application\Editor\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\SlideTextUI\SlideTextUI.cpp">
+      <Filter>Src\Application\GameObject\UI\SlideTextUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\SkillCheck\SkillCheckBase.cpp">
+      <Filter>Src\Application\System\SkillCheck</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\SkillCheck\GaugeStop\SkillCheckGaugeStop.cpp">
+      <Filter>Src\Application\System\SkillCheck\GaugeStop</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\SkillCheck\SkillCheckFactory.cpp">
+      <Filter>Src\Application\System\SkillCheck</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\SkillCheck\Mash\SkillCheckMash.cpp">
+      <Filter>Src\Application\System\SkillCheck\Mash</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\SkillCheck\Reaction\SkillCheckReaction.cpp">
+      <Filter>Src\Application\System\SkillCheck\Reaction</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\SkillCheck\Arrow\SkillCheckArrow.cpp">
+      <Filter>Src\Application\System\SkillCheck\Arrow</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\SkillCheck\HoldRelease\SkillCheckHoldRelease.cpp">
+      <Filter>Src\Application\System\SkillCheck\HoldRelease</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\Item\ItemManager.cpp">
+      <Filter>Src\Application\GameObject\Object\StaticMeshObject\Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

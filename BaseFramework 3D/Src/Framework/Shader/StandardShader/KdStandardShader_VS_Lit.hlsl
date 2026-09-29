@@ -14,6 +14,13 @@ VSOutput main(
 	float4 skinWeight : SKINWEIGHT	// ボーンの影響度(そのボーンにどれだけ影響しているか？のデータ(最大４つぶん))
 )
 {
+	// 追加 アウトライン描画チェック(アウトライン対応)
+	if (g_EnableOutLineDraw)
+	{
+		// 頂点座標を法線方向に少しずらす
+		pos.xyz = pos.xyz + normal * 0.03f;
+	}
+	
 	// スキニング---------------->
 	if (g_IsSkinMeshObj)
 	{

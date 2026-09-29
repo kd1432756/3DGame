@@ -2,16 +2,26 @@
 
 #include "../CharacterBase.h"
 
-#include "../../../System/Inventory/Inventory.h"
-
 class CameraBase;
 class Item;
 class Interactable;
 class Usable;
 
+#include "../../../System/Skillcheck/SkillCheckBase.h"
+
+class SkillCheckFactory;
+
 class Player : public CharacterBase
 {
 public:
+
+	enum class UsePhase
+	{
+		None, 
+		SkillCheck, 
+		Counting 
+	};
+
 	Player() {}
 	~Player() {}
 
@@ -19,6 +29,7 @@ public:
 	void Update() override;
 	void PostUpdate() override;
 	void DrawLit() override;
+	void DrawSprite() override;
 
 	const char* GetTypeName() const override
 	{
@@ -40,18 +51,11 @@ public:
 
 	void SetCamera(std::shared_ptr<CameraBase> _camera) { m_camera = _camera; }
 
-	Inventory& GetInventory()
-	{
-		return m_inventory;
-	}
-
 	void EquipItem(const std::string& itemPath);
 
 	void SwapItem(
 		const std::shared_ptr<Item>& newItem,
 		int index);
-
-	void SelectInventory(int index);
 
 	bool CanHighlight();
 
@@ -65,15 +69,37 @@ public:
 		return m_isUsing;
 	}
 
+	bool IsCounting() const { return m_usePhase == UsePhase::Counting; }
+
 	float GetUseProgress() const
 	{
-		if (!m_isUsing)
+		if (m_usePhase != UsePhase::Counting || m_useTotal <= 0.0f)
 		{
 			return 0.0f;
 		}
 
-		return m_useTimer / m_useTime;
+		return std::clamp(m_useTimer / m_useTotal, 0.0f, 1.0f);
 	}
+
+	void CancelUse();
+
+	float TimeRate(SkillResult result)
+	{
+		switch (result)
+		{
+		case SkillResult::Perfect: return 0.5f;	// 半分に短縮
+		case SkillResult::Good:    return 1.0f;	// 通常
+		case SkillResult::Miss:    return 1.5f;	// 延長(無防備な時間が増える)
+		default:                   return 1.0f;
+		}
+	}
+	
+	SkillResult GetSkillResult() const
+	{
+		return m_skillResult;
+	}
+
+	bool IsUsingRepairItem() const;
 
 	std::shared_ptr<KdGameObject> GetFocusObject() const
 	{
@@ -87,9 +113,6 @@ public:
 
 	void OnArrested(const std::shared_ptr<Police>& police) override;
 
-	bool HasPrankItem() const override;
-	void ConfiscatePrankItems() override;
-
 private:
 
 	void Move();
@@ -100,6 +123,8 @@ private:
 	void StartUse();
 	void UpdateUse();
 
+	void OnItemsConfiscated() override;
+	void SelectInventory(int index) override;
 	void DropItem();
 
 	void UpdateHandItem();
@@ -112,15 +137,20 @@ private:
 
 	std::weak_ptr<KdGameObject> m_focusObject;
 
-	Inventory m_inventory;
 	std::shared_ptr<Item> m_handItem;
 
 	bool m_isUsing = false;
 
 	float m_useTimer = 0.0f;
 	float m_useTime = 0.0f;
+	float m_useTotal = 0.0f;	// 補正後のカウント全体時間
 
 	std::weak_ptr<Usable> m_useObject;
 
 	bool m_isInBush = false;
+
+	UsePhase m_usePhase = UsePhase::None;
+	std::unique_ptr<SkillCheckBase> m_skillCheck;
+	SkillResult m_skillResult = SkillResult::None;
+	int m_lastSkillType = -1;	// 直前の種類(連続同種を避ける)
 };

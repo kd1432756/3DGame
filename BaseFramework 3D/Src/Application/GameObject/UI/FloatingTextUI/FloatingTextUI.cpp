@@ -23,6 +23,7 @@ void FloatingTextUI::DrawSprite()
 		m_pos,
 		&kYellowColor,
 		Math::Vector2{ 0.5f, 0.5f },
+		0.0f,
 		FontID::Future32,
 		m_text.c_str()
 	);

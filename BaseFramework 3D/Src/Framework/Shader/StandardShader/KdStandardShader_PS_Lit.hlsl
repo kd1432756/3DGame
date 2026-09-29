@@ -31,6 +31,13 @@ float BlinnPhong(float3 lightDir, float3 vCam, float3 normal, float specPower)
 //================================
 float4 main(VSOutput In) : SV_Target0
 {
+	// 追加 アウトライン描画チェック(アウトライン対応)
+	if (g_EnableOutLineDraw)
+	{
+		// アウトライン描画の場合は単色で返す
+		return float4(0, 0.9f, 1, 1);
+	}
+	
 	// ディゾルブによる描画スキップ
 	float discardValue = g_dissolveTex.Sample(g_ss, In.UV).r;
 	if (discardValue < g_dissolveValue)
@@ -272,6 +279,14 @@ float4 main(VSOutput In) : SV_Target0
 	
 	totalBrightness = saturate( totalBrightness );
 	outColor *= totalBrightness;
+
+	// 追加 リムライト処理
+	if (g_limLightEnable)
+	{
+		float limLightPow = dot(normalize(g_CamPos - In.wPos), wN);
+		limLightPow = 1.0f - limLightPow;
+		outColor.rgb += g_limLightColor * pow(limLightPow, g_limLightPow);
+	}
 	
 	//------------------------------------------
 	// 出力

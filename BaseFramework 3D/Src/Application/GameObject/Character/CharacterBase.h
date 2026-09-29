@@ -3,6 +3,8 @@
 class Police;
 
 #include "../Object/StaticMeshObject/InteractiveObject/InteractiveObject.h"
+#include "../../System/Inventory/Inventory.h"
+#include "../Object/StaticMeshObject/Item/ItemData.h"
 
 class CharacterBase : public KdGameObject
 {
@@ -41,11 +43,24 @@ public:
 	// 解放された
 	virtual void OnReleased();
 
-	// いたずらに使うアイテムを持っているか(警察の追跡条件)
-	virtual bool HasPrankItem() const { return false; }
+	//============================================================
+	// Inventory
+	//============================================================
+	Inventory& GetInventory() { return m_inventory; }
+	const Inventory& GetInventory() const { return m_inventory; }
 
-	// いたずらアイテムを没収する
-	virtual void ConfiscatePrankItems() {}
+	bool AddInventoryItem(const std::string& itemPath);
+	bool HasInventoryItem(const std::string& itemPath) const;
+	bool HasRepairItem() const;
+
+	// 警察の追跡条件（空なら false になるのでPoliceでも安全）
+	bool HasPrankItem() const;
+
+	// いたずらアイテムだけ没収する
+	void ConfiscatePrankItems();
+
+	// 選択スロット変更（Player=手持ちモデル更新 / Neighbor=ItemData更新）
+	virtual void SelectInventory(int index) { m_inventory.SelectIndex(index); }
 
 	bool IsArrested() const { return m_isArrested; }
 
@@ -82,6 +97,10 @@ protected:
 	float m_angle = 0.0f;
 
 	int m_score = 0;
+
+	virtual void OnItemsConfiscated() {}
+
+	Inventory m_inventory;
 
 	bool m_isArrested = false;
 

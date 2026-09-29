@@ -44,6 +44,10 @@ class InteractiveObject
 {
 public:
 
+	void DrawLit() override;
+
+	void DrawBright() override;
+
 	//==============================
 	// Owner
 	//==============================
@@ -118,4 +122,6 @@ protected:
 	std::string m_owner;
 
 	std::vector<InteractiveAction> m_actions;
+
+	float m_limLightTimer = 1.0f;
 };

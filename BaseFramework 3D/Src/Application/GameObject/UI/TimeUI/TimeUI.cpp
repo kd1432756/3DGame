@@ -16,29 +16,19 @@ void TimeUI::Init()
 
 void TimeUI::Update()
 {
-	auto dayCycle = m_wpDayCycle.lock();
 
-	if (!dayCycle)
-	{
-		return;
-	}
 }
 
 void TimeUI::DrawSprite()
 {
-	auto dayCycle = m_wpDayCycle.lock();
+	auto dayCycle = DayCycle::Instance();
 
-	if (!dayCycle)
-	{
-		return;
-	}
-
-	DrawGauge(dayCycle);
+	DrawGauge();
 	DrawTimeIcons();
-	DrawIndicator(dayCycle);
+	DrawIndicator();
 }
 
-void TimeUI::DrawGauge(const std::shared_ptr<DayCycle>& dayCycle)
+void TimeUI::DrawGauge()
 {
 	if (!m_gaugeTex)
 	{
@@ -95,8 +85,7 @@ void TimeUI::DrawTimeIcons()
 	}
 }
 
-void TimeUI::DrawIndicator(
-	const std::shared_ptr<DayCycle>& dayCycle)
+void TimeUI::DrawIndicator()
 {
 	if (!m_indicatorTex)
 	{
@@ -107,7 +96,7 @@ void TimeUI::DrawIndicator(
 		KdShaderManager::Instance().m_spriteShader;
 
 	const float progress =
-		dayCycle->GetTimeProgress();
+		DayCycle::Instance().GetTimeProgress();
 
 	const float gaugeStartX =
 		StartX - GaugeWidth * 0.5f;

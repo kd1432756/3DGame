@@ -10,8 +10,6 @@ public:
 
 	void Init() override;
 
-	void DrawBright() override;
-
 	const char* GetTypeName() const override
 	{
 		return "Flower";

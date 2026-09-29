@@ -1,13 +1,15 @@
 {
 	"Name": "Hammer",
 
-	"ModelPath": "Asset/Models/Item/Hammer/Hammer2.gltf",
+	"ModelPath": "Asset/Models/Item/Hammer/Hammer.gltf",
 
 	"IconPath": "Asset/Textures/Icon/Hammer.png",
 
 	"Action": "Break",
 
 	"Target": "WoodenFence",
+
+	"MaxCount": 3,
 
 	"WorldScale": [ 1.0, 1.0, 1.0 ],
 

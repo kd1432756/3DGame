@@ -72,6 +72,7 @@ void ScoreUI::DrawSprite()
 		Math::Vector2{ ScoreX - ScoreTextX, ScoreY },
 		&kWhiteColor,
 		Math::Vector2{ 1.0f, 0.5f },
+		0.0f,
 		FontID::FutureNormal64,
 		"Score : ");
 
@@ -98,6 +99,7 @@ void ScoreUI::DrawSprite()
 			},
 			&kWhiteColor,
 			Math::Vector2{ 1.0f, 0.5f },
+			0.0f,
 			FontID::FutureNormal64,
 			digit);
 	}

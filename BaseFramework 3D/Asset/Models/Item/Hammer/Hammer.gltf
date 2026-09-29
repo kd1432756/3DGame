@@ -32,7 +32,7 @@
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"Material.001",
+			"name":"Material.002",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":0
@@ -44,7 +44,7 @@
 	],
 	"meshes":[
 		{
-			"name":"Mesh1_Group1_Component_1_1_Model",
+			"name":"Mesh1_Group1_Component_1_1_Model.001",
 			"primitives":[
 				{
 					"attributes":{
@@ -75,14 +75,14 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":211,
+			"count":112,
 			"max":[
 				0.0569666251540184,
 				0.22813063859939575,
 				0.03348998352885246
 			],
 			"min":[
-				-0.05696604400873184,
+				-0.05696604773402214,
 				-0.08770988881587982,
 				-0.03769694268703461
 			],
@@ -91,13 +91,13 @@
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":211,
+			"count":112,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":211,
+			"count":112,
 			"type":"VEC2"
 		},
 		{
@@ -110,26 +110,26 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":2532,
+			"byteLength":1344,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2532,
-			"byteOffset":2532,
+			"byteLength":1344,
+			"byteOffset":1344,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1688,
-			"byteOffset":5064,
+			"byteLength":896,
+			"byteOffset":2688,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":612,
-			"byteOffset":6752,
+			"byteOffset":3584,
 			"target":34963
 		}
 	],
@@ -141,7 +141,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":7364,
+			"byteLength":4196,
 			"uri":"Hammer.bin"
 		}
 	]

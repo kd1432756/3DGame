@@ -1,47 +1,36 @@
 ﻿#include "ItemSpawner.h"
 
 #include "../../../../Scene/SceneManager.h"
-#include "../../../Character/Player/Player.h"
 #include "Item.h"
+#include "ItemManager.h"
 
 void ItemSpawner::Update()
 {
-	if (!m_respawnTimerFlg)
+	// SetItemPath などの設定が終わった後に登録したいので、
+	// Initではなく初回Updateで登録する
+	if (m_registered)
 	{
 		return;
 	}
 
-	m_respawnTimer -= 1.0f / 60.0f;
-
-	if (m_respawnTimer > 0.0f)
+	if (m_itemPath.empty())
 	{
 		return;
 	}
 
-	auto player = SceneManager::Instance().FindObject<Player>();
+	m_registered = true;
 
-	// 最大数チェック
-	int count = 0;
-
-	if (!player)return;
-
-	count = SceneManager::Instance().CountItems(m_itemPath)
-		+ player->GetInventory().CountItems(m_itemPath);
-
-	if (count >= 3)
-	{
-		return;
-	}
-
-	SpawnItem();
-
-	m_respawnTimerFlg = false;
+	ItemManager::Instance().RegisterSpawner(
+		std::dynamic_pointer_cast<ItemSpawner>(
+			shared_from_this()));
 }
 
-void ItemSpawner::StartRespawn()
+bool ItemSpawner::IsFree() const
 {
-	m_respawnTimer = m_respawnTime;
-	m_respawnTimerFlg = true;
+	auto item = m_current.lock();
+
+	// 未生成、拾われて消えた、Destroy済み → 空き
+	return !item || item->IsExpired();
 }
 
 void ItemSpawner::SpawnItem()
@@ -55,9 +44,10 @@ void ItemSpawner::SpawnItem()
 	item->SetPos(m_spawnPos);
 	item->SetScale(m_spawnScale);
 
-	item->SetSpawner(
-		std::dynamic_pointer_cast<ItemSpawner>(
-			shared_from_this()));
-
 	SceneManager::Instance().AddObject(item);
+
+	m_current = item;
+
+	// 数の管理はManager。ここで即登録するので二重出現しない
+	ItemManager::Instance().RegisterWorldItem(item);
 }

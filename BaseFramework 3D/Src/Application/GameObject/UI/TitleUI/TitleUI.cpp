@@ -91,6 +91,7 @@ void TitleUI::DrawSprite()
 			titlePos + offset,
 			&kBlackColor,
 			pivot,
+			0.0f,
 			FontID::Gothic96,
 			"ご近所いたずら大戦"
 		);
@@ -100,6 +101,7 @@ void TitleUI::DrawSprite()
 		titlePos,
 		&titleColor,
 		pivot,
+		0.0f,
 		FontID::Gothic96,
 		"ご近所いたずら大戦"
 	);
@@ -118,6 +120,7 @@ void TitleUI::DrawSprite()
 		drawPos,
 		&color,
 		Math::Vector2{ 0.5f, 0.5f },
+		0.0f,
 		FontID::FutureNormal64,
 		"Start"
 	);

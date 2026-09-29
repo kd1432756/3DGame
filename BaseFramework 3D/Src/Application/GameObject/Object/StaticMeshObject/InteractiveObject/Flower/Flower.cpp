@@ -40,22 +40,6 @@ void Flower::Init()
 	StaticMeshObject::Init();
 }
 
-void Flower::DrawBright()
-{
-	if (!IsFocused())
-	{
-		return;
-	}
-
-	if (!m_spModel) return;
-
-	Math::Color color{ 0.1,0.1,0.1,1 };
-	KdShaderManager::Instance().m_StandardShader.DrawModel(
-		*m_spModel,
-		m_mWorld,
-		color);
-}
-
 void Flower::RegisterCollider()
 {
 	if (!m_pCollider)

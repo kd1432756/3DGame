@@ -52,9 +52,9 @@ void GameScene::Update()
 		return;
 	}
 
-	m_dayCycle->Update();
+	DayCycle::Instance().Update();
 
-	if (m_dayCycle->IsFinished())
+	if (DayCycle::Instance().IsFinished())
 	{
 		m_gameUpdate = false;
 		m_state = GameState::Finished;
@@ -96,12 +96,12 @@ void GameScene::Event()
 	// Yキー：30分戻す
 	if (GetAsyncKeyState('Y') & 0x8000)
 	{
-		m_dayCycle->AddTime(-0.5f);
+		DayCycle::Instance().AddTime(-0.5f);
 	}
 	// Uキー：30分進める
 	if (GetAsyncKeyState('U') & 0x8000)
 	{
-		m_dayCycle->AddTime(0.5f);
+		DayCycle::Instance().AddTime(0.5f);
 	}
 }
 
@@ -131,13 +131,11 @@ void GameScene::Start()
 		LocationPointManager::Instance(),
 		scale);
 
-	m_dayCycle = std::make_shared<DayCycle>();
-	m_dayCycle->Init();
+	DayCycle::Instance().Init();
 	
 	auto time = std::make_shared<TimeUI>();
 	time->Init();
 	time->SetName("TimeUI");
-	time->SetDayCycle(m_dayCycle);
 	m_objList.push_back(time);
 
 	auto player = SceneManager::Instance().FindObject<Player>();

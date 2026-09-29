@@ -64,3 +64,20 @@ std::vector<std::shared_ptr<CharacterBase>> ScoreManager::GetRanking() const
 
 	return ranking;
 }
+
+int ScoreManager::CalcScore(int baseScore, float progress, SkillResult result) const
+{
+	float skillRate = 1.0f;
+	switch (result)
+	{
+	case SkillResult::Perfect: skillRate = 1.5f; break;
+	case SkillResult::Good:    skillRate = 1.0f; break;
+	case SkillResult::Miss:    skillRate = 0.5f; break;
+	default: break;
+	}
+
+	// 朝×1.0 → 夜×1.5 に緩やかに上昇
+	float timeRate = 1.0f + 0.5f * progress;
+
+	return std::max(1, static_cast<int>(std::round(baseScore * skillRate * timeRate)));
+}

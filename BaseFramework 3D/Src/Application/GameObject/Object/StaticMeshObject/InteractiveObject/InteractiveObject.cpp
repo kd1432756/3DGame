@@ -1,11 +1,52 @@
 ﻿#include "InteractiveObject.h"
 
 #include "../../../../Scene/SceneManager.h"
+#include "../../../../System/Score/ScoreManager.h"
 
 #include "../../../Character/Player/Player.h"
 #include "../../../Character/Enemy/Neighbor/Neighbor.h"
 
 #include "../Item/Item.h"
+
+#include "../../../../System/DayCycle/DayCycle.h"
+
+void InteractiveObject::DrawLit()
+{
+	auto player = SceneManager::Instance().FindObject<Player>();
+	bool canUse = CanUse(player);
+
+	float cycle = canUse ? 1.0f : 2.0f;	// 周期
+	m_limLightTimer += (2.0f * DirectX::XM_PI) / (cycle * 60.0f);
+
+	float t = (sinf(m_limLightTimer) + 1.0f) * 0.5f;
+
+	float pow = 1.0f + t * 3.0f;
+
+	Math::Vector3 color = canUse
+		? Math::Vector3{ 0.9f, 0.6f, 0.1f }
+	: Math::Vector3{ 0.5f, 0.5f, 0.5f };
+
+	KdShaderManager::Instance().m_StandardShader.SetLimLightEnable(true);
+	KdShaderManager::Instance().m_StandardShader.SetLimLight(color, pow);
+
+	StaticMeshObject::DrawLit();
+}
+
+void InteractiveObject::DrawBright()
+{
+	if (!IsFocused())
+	{
+		return;
+	}
+
+	if (!m_spModel) return;
+
+	Math::Color color{ 0.1,0.1,0.1,1 };
+	KdShaderManager::Instance().m_StandardShader.DrawModel(
+		*m_spModel,
+		m_mWorld,
+		color);
+}
 
 void InteractiveObject::RegisterAction(
 	const InteractiveAction& action)
@@ -128,9 +169,13 @@ void InteractiveObject::Use(
 	// スコア
 	if (action->score > 0)
 	{
-		player->OnPrankSuccess(
-			action->score,
-			action->message);
+		int score = ScoreManager::Instance().CalcScore(
+			action->score, 
+			DayCycle::Instance().GetTimeProgress(),
+			player->GetSkillResult()
+			);
+
+		player->OnPrankSuccess(score, action->message);
 	}
 
 	NotifyOwner(*action);
@@ -199,8 +244,13 @@ void InteractiveObject::NPCUse(
 
 	if (action->score > 0)
 	{
-		npc->OnPrankSuccess(
+		int score = ScoreManager::Instance().CalcScore(
 			action->score,
+			DayCycle::Instance().GetTimeProgress()
+		);
+
+		npc->OnPrankSuccess(
+			score,
 			action->message);
 	}
 

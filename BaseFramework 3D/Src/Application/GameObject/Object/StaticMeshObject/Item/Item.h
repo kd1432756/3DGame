@@ -89,9 +89,7 @@ public:
 		return m_mode;
 	}
 
-	bool Pickup(Inventory& inventory);
-
-	bool PickupReplace(Inventory& inventory, int index);
+	bool Pickup(Inventory& inventory, int replaceIndex = -1);
 
 	void Drop(
 		const Math::Vector3& pos,

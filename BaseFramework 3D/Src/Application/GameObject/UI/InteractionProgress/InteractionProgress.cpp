@@ -52,7 +52,7 @@ void InteractionProgress::Update()
 
 	if (player)
 	{
-		m_visible = player->IsUsing();
+		m_visible = player->IsCounting();
 		m_progress = player->GetUseProgress();
 	}
 }

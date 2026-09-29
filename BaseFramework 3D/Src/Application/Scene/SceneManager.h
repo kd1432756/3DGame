@@ -99,8 +99,6 @@ public :
 	}
 
 	// 追加
-	int CountItems(const std::string& itemPath) const;
-
 	void SetSceneScale(float scale)
 	{
 		m_sceneScale = scale;

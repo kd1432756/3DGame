@@ -18,11 +18,15 @@
 #include "../GameObject/Object/StaticMeshObject/InteractiveObject/PaintCan/PaintCan.h"
 #include "../GameObject/Object/StaticMeshObject/InteractiveObject/WoodenFence/WoodenFence.h"
 
+#include "../GameObject/Object/StaticMeshObject/Item/ItemManager.h"
+
 void SceneManager::PreUpdate()
 {
 	// シーン切替
 	if (m_currentSceneType != m_nextSceneType)
 	{
+		ItemManager::Instance().Reset();
+
 		ChangeScene(m_nextSceneType);
 	}
 
@@ -31,6 +35,8 @@ void SceneManager::PreUpdate()
 
 void SceneManager::Update()
 {
+	ItemManager::Instance().Update();
+
 	m_currentScene->Update();
 }
 
@@ -163,33 +169,6 @@ std::shared_ptr<KdGameObject> SceneManager::CreateObjectRaw(const std::string& t
 	obj->Init();
 
 	return obj;
-}
-
-int SceneManager::CountItems(const std::string& itemPath) const
-{
-	int count = 0;
-
-	for (auto& obj : m_currentScene->GetObjList())
-	{
-		if (!obj)
-		{
-			continue;
-		}
-
-		auto item = std::dynamic_pointer_cast<Item>(obj);
-
-		if (!item)
-		{
-			continue;
-		}
-
-		if (item->GetItemPath() == itemPath)
-		{
-			count++;
-		}
-	}
-
-	return count;
 }
 
 SceneManager::StageData SceneManager::GetStageData() const

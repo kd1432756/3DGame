@@ -51,6 +51,7 @@ void LoadingUI::DrawSprite()
 		Math::Vector2{ -500, -250 },
 		&kWhiteColor,
 		Math::Vector2{ 0.0f, 0.5f },
+		0.0f,
 		FontID::Future24,
 		text.c_str());
 

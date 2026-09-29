@@ -32,7 +32,7 @@
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"Material.001",
+			"name":"Material.002",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":0
@@ -44,7 +44,7 @@
 	],
 	"meshes":[
 		{
-			"name":"Mesh1_Group1_Component_1_1_Model",
+			"name":"Mesh1_Group1_Component_1_1_Model.001",
 			"primitives":[
 				{
 					"attributes":{

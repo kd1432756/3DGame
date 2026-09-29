@@ -150,11 +150,12 @@ public:
 	void DrawFont(const Math::Vector2& Pos, const Math::Color* color, const char* format, ...);
 
 	// フォント描画（追加）
-	// pivot追加
+	// pivot・angle追加
 	void DrawFont(
 		const Math::Vector2& Pos,
 		const Math::Color* color,
 		const Math::Vector2& pivot,
+		float angle,
 		FontID fontID,
 		const char* format,
 		...
@@ -165,12 +166,13 @@ private:
 	void DrawFont(std::shared_ptr<KdFontSprite>& fontSprite, const Math::Vector2& Pos, const Math::Color* color, const int antiAliasingFlag);
 
 	// フォント描画（追加）
-	// pivot追加
+	// pivot・angle追加
 	void DrawFont(
 		std::shared_ptr<KdFontSprite>& fontSprite,
 		const Math::Vector2& Pos,
 		const Math::Color* color,
 		const Math::Vector2& pivot,
+		float angle,
 		const int antiAliasingFlag);
 
 	ID3D11VertexShader*		m_VS = nullptr;				// 頂点シェーダー

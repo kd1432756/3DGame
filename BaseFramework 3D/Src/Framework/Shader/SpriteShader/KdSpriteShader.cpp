@@ -487,7 +487,7 @@ void KdSpriteShader::DrawFont(std::shared_ptr<KdFontSprite>& fontSprite, const M
 	if (!bBgn)End();
 }
 
-void KdSpriteShader::DrawFont(std::shared_ptr<KdFontSprite>& fontSprite, const Math::Vector2& Pos, const Math::Color* color, const Math::Vector2& pivot, const int antiAliasingFlag)
+void KdSpriteShader::DrawFont(std::shared_ptr<KdFontSprite>& fontSprite, const Math::Vector2& Pos, const Math::Color* color, const Math::Vector2& pivot, const float angle, const int antiAliasingFlag)
 {
 	if (fontSprite == nullptr)					return;
 	if (fontSprite->GetTexList().size() == 0)	return;
@@ -556,6 +556,24 @@ void KdSpriteShader::DrawFont(std::shared_ptr<KdFontSprite>& fontSprite, const M
 	_pos.x -= totalWidth * pivot.x;
 	_pos.y -= totalHeight * pivot.y;
 
+	//-----------------------------------------
+	// 回転の準備(Posを軸に回転する / angleは度数)
+	//-----------------------------------------
+	const float rad = DirectX::XMConvertToRadians(angle);
+	const float cosA = cosf(rad);
+	const float sinA = sinf(rad);
+
+	// (px, py)をPosを中心にangleだけ回転させる
+	auto Rotate = [&](float px, float py) -> Math::Vector2
+		{
+			float dx = px - Pos.x;
+			float dy = py - Pos.y;
+			return {
+				Pos.x + dx * cosA - dy * sinA,
+				Pos.y + dx * sinA + dy * cosA
+			};
+		};
+
 	for (auto& data : fontSprite->GetTexList())
 	{
 		// 改行文字の場合は、X,Y座標を操作
@@ -582,12 +600,19 @@ void KdSpriteShader::DrawFont(std::shared_ptr<KdFontSprite>& fontSprite, const M
 			float x2 = (float)(x1 + imageW);
 			float y2 = (float)(y1 + imageH);
 
+			// 4頂点を回転
+			Math::Vector2 p1 = Rotate(x1, y1);
+			Math::Vector2 p2 = Rotate(x1, y2);
+			Math::Vector2 p3 = Rotate(x2, y1);
+			Math::Vector2 p4 = Rotate(x2, y2);
+
 			Vertex vertex[] = {
-				{ {x1, y1, 0},	{uvMin.x, uvMax.y} },
-				{ {x1, y2, 0},	{uvMin.x, uvMin.y} },
-				{ {x2, y1, 0},	{uvMax.x, uvMax.y} },
-				{ {x2, y2, 0},	{uvMax.x, uvMin.y} }
+				{ {p1.x, p1.y, 0},	{uvMin.x, uvMax.y} },
+				{ {p2.x, p2.y, 0},	{uvMin.x, uvMin.y} },
+				{ {p3.x, p3.y, 0},	{uvMax.x, uvMax.y} },
+				{ {p4.x, p4.y, 0},	{uvMax.x, uvMin.y} }
 			};
+
 			// 描画
 			KdDirect3D::Instance().DrawVertices(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP, 4, vertex, sizeof(Vertex));
 
@@ -617,7 +642,7 @@ void KdSpriteShader::DrawFont(const Math::Vector2& Pos, const Math::Color* color
 	DrawFont(fontSprite, Pos, color, 0);
 }
 
-void KdSpriteShader::DrawFont(const Math::Vector2& Pos, const Math::Color* color, const Math::Vector2& pivot, const FontID fontID, const char* format, ...)
+void KdSpriteShader::DrawFont(const Math::Vector2& Pos, const Math::Color* color, const Math::Vector2& pivot, const float angle, const FontID fontID, const char* format, ...)
 {
 	char tmpStr[128]{};
 	va_list argptr;
@@ -627,5 +652,5 @@ void KdSpriteShader::DrawFont(const Math::Vector2& Pos, const Math::Color* color
 	int id = static_cast<int>(fontID);
 	std::shared_ptr<KdFontSprite> fontSprite = KdFontManager::Instance().CreateFontTexture(id, tmpStr, false);
 
-	DrawFont(fontSprite, Pos, color, pivot, 0);
+	DrawFont(fontSprite, Pos, color,pivot, angle, 0);
 }

@@ -14,17 +14,10 @@ public:
 		return ObjectCategory::UI;
 	}
 
-	void SetDayCycle(const std::shared_ptr<DayCycle>& dayCycle)
-	{
-		m_wpDayCycle = dayCycle;
-	}
-
 private:
-	void DrawGauge(const std::shared_ptr<DayCycle>& dayCycle);
+	void DrawGauge();
 	void DrawTimeIcons();
-	void DrawIndicator(const std::shared_ptr<DayCycle>& dayCycle);
-
-	std::weak_ptr<DayCycle> m_wpDayCycle;
+	void DrawIndicator();
 
 	std::shared_ptr<KdTexture> m_gaugeTex = nullptr;
 	std::shared_ptr<KdTexture> m_indicatorTex = nullptr;

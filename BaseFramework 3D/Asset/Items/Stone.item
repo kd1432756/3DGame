@@ -9,7 +9,9 @@
 
 	"Target": "Window",
 
-	"WorldScale" : [ 0.10, 0.10, 0.10 ],
+	"MaxCount": 3,
+
+	"WorldScale": [ 0.10, 0.10, 0.10 ],
 
 	"HandOffset": [ 0.20, -0.18, 0.42 ],
 

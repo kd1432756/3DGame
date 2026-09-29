@@ -121,6 +121,7 @@ void InventoryUI::DrawSlot(
 		},
 		&kWhiteColor,
 		Math::Vector2{ 0.35f, 0.35f },
+		0.0f,
 		FontID::Future32,
 		number.c_str());
 }

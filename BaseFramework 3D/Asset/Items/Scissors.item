@@ -9,6 +9,8 @@
 
 	"Target": "Flower",
 
+	"MaxCount": 3,
+
 	"WorldScale": [ 1.0, 1.0, 1.0 ],
 
 	"HandOffset": [ 0.20, -0.18, 0.42 ],

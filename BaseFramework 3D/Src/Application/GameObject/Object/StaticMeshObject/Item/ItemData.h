@@ -74,6 +74,14 @@ public:
 		return m_maxCount;
 	}
 
+	bool IsRepairItem() const { return m_action == ItemAction::Repair; }
+
+	// Repair以外のうち、使えるもの（=いたずら用）
+	bool IsPrankItem() const
+	{
+		return m_action != ItemAction::Repair && m_action != ItemAction::None;
+	}
+
 private:
 
 	std::string m_itemPath;
@@ -96,5 +104,5 @@ private:
 	Math::Vector3 m_handRotation = Math::Vector3::Zero;
 	Math::Vector3 m_handScale = { 1,1,1 };
 
-	int m_maxCount = 1;
+	int m_maxCount = -1;
 };

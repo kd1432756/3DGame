@@ -3,6 +3,8 @@
 #include "../../../Character/Player/Player.h"
 #include "../../../../System/Inventory/Inventory.h"
 #include "ItemSpawner.h"
+#include "ItemManager.h"
+
 
 void Item::Init()
 {
@@ -43,10 +45,12 @@ void Item::Update()
 void Item::DrawLit()
 {
 	if (!m_spModel) return;
+	StaticMeshObject::DrawLit();
 
-	KdShaderManager::Instance().m_StandardShader.DrawModel(
-		*m_spModel,
-		m_mWorld);
+	KdShaderManager::Instance().
+		m_StandardShader.SetEnableOutLineDraw(true);
+	KdShaderManager::Instance().
+		m_StandardShader.DrawModel(*m_spModel, m_mWorld);
 }
 
 void Item::GenerateDepthMapFromLight()
@@ -111,93 +115,26 @@ void Item::Interact(std::shared_ptr<Player> player)
 	);
 }
 
-bool Item::Pickup(Inventory& inventory)
+bool Item::Pickup(Inventory& inventory, int replaceIndex)
 {
-	//============================================================
-	// すでに取得済み
-	//============================================================
+	if (m_mode == ItemMode::InInventory) return false;
 
-	if (m_mode == ItemMode::InInventory)
+	const std::string& path = GetItemPath();
+	if (path.empty()) return false;
+
+	if (replaceIndex < 0)
 	{
-		return false;
+		if (!inventory.AddItem(path)) return false;
+	}
+	else
+	{
+		if (replaceIndex >= Inventory::MaxItem) return false;
+		inventory.ReplaceItem(replaceIndex, path);
 	}
 
-	//============================================================
-	// ItemPathが無効
-	//============================================================
-
-	const std::string& itemPath = GetItemPath();
-
-	if (itemPath.empty())
-	{
-		return false;
-	}
-
-	//============================================================
-	// Inventoryに追加
-	//============================================================
-
-	if (!inventory.AddItem(itemPath))
-	{
-		return false;
-	}
-
-	//============================================================
-	// SpawnedアイテムならSpawnerに再出現を要求
-	//============================================================
-
-	if (m_mode == ItemMode::Spawned)
-	{
-		auto spawner = m_spawner.lock();
-
-		if (spawner)
-		{
-			spawner->StartRespawn();
-		}
-	}
-
-	//============================================================
-	// Itemをワールドから削除
-	//============================================================
+	ItemManager::Instance().OnPickedUp(*this);   // Destroy()より前
 
 	Destroy();
-
-	return true;
-}
-
-bool Item::PickupReplace(Inventory& inventory, int index)
-{
-	if (m_mode == ItemMode::InInventory)
-	{
-		return false;
-	}
-
-	const std::string& itemPath = GetItemPath();
-
-	if (itemPath.empty())
-	{
-		return false;
-	}
-
-	if (index < 0 || index >= Inventory::MaxItem)
-	{
-		return false;
-	}
-
-	inventory.ReplaceItem(index, itemPath);
-
-	if (m_mode == ItemMode::Spawned)
-	{
-		auto spawner = m_spawner.lock();
-
-		if (spawner)
-		{
-			spawner->StartRespawn();
-		}
-	}
-
-	Destroy();
-
 	return true;
 }
 

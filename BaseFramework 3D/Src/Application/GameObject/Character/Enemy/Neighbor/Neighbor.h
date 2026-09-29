@@ -144,16 +144,9 @@ public:
 	// Inventory
 	//============================================================
 
-	Inventory& GetInventory()
-	{
-		return m_inventory;
-	}
+	void SelectInventory(int index) override;
 
-	void AddInventoryItem(
-		const std::string& itemPath);
-
-	void SelectInventory(
-		int index);
+	void OnItemsConfiscated() override;
 
 	const ItemData& GetCurrentItemData() const
 	{
@@ -193,12 +186,6 @@ public:
 	void OnArrested(const std::shared_ptr<Police>& police) override;
 
 	void OnReleased() override;
-
-	bool HasPrankItem() const override;
-		
-	void ConfiscatePrankItems() override;
-
-	bool HasRepairItem() const;
 
 	//============================================================
 	// On Pranked
@@ -382,8 +369,6 @@ private:
 	//============================================================
 	// Inventory
 	//============================================================
-
-	Inventory m_inventory;
 
 	ItemData m_currentItemData;
 

@@ -528,6 +528,65 @@ void CharacterBase::UpdateAnimation()
 	m_spModel->CalcNodeMatrices();
 }
 
+bool CharacterBase::AddInventoryItem(const std::string& itemPath)
+{
+	if (itemPath.empty()) return false;
+	return m_inventory.AddItem(itemPath);
+}
+
+bool CharacterBase::HasInventoryItem(const std::string& itemPath) const
+{
+	if (itemPath.empty()) return false;
+
+	for (const auto& item : m_inventory.GetItems())
+	{
+		if (!item.IsEmpty() && item.itemPath == itemPath) return true;
+	}
+	return false;
+}
+
+bool CharacterBase::HasRepairItem() const
+{
+	for (const auto& item : m_inventory.GetItems())
+	{
+		if (item.IsEmpty()) continue;
+
+		ItemData data;
+		if (data.Load(item.itemPath) && data.IsRepairItem()) return true;
+	}
+	return false;
+}
+
+bool CharacterBase::HasPrankItem() const
+{
+	for (const auto& item : m_inventory.GetItems())
+	{
+		if (item.IsEmpty()) continue;
+
+		ItemData data;
+		if (data.Load(item.itemPath) && data.IsPrankItem()) return true;
+	}
+	return false;
+}
+
+void CharacterBase::ConfiscatePrankItems()
+{
+	const auto& items = m_inventory.GetItems();
+
+	for (int i = 0; i < Inventory::MaxItem; ++i)
+	{
+		if (items[i].IsEmpty()) continue;
+
+		ItemData data;
+		if (data.Load(items[i].itemPath) && data.IsPrankItem())
+		{
+			m_inventory.RemoveItem(i);
+		}
+	}
+
+	OnItemsConfiscated();
+}
+
 void CharacterBase::OnArrested(const std::shared_ptr<Police>& police)
 {
 	m_isArrested = true;

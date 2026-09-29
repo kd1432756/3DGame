@@ -4,11 +4,12 @@ void DayCycle::Init()
 {
 	m_currentTime = StartTime;
 
+	m_timeScale = 3.0f;
+
 	m_timeZone = TimeZone::Day;
 
 	UpdateLighting();
 }
-
 
 void DayCycle::Update()
 {
@@ -69,12 +70,12 @@ void DayCycle::UpdateLighting()
 		KdShaderManager::Instance().WorkAmbientController();
 
 	//------------------------------------------------------------
-		// ① 太陽の位置
-		//
-		// 6:00  → 太陽が低い
-		// 14:00 → 太陽が高い
-		// 22:00 → 太陽が沈む
-		//------------------------------------------------------------
+	// ① 太陽の位置
+	//
+	// 6:00  → 太陽が低い
+	// 14:00 → 太陽が高い
+	// 22:00 → 太陽が沈む
+	//------------------------------------------------------------
 
 	float normalizedTime =
 		(m_currentTime - 6.0f) / 16.0f;

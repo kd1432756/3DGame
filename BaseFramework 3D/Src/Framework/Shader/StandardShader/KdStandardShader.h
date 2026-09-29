@@ -31,6 +31,15 @@ public:
 		float			DissolveEdgeRange = 0.03f;	// 0 ～ 1
 
 		Math::Vector3	DissolveEmissive = { 0.0f, 1.0f, 1.0f };
+
+		// 追加 リムライト
+		int LimLightEnable = 0;
+		Math::Vector3 LimLightColor = { 1.0f, 1.0f, 1.0f };
+		float LimLightPow = 1.0f;
+
+		// 追加 アウトライン対応
+		int EnableOutLineDraw = 0;
+		float _blank[2] = {};
 	};
 
 	// 定数バッファ(メッシュ単位更新)
@@ -128,6 +137,30 @@ public:
 		SetDissolveTexture(*m_dissolveTex);
 	}
 
+	// 追加 リムライト描画設定
+	void SetLimLightEnable(bool enable)
+	{
+		m_cb0_Obj.Work().LimLightEnable = enable;
+		m_dirtyCBObj = true;
+	}
+
+	void SetLimLight(const Math::Vector3& color, float pow = 1.0f)
+	{
+		m_cb0_Obj.Work().LimLightColor = color;
+		m_cb0_Obj.Work().LimLightPow = pow;
+		m_dirtyCBObj = true;
+	}
+
+	// 追加 アウトライン描画設定
+	void SetEnableOutLineDraw(const bool enableOutLineDraw = false)
+	{
+		if (m_cb0_Obj.Work().EnableOutLineDraw != static_cast<int>(enableOutLineDraw))
+		{
+			m_cb0_Obj.Work().EnableOutLineDraw = enableOutLineDraw;
+			m_dirtyCBObj = true;
+		}
+	}
+
 	//================================================
 	// 各定数バッファの取得
 	//================================================
@@ -204,6 +237,12 @@ private:
 
 	// 定数バッファを初期状態に戻す
 	void ResetCBObject();
+
+	// 追加 アウトライン描画設定
+	bool GetOutLineDraw()
+	{
+		return m_cb0_Obj.Work().EnableOutLineDraw;
+	}
 
 	// スキンメッシュ有効かどうか(スキンメッシュ対応)
 	void SetIsSkinMeshObj(bool isSkinMEshObj)

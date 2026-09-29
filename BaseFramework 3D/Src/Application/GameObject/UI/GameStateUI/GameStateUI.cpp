@@ -5,7 +5,8 @@
 void GameStateUI::Init()
 {
 	m_timer = 0.0f;
-	m_count = 4;
+	m_count = 3;
+	m_count = 1;
 	m_displayState = DisplayState::CountDown;
 }
 
@@ -113,6 +114,7 @@ void GameStateUI::DrawSprite()
 		Math::Vector2{ 0, 0 },
 		&kWhiteColor,
 		Math::Vector2{ 0.5f, 0.5f },
+		0.0f,
 		FontID::Future128,
 		text.c_str());
 }

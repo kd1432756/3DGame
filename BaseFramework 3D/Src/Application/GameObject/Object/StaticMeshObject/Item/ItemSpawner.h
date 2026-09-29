@@ -2,16 +2,30 @@
 
 class Item;
 
-class ItemSpawner :	public KdGameObject
+//============================================================
+// ItemSpawner
+//
+// 「アイテムの出現地点」。
+// タイマー・上限判定・出現のタイミングは ItemManager が持つ。
+//============================================================
+class ItemSpawner : public KdGameObject
 {
 public:
 
+	// Managerへの登録のみ（初回1回）
 	void Update() override;
+
+	//--------------------------------------------------------
+	// 設定
+	//--------------------------------------------------------
 
 	// 何のアイテムを出すか
 	void SetItemPath(const std::string& path)
 	{
 		m_itemPath = path;
+
+		// Inventory / ItemData と同じ表記に揃える
+		std::replace(m_itemPath.begin(), m_itemPath.end(), '\\', '/');
 	}
 
 	// どこに出すか
@@ -26,18 +40,22 @@ public:
 		m_spawnScale = scale;
 	}
 
-	// リスポーン時間
-	void SetRespawnTime(float time)
+	const std::string& GetItemPath() const
 	{
-		m_respawnTime = time;
+		return m_itemPath;
 	}
 
-	// リスポーン開始
-	void StartRespawn();
+	//--------------------------------------------------------
+	// Managerから使う
+	//--------------------------------------------------------
+
+	// 今この地点にItemが出ていないか
+	bool IsFree() const;
+
+	// Itemを出す（Managerが上限・タイミングを判断済み）
+	void SpawnItem();
 
 private:
-
-	void SpawnItem();
 
 	std::string m_itemPath;
 
@@ -45,8 +63,8 @@ private:
 
 	Math::Vector3 m_spawnScale = { 1, 1, 1 };
 
-	float m_respawnTime = 10.0f;
-	float m_respawnTimer = 0.0f;
+	// 今この地点に出ているItem
+	std::weak_ptr<Item> m_current;
 
-	bool m_respawnTimerFlg = false;
+	bool m_registered = false;
 };

@@ -875,6 +875,7 @@ void Editor::DrawAStarNodes()
 			{ screenPos.x, screenPos.y },
 			&kWhiteColor,
 			{ 0.5f, 0.5f },
+			0.0f,
 			FontID::Future16,
 			text);
 	}
@@ -1005,6 +1006,7 @@ void Editor::DrawLocationPoints()
 			{ screenPos.x, screenPos.y },
 			&kWhiteColor,
 			{ 0.5f, 0.5f },
+			0.0f,
 			FontID::Future16,
 			LocationTagToString(point->GetTag()));
 	}

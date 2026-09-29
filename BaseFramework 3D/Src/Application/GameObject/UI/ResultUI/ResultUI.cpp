@@ -150,6 +150,7 @@ void ResultUI::DrawSprite()
 		Math::Vector2{ 0, 260 },
 		&kWhiteColor,
 		Math::Vector2{ 0.5f, 0.5f },
+		0.0f,
 		FontID::Future128,
 		"RESULT"
 	);
@@ -212,6 +213,7 @@ void ResultUI::DrawSprite()
 			Math::Vector2{ -250, y },
 			&kWhiteColor,
 			Math::Vector2{ 0.0f, 0.5f },
+			0.0f,
 			FontID::Future64,
 			rankText.c_str()
 		);
@@ -221,6 +223,7 @@ void ResultUI::DrawSprite()
 			Math::Vector2{ 250, y },
 			&kWhiteColor,
 			Math::Vector2{ 1.0f, 0.5f },
+			0.0f,
 			FontID::Future48,
 			nameText.c_str()
 		);
@@ -230,6 +233,7 @@ void ResultUI::DrawSprite()
 			Math::Vector2{ 250, y - 45.0f },
 			&kWhiteColor,
 			Math::Vector2{ 1.0f, 0.5f },
+			0.0f,
 			FontID::Future48,
 			scoreText.c_str()
 		);
@@ -256,6 +260,7 @@ void ResultUI::DrawSprite()
 			buttonDrawPos,
 			&buttonColor,
 			Math::Vector2{ 0.5f, 0.5f },
+			0.0f,
 			FontID::Future48,
 			"Return To Title"
 		);

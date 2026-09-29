@@ -9,6 +9,7 @@
 #include "../../../../System/Score/ScoreManager.h"
 
 #include "../../../Object/StaticMeshObject/Item/Item.h"
+#include "../../../Object/StaticMeshObject/Item/ItemManager.h"
 
 #include "../../../Object/StaticMeshObject/InteractiveObject/InteractiveObject.h"
 
@@ -87,23 +88,6 @@ void Neighbor::Init()
 // Inventory
 //============================================================
 
-void Neighbor::AddInventoryItem(const std::string& itemPath)
-{
-	if (itemPath.empty())
-	{
-		return;
-	}
-
-	if (!m_inventory.AddItem(itemPath))
-	{
-		return;
-	}
-}
-
-//============================================================
-// Select Inventory
-//============================================================
-
 void Neighbor::SelectInventory(int index)
 {
 	m_inventory.SelectIndex(index);
@@ -120,9 +104,13 @@ void Neighbor::SelectInventory(int index)
 	m_currentItemData.Load(item->itemPath);
 }
 
-//============================================================
-// Inventory
-//============================================================
+void Neighbor::OnItemsConfiscated()
+{
+	if (!m_inventory.GetCurrentItem())
+	{
+		SelectInventory(-1);
+	}
+}
 
 bool Neighbor::HasInventoryItem(
 	const std::string& itemPath) const
@@ -1315,19 +1303,11 @@ void Neighbor::PickupSearchItem()
 
 		if (!oldPath.empty())
 		{
-			auto dropItem = std::make_shared<Item>();
-			dropItem->Init();
-			dropItem->LoadItem(oldPath);
-
-			dropItem->Drop(m_pos, GetMatrix().Forward());
-
-			dropItem->SetScale(
-				dropItem->GetItemData().GetWorldScale() * m_sceneScale);
-
-			SceneManager::Instance().AddObject(dropItem);
+			Math::Vector3 dir = GetMatrix().Backward();
+			ItemManager::Instance().SpawnDropped(oldPath, m_pos, dir);
 		}
 
-		pickedUp = item->PickupReplace(m_inventory, swapIndex);
+		pickedUp = item->Pickup(m_inventory, swapIndex);
 
 		pickedIndex = swapIndex;
 	}
@@ -2672,90 +2652,6 @@ void Neighbor::OnReleased()
 	m_utilityUpdateTimer = m_utilityUpdateInterval;
 
 	ApplyStateSettings();
-}
-
-bool Neighbor::HasPrankItem() const
-{
-	for (const auto& item : m_inventory.GetItems())
-	{
-		if (item.IsEmpty())
-		{
-			continue;
-		}
-
-		ItemData itemData;
-
-		if (!itemData.Load(item.itemPath))
-		{
-			continue;
-		}
-
-		// Repair以外(いたずら用)を1つでも持っていたら該当
-		if (itemData.GetAction() != ItemAction::Repair &&
-			itemData.GetAction() != ItemAction::None)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-bool Neighbor::HasRepairItem() const
-{
-	for (const auto& item : m_inventory.GetItems())
-	{
-		if (item.IsEmpty())
-		{
-			continue;
-		}
-
-		ItemData itemData;
-
-		if (!itemData.Load(item.itemPath))
-		{
-			continue;
-		}
-
-		// Repair以外(いたずら用)を1つでも持っていたら該当
-		if (itemData.GetAction() == ItemAction::Repair)
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void Neighbor::ConfiscatePrankItems()
-{
-	const auto& items = m_inventory.GetItems();
-
-	for (int i = 0; i < Inventory::MaxItem; ++i)
-	{
-		if (items[i].IsEmpty())
-		{
-			continue;
-		}
-
-		ItemData itemData;
-		itemData.Load(items[i].itemPath);
-
-		// いたずらアイテムのみ没収(Repairアイテムは残す)
-		if (itemData.GetAction() != ItemAction::Repair &&
-			itemData.GetAction() != ItemAction::None)
-		{
-			m_inventory.RemoveItem(i);
-		}
-	}
-
-	// 選択中アイテムが没収された場合はクリア
-	const InventoryItem* current = m_inventory.GetCurrentItem();
-
-	if (!current)
-	{
-		SelectInventory(-1);
-	}
 }
 
 void Neighbor::OnPranked(

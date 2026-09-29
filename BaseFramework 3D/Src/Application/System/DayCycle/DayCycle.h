@@ -16,7 +16,6 @@ public:
 
 	void AddTime(float time);
 
-
 	float GetCurrentTime() const
 	{
 		return m_currentTime;
@@ -54,4 +53,12 @@ private:
 
 	static constexpr float StartTime = 6.0f;
 	static constexpr float EndTime = 22.0f;
+
+public:
+
+	static DayCycle& Instance()
+	{
+		static DayCycle instance;
+		return instance;
+	}
 };

@@ -256,6 +256,9 @@ bool SceneSerializer::LoadWithScale(const std::string& path, float multiplier)
 				SceneManager::Instance().AddObject(spawner);
 
 				item->SetSpawner(spawner);
+
+				// Item本体はシーンに入れない（Spawnerが出すため）
+				continue;
 			}
 		}
 

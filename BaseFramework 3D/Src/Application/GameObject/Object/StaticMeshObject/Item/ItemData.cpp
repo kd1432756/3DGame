@@ -49,6 +49,8 @@ bool ItemData::Load(const std::string& path)
 
 	m_target = j.value("Target", "None");
 
+	m_maxCount = j.value("MaxCount", -1);
+
 	if (j.contains("WorldScale"))
 	{
 		auto& v = j["WorldScale"];

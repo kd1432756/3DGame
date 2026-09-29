@@ -19,6 +19,7 @@ void InteractionPrompt::DrawSprite()
 		Math::Vector2{ 0,50 },
 		&kWhiteColor,
 		Math::Vector2{ 0.5f,0.5f },
+		0.0f,
 		FontID::Future24,
 		m_prompt.c_str()
 	);
