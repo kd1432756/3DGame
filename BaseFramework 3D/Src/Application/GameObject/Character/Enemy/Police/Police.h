@@ -213,9 +213,9 @@ private:
 
 	float m_arrestTimer = 0.0f;
 
-	float m_arrestTime = 0.8f;
+	float m_arrestTime = 0.0f;
 
-	float m_arrestDistance = 0.0f;
+	float m_arrestDistance = 1.25f;
 
 	//============================================================
 	// lose sight

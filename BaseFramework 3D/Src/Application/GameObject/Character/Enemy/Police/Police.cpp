@@ -1164,7 +1164,7 @@ bool Police::CanSeeTarget(
 	//============================================================
 
 	Math::Vector3 forward =
-		m_mWorld.Backward();
+		m_mWorld.Forward();
 
 	forward.y = 0.0f;
 	forward.Normalize();

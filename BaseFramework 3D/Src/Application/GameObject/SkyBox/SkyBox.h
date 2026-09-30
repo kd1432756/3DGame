@@ -23,6 +23,14 @@ public:
 
 private:
 
-	std::shared_ptr<KdModelData> m_spModel = nullptr;
+	std::array<std::shared_ptr<KdModelData>, 3>  m_spModel;
 
+	static constexpr float DayStart = 6.0f;
+	static constexpr float EveningStart = 17.0f;
+	static constexpr float NightStart = 20.0f;
+	static constexpr float NightEnd = 22.0f;
+
+	float m_dayAlpha = 0.0f;
+	float m_eveningAlpha = 0.0f;
+	float m_nightAlpha = 0.0f;
 };

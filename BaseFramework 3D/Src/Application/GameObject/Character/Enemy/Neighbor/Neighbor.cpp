@@ -25,11 +25,7 @@ void Neighbor::Init()
 
 	m_spAnimator = std::make_shared<KdAnimator>();
 
-	m_spAnimator->SetAnimation(
-		m_spModel->GetAnimation(
-			"Armature|Idle"
-		)
-	);
+	PlayAnimation("Armature|Idle");
 
 	m_pCollider = std::make_unique<KdCollider>();
 
@@ -707,9 +703,7 @@ void Neighbor::UpdateTask()
 	{
 		m_debugInfo.taskMoveStatus = "Moving";
 
-		m_spAnimator->SetAnimation(
-			m_spModel->GetAnimation("Armature|Walk")
-		);
+		PlayAnimation("Armature|Walk");
 
 		return;
 	}
@@ -730,9 +724,7 @@ void Neighbor::UpdateTask()
 
 	SetMoveDirection(Math::Vector3::Zero);
 
-	m_spAnimator->SetAnimation(
-		m_spModel->GetAnimation("Armature|Idle")
-	);
+	PlayAnimation("Armature|Idle");
 }
 
 MoveResult Neighbor::MoveToTaskDestination(const std::shared_ptr<LocationPoint>& destPoint)
@@ -955,11 +947,7 @@ void Neighbor::UpdateSearchItem()
 
 	if (moveResult == MoveResult::Moving)
 	{
-		m_spAnimator->SetAnimation(
-			m_spModel->GetAnimation(
-				"Armature|Sprint"
-			)
-		);
+		PlayAnimation("Armature|Sprint");
 
 		return;
 	}
@@ -1519,11 +1507,7 @@ void Neighbor::UpdatePrank()
 	if (moveResult ==
 		MoveResult::Moving)
 	{
-		m_spAnimator->SetAnimation(
-			m_spModel->GetAnimation(
-				"Armature|Sprint"
-			)
-		);
+		PlayAnimation("Armature|Sprint");
 
 		return;
 	}
@@ -1575,11 +1559,7 @@ void Neighbor::UpdatePrank()
 
 	m_interactTimer = 0.0f;
 
-	m_spAnimator->SetAnimation(
-		m_spModel->GetAnimation(
-			"Armature|Idle"
-		)
-	);
+	PlayAnimation("Armature|Idle");
 }
 
 //============================================================
@@ -2055,11 +2035,7 @@ void Neighbor::UpdateRepair()
 
 	if (moveResult == MoveResult::Moving)
 	{
-		m_spAnimator->SetAnimation(
-			m_spModel->GetAnimation(
-				"Armature|Walk"
-			)
-		);
+		PlayAnimation("Armature|Walk");
 
 		return;
 	}
@@ -2104,11 +2080,7 @@ void Neighbor::UpdateRepair()
 
 	m_interactTimer = 0.0f;
 
-	m_spAnimator->SetAnimation(
-		m_spModel->GetAnimation(
-			"Armature|Idle"
-		)
-	);
+	PlayAnimation("Armature|Idle");
 }
 
 //============================================================
@@ -2633,9 +2605,7 @@ void Neighbor::OnArrested(const std::shared_ptr<Police>& police)
 	SetMoveDirection(Math::Vector3::Zero);
 	SetMoveSpeed(0.0f);
 
-	m_spAnimator->SetAnimation(
-		m_spModel->GetAnimation("Armature|Idle")
-	);
+	PlayAnimation("Armature|Idle");
 }
 
 void Neighbor::OnReleased()
@@ -2893,11 +2863,7 @@ void Neighbor::ApplyStateSettings()
 
 		SetMoveSpeed(m_taskSpeed);
 
-		m_spAnimator->SetAnimation(
-			m_spModel->GetAnimation(
-				"Armature|Idle"
-			)
-		);
+		PlayAnimation("Armature|Idle");
 
 		break;
 
@@ -2905,11 +2871,7 @@ void Neighbor::ApplyStateSettings()
 
 		SetMoveSpeed(m_searchItemSpeed);
 
-		m_spAnimator->SetAnimation(
-			m_spModel->GetAnimation(
-				"Armature|Sprint"
-			)
-		);
+		PlayAnimation("Armature|Sprint");
 
 		break;
 
@@ -2917,11 +2879,7 @@ void Neighbor::ApplyStateSettings()
 
 		SetMoveSpeed(m_prankSpeed);
 
-		m_spAnimator->SetAnimation(
-			m_spModel->GetAnimation(
-				"Armature|Sprint"
-			)
-		);
+		PlayAnimation("Armature|Sprint");
 
 		break;
 
@@ -2929,15 +2887,31 @@ void Neighbor::ApplyStateSettings()
 
 		SetMoveSpeed(m_repairSpeed);
 
-		m_spAnimator->SetAnimation(
-			m_spModel->GetAnimation(
-				"Armature|Walk"
-			)
-		);
+		PlayAnimation("Armature|Walk");
 
 		break;
 	}
 }
+
+//============================================================
+// Animation
+//============================================================
+
+void Neighbor::PlayAnimation(const std::string& animName)
+{
+	if (m_currentAnimName == animName)
+	{
+		return;
+	}
+
+	m_currentAnimName = animName;
+
+	m_spAnimator->SetAnimation(m_spModel->GetAnimation(animName));
+}
+
+//============================================================
+// Debug
+//============================================================
 
 void Neighbor::DrawDebugUI()
 {
