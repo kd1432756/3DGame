@@ -83,8 +83,6 @@ void Player::Update()
 		num++;
 	}
 
-	//CheckBush();
-
 	UpdateFocusObject();
 
 	TryInteract();
@@ -240,8 +238,6 @@ void Player::Move()
 
 	m_pos += _moveDir * _moveSpeed;
 	
-	CheckStep(_moveDir);
-
 	ResolveCollision(_moveDir);
 }
 
@@ -645,29 +641,6 @@ bool Player::CanHighlight()
 	}
 
 	return false;
-}
-
-void Player::CheckBush()
-{
-	m_isInBush = false;
-
-	KdCollider::SphereInfo sphere;
-	sphere.m_sphere.Center = m_pos;
-	sphere.m_sphere.Center.y += 1.0f;   // 胴体付近
-	sphere.m_sphere.Radius = 1.0f;
-	sphere.m_type = KdCollider::TypeBush;
-
-	std::list<KdCollider::CollisionResult> retList;
-
-	for (auto& obj : SceneManager::Instance().GetObjList())
-	{
-		if (!obj) continue;
-		if (obj.get() == this) continue;
-
-		obj->Intersects(sphere, &retList);
-	}
-
-	m_isInBush = !retList.empty();
 }
 
 void Player::OnArrested(const std::shared_ptr<Police>& police)

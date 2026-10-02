@@ -40,6 +40,12 @@ void Flower::Init()
 	StaticMeshObject::Init();
 }
 
+void Flower::OnAction(const InteractiveAction& action, const std::shared_ptr<Player>& player)
+{
+	Math::Vector3 pos = m_pos + Math::Vector3{0, GetScale().y * 1.2f, 0};
+	KdEffekseerManager::GetInstance().Play("Test.efkefc", pos, 0.05f);
+}
+
 void Flower::RegisterCollider()
 {
 	if (!m_pCollider)

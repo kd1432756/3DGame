@@ -60,4 +60,18 @@ cbuffer cbLight : register(b9)
 	    float3	    Pos;			// 座標
 	    int			IsBright;		// 明度用ライトかどうか
 	} g_PointLights[100];
+
+	// 追加 コーンライト
+	int4 g_ConeLightNum; // パッキング規則が大変なので、int4のxのみを使用する
+	struct ConeLight
+	{
+		float3 color;
+		float range;
+		
+		float3 pos;		
+		float angle;
+
+		float3 dir;
+		int enable;
+	} g_coneLight[10];
 };

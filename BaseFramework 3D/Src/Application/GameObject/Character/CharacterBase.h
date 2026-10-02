@@ -66,10 +66,28 @@ public:
 
 protected:
 
+	virtual void UpdateWorldMatrix() override
+	{
+		m_rot.x = 90.0f;
+		m_rot.z = 0.0f;
+
+		Math::Matrix rotMat =
+			Math::Matrix::CreateFromYawPitchRoll(
+				DirectX::XMConvertToRadians(m_rot.y),
+				DirectX::XMConvertToRadians(m_rot.x),
+				DirectX::XMConvertToRadians(m_rot.z));
+
+		m_mWorld =
+			Math::Matrix::CreateScale(m_scale) *
+			rotMat *
+			Math::Matrix::CreateTranslation(m_pos);
+	}
+
 	Math::Vector3 GetForward() const;
 
 	void CheckStep(
 		const Math::Vector3& moveDir);
+	bool IsBlockedAt(const Math::Vector3& pos);
 
 	void CheckGround();
 
@@ -81,6 +99,7 @@ protected:
 	void RotateToMoveDirection(const Math::Vector3& dir);
 
 	void UpdateAnimation();
+
 	std::shared_ptr<KdModelWork>				m_spModel = nullptr;
 	std::shared_ptr<KdAnimator>					m_spAnimator = nullptr;
 

@@ -74,6 +74,8 @@ void Application::Update()
 	SceneManager::Instance().Update();
 
 	CameraManager::Instance().Update();
+
+	KdEffekseerManager::GetInstance().Update();
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -135,6 +137,8 @@ void Application::Draw()
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void Application::PostDraw()
 {
+	KdEffekseerManager::GetInstance().Draw();
+
 	// 画面のぼかしや被写界深度処理の実施
 	KdShaderManager::Instance().m_postProcessShader.PostEffectProcess();
 
@@ -270,6 +274,11 @@ bool Application::Init(int w, int h)
 		"Delta Gothic One",
 		96
 	);
+
+	//===================================================================
+	// Effekseer初期化
+	//===================================================================
+	KdEffekseerManager::GetInstance().Create(1280, 720);
 
 	//===================================================================
 	// ゲーム固有の初期化

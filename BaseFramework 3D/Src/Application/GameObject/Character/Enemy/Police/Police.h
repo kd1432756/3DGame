@@ -45,6 +45,7 @@ protected:
 	//============================================================
 
 	void UpdateBehavior() override;
+	void UpdateExtra() override;
 
 private:
 
@@ -229,30 +230,13 @@ private:
 	// Search
 	//============================================================
 
-	enum class SearchPhase
-	{
-		LookLeft,
-		LookRight,
-		LookCenter
-	};
-
-	SearchPhase m_searchPhase =
-		SearchPhase::LookLeft;
-
 	float m_searchTimer = 0.0f;
-
-	// 1回の方向確認にかける時間
-	float m_searchPhaseTimer = 0.0f;
 
 	// Search全体の時間
 	float m_searchTime = 3.0f;
 
 	// 見回す速度
 	float m_searchRotateSpeed = 90.0f;
-
-	// Search開始時の正面方向
-	Math::Vector3 m_searchForward =
-		Math::Vector3::Zero;
 
 	float m_searchStartRotY = 0.0f;
 

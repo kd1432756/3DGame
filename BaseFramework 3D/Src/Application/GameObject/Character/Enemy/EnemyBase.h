@@ -16,6 +16,7 @@ protected:
 	// =========================================
 
 	virtual void UpdateBehavior() = 0;
+	virtual void UpdateExtra() {}
 
 	// =========================================
 	// 移動方向を設定

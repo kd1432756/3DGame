@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 struct PointLight;
+struct ConeLight;
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 // ゲーム内の空間環境をコントロールするパラメータ群
@@ -47,6 +48,10 @@ public:
 	void AddPointLight(const Math::Vector3& Color, float Radius, const Math::Vector3& Pos, bool IsBright = true);
 	void AddPointLight(const PointLight& pointLight);
 
+	// 追加 コーンライト
+	void AddConeLight(const Math::Vector3& color, float range, const Math::Vector3& pos, float angle, const Math::Vector3& dir, bool enable = true);
+	void AddConeLight(const ConeLight& coneLight);
+
 	// 平行光の影生成用の射影行列設定：エリアを指定 x:幅 y:奥行
 	void SetDirLightShadowArea(const Math::Vector2& lightingArea, float dirLightHeight);
 
@@ -65,6 +70,18 @@ public:
 	// 高さフォグの設定
 	void SetheightFog(const Math::Vector3& col, float topValue, float bottomValue, float distance);
 
+
+/*	// コーンライト有効化
+	void SetConeLightEnable(bool enable);
+	// コーンライトの設定
+	void SetConeLight(
+		const Math::Vector3& pos,
+		const Math::Vector3& dir,
+		float angle,
+		float range,
+		const Math::Vector3& color
+	);*/
+
 private:
 
 	void WriteLightParams(); 
@@ -74,6 +91,7 @@ private:
 
 	// 点光源
 	std::list<PointLight> m_pointLights;
+	std::list<ConeLight> m_coneLights;
 
 	// 平行光の影生成用の射影行列
 	Math::Matrix m_shadowProj;
@@ -85,4 +103,7 @@ private:
 	bool m_dirtyLightDir = true;
 	bool m_dirtyFogDist = true;
 	bool m_dirtyFogHeight = true;
+
+	// 追加 コーンライトフラグ
+	bool m_dirtyConeLight = true;
 };

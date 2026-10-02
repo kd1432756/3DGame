@@ -30,7 +30,7 @@ float BlinnPhong(float3 lightDir, float3 vCam, float3 normal, float specPower)
 // ピクセルシェーダ
 //================================
 float4 main(VSOutput In) : SV_Target0
-{
+{	
 	// 追加 アウトライン描画チェック(アウトライン対応)
 	if (g_EnableOutLineDraw)
 	{
@@ -223,6 +223,74 @@ float4 main(VSOutput In) : SV_Target0
 		}
 	}
 
+	// 追加 コーンライト
+	for (int j = 0; j < g_ConeLightNum.x; j++)
+	{
+		if (g_coneLight[j].enable)
+		{
+			float3 toDir = g_coneLight[j].pos - In.wPos;
+		
+			float len = length(toDir);
+		
+			if (len < g_coneLight[j].range)
+			{
+			// この中に入ってくるということはコーンライトの範囲内
+
+			// 角度を求める
+			// toDIrを正規化
+				toDir = normalize(toDir);
+
+			// 光源に向いたベクトルと光源のベクトルで角度を求める
+			// ラジアン角 = アークコサイン(意味：内角)
+				float rad = acos(saturate(dot(toDir, -g_coneLight[j].dir)));
+
+				if (rad < g_coneLight[j].angle)
+				{
+					float angleIn = g_coneLight[j].angle * 0.8;
+					float side = 1.0 - smoothstep(angleIn, g_coneLight[j].angle, rad);
+				// 減衰率を求める（距離に応じて光力の比率を出す）
+				//		↓attenuation（減衰）
+				//float atte = saturate(1.0 - len / g_coneLight.range) * side;
+
+					float d = saturate(len / g_coneLight[j].range);
+            
+				// 3乗にすることで、奥まで明るさをキープし、端のほうでスッと減衰させます
+				// （もっと奥まで明るくしたい場合は 4.0 や 5.0 に増やしてください）
+					float distAtten = 1.0 - pow(d, 5.0);
+            
+					float atte = distAtten * side;
+				
+				// Diffuse(拡散光)
+				{
+					// 光の方向と法線の方向との角度さが光の強さになる
+						float lightDiffuse = dot(wN, toDir);
+						lightDiffuse = saturate(lightDiffuse); // マイナス値は0にする　0(暗)～1(明)になる
+
+						lightDiffuse *= atte; // 減衰
+
+					// 正規化Lambert
+					//lightDiffuse /= 3.1415926535;
+
+					// 光の色 * 材質の拡散色 * 透明率
+						outColor += (g_coneLight[j].color * lightDiffuse) * baseDiffuse * baseColor.a;
+					}
+				
+				// Specular(反射色)
+				{
+					// 反射した光の強さを求める
+					// Blinn-Phong NDF
+						float spec = BlinnPhong(-toDir, vCam, wN, specPower);
+
+						spec *= atte; // 減衰
+				
+					// 光の色 * 反射光の強さ * 材質の反射色 * 透明率 * 適当な調整値
+						outColor += (g_coneLight[j].color * spec) * baseSpecular * baseColor.a * 1;
+					}
+				}
+			}
+		}
+	}
+	
 	outColor += g_AmbientLight.rgb * baseColor.rgb * baseColor.a;
 	
 	// 自己発光色の適応

@@ -145,9 +145,6 @@
     <Filter Include="Src\Application\GameObject\Object\StaticMeshObject\Tree">
       <UniqueIdentifier>{dc92db52-7ae8-49d7-bd4c-0241f6f884c7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\UI\BushEffect">
-      <UniqueIdentifier>{6c6f034c-44d4-4a11-a720-decb1145486e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject">
       <UniqueIdentifier>{6ad96bb7-80bd-49b4-85e6-b7364b427b5b}</UniqueIdentifier>
     </Filter>
@@ -521,9 +518,6 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\Tree\Tree.h">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\Tree</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\BushEffect\BushEffect.h">
-      <Filter>Src\Application\GameObject\UI\BushEffect</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\Item\ItemSpawner.h">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\Item</Filter>
@@ -922,9 +916,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\Tree\Tree.cpp">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\Tree</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\BushEffect\BushEffect.cpp">
-      <Filter>Src\Application\GameObject\UI\BushEffect</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\Item\ItemSpawner.cpp">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\Item</Filter>

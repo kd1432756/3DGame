@@ -8,6 +8,8 @@
 
 #include "../../../Effect/AlertIcon/AlertIcon.h"
 
+#include "../Neighbor/Neighbor.h"
+
 void Police::Init()
 {
 	EnemyBase::Init();
@@ -78,7 +80,7 @@ void Police::Init()
 
 	ApplyStateSettings();
 }
-
+	
 void Police::UpdateBehavior()
 {
 	switch (m_state)
@@ -111,6 +113,33 @@ void Police::UpdateBehavior()
 		UpdateReturn();
 		break;
 	}
+}
+
+void Police::UpdateExtra()
+{
+	bool enable = false;
+
+	// 視界（コーンライト）の更新
+	if (m_state == State::Arrest || m_state == State::Escort)
+	{
+	}
+	else
+	{
+		enable = true;
+	}
+
+	Math::Vector3 backward = m_mWorld.Backward();
+	backward.y = 0.0f;
+	backward.Normalize();
+
+	KdShaderManager::Instance().WorkAmbientController().AddConeLight(
+		Math::Vector3{ 3,0,0 },
+		8.0f * m_sceneScale,
+		m_pos,
+		DirectX::XMConvertToRadians(45),
+		backward,
+		enable
+	);
 }
 
 void Police::UpdatePatrol()
@@ -325,7 +354,7 @@ void Police::UpdateEscort()
 	//============================================================
 
 	{
-		Math::Vector3 back = m_mWorld.Forward(); // Backwardが正面なのでForwardが背後
+		Math::Vector3 back = m_mWorld.Forward(); // Forwardが背後
 		back.y = 0.0f;
 		back.Normalize();
 
@@ -458,7 +487,6 @@ void Police::UpdateSearch()
 	if (SearchTarget())
 	{
 		m_searchTimer = 0.0f;
-		m_searchPhaseTimer = 0.0f;
 
 		ChangeState(State::Chase);
 
@@ -472,7 +500,6 @@ void Police::UpdateSearch()
 	const float deltaTime = 1.0f / 60.0f;
 
 	m_searchTimer += deltaTime;
-	m_searchPhaseTimer += deltaTime;
 
 	//============================================================
 	// Search終了
@@ -481,7 +508,6 @@ void Police::UpdateSearch()
 	if (m_searchTimer >= m_searchTime)
 	{
 		m_searchTimer = 0.0f;
-		m_searchPhaseTimer = 0.0f;
 
 		m_wpTarget.reset();
 
@@ -494,44 +520,19 @@ void Police::UpdateSearch()
 	// 見回す
 	//============================================================
 
-	float targetRotY = m_searchStartRotY;
+	const float swingPeriod = 5.0f;   // 左→右→左 1往復の秒数
+	const float swingAngle = 90.0f;
 
-	switch (m_searchPhase)
-	{
-	case SearchPhase::LookLeft:
-
-		targetRotY =
-			m_searchStartRotY - 45.0f;
-
-		break;
-
-	case SearchPhase::LookRight:
-
-		targetRotY =
-			m_searchStartRotY + 45.0f;
-
-		break;
-
-	case SearchPhase::LookCenter:
-
-		targetRotY =
-			m_searchStartRotY;
-
-		break;
-	}
-
-	//============================================================
-	// 角度を方向に変換
-	//============================================================
+	float offsetDeg =
+		sinf(m_searchTimer * DirectX::XM_2PI / swingPeriod) * swingAngle;
 
 	const float rad =
-		DirectX::XMConvertToRadians(targetRotY);
+		DirectX::XMConvertToRadians(m_searchStartRotY + offsetDeg);
 
-	Math::Vector3 lookDir;
+	Math::Vector3 lookDir(-sinf(rad), 0.0f, -cosf(rad));
 
-	lookDir.x = -sinf(rad);
 	lookDir.y = 0.0f;
-	lookDir.z = -cosf(rad);
+	lookDir.Normalize();
 
 	//============================================================
 	// 回転
@@ -539,49 +540,8 @@ void Police::UpdateSearch()
 
 	RotateToMoveDirection(lookDir);
 
-	// ★重要
 	// Search中の視界方向も現在の向きに合わせる
 	m_moveDir = lookDir;
-	m_moveDir.Normalize();
-
-	//============================================================
-	// Phase変更
-	//============================================================
-
-	if (m_searchPhaseTimer >= 1.0f)
-	{
-		m_searchPhaseTimer = 0.0f;
-
-		switch (m_searchPhase)
-		{
-		case SearchPhase::LookLeft:
-
-			m_searchPhase =
-				SearchPhase::LookRight;
-
-			break;
-
-		case SearchPhase::LookRight:
-
-			m_searchPhase =
-				SearchPhase::LookCenter;
-
-			break;
-
-		case SearchPhase::LookCenter:
-
-			if (SearchTarget())
-			{
-				ChangeState(State::Chase);
-				return;
-			}
-
-			m_searchPhase =
-				SearchPhase::LookLeft;
-
-			break;
-		}
-	}
 }
 
 void Police::UpdateReturn()
@@ -965,34 +925,24 @@ void Police::FindChasePath()
 		return;
 	}
 
-
 	//============================================================
-	// 現在位置
-	//============================================================
-
-	const Math::Vector3 start =
-		m_pos;
-
-
-	//============================================================
-	// Player位置
+	// 見えているか？
 	//============================================================
 
-	const Math::Vector3 goal =
-		target->GetPos();
+	const bool visible = CanSeeTarget(target);
 
+	//============================================================
+	// target位置
+	//============================================================
+
+	const Math::Vector3 goal = visible ? target->GetPos() : m_lastTargetPos;
 
 	//============================================================
 	// NavMesh Path探索
 	//============================================================
 
-	m_navPath =
-		m_navMeshPathfinder.FindPathPoints(
-			*m_pNavMeshManager,
-			start,
-			goal
-		);
-
+	m_navPath = m_navMeshPathfinder.FindPathPoints(
+		*m_pNavMeshManager, m_pos, goal);
 
 	//============================================================
 	// Path開始
@@ -1163,11 +1113,11 @@ bool Police::CanSeeTarget(
 	// Policeの正面方向
 	//============================================================
 
-	Math::Vector3 forward =
-		m_mWorld.Forward();
+	Math::Vector3 backward =
+		m_mWorld.Backward();
 
-	forward.y = 0.0f;
-	forward.Normalize();
+	backward.y = 0.0f;
+	backward.Normalize();
 
 	//============================================================
 	// Target方向
@@ -1185,7 +1135,7 @@ bool Police::CanSeeTarget(
 		);
 
 	float dot =
-		forward.Dot(toTarget);
+		backward.Dot(toTarget);
 
 	dot =
 		std::clamp(dot, -1.0f, 1.0f);
@@ -1206,10 +1156,13 @@ bool Police::CanSeeTarget(
 		KdCollider::TypeBump;
 
 	ray.m_pos =
-		m_pos;
+		m_pos + GetScale() * 0.7f;	// 目の高さに合わせる
+
+	Math::Vector3 targetPos =
+		target->GetPos() + target->GetScale() * 0.7f;	// 目の高さに合わせる
 
 	ray.m_dir =
-		target->GetPos() - ray.m_pos;
+		targetPos - ray.m_pos;
 
 	float rayDistance =
 		ray.m_dir.Length();
@@ -1357,12 +1310,7 @@ void Police::ChangeState(State newState)
 	if (m_state == State::Search)
 	{
 		m_searchTimer = 0.0f;
-		m_searchPhaseTimer = 0.0f;
 
-		m_searchPhase =
-			SearchPhase::LookLeft;
-
-		// Search開始時の角度を保存
 		m_searchStartRotY = m_rot.y;
 	}
 

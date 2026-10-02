@@ -106,11 +106,6 @@ public:
 		return m_focusObject.lock();
 	}
 
-	bool IsInBush() const
-	{
-		return m_isInBush;
-	}
-
 	void OnArrested(const std::shared_ptr<Police>& police) override;
 
 private:
@@ -146,8 +141,6 @@ private:
 	float m_useTotal = 0.0f;	// 補正後のカウント全体時間
 
 	std::weak_ptr<Usable> m_useObject;
-
-	bool m_isInBush = false;
 
 	UsePhase m_usePhase = UsePhase::None;
 	std::unique_ptr<SkillCheckBase> m_skillCheck;

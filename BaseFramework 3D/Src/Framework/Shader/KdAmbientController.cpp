@@ -48,6 +48,7 @@ void KdAmbientController::Init()
 void KdAmbientController::Update()
 {
 	m_pointLights.clear();
+	m_coneLights.clear();
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -75,6 +76,20 @@ void KdAmbientController::AddPointLight(const Math::Vector3& Color, float Radius
 void KdAmbientController::AddPointLight(const PointLight& pointLight)
 {
 	m_pointLights.push_back(pointLight);
+}
+
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+// コーンライトの追加
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+
+void KdAmbientController::AddConeLight(const Math::Vector3& color, float range, const Math::Vector3& pos, float angle, const Math::Vector3& dir, bool enable)
+{
+	m_coneLights.emplace_back(ConeLight(color, range, pos, angle, dir, enable));
+}
+
+void KdAmbientController::AddConeLight(const ConeLight& coneLight)
+{
+	m_coneLights.emplace_back(coneLight);
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -148,6 +163,28 @@ void KdAmbientController::SetheightFog(const Math::Vector3& col, float topValue,
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+// コーンライトの設定
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
+
+/*void KdAmbientController::SetConeLightEnable(bool enable)
+{
+	KdShaderManager::Instance().WriteCBConeLightEnable(enable);
+}
+
+void KdAmbientController::SetConeLight(const Math::Vector3 & pos, const Math::Vector3 & dir, float angle, float range, const Math::Vector3 & color)
+{
+	// パラメータをセット
+	m_parameter.m_coneLightPos = pos;
+	m_parameter.m_coneLightDir = dir;
+	m_parameter.m_coneLightAngle = angle;
+	m_parameter.m_coneLightRange = range;
+	m_parameter.m_coneLightColor = color;
+
+	// データを転送してフラグ
+	m_dirtyConeLight = true;
+}*/
+
+// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 // 光関連パラメータの書き込み
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void KdAmbientController::WriteLightParams()
@@ -173,6 +210,12 @@ void KdAmbientController::WriteLightParams()
 	if (m_pointLights.size())
 	{
 		KdShaderManager::Instance().WriteCBPointLight(m_pointLights);
+	}
+
+	// コーンライト転送
+	if (m_coneLights.size())
+	{
+		KdShaderManager::Instance().WriteCBConeLight(m_coneLights);
 	}
 
 	// 影描画エリアの更新

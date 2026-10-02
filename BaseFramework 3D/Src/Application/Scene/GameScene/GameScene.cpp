@@ -30,7 +30,6 @@
 #include "../../GameObject/UI/InventoryUI/InventoryUI.h"
 #include "../../GameObject/UI/TimeUI/TimeUI.h"
 #include "../../GameObject/UI/ScoreUI/ScoreUI.h"
-#include "../../GameObject/UI/BushEffect/BushEffect.h"
 
 void GameScene::Update()
 {
@@ -148,11 +147,6 @@ void GameScene::Start()
 	m_objList.push_back(skyBox);
 
 	{
-		auto bushEffect = std::make_shared<BushEffect>();
-		bushEffect->Init();
-		bushEffect->SetName("BushEffect");
-		m_objList.push_back(bushEffect);
-
 		auto score = std::make_shared<ScoreUI>();
 		score->Init();
 		score->SetName("ScoreUI");

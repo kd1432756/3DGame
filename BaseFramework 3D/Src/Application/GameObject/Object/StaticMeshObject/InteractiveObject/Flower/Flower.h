@@ -22,6 +22,10 @@ public:
 
 private:
 
+	void OnAction(
+		const InteractiveAction& action,
+		const std::shared_ptr<Player>& player);
+
 	void RegisterCollider() override;
 
 	enum class FlowerState

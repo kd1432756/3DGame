@@ -8,6 +8,15 @@ void CameraManager::SetCamera(
 	const std::shared_ptr<CameraBase>& camera)
 {
 	m_spCamera = camera;
+
+	if (m_spCamera)
+	{
+		std::shared_ptr<KdCamera> spCamera = m_spCamera->GetCamera();
+		if (spCamera)
+		{
+			KdEffekseerManager::GetInstance().SetCamera(spCamera);
+		}
+	}
 }
 
 void CameraManager::Update()

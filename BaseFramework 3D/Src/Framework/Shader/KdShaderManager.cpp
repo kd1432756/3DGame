@@ -488,6 +488,36 @@ void KdShaderManager::WriteCBPointLight(const std::list<PointLight>& pointLights
 	m_cb9_Light.Write();
 }
 
+/*void KdShaderManager::WriteCBConeLightEnable(bool enable)
+{
+	// メンバー変数に値を代入
+	m_cb9_Light.Work().ConeLight.enable = enable;
+
+	// GPUに転送
+	m_cb9_Light.Write();
+}
+*/
+
+void KdShaderManager::WriteCBConeLight(const std::list<ConeLight>& coneLights)
+{
+	cbLight& light = m_cb9_Light.Work();
+	light.ConeLight_Num = (signed)coneLights.size();
+
+	light.ConeLights.fill(ConeLight{});
+
+	UINT coneIndex = 0;
+
+	for (const ConeLight& conelight : coneLights)
+	{
+		light.ConeLights[coneIndex] = conelight;
+
+		++coneIndex;
+	}
+
+	// GPUに転送
+	m_cb9_Light.Write();
+}
+
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 // パラメータの解放：シェーダー本体・共通の定数バッファ・各パイプラインステート
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
