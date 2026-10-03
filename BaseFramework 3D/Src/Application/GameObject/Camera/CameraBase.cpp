@@ -28,6 +28,11 @@ void CameraBase::SetTarget(const std::shared_ptr<KdGameObject>& target)
 	m_wpTarget = target;
 }
 
+void CameraBase::SetEyeHeight(float height)
+{
+	m_mLocalPos = Math::Matrix::CreateTranslation(0.0f, height, 0.0f);
+}
+
 void CameraBase::UpdateRotateByMouse()
 {    
 	// Tabキーを押した瞬間にカメラロックを切り替える

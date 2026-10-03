@@ -121,6 +121,7 @@ private:
 	std::unique_ptr<KdDebugWireFrame> m_pDebugWire = nullptr;
 
 	bool m_isOpen = false;
+	std::weak_ptr<CameraBase> m_returnCamera;
 
 	void UpdateObjectMode();
 	void UpdateStageMode();

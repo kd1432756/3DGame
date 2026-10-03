@@ -45,10 +45,16 @@ public:
 		m_wpHitObjectList.push_back(object);
 	}
 
+	// カメラ回転角度の取得・設定（カメラ切り替え時の向き引き継ぎ用）
+	const Math::Vector3& GetDegAng() const { return m_DegAng; }
+	void SetDegAng(const Math::Vector3& ang) { m_DegAng = ang; }
+
 	// マウス固定のON/OFF
 	void SetMouseLock(bool lock) { m_mouseLock = lock; }
 	bool IsMouseLock() const { return m_mouseLock; }
 
+	virtual void SetEyeHeight(float height);
+	
 protected:
 	// カメラ回転用角度
 	Math::Vector3								m_DegAng		= Math::Vector3::Zero;

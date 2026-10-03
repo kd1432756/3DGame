@@ -58,7 +58,12 @@ void GameScene::Update()
 		m_gameUpdate = false;
 		m_state = GameState::Finished;
 
-		m_spGameCamera->SetMouseLock(false);
+		// 終了処理
+		auto camera = CameraManager::Instance().GetCamera();
+		if (camera)
+		{
+			camera->SetMouseLock(false);
+		}
 
 		m_gameStateUI->ShowFinish();
 

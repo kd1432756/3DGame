@@ -1,7 +1,8 @@
 ﻿#include "Player.h"
 
 #include "../../../Scene/CameraManager/CameraManager.h"
-#include "../../Camera/CameraBase.h"
+#include "../../Camera/FPSCamera/FPSCamera.h"
+#include "../../Camera/ArrestCamera/ArrestCamera.h"
 
 #include "../../../Scene/SceneManager.h"
 
@@ -48,11 +49,11 @@ void Player::Init()
 			shared_from_this()));
 
 	auto camera = CameraManager::Instance().GetCamera();
-
 	if (camera)
 	{
 		camera->SetTarget(std::dynamic_pointer_cast<Player>(shared_from_this()));
 		SetCamera(camera);
+		m_fpsCamera = std::dynamic_pointer_cast<FPSCamera>(camera);
 	}
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
@@ -62,10 +63,11 @@ void Player::Update()
 {
 	if (m_isArrested)
 	{
-		ApplyGravity();
-		UpdateWorldMatrix();
+		UpdateArrested();
 		return;
 	}
+
+	UpdateRotationByCamera();
 
 	Move();
 
@@ -73,15 +75,7 @@ void Player::Update()
 
 	ApplyGravity();
 
-	char num = '1';
-	for (int i = 0; i < 3; ++i)
-	{
-		if (GetAsyncKeyState(num) & 0x0001)
-		{
-			SelectInventory(num - '1');
-		}
-		num++;
-	}
+	UpdateInventorySelect();
 
 	UpdateFocusObject();
 
@@ -91,10 +85,7 @@ void Player::Update()
 
 	UpdateUse();
 
-	if (GetAsyncKeyState('G') & 0x0001)
-	{
-		DropItem();
-	}
+	TryDropItem();
 
 	UpdateWorldMatrix();
 }
@@ -121,6 +112,33 @@ void Player::DrawSprite()
 	{
 		m_skillCheck->Draw();
 	}
+}
+
+void Player::UpdateArrested()
+{
+	auto arrestCam = std::dynamic_pointer_cast<ArrestCamera>(m_camera.lock());
+
+	if (arrestCam)
+	{
+		if (m_isReleasing)
+		{
+			arrestCam->StartPushIn();
+			m_isReleasing = false;
+		}
+
+		if (arrestCam->IsTransitionFinished())
+		{
+			m_fpsCamera->SetDegAng(arrestCam->GetDegAng());
+			CameraManager::Instance().SetCamera(m_fpsCamera);
+			SetCamera(m_fpsCamera);
+
+			m_isArrested = false;
+			m_isDrawEnabled = false;
+		}
+	}
+
+	ApplyGravity();
+	UpdateWorldMatrix();
 }
 
 void Player::OnPrankSuccess(int score, const std::string& message)
@@ -194,15 +212,7 @@ void Player::SelectInventory(int index)
 	m_inventory.SelectIndex(index);
 
 	auto item = m_inventory.GetCurrentItem();
-
-	if (item)
-	{
-		EquipItem(item->itemPath);
-	}
-	else
-	{
-		EquipItem("");
-	}
+	EquipItem(item ? item->itemPath : "");
 }
 
 void Player::Move()
@@ -234,13 +244,22 @@ void Player::Move()
 	_moveDir = _moveDir.TransformNormal(_moveDir, camRotYMat);
 	_moveDir.Normalize();
 
-	RotateToMoveDirection(_moveDir);
-
 	m_pos += _moveDir * _moveSpeed;
 	
 	ResolveCollision(_moveDir);
 }
 
+void Player::UpdateRotationByCamera()
+{
+	auto camera = m_camera.lock();
+
+	if (!camera)
+	{
+		return;
+	}
+
+	m_rot.y = camera->GetDegAng().y + DirectX::XMConvertToDegrees(DirectX::XM_PI);
+}
 /*
 void Player::Jump()
 {
@@ -335,6 +354,11 @@ void Player::TryInteract()
 		return;
 	}
 
+	if (m_isUsing)
+	{
+		return;
+	}
+
 	auto obj = m_focusObject.lock();
 
 	if (!obj)
@@ -353,6 +377,22 @@ void Player::TryInteract()
 	interact->Interact(
 		std::dynamic_pointer_cast<Player>(
 			shared_from_this()));
+}
+
+void Player::UpdateInventorySelect()
+{
+	if (m_isUsing)
+	{
+		return;
+	}
+
+	for (int i = 0; i < Inventory::MaxItem; ++i)
+	{
+		if (GetAsyncKeyState('1' + i) & 0x0001)
+		{
+			SelectInventory(i);
+		}
+	}
 }
 
 void Player::StartUse()
@@ -547,8 +587,18 @@ void Player::SwapItem(
 	}
 }
 
-void Player::DropItem()
+void Player::TryDropItem()
 {
+	if (!(GetAsyncKeyState('G') & 0x0001))
+	{
+		return;
+	}
+
+	if (m_isUsing)
+	{
+		return;
+	}
+
 	if (!m_handItem)
 	{
 		return;
@@ -652,7 +702,6 @@ void Player::OnArrested(const std::shared_ptr<Police>& police)
 
 	// フォーカス解除(ハイライトが残らないように)
 	auto oldObj = m_focusObject.lock();
-
 	if (oldObj)
 	{
 		auto usable = std::dynamic_pointer_cast<Usable>(oldObj);
@@ -664,6 +713,26 @@ void Player::OnArrested(const std::shared_ptr<Police>& police)
 	}
 
 	m_focusObject.reset();
+
+	m_isDrawEnabled = true;
+
+	SelectInventory(-1);
+
+	auto arrestCamera = std::make_shared<ArrestCamera>(); // 先ほど作った専用カメラ
+	arrestCamera->Init();
+	arrestCamera->SetTarget(std::dynamic_pointer_cast<Player>(shared_from_this()));
+	float height = 0.8f * m_sceneScale;
+	arrestCamera->SetEyeHeight(height);
+	arrestCamera->SetDegAng(m_fpsCamera->GetDegAng());
+
+	// カメラマネージャーやPlayerのカメラを差し替え
+	CameraManager::Instance().SetCamera(arrestCamera); // マネージャーの仕様に合わせる
+	SetCamera(arrestCamera);
+}
+
+void Player::OnReleased()
+{
+	m_isReleasing = true;
 }
 
 bool Player::IsUsingRepairItem() const

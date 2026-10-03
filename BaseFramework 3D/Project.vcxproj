@@ -283,6 +283,7 @@
     <ClInclude Include="Src\Application\Editor\Windows\NodeEditorWindow.h" />
     <ClInclude Include="Src\Application\Editor\Windows\SceneWindow.h" />
     <ClInclude Include="Src\Application\Editor\Windows\StageEditorWindow.h" />
+    <ClInclude Include="Src\Application\GameObject\Camera\ArrestCamera\ArrestCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\CameraBase.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\EditorCamera\EditorCamera.h" />
     <ClInclude Include="Src\Application\GameObject\Camera\EventCamera\EventCamera.h" />
@@ -308,6 +309,7 @@
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\StaticMeshObject.h" />
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\Tree\Tree.h" />
     <ClInclude Include="Src\Application\GameObject\SkyBox\SkyBox.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\EmoteIcon\EmoteIcon.h" />
     <ClInclude Include="Src\Application\GameObject\UI\FloatingTextUI\FloatingTextUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\GameStateUI\GameStateUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\InteractionProgress\InteractionProgress.h" />
@@ -362,7 +364,6 @@
     <ClInclude Include="Src\Application\System\SkillCheck\SkillCheckBase.h" />
     <ClInclude Include="Src\Application\System\SkillCheck\SkillCheckFactory.h" />
     <ClInclude Include="Src\Application\System\Usable\Usable.h" />
-    <ClInclude Include="Src\Application\System\VisionLight\VisionLight.h" />
     <ClInclude Include="Src\Framework\Direct3D\KdMaterial.h" />
     <ClInclude Include="Src\Framework\Direct3D\Polygon\KdPolygon.h" />
     <ClInclude Include="Src\Framework\Direct3D\Polygon\KdSquarePolygon.h" />
@@ -425,6 +426,7 @@
     <ClCompile Include="Src\Application\Editor\Windows\NodeEditorWindow.cpp" />
     <ClCompile Include="Src\Application\Editor\Windows\SceneWindow.cpp" />
     <ClCompile Include="Src\Application\Editor\Windows\StageEditorWindow.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Camera\ArrestCamera\ArrestCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\CameraBase.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\EditorCamera\EditorCamera.cpp" />
     <ClCompile Include="Src\Application\GameObject\Camera\EventCamera\EventCamera.cpp" />
@@ -450,6 +452,7 @@
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\StaticMeshObject.cpp" />
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\Tree\Tree.cpp" />
     <ClCompile Include="Src\Application\GameObject\SkyBox\SkyBox.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\EmoteIcon\EmoteIcon.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\FloatingTextUI\FloatingTextUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\GameStateUI\GameStateUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\InteractionProgress\InteractionProgress.cpp" />
@@ -497,7 +500,6 @@
     <ClCompile Include="Src\Application\System\SkillCheck\Reaction\SkillCheckReaction.cpp" />
     <ClCompile Include="Src\Application\System\SkillCheck\SkillCheckBase.cpp" />
     <ClCompile Include="Src\Application\System\SkillCheck\SkillCheckFactory.cpp" />
-    <ClCompile Include="Src\Application\System\VisionLight\VisionLight.cpp" />
     <ClCompile Include="Src\Framework\Direct3D\KdMaterial.cpp">
       <SubType>
       </SubType>

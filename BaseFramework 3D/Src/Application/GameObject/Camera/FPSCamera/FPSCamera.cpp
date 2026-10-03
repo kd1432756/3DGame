@@ -6,7 +6,7 @@ void FPSCamera::Init()
 	CameraBase::Init();
 
 	// 基準点(ターゲット)の目線
-	m_mLocalPos = Math::Matrix::CreateTranslation(0.0f, 1.5f, 0.0f);
+	//m_mLocalPos = Math::Matrix::CreateTranslation(0.0f, 1.5f, 0.0f);
 
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 }
@@ -24,7 +24,7 @@ void FPSCamera::Update()
 	// カメラの回転
 	UpdateRotateByMouse();
 	m_mRotation = GetRotationMatrix();
-	m_mWorld	= m_mRotation * m_mLocalPos * _targetMat;
+	m_mWorld	= m_mLocalPos *  m_mRotation * _targetMat;
 }
 
 void FPSCamera::SetEyeHeight(float height)

@@ -169,9 +169,6 @@
     <Filter Include="Src\Application\System\Node\RoadNode">
       <UniqueIdentifier>{6247ec61-679a-4d7f-9081-e2d2083ba636}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\System\VisionLight">
-      <UniqueIdentifier>{85b3673e-bfab-4528-a610-72d5b222781b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Effect">
       <UniqueIdentifier>{a00fe116-9ec5-403a-90d8-27f069f5e649}</UniqueIdentifier>
     </Filter>
@@ -273,6 +270,12 @@
     </Filter>
     <Filter Include="Src\Application\System\SkillCheck\HoldRelease">
       <UniqueIdentifier>{feb9fde2-410c-43c8-9735-6916b2996def}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Camera\ArrestCamera">
+      <UniqueIdentifier>{83893b01-3eae-4a29-ac2a-b5b4257ff832}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\EmoteIcon">
+      <UniqueIdentifier>{df833812-2c79-4dea-b6aa-0eaeb04e27e7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -546,9 +549,6 @@
     <ClInclude Include="Src\Application\System\Node\RoadNode\RoadNodeManager.h">
       <Filter>Src\Application\System\Node\RoadNode</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\System\VisionLight\VisionLight.h">
-      <Filter>Src\Application\System\VisionLight</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Effect\AlertIcon\AlertIcon.h">
       <Filter>Src\Application\GameObject\Effect\AlertIcon</Filter>
     </ClInclude>
@@ -704,6 +704,12 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\Item\ItemManager.h">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Camera\ArrestCamera\ArrestCamera.h">
+      <Filter>Src\Application\GameObject\Camera\ArrestCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\EmoteIcon\EmoteIcon.h">
+      <Filter>Src\Application\GameObject\UI\EmoteIcon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -939,9 +945,6 @@
     <ClCompile Include="Src\Application\System\Node\RoadNode\RoadNodeManager.cpp">
       <Filter>Src\Application\System\Node\RoadNode</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\System\VisionLight\VisionLight.cpp">
-      <Filter>Src\Application\System\VisionLight</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Effect\AlertIcon\AlertIcon.cpp">
       <Filter>Src\Application\GameObject\Effect\AlertIcon</Filter>
     </ClCompile>
@@ -1094,6 +1097,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\Item\ItemManager.cpp">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Camera\ArrestCamera\ArrestCamera.cpp">
+      <Filter>Src\Application\GameObject\Camera\ArrestCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\EmoteIcon\EmoteIcon.cpp">
+      <Filter>Src\Application\GameObject\UI\EmoteIcon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

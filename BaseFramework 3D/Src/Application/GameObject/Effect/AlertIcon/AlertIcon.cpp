@@ -27,7 +27,7 @@ void AlertIcon::Update()
 	}
 
 	m_pos = owner->GetMatrix().Translation();
-	m_pos.y += 1.4f * m_iconScale;
+	m_pos.y += 1.5f * m_iconScale;
 	
 	UpdateAnimation();
 
@@ -79,7 +79,6 @@ void AlertIcon::UpdateAnimation()
 	}
 
 	m_animTime += 1.0f / 60.0f;
-
 	float t = m_animTime / m_animDuration;
 
 	if (t >= 1.0f)
@@ -89,31 +88,25 @@ void AlertIcon::UpdateAnimation()
 	}
 
 	// --------------------------------
-	// Scale
-	// 0 → 1.3 → 0.9 → 1.0
+	// Scale Animation (0 → 1.3 → 1.0)
 	// --------------------------------
-
-	if (t < 0.4f)
+	float peakTime = 0.4f; // 全体の40%の時点で最大サイズにする
+	if (t < peakTime)
 	{
-		float p = t / 0.4f;
-
+		float p = t / peakTime;
 		SetScale(std::lerp(0.0f, m_iconScale * 1.3f, p));
 	}
 	else
 	{
-		float p = (t - 0.4f) / 0.6f;
-
+		float p = (t - peakTime) / (1.0f - peakTime);
 		SetScale(std::lerp(m_iconScale * 1.3f, m_iconScale, p));
 	}
 
 	// --------------------------------
-	// 上に跳ねる
+	// Jump Animation (上に跳ねる)
 	// --------------------------------
-
 	float jump = std::sin(t * DirectX::XM_PI);
-
-	float jumpHeight = 0.20f * m_iconScale;
-
+	float jumpHeight = 0.40f * m_iconScale;
 	m_pos.y += jump * jumpHeight;
 }
 

@@ -6,6 +6,7 @@ class CameraBase;
 class Item;
 class Interactable;
 class Usable;
+class FPSCamera;
 
 #include "../../../System/Skillcheck/SkillCheckBase.h"
 
@@ -107,20 +108,25 @@ public:
 	}
 
 	void OnArrested(const std::shared_ptr<Police>& police) override;
+	void OnReleased() override;
 
 private:
 
 	void Move();
 	void Jump();
 
+	void UpdateRotationByCamera();
+
 	void UpdateFocusObject();
 	void TryInteract();
+	void UpdateInventorySelect();
 	void StartUse();
 	void UpdateUse();
+	void UpdateArrested();
 
 	void OnItemsConfiscated() override;
 	void SelectInventory(int index) override;
-	void DropItem();
+	void TryDropItem();
 
 	void UpdateHandItem();
 
@@ -146,4 +152,8 @@ private:
 	std::unique_ptr<SkillCheckBase> m_skillCheck;
 	SkillResult m_skillResult = SkillResult::None;
 	int m_lastSkillType = -1;	// 直前の種類(連続同種を避ける)
+
+	bool m_isReleasing = false;
+
+	std::shared_ptr<FPSCamera> m_fpsCamera;
 };

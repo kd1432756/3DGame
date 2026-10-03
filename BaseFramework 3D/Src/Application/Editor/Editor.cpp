@@ -2851,11 +2851,11 @@ void Editor::SetOpen(bool open)
 
 	if (open)
 	{
+		m_returnCamera = CameraManager::Instance().GetCamera();
 		CameraManager::Instance().SetCamera(m_editorCamera);
 	}
 	else
 	{
-		CameraManager::Instance().SetCamera(
-			m_gameCamera.lock());
+		CameraManager::Instance().SetCamera(m_returnCamera.lock());
 	}
 }
