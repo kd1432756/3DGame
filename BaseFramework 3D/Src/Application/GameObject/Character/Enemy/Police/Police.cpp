@@ -57,22 +57,10 @@ void Police::Init()
 	FindPatrolPath();
 
 	//============================================================
-	// Alert Icon
+	// Emote Icon
 	//============================================================
 
-	m_spAlertIcon = std::make_shared<AlertIcon>();
-
-	m_spAlertIcon->Init();
-
-	m_spAlertIcon->SetIconScale(m_sceneScale);
-
-	m_spAlertIcon->SetOwner(
-		std::dynamic_pointer_cast<CharacterBase>(
-			shared_from_this()
-		)
-	);
-
-	SceneManager::Instance().AddObject(m_spAlertIcon);
+	InitEmoteIcon();
 
 	//============================================================
 	// State
@@ -512,6 +500,8 @@ void Police::UpdateSearch()
 		m_wpTarget.reset();
 
 		ChangeState(State::Return);
+
+		ShowEmote(EmoteIcon::IconType::Sad, 2.0f);
 
 		return;
 	}
@@ -1316,33 +1306,28 @@ void Police::ChangeState(State newState)
 
 	ApplyStateSettings();
 
-	if (!m_spAlertIcon)
-	{
-		return;
-	}
-
 	switch (m_state)
 	{
 	case State::Patrol:
-		m_spAlertIcon->SetIcon(AlertIcon::IconType::None);
+		HideEmote();
 		break;
 	case State::Chase:
-		m_spAlertIcon->SetIcon(AlertIcon::IconType::Exclamation);
+		ShowEmote(EmoteIcon::IconType::Exclamation);
 		break;
 	case State::Arrest:
-		m_spAlertIcon->SetIcon(AlertIcon::IconType::Exclamation);
+		ShowEmote(EmoteIcon::IconType::Exclamation);
 		break;
 	case State::Escort:
-		m_spAlertIcon->SetIcon(AlertIcon::IconType::None);
+		ShowEmote(EmoteIcon::IconType::Angry, 2.0f);
 		break;
 	case State::LastSeen:
-		m_spAlertIcon->SetIcon(AlertIcon::IconType::Question);
+		ShowEmote(EmoteIcon::IconType::Question);
 		break;
 	case State::Search:
-		m_spAlertIcon->SetIcon(AlertIcon::IconType::Question);
+		ShowEmote(EmoteIcon::IconType::Question);
 		break;
 	case State::Return:
-		m_spAlertIcon->SetIcon(AlertIcon::IconType::None);
+		HideEmote();
 		break;
 	}
 }

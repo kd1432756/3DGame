@@ -239,10 +239,4 @@ private:
 	float m_searchRotateSpeed = 90.0f;
 
 	float m_searchStartRotY = 0.0f;
-
-	//============================================================
-	// AlertIcon
-	//============================================================
-
-	std::shared_ptr<AlertIcon> m_spAlertIcon = nullptr;
 };

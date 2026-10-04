@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../../Character/CharacterBase.h"
+class CharacterBase;
 
 class EmoteIcon : public KdGameObject
 {
@@ -18,39 +18,78 @@ public:
 	enum class IconType
 	{
 		None,
-		Exclamation, // !
-		Question     // ?
+		Exclamation,	// !
+		Question,		// ?
+		Sad,			// 泣いてる顔
+		Angry,			// 怒った顔
+		Alert,			// 捕まった！
+		Stars,			// きらきら
+		Music,			// るんるん
+		Anger,			// むかむか
+		Idea,			// ひらめき
+		Laugh,			// 笑ってる顔
 	};
 
-	void SetIcon(IconType iconType);
+	void SetIcon(IconType iconType, float duration = 0.0f, bool force = false);
 
-	void SetOwner(std::shared_ptr<CharacterBase> chara)
+	void SetOwner(const std::shared_ptr<CharacterBase>& character)
 	{
-		m_owner = chara;
-	}
-
-	void SetIconScale(float scale)
-	{
-		m_iconScale = scale;
+		m_ownerCharacter = character;
 	}
 
 private:
 
-	std::shared_ptr<KdSquarePolygon> m_spPoly = nullptr;
+	//========================================
+	// 更新
+	//========================================
 
-	std::weak_ptr<CharacterBase> m_owner;
+	void UpdateIconAnimation();
+	void UpdateIconWorldMatrix();
 
-	IconType m_iconType = IconType::None;
+	//========================================
+	// アニメーション
+	//========================================
 
-	void UpdateAnimation();
-	void UpdateWorldMatrix() override;
+	void StartIconAnimation();
 
-	void StartAnimation();
+	//========================================
+	// 描画
+	//========================================
 
-	float m_animTime = 0.0f;
-	float m_animDuration = 0.3f;
+	std::shared_ptr<KdSquarePolygon> m_iconPolygon = nullptr;
 
-	bool m_isAnimating = false;
+	// アイコンを表示する対象キャラクター
+	std::weak_ptr<CharacterBase> m_ownerCharacter;
 
-	float m_iconScale = 1.0f;
+	// 現在表示しているアイコン
+	IconType m_currentIcon = IconType::None;
+
+	//========================================
+	// アニメーション状態
+	//========================================
+
+	float m_animationElapsed = 0.0f;
+	float m_animationDuration = 0.3f;
+
+	bool m_isAnimationPlaying = false;
+
+	//========================================
+	// 表示設定
+	//========================================
+
+	// 通常時のアイコンサイズ
+	float m_baseScale = 1.0f;
+
+	// キャラクターからの高さ
+	float m_heightOffset = 1.5f;
+
+	//========================================
+	// 表示時間
+	//========================================
+
+	// 残り表示時間(秒)
+	float m_lifeTime = 0.0f;
+
+	// true: 時間経過で自動的に消える
+	bool  m_hasLife = false;
 };

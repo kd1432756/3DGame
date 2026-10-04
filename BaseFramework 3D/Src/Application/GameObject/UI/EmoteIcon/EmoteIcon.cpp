@@ -1,139 +1,287 @@
 ﻿#include "EmoteIcon.h"
 
-#include "../../../Scene/CameraManager/CameraManager.h"
+#include "../../../Scene/SceneManager.h"
 
-#include "../../Camera/FPSCamera/FPSCamera.h"
+#include "../../Character/CharacterBase.h"
+
+#include "../../Camera/CameraBase.h"
+#include "../../../Scene/CameraManager/CameraManager.h"
 
 void EmoteIcon::Init()
 {
-	m_spPoly = std::make_shared<KdSquarePolygon>();
-	m_spPoly->SetMaterial("Asset/Textures/Effect/EmoteIcon/EmoteIcon.png");
+	if (m_iconPolygon)
+	{
+		return;
+	}
 
-	m_spPoly->SetPivot(KdSquarePolygon::PivotType::Center_Bottom);
+	m_iconPolygon = std::make_shared<KdSquarePolygon>();
 
-	m_spPoly->SetSplit(10, 3);
+	m_iconPolygon->SetMaterial("Asset/Textures/Effect/EmoteIcon/EmoteIcon.png");
 
-	m_spPoly->SetEnable(false);
+	m_iconPolygon->SetPivot(KdSquarePolygon::PivotType::Center_Bottom);
+
+	m_iconPolygon->SetSplit(10, 3);
+	m_iconPolygon->SetEnable(false);
+
+	m_baseScale = 1.0f * SceneManager::Instance().GetSceneScale();
 }
 
 void EmoteIcon::Update()
 {
-	auto owner = m_owner.lock();
+	auto ownerCharacter = m_ownerCharacter.lock();
 
-	if (!owner)
+	if (!ownerCharacter)
 	{
-		m_spPoly->SetEnable(false);
+		m_iconPolygon->SetEnable(false);
 		return;
 	}
 
-	m_pos = owner->GetMatrix().Translation();
-	m_pos.y += 1.4f * m_iconScale;
-	
-	UpdateAnimation();
+	//========================================
+	// ライフ処理
+	//========================================
 
-	UpdateWorldMatrix();
+	if (m_hasLife)
+	{
+		m_lifeTime -= 1.0f / 60.0f;
+		if (m_lifeTime <= 0.0f)
+		{
+			SetIcon(IconType::None);
+		}
+	}
+
+	//========================================
+	// キャラクターの頭上に配置
+	//========================================
+
+	m_pos = ownerCharacter->GetMatrix().Translation();
+	m_pos.y += m_heightOffset * m_baseScale;
+
+	//========================================
+	// アイコンアニメーション
+	//========================================
+
+	UpdateIconAnimation();
+
+	//========================================
+	// ワールド行列更新
+	//========================================
+
+	UpdateIconWorldMatrix();
 }
 
 void EmoteIcon::DrawUnLit()
 {
-	if (m_spPoly && m_spPoly->IsEnable())
+	if (!m_iconPolygon || !m_iconPolygon->IsEnable())
 	{
-		KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_spPoly, m_mWorld);
+		return;
 	}
+
+	KdShaderManager::Instance()
+		.m_StandardShader
+		.DrawPolygon(*m_iconPolygon, m_mWorld);
 }
 
-void EmoteIcon::SetIcon(IconType iconType)
+void EmoteIcon::SetIcon(IconType iconType, float duration, bool force)
 {
-	if (m_iconType == iconType)return;
+	const bool same = (m_currentIcon == iconType);
 
-	m_iconType = iconType;
+	m_hasLife = (duration > 0.0f);
+	m_lifeTime = duration;
 
-	switch (iconType)
+	if (same && !force) return;
+
+	m_currentIcon = iconType;
+
+	switch (m_currentIcon)
 	{
 	case IconType::None:
 
-		m_spPoly->SetEnable(false);
+		m_iconPolygon->SetEnable(false);
 		break;
 
 	case IconType::Exclamation:
 
-		m_spPoly->SetUVRect(8);
-		m_spPoly->SetEnable(true);
-		StartAnimation();
+		m_iconPolygon->SetUVRect(8);
+		m_iconPolygon->SetEnable(true);
+
+		StartIconAnimation();
 		break;
+
 	case IconType::Question:
 
-		m_spPoly->SetUVRect(9);
-		m_spPoly->SetEnable(true);
-		StartAnimation();
+		m_iconPolygon->SetUVRect(9);
+		m_iconPolygon->SetEnable(true);
+
+		StartIconAnimation();
+		break;
+
+	case IconType::Sad:
+
+		m_iconPolygon->SetUVRect(14);
+		m_iconPolygon->SetEnable(true);
+
+		StartIconAnimation();
+		break;
+
+	case IconType::Angry:
+
+		m_iconPolygon->SetUVRect(15);
+		m_iconPolygon->SetEnable(true);
+
+		StartIconAnimation();
+		break;
+
+	case IconType::Alert:
+
+		m_iconPolygon->SetUVRect(16);
+		m_iconPolygon->SetEnable(true);
+
+		StartIconAnimation();
+		break;
+
+	case IconType::Stars:
+
+		m_iconPolygon->SetUVRect(18);
+		m_iconPolygon->SetEnable(true);
+
+		StartIconAnimation();
+		break;
+
+	case IconType::Music:
+
+		m_iconPolygon->SetUVRect(19);
+		m_iconPolygon->SetEnable(true);
+
+		StartIconAnimation();
+		break;
+
+	case IconType::Anger:
+
+		m_iconPolygon->SetUVRect(22);
+		m_iconPolygon->SetEnable(true);
+
+		StartIconAnimation();
+		break;
+
+	case IconType::Idea:
+
+		m_iconPolygon->SetUVRect(27);
+		m_iconPolygon->SetEnable(true);
+
+		StartIconAnimation();
+		break;
+
+	case IconType::Laugh:
+
+		m_iconPolygon->SetUVRect(28);
+		m_iconPolygon->SetEnable(true);
+
+		StartIconAnimation();
+		break;
+
+	default:
+
 		break;
 	}
 }
 
-void EmoteIcon::UpdateAnimation()
+void EmoteIcon::UpdateIconAnimation()
 {
-	if (!m_isAnimating)
+	if (!m_isAnimationPlaying)
 	{
-		SetScale(m_iconScale);
+		SetScale(m_baseScale);
 		return;
 	}
 
-	m_animTime += 1.0f / 60.0f;
+	//========================================
+	// アニメーション時間更新
+	//========================================
 
-	float t = m_animTime / m_animDuration;
+	m_animationElapsed += 1.0f / 60.0f;
 
-	if (t >= 1.0f)
+	float progress =
+		m_animationElapsed / m_animationDuration;
+
+	if (progress >= 1.0f)
 	{
-		t = 1.0f;
-		m_isAnimating = false;
+		progress = 1.0f;
+		m_isAnimationPlaying = false;
 	}
 
-	// --------------------------------
-	// Scale
-	// 0 → 1.3 → 0.9 → 1.0
-	// --------------------------------
+	//========================================
+	// スケールアニメーション
+	//
+	// 0 → 1.3 → 1.0
+	//========================================
 
-	if (t < 0.4f)
+	if (progress < 0.4f)
 	{
-		float p = t / 0.4f;
+		const float scaleProgress = progress / 0.4f;
 
-		SetScale(std::lerp(0.0f, m_iconScale * 1.3f, p));
+		SetScale(
+			std::lerp(
+				0.0f,
+				m_baseScale * 1.3f,
+				scaleProgress
+			)
+		);
 	}
 	else
 	{
-		float p = (t - 0.4f) / 0.6f;
+		const float scaleProgress =
+			(progress - 0.4f) / 0.6f;
 
-		SetScale(std::lerp(m_iconScale * 1.3f, m_iconScale, p));
+		SetScale(
+			std::lerp(
+				m_baseScale * 1.3f,
+				m_baseScale,
+				scaleProgress
+			)
+		);
 	}
 
-	// --------------------------------
-	// 上に跳ねる
-	// --------------------------------
+	//========================================
+	// 上方向への跳ね上げ
+	//========================================
 
-	float jump = std::sin(t * DirectX::XM_PI);
+	const float jumpProgress =
+		std::sin(progress * DirectX::XM_PI);
 
-	float jumpHeight = 0.20f * m_iconScale;
+	const float jumpHeight =
+		0.20f * m_baseScale;
 
-	m_pos.y += jump * jumpHeight;
+	m_pos.y += jumpProgress * jumpHeight;
 }
 
-void EmoteIcon::UpdateWorldMatrix()
+void EmoteIcon::UpdateIconWorldMatrix()
 {
 	auto camera = CameraManager::Instance().GetCamera();
+
 	if (!camera)
+	{
 		return;
+	}
 
-	Math::Vector3 cameraPos = camera->GetMatrix().Translation();
+	const Math::Vector3 cameraPosition =
+		camera->GetMatrix().Translation();
 
-	Math::Vector3 dir = cameraPos - m_pos;
-	dir.y = 0.0f;
+	// アイコンからカメラへの方向
+	Math::Vector3 direction =
+		cameraPosition - m_pos;
 
-	if (dir.LengthSquared() < 0.0001f)
+	// Y方向は無視して水平回転だけ求める
+	direction.y = 0.0f;
+
+	if (direction.LengthSquared() < 0.0001f)
+	{
 		return;
+	}
 
-	dir.Normalize();
+	direction.Normalize();
 
-	const float yaw = std::atan2(dir.x, dir.z) + DirectX::XM_PI;
+	const float yaw =
+		std::atan2(direction.x, direction.z)
+		+ DirectX::XM_PI;
 
 	m_mWorld =
 		Math::Matrix::CreateScale(m_scale)
@@ -141,10 +289,10 @@ void EmoteIcon::UpdateWorldMatrix()
 		* Math::Matrix::CreateTranslation(m_pos);
 }
 
-void EmoteIcon::StartAnimation()
+void EmoteIcon::StartIconAnimation()
 {
-	m_animTime = 0.0f;
-	m_isAnimating = true;
+	m_animationElapsed = 0.0f;
+	m_isAnimationPlaying = true;
+
 	SetScale(0.0f);
 }
-

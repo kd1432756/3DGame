@@ -73,12 +73,14 @@ void SlideTextUI::Update()
 
 void SlideTextUI::DrawSprite()
 {
+	Math::Color color = { 1.0f, 0.45f, 0.10f, 1.0f };
+
 	KdShaderManager::Instance().m_spriteShader.DrawFont(
 		m_pos,
-		&kRedColor,
+		&color,
 		Math::Vector2{ 0.5f, 0.5f },
 		0.0f,
-		FontID::Future48,
+		FontID::Future64,
 		m_text.c_str()
 	);
 }

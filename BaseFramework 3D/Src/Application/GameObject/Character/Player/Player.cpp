@@ -21,6 +21,7 @@
 
 #include "../../UI/FloatingTextUI/FloatingTextUI.h"
 #include "../../UI/SlideTextUI/SlideTextUI.h"
+#include "../../UI/ShakeTextUI/ShakeTextUI.h"
 
 // いたずら、修復時にアクションを追加（スキルチェックかなにか）。
 // それが終わってからカウントダウンを開始する。
@@ -55,6 +56,8 @@ void Player::Init()
 		SetCamera(camera);
 		m_fpsCamera = std::dynamic_pointer_cast<FPSCamera>(camera);
 	}
+
+	InitEmoteIcon();
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 }
@@ -161,7 +164,8 @@ void Player::OnPranked(const std::shared_ptr<InteractiveObject>& object, const I
 	auto slideText = std::make_shared<SlideTextUI>();
 
 	slideText->SetText(action.ownerMessage);
-	slideText->SetPosition({ -500, 100 });
+
+	slideText->SetPosition({ -500, 130 });
 
 	SceneManager::Instance().AddObject(slideText);
 }
@@ -713,6 +717,18 @@ void Player::OnArrested(const std::shared_ptr<Police>& police)
 	}
 
 	m_focusObject.reset();
+
+	{
+		auto shakeText = std::make_shared<ShakeTextUI>();
+
+		shakeText->SetText(
+			"ARRESTED!!"
+		);
+
+		shakeText->SetPosition({ 0, 120 });
+
+		SceneManager::Instance().AddObject(shakeText);
+	}
 
 	m_isDrawEnabled = true;
 

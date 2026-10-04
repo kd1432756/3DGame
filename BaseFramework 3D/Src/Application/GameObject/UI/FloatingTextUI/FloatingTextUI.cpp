@@ -11,6 +11,23 @@ void FloatingTextUI::Update()
 
 	m_pos.y += 0.5f;
 
+	float t = m_elapsedTime / m_lifeTime;
+
+	if (t < 0.1f)
+	{
+		m_alpha = t / 0.1f;
+	}
+	else if (t > 0.8f)
+	{
+		m_alpha =
+			1.0f -
+			((t - 0.8f) / 0.2f);
+	}
+	else
+	{
+		m_alpha = 1.0f;
+	}
+
 	if (m_elapsedTime >= m_lifeTime)
 	{
 		m_isExpired = true;
@@ -19,12 +36,14 @@ void FloatingTextUI::Update()
 
 void FloatingTextUI::DrawSprite()
 {
+	Math::Color color = { 1.0f, 0.78f, 0.10f, m_alpha };
+
 	KdShaderManager::Instance().m_spriteShader.DrawFont(
 		m_pos,
-		&kYellowColor,
+		&color,
 		Math::Vector2{ 0.5f, 0.5f },
 		0.0f,
-		FontID::Future32,
+		FontID::Future48,
 		m_text.c_str()
 	);
 }

@@ -6,6 +6,8 @@ class Police;
 #include "../../System/Inventory/Inventory.h"
 #include "../Object/StaticMeshObject/Item/ItemData.h"
 
+#include "../UI/EmoteIcon/EmoteIcon.h"
+
 class CharacterBase : public KdGameObject
 {
 public:
@@ -63,6 +65,9 @@ public:
 	virtual void SelectInventory(int index) { m_inventory.SelectIndex(index); }
 
 	bool IsArrested() const { return m_isArrested; }
+
+	void ShowEmote(EmoteIcon::IconType type, float duration = 0.0f, bool force = false);
+	void HideEmote();
 
 protected:
 
@@ -122,6 +127,10 @@ protected:
 	Inventory m_inventory;
 
 	bool m_isArrested = false;
+
+	void InitEmoteIcon();
+
+	std::shared_ptr<EmoteIcon> m_spEmoteIcon = nullptr;
 
 	// ===== ray =====
 	

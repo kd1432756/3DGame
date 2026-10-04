@@ -21,6 +21,9 @@ private:
 	std::string m_text;
 
 	Math::Vector2 m_pos = {};
+
+	float m_alpha = 1.0f;
+
 	float m_lifeTime = 1.0f;
 	float m_elapsedTime = 0.0f;
 };

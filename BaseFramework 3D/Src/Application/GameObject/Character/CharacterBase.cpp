@@ -4,6 +4,8 @@
 
 #include "../../System/Score/ScoreManager.h"
 
+#include "../UI/EmoteIcon/EmoteIcon.h"
+
 void CharacterBase::Init()
 {
 	m_sceneScale = SceneManager::Instance().GetSceneScale();
@@ -568,9 +570,31 @@ void CharacterBase::ConfiscatePrankItems()
 void CharacterBase::OnArrested(const std::shared_ptr<Police>& police)
 {
 	m_isArrested = true;
+
+	ShowEmote(EmoteIcon::IconType::Alert, 2.0f);
 }
 
 void CharacterBase::OnReleased()
 {
 	m_isArrested = false;
+}
+
+void CharacterBase::InitEmoteIcon()
+{
+	m_spEmoteIcon = std::make_shared<EmoteIcon>();
+	m_spEmoteIcon->Init();
+	m_spEmoteIcon->SetOwner(
+		std::dynamic_pointer_cast<CharacterBase>(shared_from_this()));
+
+	SceneManager::Instance().AddObject(m_spEmoteIcon);
+}
+
+void CharacterBase::ShowEmote(EmoteIcon::IconType type, float duration, bool force)
+{
+	if (m_spEmoteIcon) m_spEmoteIcon->SetIcon(type, duration, force);
+}
+
+void CharacterBase::HideEmote()
+{
+	if (m_spEmoteIcon) m_spEmoteIcon->SetIcon(EmoteIcon::IconType::None);
 }

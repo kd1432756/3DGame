@@ -277,6 +277,9 @@
     <Filter Include="Src\Application\GameObject\UI\EmoteIcon">
       <UniqueIdentifier>{df833812-2c79-4dea-b6aa-0eaeb04e27e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\UI\ShakeTextUI">
+      <UniqueIdentifier>{78d66571-1485-4ffe-874e-e998e0f5d777}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -711,6 +714,9 @@
     <ClInclude Include="Src\Application\GameObject\UI\EmoteIcon\EmoteIcon.h">
       <Filter>Src\Application\GameObject\UI\EmoteIcon</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\ShakeTextUI\ShakeTextUI.h">
+      <Filter>Src\Application\GameObject\UI\ShakeTextUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1103,6 +1109,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\EmoteIcon\EmoteIcon.cpp">
       <Filter>Src\Application\GameObject\UI\EmoteIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\ShakeTextUI\ShakeTextUI.cpp">
+      <Filter>Src\Application\GameObject\UI\ShakeTextUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -319,6 +319,7 @@
     <ClInclude Include="Src\Application\GameObject\UI\ResultUI\ResultUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\Reticle\Reticle.h" />
     <ClInclude Include="Src\Application\GameObject\UI\ScoreUI\ScoreUI.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\ShakeTextUI\ShakeTextUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\SlideTextUI\SlideTextUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\TimeUI\TimeUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\TitleUI\TitleUI.h" />
@@ -462,6 +463,7 @@
     <ClCompile Include="Src\Application\GameObject\UI\ResultUI\ResultUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\Reticle\Reticle.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\ScoreUI\ScoreUI.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\ShakeTextUI\ShakeTextUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\SlideTextUI\SlideTextUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\TimeUI\TimeUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\TitleUI\TitleUI.cpp" />

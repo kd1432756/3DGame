@@ -62,6 +62,12 @@ void Neighbor::Init()
 	ApplyStateSettings();
 
 	//============================================================
+	// Emote Icon
+	//============================================================
+
+	InitEmoteIcon();
+
+	//============================================================
 	// Inventory初期化
 	//============================================================
 
@@ -774,8 +780,13 @@ std::shared_ptr<LocationPoint> Neighbor::SelectTaskDestination()
 	bool hasRepairItem = HasRepairItem();
 
 	//============================================================
-	// 優先度: 空きスロット > いたずら > 修復 > ランダム徘徊
+	// 優先度: 修復アイテムのみ > 空きスロット > いたずら > 修復 > ランダム徘徊
 	//============================================================
+	
+	if (ShouldSwapForPrankItem())
+	{
+		return SelectItemAreaPoint();
+	}
 
 	if (hasEmptySlot)
 	{
@@ -980,11 +991,8 @@ bool Neighbor::FindBestSearchItem(SearchItemCandidate & outCandidate)
 {
 	outCandidate = SearchItemCandidate();
 
-	//============================================================
-	// インベントリが満杯なら探さない
-	//============================================================
-
-	if (!m_inventory.HasEmptySlot())
+	const bool swapMode = ShouldSwapForPrankItem();
+	if (!m_inventory.HasEmptySlot() && !swapMode)
 	{
 		return false;
 	}
@@ -1034,10 +1042,20 @@ bool Neighbor::FindBestSearchItem(SearchItemCandidate & outCandidate)
 		}
 
 		//========================================================
-		// すでにインベントリにあるアイテムなら不要
+		// いたずらに使えるアイテムだけ
 		//========================================================
 
 		const ItemData& itemData = item->GetItemData();
+
+		if (swapMode)
+		{
+			if (itemData.GetAction() == ItemAction::Repair) continue;
+			if (!CanUseItemForPrank(itemData)) continue;
+		}
+
+		//========================================================
+		// すでにインベントリにあるアイテムなら不要
+		//========================================================
 
 		if (HasInventoryItem(itemData.GetItemPath()))
 		{
@@ -1269,35 +1287,40 @@ void Neighbor::PickupSearchItem()
 	{
 		pickedUp = item->Pickup(m_inventory);
 	}
-	else if (m_wpSelectedUrgentRepairTarget.lock())
+	else if (m_wpSelectedUrgentRepairTarget.lock() || ShouldSwapForPrankItem())
 	{
-		//========================================================
-		// 交換先スロットを決定（選択中スロット優先、無ければ0番）
-		//========================================================
+		int swapIndex;
 
-		int swapIndex = m_inventory.GetSelectIndex();
-
-		if (swapIndex < 0)
+		if (m_wpSelectedUrgentRepairTarget.lock())
 		{
-			swapIndex = 0;
+			//========================================================
+			// 交換先スロットを決定（選択中スロット優先、無ければ0番）
+			//========================================================
+
+			int swapIndex = m_inventory.GetSelectIndex();
+
+			if (swapIndex < 0)
+			{
+				swapIndex = 0;
+			}
+
+			//========================================================
+			// 交換されるアイテムをワールドへ落とす
+			//========================================================
+
+			const std::string oldPath =
+				m_inventory.GetItems()[swapIndex].itemPath;
+
+			if (!oldPath.empty())
+			{
+				Math::Vector3 dir = GetMatrix().Backward();
+				ItemManager::Instance().SpawnDropped(oldPath, m_pos, dir);
+			}
+
+			pickedUp = item->Pickup(m_inventory, swapIndex);
+
+			pickedIndex = swapIndex;
 		}
-
-		//========================================================
-		// 交換されるアイテムをワールドへ落とす
-		//========================================================
-
-		const std::string oldPath =
-			m_inventory.GetItems()[swapIndex].itemPath;
-
-		if (!oldPath.empty())
-		{
-			Math::Vector3 dir = GetMatrix().Backward();
-			ItemManager::Instance().SpawnDropped(oldPath, m_pos, dir);
-		}
-
-		pickedUp = item->Pickup(m_inventory, swapIndex);
-
-		pickedIndex = swapIndex;
 	}
 
 	if (!pickedUp)
@@ -1330,6 +1353,8 @@ void Neighbor::PickupSearchItem()
 			}
 		}
 	}
+
+	ShowEmote(EmoteIcon::IconType::Stars, 2.0f);
 
 	ChangeState(State::Task);
 }
@@ -1478,6 +1503,8 @@ void Neighbor::UpdatePrank()
 
 			target->NPCUse(itemData, std::dynamic_pointer_cast<Neighbor>(
 				shared_from_this()));
+
+			ShowEmote(EmoteIcon::IconType::Laugh, 2.0f);
 
 			//====================================================
 			// いたずら終了
@@ -1987,6 +2014,8 @@ void Neighbor::UpdateRepair()
 
 			target->NPCUse(itemData, std::dynamic_pointer_cast<Neighbor>(
 				shared_from_this()));
+
+			ShowEmote(EmoteIcon::IconType::Music, 2.0f);
 
 			//====================================================
 			// 緊急修復キューから該当対象を除去
@@ -2628,21 +2657,13 @@ void Neighbor::OnPranked(
 	const std::shared_ptr<InteractiveObject>& target,
 	const InteractiveAction& action)
 {
-	OutputDebugStringA(("OnPranked called: " + GetName() + "\n").c_str());
-
 	if (!target)
 	{
-		OutputDebugStringA("  -> target is null\n");
 		return;
 	}
 
-	OutputDebugStringA(
-		("  target owner = [" + target->GetOwner() +
-			"], GetName() = [" + GetName() + "]\n").c_str()
-	);
 	if (target->GetOwner() != GetName())
 	{
-		OutputDebugStringA("  -> owner mismatch, ignored\n");
 		return;
 	}
 
@@ -2650,17 +2671,13 @@ void Neighbor::OnPranked(
 	{
 		if (wp.lock() == target)
 		{
-			OutputDebugStringA("  -> already in queue\n");
 			return;
 		}
 	}
 
 	m_urgentRepairTargets.push_back(target);
 
-	OutputDebugStringA(
-		("  -> pushed. queue size = " +
-			std::to_string(m_urgentRepairTargets.size()) + "\n").c_str()
-	);
+	ShowEmote(EmoteIcon::IconType::Anger, 1.0f);
 }
 
 //============================================================
@@ -2822,6 +2839,100 @@ std::shared_ptr<InteractiveObject> Neighbor::SelectBestUrgentRepairTarget()
 }
 
 //============================================================
+// Inventory EX
+//============================================================
+
+// インベントリが満杯で、中身が全部修復アイテム
+bool Neighbor::IsInventoryAllRepair() const
+{
+	if (m_inventory.HasEmptySlot())
+	{
+		return false;
+	}
+
+	const auto& items = m_inventory.GetItems();
+
+	bool any = false;
+
+	for (int i = 0; i < Inventory::MaxItem; ++i)
+	{
+		if (items[i].IsEmpty())
+		{
+			continue;
+		}
+
+		ItemData data;
+
+		if (!data.Load(items[i].itemPath))
+		{
+			continue;
+		}
+
+		if (data.GetAction() != ItemAction::Repair)
+		{
+			return false;
+		}
+
+		any = true;
+	}
+
+	return any;
+}
+
+// 入れ替えを行うべきか
+bool Neighbor::ShouldSwapForPrankItem()
+{
+	// 自宅が壊されていて修復待ちなら、修復アイテムは手放さない
+	CleanupUrgentRepairTargets();
+
+	if (!m_urgentRepairTargets.empty())
+	{
+		return false;
+	}
+
+	return IsInventoryAllRepair();
+}
+
+// 捨てるスロットを選ぶ：今使い道のない修復アイテムを優先
+int Neighbor::FindSwapSlotForPrank() const
+{
+	const auto& items = m_inventory.GetItems();
+	auto& objList = SceneManager::Instance().GetObjList();
+
+	for (int i = 0; i < Inventory::MaxItem; ++i)
+	{
+		if (items[i].IsEmpty()) continue;
+
+		ItemData data;
+		if (!data.Load(items[i].itemPath)) continue;
+
+		bool needed = false;
+
+		for (auto& obj : objList)
+		{
+			auto target = std::dynamic_pointer_cast<InteractiveObject>(obj);
+
+			if (!target || target->GetOwner() != GetName()) continue;
+
+			if (target->CanNPCUse(data))
+			{
+				needed = true;
+				break;
+			}
+		}
+
+		if (!needed)
+		{
+			return i;
+		}
+	}
+
+	// 全部使い道があるなら選択中、なければ0番
+	int idx = m_inventory.GetSelectIndex();
+	return idx < 0 ? 0 : idx;
+}
+
+//============================================================
 // State
 //============================================================
 
@@ -2849,6 +2960,20 @@ void Neighbor::ChangeState(State newState)
 	m_debugInfo.stateName = StateToString(m_state);
 
 	ApplyStateSettings();
+
+	switch (m_state)
+	{
+	case State::Prank:
+
+		ShowEmote(EmoteIcon::IconType::Idea, 2.0f);
+
+		break;
+
+	default:
+
+		break;
+	}
+
 }
 
 //============================================================

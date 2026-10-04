@@ -310,6 +310,16 @@ private:
 	std::shared_ptr<InteractiveObject> SelectBestUrgentRepairTarget();
 
 	//============================================================
+	// Inventory EX
+	//============================================================
+
+	bool IsInventoryAllRepair() const;
+
+	bool ShouldSwapForPrankItem();
+
+	int  FindSwapSlotForPrank() const;
+
+	//============================================================
 	// Movement
 	//============================================================
 

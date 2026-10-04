@@ -32,7 +32,7 @@ void SkyBox::Update()
 
 	// 修正したCalcAlpha関数（安全に補間を行えるように調整）
 	auto CalcAlpha = [](float t, float start, float peakStart, float peakEnd, float end) {
-		if (t <= start || t >= end) return 0.0f;
+		if (t < start || t > end) return 0.0f;
 		if (t >= peakStart && t <= peakEnd) return 1.0f;
 		if (t < peakStart) {
 			return (t - start) / (peakStart - start);
