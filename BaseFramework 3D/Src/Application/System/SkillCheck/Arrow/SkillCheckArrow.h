@@ -22,6 +22,17 @@ protected:
 	void OnDraw() override;
 
 private:
+	static SkillKey KeyOf(Dir d)
+	{
+		switch (d)
+		{
+		case Up:   return SkillKey::W;
+		case Down: return SkillKey::S;
+		case Left: return SkillKey::A;
+		default:   return SkillKey::D;
+		}
+	}
+
 	std::vector<Dir> m_seq;
 	int   m_index = 0;
 	float m_inputTime = 0.0f;

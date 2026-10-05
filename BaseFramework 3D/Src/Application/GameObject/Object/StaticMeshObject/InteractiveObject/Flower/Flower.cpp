@@ -18,8 +18,7 @@ void Flower::Init()
 		200,
 		"Flower Cut!",
 		"Your Flower was Cut!",
-		"Asset/Models/Props/Flower/FlowerCut.gltf",
-		true
+		"Asset/Models/Props/Flower/FlowerCut.gltf"
 		});
 
 	RegisterAction({
@@ -31,8 +30,7 @@ void Flower::Init()
 		80,
 		"Flower Repair!",
 		"",
-		"Asset/Models/Props/Flower/FlowerTape.gltf",
-		true
+		"Asset/Models/Props/Flower/FlowerTape.gltf"
 		});
 
 	SetCollisionEnabled(false);

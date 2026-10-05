@@ -5,6 +5,8 @@
 #include "HoldRelease/SkillCheckHoldRelease.h"
 #include "Arrow/SkillCheckArrow.h"
 #include "Reaction/SkillCheckReaction.h"
+#include "ShrinkRing/SkillCheckShrinkRing.h"
+#include "AltMash/SkillCheckAltMash.h"
 
 namespace
 {
@@ -30,6 +32,8 @@ namespace
 			{ SkillCheckType::GaugeStop, 1.0f, 0.0f },
 			{ SkillCheckType::Mash,      1.0f, 0.0f },
 			{ SkillCheckType::Reaction,  0.7f, 0.4f },
+			{ SkillCheckType::AltMash,   1.0f, 0.0f },
+			{ SkillCheckType::ShrinkRing, 0.8f, 0.0f },
 		};
 		return pool;
 	}
@@ -41,6 +45,7 @@ namespace
 			{ SkillCheckType::GaugeStop,   1.0f, 0.0f },
 			{ SkillCheckType::HoldRelease, 1.0f, 0.0f },
 			{ SkillCheckType::Arrow,       0.7f, 0.3f },
+			{ SkillCheckType::ShrinkRing, 1.0f, 0.0f },
 		};
 		return pool;
 	}
@@ -127,6 +132,8 @@ std::unique_ptr<SkillCheckBase> SkillCheckFactory::Make(SkillCheckType type)
 	case SkillCheckType::HoldRelease: return std::make_unique<SkillCheckHoldRelease>();
 	case SkillCheckType::Arrow:       return std::make_unique<SkillCheckArrow>();
 	case SkillCheckType::Reaction:    return std::make_unique<SkillCheckReaction>();
+	case SkillCheckType::ShrinkRing:  return std::make_unique<SkillCheckShrinkRing>();
+	case SkillCheckType::AltMash:     return std::make_unique<SkillCheckAltMash>();
 
 	default:
 		return std::make_unique<SkillCheckGaugeStop>();

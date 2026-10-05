@@ -11,8 +11,9 @@ void SkillCheckBase::Start(float difficulty)
 	m_difficulty = (difficulty < 0.1f) ? 0.1f : difficulty;
 	m_elapsed = 0.0f;
 
-	// 開始時に残っている入力を拾わないよう、ここで一度読み捨てる
-	DrainInput();
+	// 開始時に残っている入力を拾わないよう、一度読んで捨てる
+	PollKeys();
+	ClearPressed();
 
 	OnStart();
 }
@@ -21,12 +22,14 @@ void SkillCheckBase::Update()
 {
 	if (IsFinished()) return;
 
+	PollKeys();	// キー状態は1フレームに1回だけ読む
+
 	m_elapsed += kDeltaTime;
 
 	// 準備時間中は入力を受け付けない
 	if (!IsReady())
 	{
-		DrainInput();
+		ClearPressed();
 		return;
 	}
 
@@ -52,23 +55,44 @@ void SkillCheckBase::Finish(SkillResult result)
 	m_result = result;
 }
 
-bool SkillCheckBase::IsKeyPressed(int vk)
+int SkillCheckBase::KeyIndex(int vk)
 {
-	return (GetAsyncKeyState(vk) & 0x0001) != 0;
+	for (int i = 0; i < kKeyCount; ++i)
+	{
+		if (SkillKeyUI::ToVirtualKey(static_cast<SkillKey>(i)) == vk) return i;
+	}
+	return -1;
 }
 
-bool SkillCheckBase::IsKeyDown(int vk)
+void SkillCheckBase::PollKeys()
 {
-	return (GetAsyncKeyState(vk) & 0x8000) != 0;
+	for (int i = 0; i < kKeyCount; ++i)
+	{
+		const SHORT state = GetAsyncKeyState(SkillKeyUI::ToVirtualKey(static_cast<SkillKey>(i)));
+		const bool  down = (state & 0x8000) != 0;
+
+		// 「押された記録(0x0001)」か、「前フレームは離れていて今は押している」のどちらか
+		m_keyPressed[i] = ((state & 0x0001) != 0) || (down && !m_keyPrevDown[i]);
+		m_keyDown[i] = down;
+		m_keyPrevDown[i] = down;
+	}
 }
 
-void SkillCheckBase::DrainInput()
+void SkillCheckBase::ClearPressed()
 {
-	GetAsyncKeyState(VK_SPACE);
-	GetAsyncKeyState('W');
-	GetAsyncKeyState('A');
-	GetAsyncKeyState('S');
-	GetAsyncKeyState('D');
+	for (int i = 0; i < kKeyCount; ++i) m_keyPressed[i] = false;
+}
+
+bool SkillCheckBase::IsKeyPressed(int vk) const
+{
+	const int i = KeyIndex(vk);
+	return i >= 0 && m_keyPressed[i];
+}
+
+bool SkillCheckBase::IsKeyDown(int vk) const
+{
+	const int i = KeyIndex(vk);
+	return i >= 0 && m_keyDown[i];
 }
 
 void SkillCheckBase::DrawRect(float x, float y, float halfW, float halfH, const Math::Color& color)
@@ -77,7 +101,13 @@ void SkillCheckBase::DrawRect(float x, float y, float halfW, float halfH, const 
 
 	Math::Color c = color;
 	KdShaderManager::Instance().m_spriteShader.DrawBox(
-		static_cast<int>(x), static_cast<int>(y),
+		static_cast<int>(x), static_cast<int>(y + kLayoutOffsetY),
 		static_cast<int>(halfW), static_cast<int>(halfH),
 		&c, true);
+}
+
+void SkillCheckBase::DrawKey(SkillKey key, float x, float y, SkillKeyAnim anim, float alphaMul) const
+{
+	const bool isDown = IsReady() && IsKeyDown(SkillKeyUI::ToVirtualKey(key));
+	SkillKeyUI::Instance().Draw(key, x, y + kLayoutOffsetY, anim, m_elapsed, isDown, GetAlpha() * alphaMul);
 }

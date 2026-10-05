@@ -9,25 +9,38 @@ void PaintCan::Init()
 {
 	SetModelPath("Asset/Models/Props/PaintCan/PaintCan.gltf");
 
+	RegisterAction({
+		InteractiveState::Normal,
+		InteractiveState::Damaged,
+		ItemAction::None,
+		"PaintCan",
+		1.5f,
+		100,
+		"PaintCan Spilled!",
+		"Your PaintCan was Spilled!",
+		"Asset/Models/Props/PaintCan/SpilledPaintCan.gltf",
+		false,
+		"Spill"
+		});
+
+	RegisterAction({
+		InteractiveState::Damaged,
+		InteractiveState::Normal,
+		ItemAction::Repair,
+		"PaintCan",
+		2.0f,
+		60,
+		"PaintCan Repair!",
+		"",
+		"Asset/Models/Props/PaintCan/PaintCan.gltf",
+		false,
+		"Clean up"
+		});
+
+	SetCollisionEnabled(false);
+
 	StaticMeshObject::Init();
 }
-
-void PaintCan::DrawBright()
-{
-	if (!IsFocused())
-	{
-		return;
-	}
-
-	if (!m_spModel) return;
-
-	Math::Color color{ 0.1,0.1,0.1,1 };
-	KdShaderManager::Instance().m_StandardShader.DrawModel(
-		*m_spModel,
-		m_mWorld,
-		color);
-}
-
 
 void PaintCan::RegisterCollider()
 {

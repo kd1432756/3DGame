@@ -337,6 +337,15 @@ void Neighbor::UpdateUtility()
 			return;
 		}
 
+		if (target->CanNPCUseBare(GetName()))
+		{
+			SelectInventory(-1);
+			m_wpRepairTarget = target;
+			m_repairInventoryIndex = -1;
+			ChangeState(State::Repair);
+			break;
+		}
+
 		const auto& items = m_inventory.GetItems();
 
 		bool found = false;
@@ -1004,6 +1013,7 @@ bool Neighbor::FindBestSearchItem(SearchItemCandidate & outCandidate)
 	const float searchDistanceSq = searchRadius * searchRadius;
 
 	float bestUtility = 0.0f;
+	int bestLogIndex = -1;
 
 	for (auto& obj : objList)
 	{
@@ -1480,6 +1490,11 @@ void Neighbor::UpdatePrank()
 	}
 
 	const ItemData& itemData = GetCurrentItemData();
+	const bool bare = IsBareHanded();
+
+	auto canUse = [&]() {
+		return bare ? target->CanNPCUseBare(GetName()) : target->CanNPCUse(itemData);
+		};
 
 	//============================================================
 	// インタラクト中
@@ -1489,7 +1504,8 @@ void Neighbor::UpdatePrank()
 	{
 		m_interactTimer += 1.0f / 60.0f;
 
-		float useTime = target->GetNPCUseTime(itemData);
+		float useTime = bare ? target->GetNPCUseTimeBare(GetName())
+			: target->GetNPCUseTime(itemData);
 
 		if (m_interactTimer >= useTime)
 		{
@@ -1501,8 +1517,9 @@ void Neighbor::UpdatePrank()
 			// いたずら実行
 			//====================================================
 
-			target->NPCUse(itemData, std::dynamic_pointer_cast<Neighbor>(
-				shared_from_this()));
+			auto self = std::dynamic_pointer_cast<Neighbor>(shared_from_this());
+			if (bare) target->NPCUseBare(self);
+			else      target->NPCUse(itemData, self);
 
 			ShowEmote(EmoteIcon::IconType::Laugh, 2.0f);
 
@@ -1561,13 +1578,11 @@ void Neighbor::UpdatePrank()
 	// 到着したので、もう一度使用可能か確認
 	//============================================================
 
-	if (!target->CanNPCUse(
-		itemData))
+	if (!canUse())
 	{
 		m_wpPrankTarget.reset();
 
 		m_prankInventoryIndex = -1;
-
 
 		ChangeState(
 			State::Task
@@ -1681,44 +1696,28 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 	const auto& items = m_inventory.GetItems();
 
 	float bestUtility = 0.0f;
+	int bestLogIndex = -1;
 
 	//============================================================
 	// Inventory全スロット
 	//============================================================
 
-	for (int inventoryIndex = 0;
-		inventoryIndex < Inventory::MaxItem;
-		++inventoryIndex)
+	for (int inventoryIndex = -1; inventoryIndex < Inventory::MaxItem; ++inventoryIndex)
 	{
-		const InventoryItem& inventoryItem = items[inventoryIndex];
+		const bool bare = (inventoryIndex < 0);
 
-		//========================================================
-		// 空きスロット
-		//========================================================
-
-		if (inventoryItem.IsEmpty())
-		{
-			continue;
-		}
-
-		//========================================================
-		// ItemData
-		//========================================================
-		
 		ItemData itemData;
+		std::string itemPath = "(bare hands)";
 
-		if (!itemData.Load(inventoryItem.itemPath))
+		if (!bare)
 		{
-			continue;
-		}
-		
-		//========================================================
-		// Repairは無視
-		//========================================================
+			const InventoryItem& inventoryItem = items[inventoryIndex];
 
-		if (itemData.GetAction() == ItemAction::Repair)
-		{
-			continue;
+			if (inventoryItem.IsEmpty()) { continue; }
+			if (!itemData.Load(inventoryItem.itemPath)) { continue; }
+			if (itemData.GetAction() == ItemAction::Repair) { continue; }
+
+			itemPath = inventoryItem.itemPath;
 		}
 
 		//========================================================
@@ -1744,7 +1743,7 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 			//====================================================
 
 			DebugInfo::PrankLog log;
-			log.itemPath = inventoryItem.itemPath;
+			log.itemPath = itemPath;
 			log.targetOwner = target->GetOwner();
 			log.utility = 0.0f;
 			log.canNPCUse = false;
@@ -1763,8 +1762,10 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 			//====================================================
 			// このItemでいたずら可能か
 			//====================================================
-			const bool canNPCUse =
-				target->CanNPCUse(itemData);
+
+			const bool canNPCUse = bare
+				? target->CanNPCUseBare(GetName())
+				: target->CanNPCUse(itemData);
 
 			log.canNPCUse = canNPCUse;
 
@@ -1839,6 +1840,8 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 
 			bestUtility = utility;
 
+			bestLogIndex = static_cast<int>(m_debugInfo.prankCandidateLog.size()) - 1;
+
 			outCandidate.target = target;
 
 			outCandidate.inventoryIndex = inventoryIndex;
@@ -1853,17 +1856,13 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 		}
 	}
 
+	//====================================================
 	// 一番Utilityが高かった候補にだけselectedフラグを立て直す
-	if (outCandidate.target)
+	//====================================================
+
+	if (bestLogIndex >= 0)
 	{
-		for (auto& log :
-			m_debugInfo.prankCandidateLog)
-		{
-			log.selected =
-				log.itemPath == items[outCandidate.inventoryIndex].itemPath &&
-				log.targetOwner == outCandidate.target->GetOwner() &&
-				log.utility == outCandidate.utility;
-		}
+		m_debugInfo.prankCandidateLog[bestLogIndex].selected = true;
 	}
 
 	m_debugInfo.bestPrankTarget =
@@ -1946,12 +1945,8 @@ void Neighbor::SelectPrankCandidate(const PrankCandidate& candidate)
 		return;
 	}
 
-	if (candidate.inventoryIndex < 0 ||
-		candidate.inventoryIndex >=
-		Inventory::MaxItem)
-	{
-		return;
-	}
+	if (candidate.inventoryIndex < -1 ||
+		candidate.inventoryIndex >= Inventory::MaxItem) return;
 
 	//============================================================
 	// アイテムを選択
@@ -1989,7 +1984,12 @@ void Neighbor::UpdateRepair()
 		return;
 	}
 
-	const ItemData& itemData =	GetCurrentItemData();
+	const ItemData& itemData = GetCurrentItemData();
+	const bool bare = IsBareHanded();
+
+	auto canUse = [&]() {
+		return bare ? target->CanNPCUseBare(GetName()) : target->CanNPCUse(itemData);
+		};
 
 	//============================================================
 	// インタラクト中
@@ -1999,8 +1999,8 @@ void Neighbor::UpdateRepair()
 	{
 		m_interactTimer += 1.0f / 60.0f;
 
-		float useTime = target->GetNPCUseTime(itemData);
-
+		float useTime = bare ? target->GetNPCUseTimeBare(GetName())
+			: target->GetNPCUseTime(itemData);
 
 		if (m_interactTimer >= useTime)
 		{
@@ -2012,8 +2012,9 @@ void Neighbor::UpdateRepair()
 			// 修復実行
 			//====================================================
 
-			target->NPCUse(itemData, std::dynamic_pointer_cast<Neighbor>(
-				shared_from_this()));
+			auto self = std::dynamic_pointer_cast<Neighbor>(shared_from_this());
+			if (bare) target->NPCUseBare(self);
+			else      target->NPCUse(itemData, self);
 
 			ShowEmote(EmoteIcon::IconType::Music, 2.0f);
 
@@ -2088,7 +2089,7 @@ void Neighbor::UpdateRepair()
 	// 到着後、もう一度Use可能か確認
 	//============================================================
 
-	if (!target->CanNPCUse(itemData))
+	if (!canUse())
 	{
 		m_wpRepairTarget.reset();
 
@@ -2205,41 +2206,30 @@ bool Neighbor::FindBestRepairCandidate(
 	const auto& items = m_inventory.GetItems();
 
 	float bestUtility = 0.0f;
+	int bestLogIndex = -1;
 
 	//============================================================
 	// Inventory全スロット
 	//============================================================
 
-	for (int inventoryIndex = 0;
-		inventoryIndex < Inventory::MaxItem;
-		++inventoryIndex)
+	for (int inventoryIndex = -1; inventoryIndex < Inventory::MaxItem; ++inventoryIndex)
 	{
-		const InventoryItem& inventoryItem = items[inventoryIndex];
-
-		//========================================================
-		// 空きスロット
-		//========================================================
-
-		if (inventoryItem.IsEmpty())
-		{
-			continue;
-		}
-
-		//========================================================
-		// ItemData
-		//========================================================
+		const bool bare = (inventoryIndex < 0);
 
 		ItemData itemData;
+		std::string itemPath = "(bare hands)";
 
-		itemData.Load(inventoryItem.itemPath);
-
-		//========================================================
-		// Repairアイテム以外は無視
-		//========================================================
-
-		if (itemData.GetAction() != ItemAction::Repair)
+		if (!bare)
 		{
-			continue;
+			const InventoryItem& inventoryItem = items[inventoryIndex];
+
+			if (inventoryItem.IsEmpty()) { continue; }
+
+			itemData.Load(inventoryItem.itemPath);
+
+			if (itemData.GetAction() != ItemAction::Repair) { continue; }
+
+			itemPath = inventoryItem.itemPath;
 		}
 
 		//========================================================
@@ -2266,7 +2256,7 @@ bool Neighbor::FindBestRepairCandidate(
 
 			DebugInfo::RepairLog log;
 
-			log.itemPath = inventoryItem.itemPath;
+			log.itemPath = itemPath;
 			log.targetOwner = target->GetOwner();
 			log.utility = 0.0f;
 			log.canNPCUse = false;
@@ -2286,8 +2276,9 @@ bool Neighbor::FindBestRepairCandidate(
 			// このアイテムでUse可能か
 			//====================================================
 
-			const bool canNPCUse =
-				target->CanNPCUse(itemData);
+			const bool canNPCUse = bare
+				? target->CanNPCUseBare(GetName())
+				: target->CanNPCUse(itemData);
 
 			log.canNPCUse = canNPCUse;
 
@@ -2358,6 +2349,8 @@ bool Neighbor::FindBestRepairCandidate(
 
 			bestUtility = utility;
 
+			bestLogIndex = static_cast<int>(m_debugInfo.repairCandidateLog.size()) - 1;
+
 			outCandidate.target = target;
 
 			outCandidate.inventoryIndex = inventoryIndex;
@@ -2366,16 +2359,9 @@ bool Neighbor::FindBestRepairCandidate(
 		}
 	}
 
-	if (outCandidate.target)
+	if (bestLogIndex >= 0)
 	{
-		for (auto& log :
-			m_debugInfo.repairCandidateLog)
-		{
-			log.selected =
-				log.itemPath == items[outCandidate.inventoryIndex].itemPath &&
-				log.targetOwner == outCandidate.target->GetOwner() &&
-				log.utility == outCandidate.utility;
-		}
+		m_debugInfo.repairCandidateLog[bestLogIndex].selected = true;
 	}
 
 	m_debugInfo.bestRepairTarget =
@@ -2442,11 +2428,8 @@ void Neighbor::SelectRepairCandidate(
 		return;
 	}
 
-	if (candidate.inventoryIndex < 0 ||
-		candidate.inventoryIndex >= Inventory::MaxItem)
-	{
-		return;
-	}
+	if (candidate.inventoryIndex < -1 ||
+		candidate.inventoryIndex >= Inventory::MaxItem) return;
 
 	//============================================================
 	// 修復アイテムを選択

@@ -36,7 +36,7 @@ void SkillCheckGaugeStop::OnUpdate(float dt)
 
 void SkillCheckGaugeStop::OnDraw()
 {
-	auto& sprite = KdShaderManager::Instance().m_spriteShader;
+	const float a = GetAlpha();
 
 	// 0〜1 → 画面X座標(中央原点)
 	auto toX = [](float t) { return (t - 0.5f) * kBarWidth; };
@@ -44,20 +44,18 @@ void SkillCheckGaugeStop::OnDraw()
 	const float halfH = kBarHeight * 0.5f;
 
 	// 背景バー
-	Math::Color bg = { 0.1f, 0.1f, 0.1f, 0.8f };
-	sprite.DrawBox(0, (int)kBarY, (int)(kBarWidth * 0.5f), (int)halfH, &bg, true);
+	DrawRect(0, kBarY, kBarWidth * 0.5f, halfH, { 0.1f, 0.1f, 0.1f, 0.8f * a });
 
 	// Goodゾーン(緑)
-	Math::Color green = { 0.2f, 0.8f, 0.3f, 1.0f };
-	sprite.DrawBox((int)toX(m_zoneCenter), (int)kBarY,
-		(int)(kBarWidth * m_goodWidth * 0.5f), (int)halfH, &green, true);
+	DrawRect(toX(m_zoneCenter), kBarY, kBarWidth * m_goodWidth * 0.5f, halfH,
+		{ 0.2f, 0.8f, 0.3f, a });
 
 	// Perfectゾーン(黄)
-	Math::Color yellow = { 1.0f, 0.9f, 0.2f, 1.0f };
-	sprite.DrawBox((int)toX(m_zoneCenter), (int)kBarY,
-		(int)(kBarWidth * m_perfWidth * 0.5f), (int)halfH, &yellow, true);
+	DrawRect(toX(m_zoneCenter), kBarY, kBarWidth * m_perfWidth * 0.5f, halfH,
+		{ 1.0f, 0.9f, 0.2f, a });
 
-	// カーソル(準備時間中は半透明にして「まだ押せない」を伝える)
-	Math::Color cursor = { 1.0f, 1.0f, 1.0f, IsReady() ? 1.0f : 0.4f };
-	sprite.DrawBox((int)toX(m_cursor), (int)kBarY, 3, (int)halfH + 8, &cursor, true);
+	// カーソル
+	DrawRect(toX(m_cursor), kBarY, 3, halfH + 8, { 1.0f, 1.0f, 1.0f, a });
+
+	DrawKey(SkillKey::Space, 0.0f, kBarY - 45.0f, SkillKeyAnim::Timing);
 }

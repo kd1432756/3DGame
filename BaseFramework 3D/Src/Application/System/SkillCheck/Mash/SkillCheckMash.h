@@ -25,7 +25,7 @@ private:
 	float m_perfectTime = 1.5f;
 	float m_pushFlash = 0.0f;
 
-	static constexpr float kDecay = 0.3f;	// 1秒あたりの減少量
+	static constexpr float kDecay = 0.2f;	// 1秒あたりの減少量
 	static constexpr float kBarWidth = 400.0f;
 	static constexpr float kBarHeight = 24.0f;
 	static constexpr float kBarY = -120.0f;

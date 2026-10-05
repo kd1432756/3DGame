@@ -320,6 +320,7 @@
     <ClInclude Include="Src\Application\GameObject\UI\Reticle\Reticle.h" />
     <ClInclude Include="Src\Application\GameObject\UI\ScoreUI\ScoreUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\ShakeTextUI\ShakeTextUI.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\SkillKeyUI\SkillKeyUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\SlideTextUI\SlideTextUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\TimeUI\TimeUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\TitleUI\TitleUI.h" />
@@ -357,11 +358,13 @@
     <ClInclude Include="Src\Application\System\Node\RoadNode\RoadNode.h" />
     <ClInclude Include="Src\Application\System\Node\RoadNode\RoadNodeManager.h" />
     <ClInclude Include="Src\Application\System\Score\ScoreManager.h" />
+    <ClInclude Include="Src\Application\System\SkillCheck\AltMash\SkillCheckAltMash.h" />
     <ClInclude Include="Src\Application\System\SkillCheck\Arrow\SkillCheckArrow.h" />
     <ClInclude Include="Src\Application\System\SkillCheck\GaugeStop\SkillCheckGaugeStop.h" />
     <ClInclude Include="Src\Application\System\SkillCheck\HoldRelease\SkillCheckHoldRelease.h" />
     <ClInclude Include="Src\Application\System\SkillCheck\Mash\SkillCheckMash.h" />
     <ClInclude Include="Src\Application\System\SkillCheck\Reaction\SkillCheckReaction.h" />
+    <ClInclude Include="Src\Application\System\SkillCheck\ShrinkRing\SkillCheckShrinkRing.h" />
     <ClInclude Include="Src\Application\System\SkillCheck\SkillCheckBase.h" />
     <ClInclude Include="Src\Application\System\SkillCheck\SkillCheckFactory.h" />
     <ClInclude Include="Src\Application\System\Usable\Usable.h" />
@@ -464,6 +467,7 @@
     <ClCompile Include="Src\Application\GameObject\UI\Reticle\Reticle.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\ScoreUI\ScoreUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\ShakeTextUI\ShakeTextUI.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\SkillKeyUI\SkillKeyUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\SlideTextUI\SlideTextUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\TimeUI\TimeUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\TitleUI\TitleUI.cpp" />
@@ -495,11 +499,13 @@
     <ClCompile Include="Src\Application\System\Node\AStarNode\AStarPathfinder.cpp" />
     <ClCompile Include="Src\Application\System\Node\RoadNode\RoadNodeManager.cpp" />
     <ClCompile Include="Src\Application\System\Score\ScoreManager.cpp" />
+    <ClCompile Include="Src\Application\System\SkillCheck\AltMash\SkillCheckAltMash.cpp" />
     <ClCompile Include="Src\Application\System\SkillCheck\Arrow\SkillCheckArrow.cpp" />
     <ClCompile Include="Src\Application\System\SkillCheck\GaugeStop\SkillCheckGaugeStop.cpp" />
     <ClCompile Include="Src\Application\System\SkillCheck\HoldRelease\SkillCheckHoldRelease.cpp" />
     <ClCompile Include="Src\Application\System\SkillCheck\Mash\SkillCheckMash.cpp" />
     <ClCompile Include="Src\Application\System\SkillCheck\Reaction\SkillCheckReaction.cpp" />
+    <ClCompile Include="Src\Application\System\SkillCheck\ShrinkRing\SkillCheckShrinkRing.cpp" />
     <ClCompile Include="Src\Application\System\SkillCheck\SkillCheckBase.cpp" />
     <ClCompile Include="Src\Application\System\SkillCheck\SkillCheckFactory.cpp" />
     <ClCompile Include="Src\Framework\Direct3D\KdMaterial.cpp">

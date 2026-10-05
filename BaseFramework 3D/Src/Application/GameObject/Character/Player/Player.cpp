@@ -437,18 +437,21 @@ void Player::StartUse()
 	m_useTimer = 0.0f;
 	m_useTotal = 0.0f;
 
+	const bool isRepair = usable->IsRepairAction(
+		std::dynamic_pointer_cast<Player>(shared_from_this()));
+
 	// スキルチェック開始(種類は抽選)
 	m_skillResult = SkillResult::None;
 
 	m_skillCheck = SkillCheckFactory::Create(
-		IsUsingRepairItem(),
+		isRepair,
 		m_lastSkillType,
 		DayCycle::Instance().GetTimeProgress());
 
 	m_lastSkillType = static_cast<int>(m_skillCheck->GetType());
 
 	// 難易度: 修復は易しめ、いたずらは標準
-	m_skillCheck->Start(IsUsingRepairItem() ? 0.8f : 1.0f);
+	m_skillCheck->Start(isRepair ? 0.8f : 1.0f);
 
 	m_usePhase = UsePhase::SkillCheck;
 }
@@ -749,14 +752,4 @@ void Player::OnArrested(const std::shared_ptr<Police>& police)
 void Player::OnReleased()
 {
 	m_isReleasing = true;
-}
-
-bool Player::IsUsingRepairItem() const
-{
-	if (!m_handItem)
-	{
-		return false;
-	}
-
-	return m_handItem->GetItemData().GetAction() == ItemAction::Repair;
 }

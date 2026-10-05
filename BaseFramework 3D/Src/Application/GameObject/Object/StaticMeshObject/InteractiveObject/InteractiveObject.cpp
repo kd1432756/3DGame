@@ -65,40 +65,53 @@ InteractiveObject::FindAction(
 
 	auto item = player->GetHandItem();
 
-	if (!item)
-	{
-		return nullptr;
-	}
-
-	const auto& data = item->GetItemData();
-
 	for (const auto& action : m_actions)
 	{
+
 		if (action.fromState != m_state)
 		{
 			continue;
 		}
 
-		if (action.action != data.GetAction())
+		if (action.needItem)
 		{
-			continue;
+			// アイテム必須：従来どおり照合
+			if (!item)
+			{
+				continue;
+			}
+
+			const auto& data = item->GetItemData();
+
+			if (action.action != data.GetAction())
+			{
+				continue;
+			}
+
+			if (action.target != data.GetTarget())
+			{
+				continue;
+			}
+		}
+		else
+		{
+			// アイテム不要：手ぶらのときだけ
+			if (item)
+			{
+				continue;
+			}
 		}
 
-		if (action.target != data.GetTarget())
-		{
-			continue;
-		}
+		const bool isRepair = (action.action == ItemAction::Repair);
 
 		// いたずらはOwner不可
-		if (action.action != ItemAction::Repair &&
-			IsOwner(player))
+		if (!isRepair && IsOwner(player))
 		{
 			continue;
 		}
 
 		// 修復はOwnerのみ
-		if (action.action == ItemAction::Repair &&
-			!IsOwner(player))
+		if (isRepair && !IsOwner(player))
 		{
 			continue;
 		}
@@ -115,36 +128,74 @@ InteractiveObject::FindNPCAction(
 {
 	for (const auto& action : m_actions)
 	{
-		if (action.fromState != m_state)
-		{
-			continue;
-		}
-
-		if (!action.npcCanUse)
-		{
-			continue;
-		}
-
-		if (action.action != item.GetAction())
-		{
-			continue;
-		}
-
-		if (action.target != item.GetTarget())
-		{
-			continue;
-		}
-
+		if (action.fromState != m_state) continue;
+		if (!action.npcCanUse) continue;
+		if (!action.needItem) continue;
+		if (action.action != item.GetAction()) continue;
+		if (action.target != item.GetTarget()) continue;
 		return &action;
 	}
 
 	return nullptr;
 }
 
+const InteractiveAction* InteractiveObject::FindNPCBareAction(const std::string& npcName) const
+{
+	const bool isOwner = (m_owner == npcName);
+
+	for (const auto& action : m_actions)
+	{
+		if (action.fromState != m_state) continue;
+		if (!action.npcCanUse) continue;
+		if (action.needItem) continue;
+
+		const bool isRepair = (action.action == ItemAction::Repair);
+
+		// 修復はオーナーのみ、いたずらはオーナー不可
+		if (isRepair != isOwner) continue;
+
+		return &action;
+	}
+	return nullptr;
+}
+
+void InteractiveObject::ExecuteNPCAction(const InteractiveAction& action, const std::shared_ptr<Neighbor>& npc)
+{
+	m_state = action.toState;
+
+	if (!action.modelPath.empty())
+	{
+		SetModelPath(action.modelPath);
+	}
+
+	if (action.score > 0)
+	{
+		int score = ScoreManager::Instance().CalcScore(
+			action.score, DayCycle::Instance().GetTimeProgress());
+		npc->OnPrankSuccess(score, action.message);
+	}
+
+	NotifyOwner(action);
+	OnAction(action, nullptr);
+}
+
 bool InteractiveObject::CanUse(
 	const std::shared_ptr<Player>& player)
 {
 	return FindAction(player) != nullptr;
+}
+
+float InteractiveObject::GetUseTime(
+	const std::shared_ptr<Player>& player) const
+{
+	const auto* action = FindAction(player);
+
+	if (!action)
+	{
+		return 0.0f;
+	}
+
+	return action->useTime;
 }
 
 void InteractiveObject::Use(
@@ -184,31 +235,21 @@ void InteractiveObject::Use(
 	OnAction(*action, player);
 }
 
-float InteractiveObject::GetUseTime(
-	const std::shared_ptr<Player>& player) const
-{
-	const auto* action = FindAction(player);
-
-	if (!action)
-	{
-		return 0.0f;
-	}
-
-	return action->useTime;
-}
-
 std::string InteractiveObject::GetActionText(
 	const std::shared_ptr<Player>& player) const
 {
 	const auto* action = FindAction(player);
-
 	if (!action)
 	{
 		return "";
 	}
 
-	auto item = player->GetHandItem();
+	if (!action->needItem)
+	{
+		return action->actionText;
+	}
 
+	auto item = player->GetHandItem();
 	if (!item)
 	{
 		return "";
@@ -223,42 +264,6 @@ bool InteractiveObject::CanNPCUse(
 	return FindNPCAction(item) != nullptr;
 }
 
-void InteractiveObject::NPCUse(
-	const ItemData& item,
-	const std::shared_ptr<Neighbor>& npc)
-{
-	const auto* action =
-		FindNPCAction(item);
-
-	if (!action)
-	{
-		return;
-	}
-
-	m_state = action->toState;
-
-	if (!action->modelPath.empty())
-	{
-		SetModelPath(action->modelPath);
-	}
-
-	if (action->score > 0)
-	{
-		int score = ScoreManager::Instance().CalcScore(
-			action->score,
-			DayCycle::Instance().GetTimeProgress()
-		);
-
-		npc->OnPrankSuccess(
-			score,
-			action->message);
-	}
-
-	NotifyOwner(*action);
-
-	OnAction(*action, nullptr);
-}
-
 float InteractiveObject::GetNPCUseTime(
 	const ItemData& itemData) const
 {
@@ -271,6 +276,46 @@ float InteractiveObject::GetNPCUseTime(
 	}
 
 	return action->useTime;
+}
+
+void InteractiveObject::NPCUse(
+	const ItemData& item,
+	const std::shared_ptr<Neighbor>& npc)
+{
+	const auto* action =
+		FindNPCAction(item);
+
+	if (!action)
+	{
+		return;
+	}
+
+	ExecuteNPCAction(*action, npc);
+}
+
+bool InteractiveObject::CanNPCUseBare(const std::string& npcName) const
+{
+	return FindNPCBareAction(npcName) != nullptr;
+}
+
+float InteractiveObject::GetNPCUseTimeBare(const std::string& npcName) const
+{
+	const auto* action = FindNPCBareAction(npcName);
+	return action ? action->useTime : 0.0f;
+}
+
+void InteractiveObject::NPCUseBare(const std::shared_ptr<Neighbor>& npc)
+{
+	const auto* action = FindNPCBareAction(npc->GetName());
+	if (!action) return;
+	ExecuteNPCAction(*action, npc);
+}
+
+bool InteractiveObject::IsRepairAction(
+	const std::shared_ptr<Player>& player) const
+{
+	const auto* action = FindAction(player);
+	return action && action->action == ItemAction::Repair;
 }
 
 bool InteractiveObject::IsOwner(const std::shared_ptr<Player>& player) const

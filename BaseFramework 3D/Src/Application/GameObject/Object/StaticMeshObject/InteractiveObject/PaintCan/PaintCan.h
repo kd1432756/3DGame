@@ -10,8 +10,6 @@ public:
 
 	void Init() override;
 
-	void DrawBright() override;
-
 	const char* GetTypeName() const override
 	{
 		return "PaintCan";
@@ -42,13 +40,4 @@ private:
 
 	void RegisterCollider() override;
 
-	enum class PaintCanState
-	{
-		Normal,
-		Spilled,
-	}; 
-	
-	PaintCanState m_state = PaintCanState::Normal;
-
-	std::string m_target = "PaintCan";
 };

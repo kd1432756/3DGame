@@ -27,13 +27,4 @@ private:
 		const std::shared_ptr<Player>& player);
 
 	void RegisterCollider() override;
-
-	enum class FlowerState
-	{
-		Normal,
-		Cut,
-		Repaired
-	}; 
-	
-	FlowerState m_state = FlowerState::Normal;
 };

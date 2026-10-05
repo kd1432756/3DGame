@@ -280,6 +280,15 @@
     <Filter Include="Src\Application\GameObject\UI\ShakeTextUI">
       <UniqueIdentifier>{78d66571-1485-4ffe-874e-e998e0f5d777}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\System\SkillCheck\ShrinkRing">
+      <UniqueIdentifier>{91d253d2-b39b-4eb9-9c6f-3b440c458338}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\SkillCheck\AltMash">
+      <UniqueIdentifier>{97ebe88b-c4a9-41b1-84f9-e411a19a1896}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\SkillKeyUI">
+      <UniqueIdentifier>{7aa3d7bd-207a-4679-a975-8440ce7d219a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -717,6 +726,15 @@
     <ClInclude Include="Src\Application\GameObject\UI\ShakeTextUI\ShakeTextUI.h">
       <Filter>Src\Application\GameObject\UI\ShakeTextUI</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\System\SkillCheck\ShrinkRing\SkillCheckShrinkRing.h">
+      <Filter>Src\Application\System\SkillCheck\ShrinkRing</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\SkillCheck\AltMash\SkillCheckAltMash.h">
+      <Filter>Src\Application\System\SkillCheck\AltMash</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\SkillKeyUI\SkillKeyUI.h">
+      <Filter>Src\Application\GameObject\UI\SkillKeyUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1112,6 +1130,15 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\ShakeTextUI\ShakeTextUI.cpp">
       <Filter>Src\Application\GameObject\UI\ShakeTextUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\SkillCheck\ShrinkRing\SkillCheckShrinkRing.cpp">
+      <Filter>Src\Application\System\SkillCheck\ShrinkRing</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\SkillCheck\AltMash\SkillCheckAltMash.cpp">
+      <Filter>Src\Application\System\SkillCheck\AltMash</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\SkillKeyUI\SkillKeyUI.cpp">
+      <Filter>Src\Application\GameObject\UI\SkillKeyUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

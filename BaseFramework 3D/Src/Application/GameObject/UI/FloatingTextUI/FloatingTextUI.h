@@ -17,10 +17,17 @@ public:
 		m_pos = pos;
 	}
 
+	void SetFont(const FontID& fontId)
+	{
+		m_fontId = fontId;
+	}
+
 private:
 	std::string m_text;
 
 	Math::Vector2 m_pos = {};
+	
+	FontID m_fontId = FontID::Future48;
 
 	float m_alpha = 1.0f;
 

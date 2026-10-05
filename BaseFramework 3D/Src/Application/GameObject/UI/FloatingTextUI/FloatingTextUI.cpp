@@ -43,7 +43,7 @@ void FloatingTextUI::DrawSprite()
 		&color,
 		Math::Vector2{ 0.5f, 0.5f },
 		0.0f,
-		FontID::Future48,
+		m_fontId,
 		m_text.c_str()
 	);
 }

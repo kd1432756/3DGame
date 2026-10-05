@@ -100,8 +100,6 @@ public:
 		return m_skillResult;
 	}
 
-	bool IsUsingRepairItem() const;
-
 	std::shared_ptr<KdGameObject> GetFocusObject() const
 	{
 		return m_focusObject.lock();

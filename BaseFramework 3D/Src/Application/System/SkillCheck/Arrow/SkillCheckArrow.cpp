@@ -55,6 +55,14 @@ void SkillCheckArrow::OnDraw()
 
 	for (int i = 0; i < n; ++i)
 	{
+		const float kx = (i - (n - 1) * 0.5f) * kSpacing;
+		DrawKey(KeyOf(m_seq[i]), kx, kY - 75.0f,
+			(i == m_index) ? SkillKeyAnim::Timing : SkillKeyAnim::Static,
+			(i < m_index) ? 0.4f : 1.0f);
+	}
+
+	for (int i = 0; i < n; ++i)
+	{
 		const float x = (i - (n - 1) * 0.5f) * kSpacing;
 
 		// 枠(入力済み=緑 / 今の入力=白 / これから=灰色)

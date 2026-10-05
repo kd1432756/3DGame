@@ -13,6 +13,11 @@ public:
 	virtual bool CanUse(const std::shared_ptr<Player>& player) = 0;
 	virtual void Use(const std::shared_ptr<Player>& player) = 0;
 
+	virtual bool IsRepairAction(const std::shared_ptr<Player>& player) const
+	{
+		return false;
+	}
+
 	virtual bool CanNPCUse(
 		const ItemData& item) const
 	{

@@ -2,7 +2,7 @@
 
 void SkillCheckMash::OnStart()
 {
-	m_required = 8 + static_cast<int>(3.0f * m_difficulty);	// 必要な打鍵数(難易度1.0で11回)
+	m_required = 8 + static_cast<int>(3.0f * m_difficulty);		// 必要な打鍵数(難易度1.0で11回)
 	m_perfectTime = m_required * 0.15f;							// この時間内ならPerfect
 	m_timeLimit = m_required * 0.25f;							// これを超えたらMiss
 	m_gauge = 0.0f;
@@ -50,4 +50,6 @@ void SkillCheckMash::OnDraw()
 	: Math::Color{ 1.0f, 0.6f, 0.2f, a };
 
 	DrawRect(-halfW + fillHalf, kBarY, fillHalf, halfH, fillColor);
+
+	DrawKey(SkillKey::Space, 0.0f, kBarY - 45.0f, SkillKeyAnim::Mash);
 }

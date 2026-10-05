@@ -66,4 +66,6 @@ void SkillCheckHoldRelease::OnDraw()
 
 	// 先端の線
 	DrawRect(toX(v), kBarY, 3, halfH + 8, { 1.0f, 1.0f, 1.0f, a });
+
+	DrawKey(SkillKey::Space, 0.0f, kBarY - 45.0f, SkillKeyAnim::Hold);
 }

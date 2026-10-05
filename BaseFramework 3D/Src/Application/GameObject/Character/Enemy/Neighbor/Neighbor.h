@@ -262,6 +262,8 @@ private:
 	bool CanUseItemForPrank(const ItemData& itemData) const;
 	bool CanUseItemForRepair(const ItemData& itemData) const;
 
+	bool IsBareHanded() const { return m_inventory.GetCurrentItem() == nullptr; }
+
 	//============================================================
 	// Prank
 	//============================================================
