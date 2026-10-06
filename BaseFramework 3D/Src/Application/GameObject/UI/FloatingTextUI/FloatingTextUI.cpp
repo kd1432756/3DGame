@@ -36,7 +36,8 @@ void FloatingTextUI::Update()
 
 void FloatingTextUI::DrawSprite()
 {
-	Math::Color color = { 1.0f, 0.78f, 0.10f, m_alpha };
+	Math::Color color = m_color;
+	color.w = m_alpha;
 
 	KdShaderManager::Instance().m_spriteShader.DrawFont(
 		m_pos,

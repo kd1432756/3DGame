@@ -1049,131 +1049,137 @@
             ],
             "Type": "Ground"
         },
-        {
-            "Color": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "ModelPath": "Asset/Models/Ground/Grass.gltf",
-            "Name": "Ground_907",
-            "Position": [
-                24.0,
-                0.0,
-                -8.0
-            ],
-            "Rotation": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Scale": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "Type": "Ground"
-        },
-        {
-            "Color": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "ModelPath": "Asset/Models/Ground/Grass.gltf",
-            "Name": "Ground_908",
-            "Position": [
-                20.0,
-                0.0,
-                -8.0
-            ],
-            "Rotation": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Scale": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "Type": "Ground"
-        },
-        {
-            "Color": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "ModelPath": "Asset/Models/Ground/Grass.gltf",
-            "Name": "Ground_909",
-            "Position": [
-                16.0,
-                0.0,
-                -8.0
-            ],
-            "Rotation": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Scale": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "Type": "Ground"
-        },
-        {
-            "Color": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "ModelPath": "Asset/Models/Ground/Grass.gltf",
-            "Name": "Ground_910",
-            "Position": [
-                12.0,
-                0.0,
-                -8.0
-            ],
-            "Rotation": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Scale": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "Type": "Ground"
-        },
-        {
-            "Color": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "ModelPath": "Asset/Models/Ground/Grass.gltf",
-            "Name": "Ground_911",
-            "Position": [
-                8.0,
-                0.0,
-                -8.0
-            ],
-            "Rotation": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Scale": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "Type": "Ground"
-        },
+		{
+			"Color": [
+				1.0,
+				1.0,
+				1.0
+			],
+			"ModelPath": "Asset/Models/Ground/Grass.gltf",
+			"Name": "Ground_907",
+			"Position": [
+				24.0,
+				0.0,
+				-8.0
+			],
+			"Rotation": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"Scale": [
+				0.5,
+				0.5,
+				0.5
+			],
+			"GroundType": 1,
+			"Type": "Ground"
+
+		},
+		{
+			"Color": [
+				1.0,
+				1.0,
+				1.0
+			],
+			"ModelPath": "Asset/Models/Ground/Grass.gltf",
+			"Name": "Ground_908",
+			"Position": [
+				20.0,
+				0.0,
+				-8.0
+			],
+			"Rotation": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"Scale": [
+				0.5,
+				0.5,
+				0.5
+			],
+			"GroundType": 1,
+			"Type": "Ground"
+		},
+		{
+			"Color": [
+				1.0,
+				1.0,
+				1.0
+			],
+			"ModelPath": "Asset/Models/Ground/Grass.gltf",
+			"Name": "Ground_909",
+			"Position": [
+				16.0,
+				0.0,
+				-8.0
+			],
+			"Rotation": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"Scale": [
+				0.5,
+				0.5,
+				0.5
+			],
+			"GroundType": 1,
+			"Type": "Ground"
+		},
+		{
+			"Color": [
+				1.0,
+				1.0,
+				1.0
+			],
+			"ModelPath": "Asset/Models/Ground/Grass.gltf",
+			"Name": "Ground_910",
+			"Position": [
+				12.0,
+				0.0,
+				-8.0
+			],
+			"Rotation": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"Scale": [
+				0.5,
+				0.5,
+				0.5
+			],
+			"GroundType": 1,
+			"Type": "Ground"
+		},
+		{
+			"Color": [
+				1.0,
+				1.0,
+				1.0
+			],
+			"ModelPath": "Asset/Models/Ground/Grass.gltf",
+			"Name": "Ground_911",
+			"Position": [
+				8.0,
+				0.0,
+				-8.0
+			],
+			"Rotation": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"Scale": [
+				0.5,
+				0.5,
+				0.5
+			],
+			"GroundType": 1,
+			"Type": "Ground"
+		},
         {
             "Color": [
                 1.0,

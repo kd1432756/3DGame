@@ -70,6 +70,8 @@ void StaticMeshObject::ReloadModel()
 
 void StaticMeshObject::RegisterCollider()
 {
+	m_pCollider.reset();
+
 	if (!m_pCollider)
 	{
 		m_pCollider = std::make_unique<KdCollider>();

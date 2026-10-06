@@ -18,30 +18,20 @@
 			"mesh":0,
 			"name":"Scissor_black_A",
 			"rotation":[
-				0.7071068286895752,
+				0.70710688829422,
 				0,
 				0,
-				0.7071068286895752
-			],
-			"scale":[
-				0.009999999776482582,
-				0.009999999776482582,
-				0.009999999776482582
+				0.7071066498756409
 			]
 		},
 		{
 			"mesh":1,
 			"name":"Scissor_black_B",
 			"rotation":[
-				0.7071068286895752,
+				0.70710688829422,
 				0,
 				0,
-				0.7071068286895752
-			],
-			"scale":[
-				0.009999999776482582,
-				0.009999999776482582,
-				0.009999999776482582
+				0.7071066498756409
 			]
 		}
 	],
@@ -120,29 +110,29 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":398,
+			"count":290,
 			"max":[
-				15.951861381530762,
-				6.584318161010742,
-				0.6661262512207031
+				3.1903722286224365,
+				1.316863775253296,
+				0.1332252472639084
 			],
 			"min":[
-				-14.678317070007324,
-				-1.1902573108673096,
-				-0.5730369687080383
+				-2.9356637001037598,
+				-0.23805145919322968,
+				-0.11460739374160767
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":398,
+			"count":290,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":398,
+			"count":290,
 			"type":"VEC2"
 		},
 		{
@@ -154,73 +144,73 @@
 		{
 			"bufferView":4,
 			"componentType":5126,
-			"count":398,
+			"count":290,
 			"max":[
-				15.951861381530762,
-				1.1902573108673096,
-				0.5730389356613159
+				3.1903722286224365,
+				0.23805145919322968,
+				0.1146077960729599
 			],
 			"min":[
-				-14.678317070007324,
-				-6.584318161010742,
-				-0.6661264896392822
+				-2.9356637001037598,
+				-1.316863775253296,
+				-0.13322530686855316
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":5,
 			"componentType":5126,
-			"count":398,
+			"count":290,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":6,
 			"componentType":5126,
-			"count":398,
+			"count":290,
 			"type":"VEC2"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":4776,
+			"byteLength":3480,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":4776,
-			"byteOffset":4776,
+			"byteLength":3480,
+			"byteOffset":3480,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":3184,
-			"byteOffset":9552,
+			"byteLength":2320,
+			"byteOffset":6960,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":1848,
-			"byteOffset":12736,
+			"byteOffset":9280,
 			"target":34963
 		},
 		{
 			"buffer":0,
-			"byteLength":4776,
-			"byteOffset":14584,
+			"byteLength":3480,
+			"byteOffset":11128,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":4776,
-			"byteOffset":19360,
+			"byteLength":3480,
+			"byteOffset":14608,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":3184,
-			"byteOffset":24136,
+			"byteLength":2320,
+			"byteOffset":18088,
 			"target":34962
 		}
 	],
@@ -232,7 +222,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":27320,
+			"byteLength":20408,
 			"uri":"Scissors.bin"
 		}
 	]

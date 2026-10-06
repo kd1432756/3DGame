@@ -92,7 +92,6 @@ protected:
 
 	void CheckStep(
 		const Math::Vector3& moveDir);
-	bool IsBlockedAt(const Math::Vector3& pos);
 
 	void CheckGround();
 

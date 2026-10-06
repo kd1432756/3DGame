@@ -11,7 +11,9 @@ void KdCollider::RegisterCollisionShape(std::string_view name, std::unique_ptr<K
 {
 	if (!spShape) { return; }
 
-	m_collisionShapes.emplace(name.data(), std::move(spShape));
+	// 変更 同じクラスでのモデル変更による当たり判定を変更するため
+	//m_collisionShapes.emplace(name.data(), std::move(spShape));
+	m_collisionShapes[name.data()] = std::move(spShape);
 }
 
 ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////

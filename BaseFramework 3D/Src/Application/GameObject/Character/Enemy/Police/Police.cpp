@@ -346,7 +346,7 @@ void Police::UpdateEscort()
 		back.y = 0.0f;
 		back.Normalize();
 
-		const float followDist = 0.8f * m_sceneScale;
+		const float followDist = 1.2f * m_sceneScale;
 
 		Math::Vector3 pos = m_pos + back * followDist;
 		pos.y = arrested->GetPos().y;

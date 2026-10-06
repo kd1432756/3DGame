@@ -75,3 +75,12 @@ cbuffer cbLight : register(b9)
 		int enable;
 	} g_coneLight[10];
 };
+
+//------------------------------
+// 定数バッファ(環境系)
+//------------------------------
+cbuffer cbAmbient : register(b10)
+{
+	int g_windEnable; // 風有効/無効フラグ
+	float3 g_windValue; // 風の方向
+};

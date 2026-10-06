@@ -38,6 +38,12 @@ void KdShaderManager::Init()
 	KdDirect3D::Instance().WorkDevContext()->VSSetConstantBuffers(9, 1, m_cb9_Light.GetAddress());
 	KdDirect3D::Instance().WorkDevContext()->PSSetConstantBuffers(9, 1, m_cb9_Light.GetAddress());
 
+	// 追加 環境
+	m_cb10_Ambient.Create();
+	m_cb10_Ambient.Write();
+	KdDirect3D::Instance().WorkDevContext()->VSSetConstantBuffers(10, 1, m_cb10_Ambient.GetAddress());
+	KdDirect3D::Instance().WorkDevContext()->PSSetConstantBuffers(10, 1, m_cb10_Ambient.GetAddress());
+
 	//============================================
 	// パイプラインステート関係
 	//============================================
@@ -531,6 +537,8 @@ void KdShaderManager::Release()
 	m_cb7_Camera.Release();
 	m_cb8_Fog.Release();
 	m_cb9_Light.Release();
+	// 追加 アンビエント
+	m_cb10_Ambient.Release();
 
 	//深度ステンシルステート開放
 	for (auto& state : m_depthStencilStates)

@@ -1,0 +1,21 @@
+{
+	"Name": "WoodPlank",
+
+	"ModelPath": "Asset/Models/Item/WoodPlank/WoodPlank.gltf",
+
+	"IconPath": "Asset/Textures/Icon/WoodPlank.png",
+
+	"Action": "Repair",
+
+	"Target": "WoodenFence",
+
+	"MaxCount": 3,
+
+	"WorldScale": [ 0.24, 0.24, 0.24 ],
+
+	"HandOffset": [ 0.0, -0.12, 0.30 ],
+
+	"HandRotation": [ -25, 0, 0 ],
+
+	"HandScale": [ 0.1, 0.1, 0.1 ]
+}

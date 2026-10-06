@@ -15,27 +15,31 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"Mesh1_Group1_Component_1_1_Model",
+			"name":"\u5e73\u9762",
 			"rotation":[
-				0.70710688829422,
 				0,
 				0,
-				0.7071066498756409
+				-0.7071068286895752,
+				0.7071067094802856
 			],
 			"translation":[
 				0,
-				0.03349000960588455,
-				-0.06897486746311188
+				0.770541787147522,
+				0
 			]
 		}
 	],
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"Material.002",
+			"name":"\u30de\u30c6\u30ea\u30a2\u30eb",
+			"normalTexture":{
+				"index":0,
+				"scale":9.999999046325684
+			},
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
-					"index":0
+					"index":1
 				},
 				"metallicFactor":0,
 				"roughnessFactor":0.5
@@ -44,7 +48,7 @@
 	],
 	"meshes":[
 		{
-			"name":"Mesh1_Group1_Component_1_1_Model.001",
+			"name":"\u5e73\u9762",
 			"primitives":[
 				{
 					"attributes":{
@@ -62,74 +66,83 @@
 		{
 			"sampler":0,
 			"source":0
+		},
+		{
+			"sampler":0,
+			"source":1
 		}
 	],
 	"images":[
 		{
 			"mimeType":"image/png",
-			"name":"House_Props_Diffuse",
-			"uri":"House_Props_Diffuse.png"
+			"name":"GrassNormalMap",
+			"uri":"GrassNormalMap.png"
+		},
+		{
+			"mimeType":"image/png",
+			"name":"Grass",
+			"uri":"Grass.png"
 		}
 	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":211,
+			"count":4,
 			"max":[
-				0.0569666251540184,
-				0.22813063859939575,
-				0.03348998352885246
+				1,
+				0,
+				1
 			],
 			"min":[
-				-0.05696604400873184,
-				-0.08770988881587982,
-				-0.03769694268703461
+				-1,
+				0,
+				-1
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":211,
+			"count":4,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":211,
+			"count":4,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":306,
+			"count":6,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":2532,
+			"byteLength":48,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":2532,
-			"byteOffset":2532,
+			"byteLength":48,
+			"byteOffset":48,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1688,
-			"byteOffset":5064,
+			"byteLength":32,
+			"byteOffset":96,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":612,
-			"byteOffset":6752,
+			"byteLength":12,
+			"byteOffset":128,
 			"target":34963
 		}
 	],
@@ -141,8 +154,8 @@
 	],
 	"buffers":[
 		{
-			"byteLength":7364,
-			"uri":"Hammer2.bin"
+			"byteLength":140,
+			"uri":"Grass.bin"
 		}
 	]
 }

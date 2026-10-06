@@ -19,6 +19,9 @@ cbuffer cbObject : register(b0)
 	
 	// 追加 アウトライン対応
 	int g_EnableOutLineDraw;
+	
+	// 追加 風の影響
+	int g_windEffectEnable;
 };
 
 // 定数バッファ(メッシュ単位)

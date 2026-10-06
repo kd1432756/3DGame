@@ -11,11 +11,11 @@
 
 	"MaxCount": 3,
 
-	"WorldScale": [ 3.0, 3.0, 3.0 ],
+	"WorldScale": [ 0.06, 0.06, 0.06 ],
 
-	"HandOffset": [ 0.20, -0.18, 0.42 ],
+	"HandOffset": [ 0.20, -0.16, 0.30 ],
 
-	"HandRotation": [ -15, 30, 0 ],
+	"HandRotation": [ -25, 30, 0 ],
 
-	"HandScale": [ 3.0, 3.0, 3.0 ]
+	"HandScale": [ 0.03, 0.03, 0.03 ]
 }

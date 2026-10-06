@@ -2,6 +2,7 @@
 
 #include "../SceneManager.h"
 #include "../..//GameObject/Object/StaticMeshObject/StaticMeshObject.h"
+#include "../../GameObject/Object/StaticMeshObject/Ground/Ground.h"
 #include "../..//GameObject/Object/StaticMeshObject/InteractiveObject/InteractiveObject.h"
 #include "../../GameObject/Object/StaticMeshObject/Item/Item.h"
 #include "../../GameObject/Object/StaticMeshObject/Item/ItemSpawner.h"
@@ -45,6 +46,13 @@ bool SceneSerializer::Save(const std::string& path)
 		if (auto mesh = std::dynamic_pointer_cast<StaticMeshObject>(obj))
 		{
 			objData["ModelPath"] = mesh->GetModelPath();
+		}
+
+		if (auto ground =
+			std::dynamic_pointer_cast<Ground>(obj))
+		{
+			objData["GroundType"] =
+				static_cast<int>(ground->GetGroundType());
 		}
 
 		if (auto interactive =
@@ -133,6 +141,17 @@ bool SceneSerializer::Load(const std::string& path)
 			if (objData.contains("ModelPath"))
 			{
 				mesh->SetModelPath(objData["ModelPath"]);
+			}
+		}
+
+		if (auto ground =
+			std::dynamic_pointer_cast<Ground>(obj))
+		{
+			if (objData.contains("GroundType"))
+			{
+				ground->SetGroundType(
+					static_cast<Ground::GroundType>(
+						objData["GroundType"].get<int>()));
 			}
 		}
 
@@ -230,6 +249,17 @@ bool SceneSerializer::LoadWithScale(const std::string& path, float multiplier)
 			if (objData.contains("ModelPath"))
 			{
 				mesh->SetModelPath(objData["ModelPath"]);
+			}
+		}
+
+		if (auto ground =
+			std::dynamic_pointer_cast<Ground>(obj))
+		{
+			if (objData.contains("GroundType"))
+			{
+				ground->SetGroundType(
+					static_cast<Ground::GroundType>(
+						objData["GroundType"].get<int>()));
 			}
 		}
 

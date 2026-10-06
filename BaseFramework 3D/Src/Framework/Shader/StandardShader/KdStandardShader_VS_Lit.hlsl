@@ -59,6 +59,29 @@ VSOutput main(
 
     // UV座標
 	Out.UV = uv * g_UVTiling + g_UVOffset;
+
+	// 追加
+	{
+		float3 wpos = mul(pos, g_mWorld).xyz;
+	
+		// 風の影響を受けるか
+		if (g_windEnable)
+		{
+			// 風吹いてるか
+			if (g_windEffectEnable)
+			{
+				// 風の影響を受ける
+				if (uv.y < 0.1)
+				{
+					wpos += g_windValue;
+				}
+			}
+		}
+		
+		Out.wPos = wpos; // ワールド座標を別途保存
+		Out.Pos = mul(float4(wpos, 1), g_mView); // ワールド -> ビュー
+		Out.Pos = mul(Out.Pos, g_mProj); // ビュー -> 射影
+	}
 	
     // 出力
 	return Out;

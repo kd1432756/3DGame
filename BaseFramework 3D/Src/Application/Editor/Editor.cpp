@@ -193,21 +193,23 @@ void Editor::PlaceStageTile(const Math::Vector3& pos)
 	auto obj =
 		SceneManager::Instance().CreateObject("Ground");
 
-	auto mesh =
-		std::dynamic_pointer_cast<StaticMeshObject>(obj);
+	auto ground =
+		std::dynamic_pointer_cast<Ground>(obj);
 
-	if (!mesh)
+	if (!ground)
 	{
 		return;
 	}
 
-	mesh->SetModelPath(tile->modelPath);
+	ground->SetModelPath(tile->modelPath);
 
-	mesh->SetPos(m_previewPos);
+	ground->SetPos(m_previewPos);
 
-	mesh->SetScale(GRID_SIZE / 8.0f);
+	ground->SetScale(GRID_SIZE / 8.0f);
 
-	mesh->SetRot({ 0, m_stageEditorWindow.GetRotation(), 0 });
+	ground->SetRot({ 0, m_stageEditorWindow.GetRotation(), 0 });
+
+	ground->SetGroundType(tile->groundType);
 }
 
 void Editor::EraseStageTile(const Math::Vector3& pos)

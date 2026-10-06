@@ -492,6 +492,36 @@ void Player::UpdateUse()
 			m_skillResult = m_skillCheck->GetResult();
 			m_skillCheck.reset();
 
+			std::string text;
+			Math::Color color;
+			switch (m_skillResult)
+			{
+			case SkillResult::Perfect:
+				text = "Perfect!";
+				color = { 1.0f, 0.9f, 0.2f, 1.0f };		// 黄
+				break;
+
+			case SkillResult::Good:
+				text = "Good";
+				color = { 0.4f, 0.9f, 0.4f, 1.0f };		// 緑
+				break;
+
+			case SkillResult::Miss:
+				text = "Miss";
+				color = { 0.9f, 0.3f, 0.3f, 1.0f };		// 赤
+				break;
+
+			default:
+				return;
+			}
+
+			auto floatingText = std::make_shared<FloatingTextUI>();
+			floatingText->SetText(text);
+			floatingText->SetColor(color);
+			floatingText->SetFont(FontID::Future16);
+			floatingText->SetPosition({ 0, -25 });
+			SceneManager::Instance().AddObject(floatingText);
+
 			// 結果でカウント時間を補正(Perfect短縮 / Miss延長)
 			m_useTotal = m_useTime * TimeRate(m_skillResult);
 			m_useTimer = m_useTotal;

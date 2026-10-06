@@ -9,23 +9,37 @@ void WoodenFence::Init()
 {
 	SetModelPath("Asset/Models/Props/WoodenFence/WoodenFence.gltf");
 
+	RegisterAction({
+		InteractiveState::Normal,
+		InteractiveState::Damaged,
+		ItemAction::Break,
+		"WoodenFence",
+		3.5f,
+		300,
+		"Wooden Fence Break!",
+		"Your Wodden Fence was Broken!",
+		"Asset/Models/Props/WoodenFence/WoodenFenceBroken.gltf"
+		});
+
+	// ↓は仮
+	RegisterAction({
+		InteractiveState::Damaged,
+		InteractiveState::Repaired,
+		ItemAction::Repair,
+		"WoodenFence",
+		3.0f,
+		210,
+		"Wooden Fence Repair!",
+		"",
+		"Asset/Models/Props/Flower/FlowerTape.gltf"
+		});
+
 	StaticMeshObject::Init();
 }
 
-void WoodenFence::DrawBright()
+void WoodenFence::OnAction(const InteractiveAction& action, const std::shared_ptr<Player>& player)
 {
-	if (!IsFocused())
-	{
-		return;
-	}
 
-	if (!m_spModel) return;
-
-	Math::Color color{ 0.1,0.1,0.1,1 };
-	KdShaderManager::Instance().m_StandardShader.DrawModel(
-		*m_spModel,
-		m_mWorld,
-		color);
 }
 
 void WoodenFence::RegisterCollider()

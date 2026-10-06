@@ -15,25 +15,28 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"Adhesive_Tape_",
+			"name":"Mesh1_Group1_Component_1_1_Model.001",
 			"rotation":[
-				0.6103999614715576,
-				-0.3569481074810028,
-				0.3569481074810028,
-				0.6103998422622681
+				0.70710688829422,
+				0,
+				0,
+				0.7071066498756409
 			],
-			"scale":[
-				0.010000001639127731,
-				0.010000001639127731,
-				0.009999999776482582
+			"translation":[
+				0,
+				0.03349000960588455,
+				-0.06897486746311188
 			]
 		}
 	],
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"AdhesiveTape.001",
+			"name":"Material.003",
 			"pbrMetallicRoughness":{
+				"baseColorTexture":{
+					"index":0
+				},
 				"metallicFactor":0,
 				"roughnessFactor":0.5
 			}
@@ -41,7 +44,7 @@
 	],
 	"meshes":[
 		{
-			"name":"Scene.003",
+			"name":"Mesh1_Group1_Component_1_1_Model.002",
 			"primitives":[
 				{
 					"attributes":{
@@ -55,72 +58,91 @@
 			]
 		}
 	],
+	"textures":[
+		{
+			"sampler":0,
+			"source":0
+		}
+	],
+	"images":[
+		{
+			"mimeType":"image/png",
+			"name":"House_Props_Diffuse",
+			"uri":"House_Props_Diffuse.png"
+		}
+	],
 	"accessors":[
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":164,
+			"count":211,
 			"max":[
-				2.2104995250701904,
-				2.2620489597320557,
-				0.6745052337646484
+				0.8544993996620178,
+				3.421959638595581,
+				0.5023497343063354
 			],
 			"min":[
-				-2.4220495223999023,
-				-2.489635467529297,
-				-0.6745056509971619
+				-0.8544906377792358,
+				-1.3156483173370361,
+				-0.5654541254043579
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":164,
+			"count":211,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":164,
+			"count":211,
 			"type":"VEC2"
 		},
 		{
 			"bufferView":3,
 			"componentType":5123,
-			"count":516,
+			"count":306,
 			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":1968,
+			"byteLength":2532,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1968,
-			"byteOffset":1968,
+			"byteLength":2532,
+			"byteOffset":2532,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1312,
-			"byteOffset":3936,
+			"byteLength":1688,
+			"byteOffset":5064,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1032,
-			"byteOffset":5248,
+			"byteLength":612,
+			"byteOffset":6752,
 			"target":34963
+		}
+	],
+	"samplers":[
+		{
+			"magFilter":9729,
+			"minFilter":9987
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":6280,
-			"uri":"Tape3.bin"
+			"byteLength":7364,
+			"uri":"Hammer_Source.bin"
 		}
 	]
 }

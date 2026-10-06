@@ -15,7 +15,7 @@
 	"nodes":[
 		{
 			"mesh":0,
-			"name":"Mesh1_Group1_Component_1_1_Model",
+			"name":"Mesh1_Group1_Component_1_1_Model.001",
 			"rotation":[
 				0.70710688829422,
 				0,
@@ -32,7 +32,7 @@
 	"materials":[
 		{
 			"doubleSided":true,
-			"name":"Material.002",
+			"name":"Material.003",
 			"pbrMetallicRoughness":{
 				"baseColorTexture":{
 					"index":0
@@ -44,7 +44,7 @@
 	],
 	"meshes":[
 		{
-			"name":"Mesh1_Group1_Component_1_1_Model.001",
+			"name":"Mesh1_Group1_Component_1_1_Model.002",
 			"primitives":[
 				{
 					"attributes":{
@@ -77,14 +77,14 @@
 			"componentType":5126,
 			"count":112,
 			"max":[
-				0.0569666251540184,
-				0.22813063859939575,
-				0.03348998352885246
+				0.8544994592666626,
+				3.421959638595581,
+				0.5023497343063354
 			],
 			"min":[
-				-0.05696604773402214,
-				-0.08770988881587982,
-				-0.03769694268703461
+				-0.8544906377792358,
+				-1.3156483173370361,
+				-0.5654541254043579
 			],
 			"type":"VEC3"
 		},

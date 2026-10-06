@@ -6,52 +6,62 @@ void StageEditorWindow::Init()
 	{
 		{
 			"Straight",
-			"Asset/Models/Ground/Straight.gltf"
+			"Asset/Models/Ground/Straight.gltf",
+			Ground::GroundType::Road
 		},
 
 		{
 			"Corner",
-			"Asset/Models/Ground/Corner.gltf"
+			"Asset/Models/Ground/Corner.gltf",
+			Ground::GroundType::Road
 		},
 
 		{
 			"TJunction",
-			"Asset/Models/Ground/TJunction.gltf"
+			"Asset/Models/Ground/TJunction.gltf",
+			Ground::GroundType::Road
 		},
 
 		{
 			"Grass",
-			"Asset/Models/Ground/Grass.gltf"
+			"Asset/Models/Ground/Grass.gltf",
+			Ground::GroundType::Grass
 		},
 
 		{
 			"Dirt",
-			"Asset/Models/Ground/Dirt.gltf"
+			"Asset/Models/Ground/Dirt.gltf",
+			Ground::GroundType::Dirt
 		},
 
 		{
 			"Lot",
-			"Asset/Models/Ground/Lot.gltf"
+			"Asset/Models/Ground/Lot.gltf",
+			Ground::GroundType::Lot
 		},
 
 		{
 			"LotBorder",
-			"Asset/Models/Ground/LotBorder.gltf"
+			"Asset/Models/Ground/LotBorder.gltf",
+			Ground::GroundType::Lot
 		},
 
 		{
 			"LotCorner",
-			"Asset/Models/Ground/LotCorner.gltf"
+			"Asset/Models/Ground/LotCorner.gltf",
+			Ground::GroundType::Lot
 		},
 
 		{
 			"LotExit",
-			"Asset/Models/Ground/LotExit.gltf"
+			"Asset/Models/Ground/LotExit.gltf",
+			Ground::GroundType::Lot
 		},
 
 		{
 			"Concrete",
-			"Asset/Models/Ground/Concrete.gltf"
+			"Asset/Models/Ground/Concrete.gltf",
+			Ground::GroundType::Concrete
 		},
 	};
 }

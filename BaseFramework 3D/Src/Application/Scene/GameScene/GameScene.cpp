@@ -19,6 +19,8 @@
 
 #include "../../System/DayCycle/DayCycle.h"
 
+#include "../../System/GrassField/GrassField.h"
+
 #include "../../GameObject/UI/GameStateUI/GameStateUI.h"
 #include "../../GameObject/UI/ResultUI/ResultUI.h"
 
@@ -89,6 +91,35 @@ void GameScene::Update()
 
 void GameScene::Event()
 {
+	{
+		static float time = 0.0f;
+		time += 1.0f / 60.0f;	// フレーム固定なら。dtが取れるならそちらを使う
+
+		// 1. 風の強さ: 周期の違う波を重ねて不規則にする
+		float strength =
+			0.6f +
+			0.25f * sinf(time * 1.3f) +
+			0.15f * sinf(time * 3.1f + 1.7f) +
+			0.10f * sinf(time * 7.3f + 0.4f);	// 細かい揺らぎ(ブレ)
+
+		// 2. 突風: たまに強くなる
+		float gust = sinf(time * 0.35f);
+		gust = std::max(0.0f, gust);
+		gust = gust * gust * gust;				// 立ち上がりを鋭く
+		strength += gust * 0.8f;
+
+		// 3. 風向き: ゆっくり回転 + 小さなブレ
+		float angle = 0.6f + 0.5f * sinf(time * 0.2f) + 0.1f * sinf(time * 1.1f);
+
+		const float scale = SceneManager::Instance().GetSceneScale();
+		strength *= scale * 0.2f;
+
+		KdShaderManager::Instance().SetWindValue({
+			cosf(angle) * strength,
+			0,
+			sinf(angle) * strength });
+	}
+
 	if (GetAsyncKeyState('T') & 0x8000)
 	{
 		SceneManager::Instance().SetNextScene
@@ -136,7 +167,14 @@ void GameScene::Start()
 		scale);
 
 	DayCycle::Instance().Init();
-	
+
+	// 風有効化
+	KdShaderManager::Instance().SetWindEnable(true);
+
+	auto field = std::make_shared<GrassField>();
+	SceneManager::Instance().AddObject(field);
+	field->Generate(50.0f, 0.3f * scale);
+
 	auto time = std::make_shared<TimeUI>();
 	time->Init();
 	time->SetName("TimeUI");

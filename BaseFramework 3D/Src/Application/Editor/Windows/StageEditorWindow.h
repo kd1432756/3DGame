@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "../../GameObject/Object/StaticMeshObject/Ground/Ground.h"
+
 class StageEditorWindow
 {
 public:
@@ -14,6 +16,7 @@ public:
 	{
 		std::string name;
 		std::string modelPath;
+		Ground::GroundType groundType;
 	};
 
 	void Init();
@@ -61,7 +64,7 @@ public:
 		m_windowPos = pos;
 		m_windowSize = size;
 	}
-
+	
 private:
 
 	void DrawRoadCategory();

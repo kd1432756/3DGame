@@ -146,6 +146,13 @@ public:
 		std::array<ConeLight, MaxConeLightNum> ConeLights;
 	};
 
+	// 追加 風
+	struct cbAmbient
+	{
+		int windEnable = 0;
+		Math::Vector3 windValue = {};
+	};
+
 	static KdShaderManager& Instance()
 	{
 		static KdShaderManager instance;
@@ -206,6 +213,19 @@ public:
 	// 定数バッファ系
 	//
 	//==========================
+	
+	// 追加 風
+	void SetWindEnable(bool enable)
+	{
+		m_cb10_Ambient.Work().windEnable = enable;
+		m_cb10_Ambient.Write();
+	}
+	void SetWindValue(const Math::Vector3& wind)
+	{
+		m_cb10_Ambient.Work().windValue = wind;
+		m_cb10_Ambient.Write();
+	}
+
 	const cbCamera& GetCameraCB() const { return m_cb7_Camera.Get(); }
 
 	const cbFog& GetFogCB() const { return m_cb8_Fog.Get(); }
@@ -255,6 +275,9 @@ private:
 
 	// ライト定数バッファ
 	KdConstantBuffer<cbLight>	m_cb9_Light;
+
+	// 追加 アンビエント定数バッファ
+	KdConstantBuffer<cbAmbient>	m_cb10_Ambient;
 
 	KdAmbientController m_ambientController;
 

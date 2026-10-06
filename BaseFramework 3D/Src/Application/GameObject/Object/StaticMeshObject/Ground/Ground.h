@@ -9,6 +9,15 @@ class Ground :
 {
 public:
 
+	enum class GroundType
+	{
+		Road,
+		Grass,
+		Dirt,
+		Lot,
+		Concrete
+	};
+
 	void Init() override;
 
 	const char* GetTypeName() const override
@@ -21,8 +30,26 @@ public:
 		return ObjectCategory::Stage;
 	}
 
+	void SetGroundType(GroundType type)
+	{
+		m_groundType = type;
+	}
+
+	GroundType GetGroundType() const
+	{
+		return m_groundType;
+	}
+
+	bool IsGrass() const
+	{
+		return m_groundType == GroundType::Grass;
+	}
+
+	void CollectGrassPoints(std::vector<Math::Vector3>& out, float density) const;
+
 private:
 
 	void RegisterCollider() override;
 
+	GroundType m_groundType = GroundType::Road;
 };

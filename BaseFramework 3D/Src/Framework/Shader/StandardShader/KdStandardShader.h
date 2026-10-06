@@ -39,7 +39,11 @@ public:
 
 		// 追加 アウトライン対応
 		int EnableOutLineDraw = 0;
-		float _blank[2] = {};
+
+		// 追加 風の影響を受けるか
+		int windEffectEnable = 0;
+
+		float _blank[1] = {};
 	};
 
 	// 定数バッファ(メッシュ単位更新)
@@ -159,6 +163,13 @@ public:
 			m_cb0_Obj.Work().EnableOutLineDraw = enableOutLineDraw;
 			m_dirtyCBObj = true;
 		}
+	}
+
+	// 追加 風の影響を受けるか
+	void SetWindEffectEnable(bool enable)
+	{
+		m_cb0_Obj.Work().windEffectEnable = enable;
+		m_dirtyCBObj = true;
 	}
 
 	//================================================
