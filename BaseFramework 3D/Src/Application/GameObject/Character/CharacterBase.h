@@ -11,6 +11,12 @@ class Police;
 class CharacterBase : public KdGameObject
 {
 public:
+	struct WallHit
+	{
+		Math::Vector3 normal;
+		float         overlap;
+	};
+
 	virtual void Init() override;
 	virtual void Update() override;
 	virtual void DrawLit() override;
@@ -66,6 +72,9 @@ public:
 
 	bool IsArrested() const { return m_isArrested; }
 
+	virtual bool IsPranking() const { return false; }
+	virtual Math::Vector3 GetPrankPos() const { return m_pos; }
+
 	void ShowEmote(EmoteIcon::IconType type, float duration = 0.0f, bool force = false);
 	void HideEmote();
 
@@ -88,15 +97,15 @@ protected:
 			Math::Matrix::CreateTranslation(m_pos);
 	}
 
-	Math::Vector3 GetForward() const;
-
 	void CheckStep(
 		const Math::Vector3& moveDir);
 
 	void CheckGround();
 
-	void ResolveCollision(
-		const Math::Vector3& moveDir);
+	void ResolveCollision(const Math::Vector3& moveDir);
+
+	void CollectWallHits(float radius, std::vector<WallHit>& out);
+	void ResolveCollision();
 
 	void ApplyGravity();
 
@@ -149,4 +158,6 @@ protected:
 
 	// 壁判定Sphereの半径
 	float m_collisionRadius = 0.75f;
+
+	Math::Vector3 m_wallNormal = Math::Vector3::Zero;
 };

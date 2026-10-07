@@ -70,6 +70,27 @@ public:
 		return m_isUsing;
 	}
 
+	bool IsPranking() const
+	{
+		if (!m_isUsing)
+		{
+			return false;
+		}
+
+		auto usable = m_useObject.lock();
+		if (!usable)
+		{
+			return false;
+		}
+
+		return !m_isRepairUse;
+	}
+
+	Math::Vector3 GetPrankPos() const
+	{
+		return m_prankPos;
+	}
+
 	bool IsCounting() const { return m_usePhase == UsePhase::Counting; }
 
 	float GetUseProgress() const
@@ -128,8 +149,6 @@ private:
 
 	void UpdateHandItem();
 
-	void CheckBush();
-
 	std::weak_ptr<CameraBase> m_camera;
 
 	bool m_isDrawEnabled = false;
@@ -139,6 +158,9 @@ private:
 	std::shared_ptr<Item> m_handItem;
 
 	bool m_isUsing = false;
+	bool m_isRepairUse = false;
+
+	Math::Vector3 m_prankPos = Math::Vector3::Zero;
 
 	float m_useTimer = 0.0f;
 	float m_useTime = 0.0f;

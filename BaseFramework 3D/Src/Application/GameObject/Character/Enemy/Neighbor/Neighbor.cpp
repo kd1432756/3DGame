@@ -44,12 +44,6 @@ void Neighbor::Init()
 	);
 
 	//============================================================
-	// NavMesh Manager
-	//============================================================
-
-	m_pNavMeshManager = &NavMeshManager::Instance();
-
-	//============================================================
 	// Location Point Manager
 	//============================================================
 
@@ -2476,40 +2470,6 @@ void Neighbor::FindPathTo(
 		);
 
 	m_navPathIndex = 0;
-}
-
-//============================================================
-// Snap To NavMesh
-//============================================================
-
-Math::Vector3 Neighbor::SnapToNavMesh(
-	const Math::Vector3& point) const
-{
-	if (!m_pNavMeshManager)
-	{
-		return point;
-	}
-
-	//============================================================
-	// すでにNavMesh内ならそのまま
-	//============================================================
-
-	auto polygon =
-		m_pNavMeshManager->FindPolygonFromPoint(point);
-
-	if (polygon)
-	{
-		return point;
-	}
-
-	//============================================================
-	// 範囲外 → 最近傍点へ補正
-	//============================================================
-
-	return m_pNavMeshManager->FindNearestPoint(
-		point,
-		m_navSnapRadius * m_sceneScale
-	);
 }
 
 //============================================================

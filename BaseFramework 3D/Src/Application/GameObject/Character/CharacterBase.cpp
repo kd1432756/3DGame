@@ -201,7 +201,6 @@ void CharacterBase::CheckGround()
 		m_stepVisualOffset -= diff;*/
 }
 
-
 void CharacterBase::ResolveCollision(const Math::Vector3& moveDir)
 {
 	// =========================================================
@@ -212,13 +211,11 @@ void CharacterBase::ResolveCollision(const Math::Vector3& moveDir)
 		return;
 	}
 
-
 	// =========================================================
 	// プレイヤーの移動方向
 	// =========================================================
 	Math::Vector3 direction = moveDir;
 	direction.Normalize();
-
 
 	// =========================================================
 	// 最大反復回数
@@ -226,8 +223,7 @@ void CharacterBase::ResolveCollision(const Math::Vector3& moveDir)
 	// 壁＋壁、壁＋角などに対応するため、
 	// 押し戻す → 再判定を数回行う
 	// =========================================================
-	const int maxIterations = 3;
-
+	const int maxIterations = 4;
 
 	for (int iteration = 0; iteration < maxIterations; ++iteration)
 	{
@@ -277,7 +273,6 @@ void CharacterBase::ResolveCollision(const Math::Vector3& moveDir)
 			);
 		}
 
-
 		// =====================================================
 		// 衝突していない
 		// =====================================================
@@ -285,7 +280,6 @@ void CharacterBase::ResolveCollision(const Math::Vector3& moveDir)
 		{
 			break;
 		}
-
 
 		// =====================================================
 		// 今回一番深くめり込んでいる壁を探す
@@ -300,7 +294,6 @@ void CharacterBase::ResolveCollision(const Math::Vector3& moveDir)
 		{
 			Math::Vector3 normal = collision.m_hitNDir;
 
-
 			// -------------------------------------------------
 			// 法線が取得できない場合
 			// -------------------------------------------------
@@ -311,7 +304,6 @@ void CharacterBase::ResolveCollision(const Math::Vector3& moveDir)
 
 			normal.Normalize();
 
-
 			// -------------------------------------------------
 			// 地面・坂は無視
 			// -------------------------------------------------
@@ -320,7 +312,6 @@ void CharacterBase::ResolveCollision(const Math::Vector3& moveDir)
 				continue;
 			}
 
-
 			// -------------------------------------------------
 			// 天井も壁として扱わない
 			// -------------------------------------------------
@@ -328,7 +319,6 @@ void CharacterBase::ResolveCollision(const Math::Vector3& moveDir)
 			{
 				continue;
 			}
-
 
 			// -------------------------------------------------
 			// 水平方向だけを使用
@@ -342,7 +332,6 @@ void CharacterBase::ResolveCollision(const Math::Vector3& moveDir)
 
 			normal.Normalize();
 
-
 			// -------------------------------------------------
 			// 壁に向かって移動している場合だけ処理
 			// -------------------------------------------------
@@ -352,7 +341,6 @@ void CharacterBase::ResolveCollision(const Math::Vector3& moveDir)
 			{
 				continue;
 			}
-
 
 			// -------------------------------------------------
 			// めり込み量
@@ -375,7 +363,6 @@ void CharacterBase::ResolveCollision(const Math::Vector3& moveDir)
 			}
 		}
 
-
 		// =====================================================
 		// 壁との衝突がなければ終了
 		// =====================================================
@@ -384,13 +371,89 @@ void CharacterBase::ResolveCollision(const Math::Vector3& moveDir)
 			break;
 		}
 
-
 		// =====================================================
 		// めり込みを完全に解消
 		// =====================================================
 		const float skin = 0.001f;
 
 		m_pos += bestNormal * (bestOverlap + skin);
+	}
+}
+
+void CharacterBase::CollectWallHits(float radius, std::vector<WallHit>& out)
+{
+	out.clear();
+
+	KdCollider::SphereInfo sphere;
+	sphere.m_sphere.Center = m_pos;
+	sphere.m_sphere.Radius = radius;
+	sphere.m_type = KdCollider::TypeBump;
+
+	std::list<KdCollider::CollisionResult> collisionList;
+
+	for (auto& obj : SceneManager::Instance().GetObjList())
+	{
+		if (!obj || obj.get() == this) { continue; }
+
+		if (auto mesh = std::dynamic_pointer_cast<StaticMeshObject>(obj))
+		{
+			if (!mesh->IsCollisionEnabled()) { continue; }
+		}
+		obj->Intersects(sphere, &collisionList);
+	}
+
+	for (auto& c : collisionList)
+	{
+		if (c.m_overlapDistance <= 0.0f) { continue; }
+
+		Math::Vector3 n = c.m_hitNDir;
+		if (n.LengthSquared() <= 0.000001f) { continue; }
+		n.Normalize();
+
+		//if (n.y > 0.7f || n.y < -0.7f) { continue; }   // 床・天井は除外
+
+		n.y = 0.0f;
+		if (n.LengthSquared() <= 0.000001f) { continue; }
+		n.Normalize();
+
+		// 近い法線は統合
+		bool merged = false;
+		for (auto& w : out)
+		{
+			if (w.normal.Dot(n) > 0.98f)
+			{
+				w.overlap = std::max(w.overlap, c.m_overlapDistance);
+				merged = true;
+				break;
+			}
+		}
+		if (!merged) { out.push_back({ n, c.m_overlapDistance }); }
+	}
+}
+
+void CharacterBase::ResolveCollision()
+{
+	const float radius = m_collisionRadius * m_sceneScale;
+	const float skin = 0.001f;
+
+	std::vector<WallHit> walls;
+
+	for (int i = 0; i < 5; ++i)
+	{
+		CollectWallHits(radius, walls);
+		if (walls.empty()) { break; }
+
+		Math::Vector3 push = Math::Vector3::Zero;
+		for (auto& w : walls)
+		{
+			push += w.normal * (w.overlap + skin);
+		}
+
+		const float len = push.Length();
+		if (len < 0.00001f) { break; }
+		if (len > radius) { push *= radius / len; }
+
+		m_pos += push;
 	}
 }
 

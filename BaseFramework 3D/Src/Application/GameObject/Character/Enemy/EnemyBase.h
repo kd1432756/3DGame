@@ -2,6 +2,9 @@
 
 #include "../CharacterBase.h"
 
+#include "../../../System/Navigation/NavMesh/NavMeshPathfinder.h"
+class NavMeshManager;
+
 class EnemyBase : public CharacterBase
 {
 
@@ -53,4 +56,24 @@ protected:
 
 	Math::Vector3 m_moveDir =
 		Math::Vector3::Zero;
+
+	// =========================================
+	// NavMesh
+	// =========================================
+
+	NavMeshPathfinder m_navMeshPathfinder;
+
+	NavMeshManager* m_pNavMeshManager = nullptr;
+
+	std::vector<Math::Vector3> m_navPath;
+
+	int m_navPathIndex = 0;
+
+	Math::Vector3 SnapToNavMesh(const Math::Vector3& point) const;
+
+	std::vector<Math::Vector3> FindNavPath(
+		const Math::Vector3& start, const Math::Vector3& goal) const;
+
+	static constexpr float m_navSnapRadius = 2.0f;
+
 };

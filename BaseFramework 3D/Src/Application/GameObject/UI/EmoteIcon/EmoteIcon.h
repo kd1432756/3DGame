@@ -37,6 +37,13 @@ public:
 		m_ownerCharacter = character;
 	}
 
+	enum class AnimationState
+	{
+		None,
+		Appear,
+		Disappear
+	};
+
 private:
 
 	//========================================
@@ -50,7 +57,8 @@ private:
 	// アニメーション
 	//========================================
 
-	void StartIconAnimation();
+	void StartIconAnimation(); 
+	void StartIconDisappearAnimation();
 
 	//========================================
 	// 描画
@@ -68,10 +76,10 @@ private:
 	// アニメーション状態
 	//========================================
 
+	AnimationState m_animationState = AnimationState::None;
+
 	float m_animationElapsed = 0.0f;
 	float m_animationDuration = 0.3f;
-
-	bool m_isAnimationPlaying = false;
 
 	//========================================
 	// 表示設定

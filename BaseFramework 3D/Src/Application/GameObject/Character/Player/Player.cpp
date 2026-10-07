@@ -248,9 +248,29 @@ void Player::Move()
 	_moveDir = _moveDir.TransformNormal(_moveDir, camRotYMat);
 	_moveDir.Normalize();
 
-	m_pos += _moveDir * _moveSpeed;
-	
-	ResolveCollision(_moveDir);
+	Math::Vector3 move = _moveDir * _moveSpeed;
+
+	const float radius = m_collisionRadius * m_sceneScale;
+	const float margin = 0.02f * m_sceneScale;   // 先読み距離。移動量より小さめに
+
+	std::vector<WallHit> walls;
+	CollectWallHits(radius + margin, walls);
+
+	// 壁に向かう成分を除去(角に備えて2周)
+	for (int pass = 0; pass < 2; ++pass)
+	{
+		for (auto& w : walls)
+		{
+			float into = move.Dot(w.normal);
+			if (into < 0.0f)
+			{
+				move -= w.normal * into;
+			}
+		}
+	}
+
+	m_pos += move;
+	ResolveCollision();   // 念のための貫通解消
 }
 
 void Player::UpdateRotationByCamera()
@@ -437,21 +457,23 @@ void Player::StartUse()
 	m_useTimer = 0.0f;
 	m_useTotal = 0.0f;
 
-	const bool isRepair = usable->IsRepairAction(
+	m_isRepairUse = usable->IsRepairAction(
 		std::dynamic_pointer_cast<Player>(shared_from_this()));
+
+	m_prankPos = obj->GetPos();
 
 	// スキルチェック開始(種類は抽選)
 	m_skillResult = SkillResult::None;
 
 	m_skillCheck = SkillCheckFactory::Create(
-		isRepair,
+		m_isRepairUse,
 		m_lastSkillType,
 		DayCycle::Instance().GetTimeProgress());
 
 	m_lastSkillType = static_cast<int>(m_skillCheck->GetType());
 
 	// 難易度: 修復は易しめ、いたずらは標準
-	m_skillCheck->Start(isRepair ? 0.8f : 1.0f);
+	m_skillCheck->Start(m_isRepairUse ? 0.8f : 1.0f);
 
 	m_usePhase = UsePhase::SkillCheck;
 }

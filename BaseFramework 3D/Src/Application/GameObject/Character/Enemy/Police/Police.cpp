@@ -37,13 +37,6 @@ void Police::Init()
 		&AStarNodeManager::Instance();
 
 	//============================================================
-	// NavMesh Manager
-	//============================================================
-
-	m_pNavMeshManager =
-		&NavMeshManager::Instance();
-
-	//============================================================
 	// Location Point Manager
 	//============================================================
 
@@ -71,6 +64,8 @@ void Police::Init()
 	
 void Police::UpdateBehavior()
 {
+	UpdateTimers();
+
 	switch (m_state)
 	{
 	case State::Patrol:
@@ -99,6 +94,10 @@ void Police::UpdateBehavior()
 
 	case State::Return:
 		UpdateReturn();
+		break;
+
+	case State::Investigate: 
+		UpdateInvestigate(); 
 		break;
 	}
 }
@@ -130,12 +129,28 @@ void Police::UpdateExtra()
 	);
 }
 
+void Police::UpdateTimers()
+{
+	if (m_investigateCooldown > 0.0f)
+	{
+		m_investigateCooldown -= 1.0f / 60.0f;
+	}
+}
+
 void Police::UpdatePatrol()
 {
 	// Playerを発見したらChase
 	if (SearchTarget())
 	{
 		ChangeState(State::Chase);
+		return;
+	}
+
+	if (m_investigateCooldown <= 0.0f && DetectPrankSound())
+	{
+		m_navPath.clear();
+		m_navPathIndex = 0;
+		ChangeState(State::Investigate);
 		return;
 	}
 
@@ -201,50 +216,18 @@ void Police::UpdateChase()
 	}
 
 	//============================================================
-	// 追跡範囲
+	// 追跡判定
 	//============================================================
 
-	const float chaseDistance =
-		10.0f * m_sceneScale;
-
-	if (distance > chaseDistance)
+	if (CanSeeTarget(target))
 	{
-		//========================================================
-		// 追跡範囲外
-		//========================================================
-
-		m_loseSightTimer += 1.0f / 60.0f;
-
-		if (m_loseSightTimer >= m_loseSightTime)
-		{
-			ChangeState(State::LastSeen);
-
-			m_navPath.clear();
-			m_navPathIndex = 0;
-
-			m_loseSightTimer = 0.0f;
-
-			return;
-		}
-	}
-	else if (CanSeeTarget(target))
-	{
-		//========================================================
-		// Playerを見ている
-		//========================================================
-
 		m_loseSightTimer = 0.0f;
 
-		// 最後に見たPlayer位置を更新
 		m_lastTargetPos =
 			target->GetPos();
 	}
 	else
 	{
-		//========================================================
-		// Playerが見えない
-		//========================================================
-
 		m_loseSightTimer += 1.0f / 60.0f;
 
 		if (m_loseSightTimer >= m_loseSightTime)
@@ -277,8 +260,22 @@ void Police::UpdateChase()
 	//============================================================
 	// NavMesh Pathを進む
 	//============================================================
-
-	MoveToNextNavPathPoint();
+	
+	if (!MoveToNextNavPathPoint())
+	{
+		if (CanSeeTarget(target))
+		{
+			// 経路は無いが見えている → 直進で近づく
+			Math::Vector3 dir = target->GetPos() - m_pos;
+			dir.y = 0.0f;
+			SetMoveDirection(dir);
+		}
+		else
+		{
+			// 経路も無く見えもしない → 見失いカウントを進める
+			m_loseSightTimer += 1.0f / 60.0f;
+		}
+	}
 }
 
 void Police::UpdateArrest()
@@ -421,22 +418,19 @@ void Police::UpdateLastSeen()
 			return;
 		}
 
-		m_navPath =
-			m_navMeshPathfinder.FindPathPoints(
-				*m_pNavMeshManager,
-				m_pos,
-				m_lastTargetPos
-			);
+		m_navPath = FindNavPath(m_pos, m_lastTargetPos);
 
 		m_navPathIndex = 0;
-
+				
 		//========================================================
-		// Pathが作れない
+		// Pathが作れない場合
 		//========================================================
 
 		if (m_navPath.empty())
 		{
-			ChangeState(State::Return);
+			m_searchTimer = 0.0f;
+
+			ChangeState(State::Search);
 
 			return;
 		}
@@ -474,8 +468,8 @@ void Police::UpdateSearch()
 
 	if (SearchTarget())
 	{
-		m_searchTimer = 0.0f;
-
+		m_searchTimer = 0.0f; 
+		
 		ChangeState(State::Chase);
 
 		return;
@@ -549,6 +543,14 @@ void Police::UpdateReturn()
 		return;
 	}
 
+	if (m_investigateCooldown <= 0.0f && DetectPrankSound())
+	{
+		m_navPath.clear();
+		m_navPathIndex = 0;
+		ChangeState(State::Investigate);
+		return;
+	}
+
 	//============================================================
 	// Return Pathがない場合
 	//============================================================
@@ -587,13 +589,8 @@ void Police::UpdateReturn()
 		// Patrol NodeへNavMeshで移動
 		//========================================================
 
-		m_navPath =
-			m_navMeshPathfinder.FindPathPoints(
-				*m_pNavMeshManager,
-				m_pos,
-				node->GetPos()
-			);
-
+		m_navPath = FindNavPath(m_pos, node->GetPos());
+		
 		m_navPathIndex = 0;
 
 		// Path作成失敗
@@ -646,6 +643,73 @@ void Police::UpdateReturn()
 	ChangeState(State::Patrol);
 
 	FindPatrolPath();
+}
+
+void Police::UpdateInvestigate()
+{
+	//============================================================
+	// 視認できたらChase
+	//============================================================
+
+	if (SearchTarget())
+	{
+		ChangeState(State::Chase);
+		m_navPath.clear();
+		m_navPathIndex = 0;
+		return;
+	}
+
+	if (m_navPath.empty())
+	{
+		if (!m_pNavMeshManager) 
+		{
+			ChangeState(State::Return); return; 
+		}
+
+		m_navPath = FindNavPath(m_pos, m_investigatePos);
+
+		m_navPathIndex = 0;
+
+		if (m_navPath.empty()) 
+		{
+			ChangeState(State::Return); return; 
+		}
+	}
+
+	if (MoveToNextNavPathPoint()) return;
+
+	//============================================================
+	// 到着 → 見回す
+	//============================================================
+
+	m_navPath.clear(); 
+	m_navPathIndex = 0;
+	m_investigateCooldown = 5.0f;
+	ChangeState(State::Search);
+}
+
+bool Police::DetectPrankSound()
+{
+	const float range = m_hearRange * m_sceneScale;
+	const float rangeSq = range * range;
+
+	for (auto& obj : SceneManager::Instance().GetObjList())
+	{
+		auto character = std::dynamic_pointer_cast<CharacterBase>(obj);
+		if (!character || character.get() == this) continue;
+		if (std::dynamic_pointer_cast<Police>(character)) continue;
+		if (character->IsArrested()) continue;
+		if (!character->IsPranking()) continue;
+
+		const Math::Vector3 p = character->GetPrankPos();
+		Math::Vector3 diff = p - m_pos;
+		diff.y = 0.0f;
+		if (diff.LengthSquared() > rangeSq) continue;
+
+		m_investigatePos = p;
+		return true;
+	}
+	return false;
 }
 
 void Police::FindPatrolPath()
@@ -931,8 +995,7 @@ void Police::FindChasePath()
 	// NavMesh Path探索
 	//============================================================
 
-	m_navPath = m_navMeshPathfinder.FindPathPoints(
-		*m_pNavMeshManager, m_pos, goal);
+	m_navPath = FindNavPath(m_pos, goal);
 
 	//============================================================
 	// Path開始
@@ -953,7 +1016,6 @@ bool Police::MoveToNextNavPathPoint()
 	{
 		return false;
 	}
-
 
 	//============================================================
 	// 現在のTarget Point
@@ -984,9 +1046,19 @@ bool Police::MoveToNextNavPathPoint()
 	{
 		m_navPathIndex++;
 
+		//========================================================
+		// 最後まで到着
+		//========================================================
+
+		if (m_navPathIndex >=
+			static_cast<int>(m_navPath.size()))
+		{
+			SetMoveDirection(Math::Vector3::Zero);
+			return false;
+		}
+
 		return true;
 	}
-
 
 	//============================================================
 	// 移動
@@ -1265,20 +1337,22 @@ void Police::EndEscort(bool confiscate)
 
 void Police::FindPolicePostPath()
 {
-	if (!m_pNavMeshManager)
+	if (!m_pNavMeshManager || !m_pLocationPointManager)
 	{
 		return;
 	}
 
-	Math::Vector3 policeStationPos = 
-		m_pLocationPointManager->FindByTag(LocationTag::PoliceStation)->GetPos();
+	auto policeStation =
+		m_pLocationPointManager->FindByTag(LocationTag::PoliceStation);
 
-	m_navPath =
-		m_navMeshPathfinder.FindPathPoints(
-			*m_pNavMeshManager,
-			m_pos,
-			policeStationPos
-		);
+	if (!policeStation)
+	{
+		return;
+	}
+
+	Math::Vector3 policeStationPos = policeStation->GetPos();
+
+	m_navPath = FindNavPath(m_pos, policeStationPos);
 
 	m_navPathIndex = 0;
 }
@@ -1329,6 +1403,9 @@ void Police::ChangeState(State newState)
 	case State::Return:
 		HideEmote();
 		break;
+	case State::Investigate: 
+		ShowEmote(EmoteIcon::IconType::Question); 
+		break;
 	}
 }
 
@@ -1362,6 +1439,10 @@ void Police::ApplyStateSettings()
 		break;
 	case State::Return:
 		SetMoveSpeed(m_returnSpeed);
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Walk"));
+		break;
+	case State::Investigate:
+		SetMoveSpeed(m_investigateSpeed);
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Walk"));
 		break;
 	}

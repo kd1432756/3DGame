@@ -90,15 +90,16 @@ void EmoteIcon::SetIcon(IconType iconType, float duration, bool force)
 
 	if (same && !force) return;
 
+	if (iconType == IconType::None)
+	{
+		StartIconDisappearAnimation();
+		return;
+	}
+
 	m_currentIcon = iconType;
 
 	switch (m_currentIcon)
 	{
-	case IconType::None:
-
-		m_iconPolygon->SetEnable(false);
-		break;
-
 	case IconType::Exclamation:
 
 		m_iconPolygon->SetUVRect(8);
@@ -187,14 +188,85 @@ void EmoteIcon::SetIcon(IconType iconType, float duration, bool force)
 
 void EmoteIcon::UpdateIconAnimation()
 {
-	if (!m_isAnimationPlaying)
+	//========================================
+	// 消滅アニメーション
+	//========================================
+
+	if (m_animationState == AnimationState::Disappear)
+	{
+		m_animationElapsed += 1.0f / 60.0f;
+
+		float progress =
+			m_animationElapsed / m_animationDuration;
+
+		//========================================
+		// 1.0 → 1.1 → 0.0
+		//========================================
+
+		if (progress >= 1.0f)
+		{
+			progress = 1.0f;
+
+			SetScale(0.0f);
+
+			m_animationState = AnimationState::None;
+			m_currentIcon = IconType::None;
+
+			m_iconPolygon->SetEnable(false);
+
+			return;
+		}
+
+		if (progress < 0.25f)
+		{
+			// 1.0 → 1.1
+			const float scaleProgress =
+				progress / 0.25f;
+
+			const float eased =
+				1.0f - std::pow(1.0f - scaleProgress, 2.0f);
+
+			SetScale(
+				std::lerp(
+					m_baseScale,
+					m_baseScale * 1.1f,
+					eased
+				)
+			);
+		}
+		else
+		{
+			// 1.1 → 0.0
+			const float scaleProgress =
+				(progress - 0.25f) / 0.75f;
+
+			const float eased =
+				scaleProgress * scaleProgress;
+
+			SetScale(
+				std::lerp(
+					m_baseScale * 1.1f,
+					0.0f,
+					eased
+				)
+			);
+		}
+
+		return;
+	}
+
+	//========================================
+	// アニメーションしていない
+	//========================================
+
+	if (m_animationState != AnimationState::Appear)
 	{
 		SetScale(m_baseScale);
 		return;
 	}
 
 	//========================================
-	// アニメーション時間更新
+	// 出現アニメーション
 	//========================================
 
 	m_animationElapsed += 1.0f / 60.0f;
@@ -205,18 +277,17 @@ void EmoteIcon::UpdateIconAnimation()
 	if (progress >= 1.0f)
 	{
 		progress = 1.0f;
-		m_isAnimationPlaying = false;
+		m_animationState = AnimationState::None;
 	}
 
 	//========================================
-	// スケールアニメーション
-	//
 	// 0 → 1.3 → 1.0
 	//========================================
 
 	if (progress < 0.4f)
 	{
-		const float scaleProgress = progress / 0.4f;
+		const float scaleProgress =
+			progress / 0.4f;
 
 		SetScale(
 			std::lerp(
@@ -292,7 +363,19 @@ void EmoteIcon::UpdateIconWorldMatrix()
 void EmoteIcon::StartIconAnimation()
 {
 	m_animationElapsed = 0.0f;
-	m_isAnimationPlaying = true;
+	m_animationState = AnimationState::Appear;
 
 	SetScale(0.0f);
+}
+
+void EmoteIcon::StartIconDisappearAnimation()
+{
+	if (!m_iconPolygon || !m_iconPolygon->IsEnable())
+	{
+		m_currentIcon = IconType::None;
+		return;
+	}
+
+	m_animationElapsed = 0.0f;
+	m_animationState = AnimationState::Disappear;
 }

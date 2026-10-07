@@ -132,7 +132,7 @@ bool Item::Pickup(Inventory& inventory, int replaceIndex)
 		inventory.ReplaceItem(replaceIndex, path);
 	}
 
-	ItemManager::Instance().OnPickedUp(*this);   // Destroy()より前
+	ItemManager::Instance().OnPickedUp(*this);
 
 	Destroy();
 	return true;
@@ -145,6 +145,9 @@ void Item::Drop(const Math::Vector3& pos, const Math::Vector3& dir)
 	m_dropTimer = m_dropTime;
 
 	SetPos(pos);
+
+	m_rot.y = std::atan2f(dir.x, dir.z);
+	SetRot(m_rot);
 
 	Math::Vector3 _dir = dir;
 

@@ -13,6 +13,8 @@ void Reticle::DrawSprite()
 {
 	if (!m_tex)return;
 
+	if (!m_isVisible)return;
+
 	Math::Color color = { 1,1,1,1 };
 
 	if (m_canInteract)
@@ -37,4 +39,6 @@ void Reticle::Update()
 	if (!player)return;
 
 	m_canInteract = player->CanHighlight();
+
+	m_isVisible = !player->IsArrested();
 }

@@ -2,10 +2,8 @@
 
 #include "../EnemyBase.h"
 
-#include "../../../../System/Navigation/NavMesh/NavMeshPathfinder.h"
 #include "../../../../System/Inventory/Inventory.h"
 
-class NavMeshManager;
 class LocationPointManager;
 class LocationPoint;
 
@@ -170,13 +168,18 @@ public:
 	}
 
 	//============================================================
-	// Prank Target
+	// Prank
 	//============================================================
 
-	void SetPrankTarget(
-		const std::shared_ptr<InteractiveObject>& target)
+	bool IsPranking() const override
 	{
-		m_wpPrankTarget = target;
+		return m_state == State::Prank && m_isInteracting;
+	}
+
+	Math::Vector3 GetPrankPos() const override
+	{
+		auto t = m_wpPrankTarget.lock();
+		return t ? t->GetPos() : m_pos;
 	}
 
 	//============================================================
@@ -328,8 +331,6 @@ private:
 	void FindPathTo(
 		const Math::Vector3& goal);
 
-	Math::Vector3 SnapToNavMesh(const Math::Vector3& point) const;
-
 	MoveResult MoveToNextNavPathPoint();
 
 	MoveResult MoveToTaskDestination(
@@ -407,20 +408,6 @@ private:
 	float m_prankSpeed = 0.01f;
 
 	float m_repairSpeed = 0.01f;
-
-	//============================================================
-	// NavMesh
-	//============================================================
-
-	NavMeshPathfinder m_navMeshPathfinder;
-
-	NavMeshManager* m_pNavMeshManager = nullptr;
-
-	std::vector<Math::Vector3> m_navPath;
-
-	int m_navPathIndex = 0;
-
-	static constexpr float m_navSnapRadius = 2.0f;
 
 	//============================================================
 	// Animation

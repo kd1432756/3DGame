@@ -3,10 +3,8 @@
 #include "../EnemyBase.h"
 
 #include "../../../../System/Node/AStarNode/AStarPathfinder.h"
-#include "../../../../System/Navigation/NavMesh/NavMeshPathfinder.h"
 
 class AStarNodeManager;
-class NavMeshManager;
 class LocationPointManager;
 
 class AlertIcon;
@@ -35,7 +33,8 @@ public:
 		Escort,
 		LastSeen,
 		Search,
-		Return
+		Return, 
+		Investigate
 	};
 
 protected:
@@ -48,6 +47,12 @@ protected:
 	void UpdateExtra() override;
 
 private:
+
+	//============================================================
+	// Timer
+	//============================================================
+
+	void UpdateTimers();
 
 	//============================================================
 	// Patrol
@@ -92,6 +97,12 @@ private:
 	void UpdateReturn();
 
 	//============================================================
+	// Investigate
+	//============================================================
+
+	void UpdateInvestigate();
+
+	//============================================================
 	// Path
 	//============================================================
 
@@ -126,9 +137,15 @@ private:
 
 	void BeginEscort(const std::shared_ptr<CharacterBase>& target);
 
-	void EndEscort(bool confiscate);       // 連行終了(解放処理)
+	void EndEscort(bool confiscate);
 
 	void FindPolicePostPath();
+
+	//============================================================
+	// Investigate
+	//============================================================
+
+	bool DetectPrankSound();
 
 	//============================================================
 	// State
@@ -153,7 +170,8 @@ private:
 	float m_patrolSpeed = 0.006f;
 	float m_chaseSpeed = 0.016f;
 	float m_returnSpeed = 0.01f;
-	float m_escortSpeed = 0.012f;
+	float m_escortSpeed = 0.014f;
+	float m_investigateSpeed = 0.012f;
 
 	//============================================================
 	// A*
@@ -176,18 +194,6 @@ private:
 	int m_previousPatrolNode = -1;
 
 	//============================================================
-	// NavMesh
-	//============================================================
-
-	NavMeshPathfinder m_navMeshPathfinder;
-
-	NavMeshManager* m_pNavMeshManager = nullptr;
-
-	std::vector<Math::Vector3> m_navPath;
-
-	int m_navPathIndex = 0;
-
-	//============================================================
 	// Location Point
 	//============================================================
 
@@ -205,6 +211,16 @@ private:
 
 	Math::Vector3 m_lastTargetPos =
 		Math::Vector3::Zero;
+
+	//============================================================
+	// Chase
+	//============================================================
+
+	Math::Vector3 m_investigatePos = Math::Vector3::Zero;
+
+	float m_hearRange = 15.0f;
+
+	float m_investigateCooldown = 0.0f;
 
 	//============================================================
 	// Arrest

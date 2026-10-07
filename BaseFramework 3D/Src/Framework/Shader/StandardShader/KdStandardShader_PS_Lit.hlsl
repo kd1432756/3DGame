@@ -35,7 +35,7 @@ float4 main(VSOutput In) : SV_Target0
 	if (g_EnableOutLineDraw)
 	{
 		// アウトライン描画の場合は単色で返す
-		return float4(0, 0.9f, 1, 1);
+		return float4(1, 1, 0.2f, 1);
 	}
 	
 	// ディゾルブによる描画スキップ
