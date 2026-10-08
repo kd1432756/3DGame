@@ -83,12 +83,7 @@ InteractiveObject::FindAction(
 
 			const auto& data = item->GetItemData();
 
-			if (action.action != data.GetAction())
-			{
-				continue;
-			}
-
-			if (action.target != data.GetTarget())
+			if (!data.FindUse(action.action, action.target))
 			{
 				continue;
 			}
@@ -124,15 +119,19 @@ InteractiveObject::FindAction(
 
 const InteractiveAction*
 InteractiveObject::FindNPCAction(
-	const ItemData& item) const
+	const ItemData& item,
+	const std::string& npcName) const
 {
+	const bool isOwner = (m_owner == npcName);
+
 	for (const auto& action : m_actions)
 	{
 		if (action.fromState != m_state) continue;
 		if (!action.npcCanUse) continue;
 		if (!action.needItem) continue;
-		if (action.action != item.GetAction()) continue;
-		if (action.target != item.GetTarget()) continue;
+		if (!item.FindUse(action.action, action.target)) continue;
+		const bool isRepair = (action.action == ItemAction::Repair);
+		if (isRepair != isOwner) continue;
 		return &action;
 	}
 
@@ -255,20 +254,30 @@ std::string InteractiveObject::GetActionText(
 		return "";
 	}
 
-	return item->GetItemData().GetActionText();
+	const auto* use =
+		item->GetItemData().FindUse(action->action, action->target);
+
+	if (!use)
+	{
+		return "";
+	}
+
+	return use->actionText.empty() ? action->actionText : use->actionText;
 }
 
 bool InteractiveObject::CanNPCUse(
-	const ItemData& item) const
+	const ItemData& item,
+	const std::string& npcName) const
 {
-	return FindNPCAction(item) != nullptr;
+	return FindNPCAction(item, npcName) != nullptr;
 }
 
 float InteractiveObject::GetNPCUseTime(
-	const ItemData& itemData) const
+	const ItemData& itemData,
+	const std::string& npcName) const
 {
 	const auto* action =
-		FindNPCAction(itemData);
+		FindNPCAction(itemData, npcName);
 
 	if (!action)
 	{
@@ -283,7 +292,7 @@ void InteractiveObject::NPCUse(
 	const std::shared_ptr<Neighbor>& npc)
 {
 	const auto* action =
-		FindNPCAction(item);
+		FindNPCAction(item, npc->GetName());
 
 	if (!action)
 	{

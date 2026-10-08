@@ -5,9 +5,15 @@
 
 	"IconPath": "Asset/Textures/Icon/Tape.png",
 
-	"Action": "Repair",
+	"Dangerous": false,
 
-	"Target": "Flower",
+	"Uses": [
+		{
+			"Action": "Repair",
+			"Target": "Flower",
+			"Text": "Repair"
+		}
+	],
 
 	"MaxCount": 3,
 

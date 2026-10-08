@@ -81,9 +81,11 @@ public:
 		const std::shared_ptr<Player>& player) const;
 
 	bool CanNPCUse(
-		const ItemData& item) const override;
+		const ItemData& item,
+		const std::string& npcName) const override;
 	float GetNPCUseTime(
-		const ItemData& itemData) const;
+		const ItemData& itemData,
+		const std::string& npcName) const;
 	void NPCUse(
 		const ItemData& item,
 		const std::shared_ptr<Neighbor>& npc) override;
@@ -119,7 +121,8 @@ protected:
 		const std::shared_ptr<Player>& player) const;
 
 	const InteractiveAction* FindNPCAction(
-		const ItemData& item) const;
+		const ItemData& item,
+		const std::string& npcName) const;
 
 	const InteractiveAction* FindNPCBareAction(const std::string& npcName) const;
 	void ExecuteNPCAction(const InteractiveAction& action,

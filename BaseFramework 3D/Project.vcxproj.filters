@@ -292,6 +292,9 @@
     <Filter Include="Src\Application\System\GrassField">
       <UniqueIdentifier>{ab5f8f54-3ad1-4130-b78b-7a057e5b730e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\System\FootStep">
+      <UniqueIdentifier>{32fed343-7d4f-443d-9727-7e67d0025ae7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -741,6 +744,9 @@
     <ClInclude Include="Src\Application\System\GrassField\GrassField.h">
       <Filter>Src\Application\System\GrassField</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\System\FootStep\FootStep.h">
+      <Filter>Src\Application\System\FootStep</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1148,6 +1154,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\System\GrassField\GrassField.cpp">
       <Filter>Src\Application\System\GrassField</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\FootStep\FootStep.cpp">
+      <Filter>Src\Application\System\FootStep</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

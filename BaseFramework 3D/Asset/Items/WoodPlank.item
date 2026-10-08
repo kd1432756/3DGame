@@ -5,9 +5,15 @@
 
 	"IconPath": "Asset/Textures/Icon/WoodPlank.png",
 
-	"Action": "Repair",
+	"Dangerous": false,
 
-	"Target": "WoodenFence",
+	"Uses": [
+		{
+			"Action": "Repair",
+			"Target": "WoddenFence",
+			"Text": "Repair"
+		}
+	],
 
 	"MaxCount": 3,
 

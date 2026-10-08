@@ -134,6 +134,8 @@ bool Item::Pickup(Inventory& inventory, int replaceIndex)
 
 	ItemManager::Instance().OnPickedUp(*this);
 
+	KdEffekseerManager::GetInstance().Play("itemPickup.efkefc", m_pos, SceneManager::Instance().GetSceneScale());
+
 	Destroy();
 	return true;
 }

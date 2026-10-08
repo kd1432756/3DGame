@@ -6,6 +6,8 @@ class Police;
 #include "../../System/Inventory/Inventory.h"
 #include "../Object/StaticMeshObject/Item/ItemData.h"
 
+#include "../Object/StaticMeshObject/Ground/Ground.h"
+
 #include "../UI/EmoteIcon/EmoteIcon.h"
 
 class CharacterBase : public KdGameObject
@@ -60,12 +62,9 @@ public:
 	bool AddInventoryItem(const std::string& itemPath);
 	bool HasInventoryItem(const std::string& itemPath) const;
 	bool HasRepairItem() const;
-
-	// 警察の追跡条件（空なら false になるのでPoliceでも安全）
 	bool HasPrankItem() const;
-
-	// いたずらアイテムだけ没収する
-	void ConfiscatePrankItems();
+	bool HasDangerousItem() const;
+	void ConfiscateDangerousItems();
 
 	// 選択スロット変更（Player=手持ちモデル更新 / Neighbor=ItemData更新）
 	virtual void SelectInventory(int index) { m_inventory.SelectIndex(index); }
@@ -102,8 +101,6 @@ protected:
 
 	void CheckGround();
 
-	void ResolveCollision(const Math::Vector3& moveDir);
-
 	void CollectWallHits(float radius, std::vector<WallHit>& out);
 	void ResolveCollision();
 
@@ -112,6 +109,8 @@ protected:
 	void RotateToMoveDirection(const Math::Vector3& dir);
 
 	void UpdateAnimation();
+
+	void UpdateFootstep(const Math::Vector3& movedVec);
 
 	std::shared_ptr<KdModelWork>				m_spModel = nullptr;
 	std::shared_ptr<KdAnimator>					m_spAnimator = nullptr;
@@ -139,6 +138,10 @@ protected:
 	void InitEmoteIcon();
 
 	std::shared_ptr<EmoteIcon> m_spEmoteIcon = nullptr;
+
+	float m_stepDistance = 0.0f;
+	float m_stepInterval = 0.8f;
+	Ground::GroundType m_groundType = Ground::GroundType::None;
 
 	// ===== ray =====
 	

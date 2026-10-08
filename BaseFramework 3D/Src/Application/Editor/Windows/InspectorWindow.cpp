@@ -229,7 +229,6 @@ void InspectorWindow::DrawItem(std::shared_ptr<Item> obj)
 	const ItemData& data = obj->GetItemData();
 
 	ImGui::Text("Name : %s", data.GetName().c_str());
-	ImGui::Text("Action : %d", (int)data.GetAction());
 }
 
 void InspectorWindow::DrawNeighbor(std::shared_ptr<Neighbor> obj)

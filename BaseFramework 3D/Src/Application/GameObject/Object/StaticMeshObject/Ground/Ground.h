@@ -11,6 +11,7 @@ public:
 
 	enum class GroundType
 	{
+		None,
 		Road,
 		Grass,
 		Dirt,
@@ -51,5 +52,5 @@ private:
 
 	void RegisterCollider() override;
 
-	GroundType m_groundType = GroundType::Road;
+	GroundType m_groundType = GroundType::None;
 };

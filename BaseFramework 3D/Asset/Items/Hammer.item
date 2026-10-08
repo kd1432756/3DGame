@@ -5,9 +5,20 @@
 
 	"IconPath": "Asset/Textures/Icon/Hammer.png",
 
-	"Action": "Break",
+	"Dangerous": true,
 
-	"Target": "WoodenFence",
+	"Uses": [
+		{
+			"Action": "Break",
+			"Target": "WoodFence",
+			"Text": "Break"
+		},
+		{
+			"Action": "Break",
+			"Target": "StoneStatue",
+			"Text": "Break"
+		}
+	],
 
 	"MaxCount": 3,
 

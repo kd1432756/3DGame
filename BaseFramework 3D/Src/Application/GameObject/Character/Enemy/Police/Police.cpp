@@ -186,10 +186,10 @@ void Police::UpdateChase()
 		toTarget.Length();
 
 	//============================================================
-	// いたずらアイテムを持っていないなら追跡終了
+	// 逮捕対象でないなら追跡終了
 	//============================================================
 
-	if (!target->HasPrankItem())
+	if (!m_chasingForPrank && !IsWanted(target))
 	{
 		m_wpTarget.reset();
 
@@ -318,6 +318,9 @@ void Police::UpdateArrest()
 	//============================================================
 	// 確保確定 → 連行開始
 	//============================================================
+
+	Math::Vector3 pos = m_pos + Math::Vector3{ 0,GetScale().y * -0.95f,0 };
+	KdEffekseerManager::GetInstance().Play("arrest.efkefc", pos, SceneManager::Instance().GetSceneScale() * 3.0f);
 
 	BeginEscort(target);
 }
@@ -491,7 +494,9 @@ void Police::UpdateSearch()
 	{
 		m_searchTimer = 0.0f;
 
-		m_wpTarget.reset();
+		m_wpTarget.reset(); 
+		
+		m_chasingForPrank = false;
 
 		ChangeState(State::Return);
 
@@ -1107,8 +1112,8 @@ bool Police::SearchTarget()
 			continue;
 		}
 
-		// いたずらアイテムを持っていない相手は対象外
-		if (!character->HasPrankItem())
+		// 確保対象でない相手は対象外
+		if (!IsWanted(character))
 		{
 			continue;
 		}
@@ -1127,6 +1132,8 @@ bool Police::SearchTarget()
 		//========================================================
 
 		m_wpTarget = character;
+
+		m_chasingForPrank = character->IsPranking();
 
 		m_lastTargetPos =
 			character->GetPos();
@@ -1325,7 +1332,7 @@ void Police::EndEscort(bool confiscate)
 	{
 		if (confiscate)
 		{
-			arrested->ConfiscatePrankItems();
+			arrested->ConfiscateDangerousItems();
 		}
 
 		arrested->OnReleased();

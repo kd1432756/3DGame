@@ -4,100 +4,100 @@
 
 using json = nlohmann::json;
 
+namespace
+{
+	// [x,y,z] を安全に読む。形式が違えば既定値のまま
+	bool ReadVector3(const json& j, const char* key, Math::Vector3& out)
+	{
+		auto it = j.find(key);
+		if (it == j.end() || !it->is_array() || it->size() < 3)
+		{
+			return false;
+		}
+
+		out = { (*it)[0].get<float>(), (*it)[1].get<float>(), (*it)[2].get<float>() };
+		return true;
+	}
+}
+
+ItemAction ItemData::ParseAction(const std::string& str)
+{
+	if (str == "Cut")    return ItemAction::Cut;
+	if (str == "Repair") return ItemAction::Repair;
+	if (str == "Break")  return ItemAction::Break;
+	return ItemAction::None;
+}
+
 bool ItemData::Load(const std::string& path)
 {
-	std::string normalizedPath = path;
+	*this = ItemData();   // 前回の値を持ち越さない
 
+	std::string normalizedPath = path;
 	std::replace(normalizedPath.begin(), normalizedPath.end(), '\\', '/');
 
 	std::ifstream ifs(normalizedPath);
-
 	if (!ifs)
 	{
 		return false;
 	}
 
 	json j;
-	ifs >> j;
+	try
+	{
+		ifs >> j;
+	}
+	catch (const json::exception&)
+	{
+		return false;
+	}
 
 	m_itemPath = normalizedPath;
-
 	m_name = j.value("Name", "");
-
 	m_modelPath = j.value("ModelPath", "");
-
 	m_iconPath = j.value("IconPath", "");
+	m_maxCount = j.value("MaxCount", -1);
+	m_dangerous = j.value("Dangerous", false);
 
-	m_actionText = j.value("Action", "None");
+	//--------------------------------------------------
+	// 用途
+	//--------------------------------------------------
+	m_uses.clear();
 
-	if (m_actionText == "Cut")
+	if (j.contains("Uses") && j["Uses"].is_array())
 	{
-		m_action = ItemAction::Cut;
-	}
-	else if (m_actionText == "Repair")
-	{
-		m_action = ItemAction::Repair;
-	}
-	else if (m_actionText == "Break")
-	{
-		m_action = ItemAction::Break;
+		// 新形式: "Uses": [ { "Action": "...", "Target": "...", "Text": "..." } ]
+		for (const auto& u : j["Uses"])
+		{
+			ItemUse use;
+			use.action = ParseAction(u.value("Action", "None"));
+			use.target = u.value("Target", "None");
+			use.actionText = u.value("Text", "");
+			m_uses.push_back(std::move(use));
+		}
 	}
 	else
 	{
-		m_action = ItemAction::None;
-	}
+		// 旧形式: "Action" / "Target" 単体 → Use 1件に変換
+		const std::string actionStr = j.value("Action", "None");
 
-	m_target = j.value("Target", "None");
+		ItemUse use;
+		use.action = ParseAction(actionStr);
+		use.target = j.value("Target", "None");
+		use.actionText = actionStr;	// 旧仕様: 文言にAction名をそのまま使っていた
 
-	m_maxCount = j.value("MaxCount", -1);
-
-	if (j.contains("WorldScale"))
-	{
-		auto& v = j["WorldScale"];
-
-		m_worldScale =
+		if (use.action != ItemAction::None)
 		{
-			v[0],
-			v[1],
-			v[2]
-		};
+			m_uses.push_back(std::move(use));
+		}
 	}
 
-	if (j.contains("HandOffset"))
-	{
-		auto& v = j["HandOffset"];
-
-		m_handOffset =
-		{
-			v[0],
-			v[1],
-			v[2]
-		};
-	}
-
-	if (j.contains("HandRotation"))
-	{
-		auto& v = j["HandRotation"];
-
-		m_handRotation =
-		{
-			v[0],
-			v[1],
-			v[2]
-		};
-	}
-
-	if (j.contains("HandScale"))
-	{
-		auto& v = j["HandScale"];
-
-		m_handScale =
-		{
-			v[0],
-			v[1],
-			v[2]
-		};
-	}
+	//--------------------------------------------------
+	// 持ち手・スケール
+	//--------------------------------------------------
+	ReadVector3(j, "WorldScale", m_worldScale);
+	ReadVector3(j, "HandOffset", m_handOffset);
+	ReadVector3(j, "HandRotation", m_handRotation);
+	ReadVector3(j, "HandScale", m_handScale);
 
 	return true;
 }

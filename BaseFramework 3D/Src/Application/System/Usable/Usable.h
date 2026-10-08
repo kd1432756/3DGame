@@ -19,7 +19,8 @@ public:
 	}
 
 	virtual bool CanNPCUse(
-		const ItemData& item) const
+		const ItemData& item,
+		const std::string& npcName) const
 	{
 		return false;
 	}

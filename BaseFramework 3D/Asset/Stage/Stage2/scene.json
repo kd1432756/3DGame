@@ -1072,7 +1072,7 @@
 				0.5,
 				0.5
 			],
-			"GroundType": 1,
+			"GroundType": 2,
 			"Type": "Ground"
 
 		},
@@ -1099,7 +1099,7 @@
 				0.5,
 				0.5
 			],
-			"GroundType": 1,
+			"GroundType": 2,
 			"Type": "Ground"
 		},
 		{
@@ -1125,7 +1125,7 @@
 				0.5,
 				0.5
 			],
-			"GroundType": 1,
+			"GroundType": 2,
 			"Type": "Ground"
 		},
 		{
@@ -1151,7 +1151,7 @@
 				0.5,
 				0.5
 			],
-			"GroundType": 1,
+			"GroundType": 2,
 			"Type": "Ground"
 		},
 		{
@@ -1177,159 +1177,165 @@
 				0.5,
 				0.5
 			],
-			"GroundType": 1,
+			"GroundType": 2,
 			"Type": "Ground"
 		},
-        {
-            "Color": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "ModelPath": "Asset/Models/Ground/Grass.gltf",
-            "Name": "Ground_912",
-            "Position": [
-                4.0,
-                0.0,
-                -8.0
-            ],
-            "Rotation": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Scale": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "Type": "Ground"
-        },
-        {
-            "Color": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "ModelPath": "Asset/Models/Ground/Grass.gltf",
-            "Name": "Ground_913",
-            "Position": [
-                0.0,
-                0.0,
-                -8.0
-            ],
-            "Rotation": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Scale": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "Type": "Ground"
-        },
-        {
-            "Color": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "ModelPath": "Asset/Models/Ground/Grass.gltf",
-            "Name": "Ground_914",
-            "Position": [
-                28.0,
-                0.0,
-                -8.0
-            ],
-            "Rotation": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Scale": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "Type": "Ground"
-        },
-        {
-            "Color": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "ModelPath": "Asset/Models/Ground/Grass.gltf",
-            "Name": "Ground_915",
-            "Position": [
-                -4.0,
-                0.0,
-                -8.0
-            ],
-            "Rotation": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Scale": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "Type": "Ground"
-        },
-        {
-            "Color": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "ModelPath": "Asset/Models/Ground/Grass.gltf",
-            "Name": "Ground_916",
-            "Position": [
-                -20.0,
-                0.0,
-                -8.0
-            ],
-            "Rotation": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Scale": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "Type": "Ground"
-        },
-        {
-            "Color": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "ModelPath": "Asset/Models/Ground/Grass.gltf",
-            "Name": "Ground_917",
-            "Position": [
-                -24.0,
-                0.0,
-                -8.0
-            ],
-            "Rotation": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Scale": [
-                0.5,
-                0.5,
-                0.5
-            ],
-            "Type": "Ground"
-        },
+		{
+			"Color": [
+				1.0,
+				1.0,
+				1.0
+			],
+			"ModelPath": "Asset/Models/Ground/Grass.gltf",
+			"Name": "Ground_912",
+			"Position": [
+				4.0,
+				0.0,
+				-8.0
+			],
+			"Rotation": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"Scale": [
+				0.5,
+				0.5,
+				0.5
+			],
+			"GroundType": 2,
+			"Type": "Ground"
+		},
+		{
+			"Color": [
+				1.0,
+				1.0,
+				1.0
+			],
+			"ModelPath": "Asset/Models/Ground/Grass.gltf",
+			"Name": "Ground_913",
+			"Position": [
+				0.0,
+				0.0,
+				-8.0
+			],
+			"Rotation": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"Scale": [
+				0.5,
+				0.5,
+				0.5
+			],
+			"GroundType": 2,
+			"Type": "Ground"
+		},
+		{
+			"Color": [
+				1.0,
+				1.0,
+				1.0
+			],
+			"ModelPath": "Asset/Models/Ground/Grass.gltf",
+			"Name": "Ground_914",
+			"Position": [
+				28.0,
+				0.0,
+				-8.0
+			],
+			"Rotation": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"Scale": [
+				0.5,
+				0.5,
+				0.5
+			],
+			"GroundType": 2,
+			"Type": "Ground"
+		},
+		{
+			"Color": [
+				1.0,
+				1.0,
+				1.0
+			],
+			"ModelPath": "Asset/Models/Ground/Grass.gltf",
+			"Name": "Ground_915",
+			"Position": [
+				-4.0,
+				0.0,
+				-8.0
+			],
+			"Rotation": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"Scale": [
+				0.5,
+				0.5,
+				0.5
+			],
+			"GroundType": 2,
+			"Type": "Ground"
+		},
+		{
+			"Color": [
+				1.0,
+				1.0,
+				1.0
+			],
+			"ModelPath": "Asset/Models/Ground/Grass.gltf",
+			"Name": "Ground_916",
+			"Position": [
+				-20.0,
+				0.0,
+				-8.0
+			],
+			"Rotation": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"Scale": [
+				0.5,
+				0.5,
+				0.5
+			],
+			"GroundType": 2,
+			"Type": "Ground"
+		},
+		{
+			"Color": [
+				1.0,
+				1.0,
+				1.0
+			],
+			"ModelPath": "Asset/Models/Ground/Grass.gltf",
+			"Name": "Ground_917",
+			"Position": [
+				-24.0,
+				0.0,
+				-8.0
+			],
+			"Rotation": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"Scale": [
+				0.5,
+				0.5,
+				0.5
+			],
+			"GroundType": 2,
+			"Type": "Ground"
+		},
         {
             "Color": [
                 1.0,

@@ -23,8 +23,7 @@
 #include "../../UI/SlideTextUI/SlideTextUI.h"
 #include "../../UI/ShakeTextUI/ShakeTextUI.h"
 
-// いたずら、修復時にアクションを追加（スキルチェックかなにか）。
-// それが終わってからカウントダウンを開始する。
+#include "../../../System/FootStep/FootStep.h"
 
 void Player::Init()
 {
@@ -270,6 +269,11 @@ void Player::Move()
 	}
 
 	m_pos += move;
+
+	FootstepSystem::Instance().SetListenerPos(m_pos);
+
+	UpdateFootstep(move);
+
 	ResolveCollision();   // 念のための貫通解消
 }
 
@@ -559,7 +563,9 @@ void Player::UpdateUse()
 		if (m_useTimer <= 0)
 		{
 			// Use() の中で GetSkillResult() を見てスコア倍率などを変える
-			obj->Use(self);
+			obj->Use(self);	
+			
+			KdAudioManager::Instance().Play("Asset/Audio/Test.wav");
 
 			CancelUse();
 		}

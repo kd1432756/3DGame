@@ -5,9 +5,15 @@
 
 	"IconPath": "Asset/Textures/Icon/Scissors.png",
 
-	"Action": "Cut",
+	"Dangerous": true,
 
-	"Target": "Flower",
+	"Uses": [
+		{
+			"Action": "Cut",
+			"Target": "Flower",
+			"Text": "Cut"
+		}
+	],
 
 	"MaxCount": 3,
 

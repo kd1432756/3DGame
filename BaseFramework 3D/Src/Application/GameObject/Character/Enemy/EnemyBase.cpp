@@ -118,6 +118,8 @@ void EnemyBase::ApplyMove()
 	// 移動
 	m_pos += moveVec;
 
+	UpdateFootstep(moveVec);
+
 	// 念のため残っためり込みを解消
 	ResolveCollision();
 }

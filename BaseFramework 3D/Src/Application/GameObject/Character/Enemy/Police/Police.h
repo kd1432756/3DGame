@@ -125,6 +125,11 @@ private:
 
 	bool CanSeeTarget(const std::shared_ptr<CharacterBase>& target);
 
+	bool IsWanted(const std::shared_ptr<CharacterBase>& c) const
+	{
+		return c->HasDangerousItem() || c->IsPranking();
+	}
+
 	//============================================================
 	// Arrest
 	//============================================================
@@ -212,8 +217,10 @@ private:
 	Math::Vector3 m_lastTargetPos =
 		Math::Vector3::Zero;
 
+	bool m_chasingForPrank = false;
+
 	//============================================================
-	// Chase
+	// Investigate
 	//============================================================
 
 	Math::Vector3 m_investigatePos = Math::Vector3::Zero;

@@ -40,8 +40,7 @@ void Flower::Init()
 
 void Flower::OnAction(const InteractiveAction& action, const std::shared_ptr<Player>& player)
 {
-	Math::Vector3 pos = m_pos + Math::Vector3{0, GetScale().y * 1.2f, 0};
-	KdEffekseerManager::GetInstance().Play("Test.efkefc", pos, 0.05f);
+	KdEffekseerManager::GetInstance().Play("interact.efkefc", m_pos, SceneManager::Instance().GetSceneScale() * 3.0f);
 }
 
 void Flower::RegisterCollider()

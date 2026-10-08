@@ -4,11 +4,17 @@
 	"ModelPath": "Asset/Models/Item/Stone/Stone.gltf",
 
 	"IconPath": "Asset/Textures/Icon/Stone.png",
+	
+	"Dangerous": true,
 
-	"Action": "Throw",
-
-	"Target": "Window",
-
+	"Uses": [
+		{
+			"Action": "Throw",
+			"Target": "Window",
+			"Text": "Throw"
+		}
+	],
+		
 	"MaxCount": 3,
 
 	"WorldScale": [ 0.10, 0.10, 0.10 ],

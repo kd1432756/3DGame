@@ -4,6 +4,8 @@
 
 #include "../../System/Score/ScoreManager.h"
 
+#include "../../System/FootStep/FootStep.h"
+
 #include "../UI/EmoteIcon/EmoteIcon.h"
 
 void CharacterBase::Init()
@@ -143,7 +145,7 @@ void CharacterBase::CheckStep(const Math::Vector3& moveDir)
 	m_pos.y += heightDiff;
 }
 
-void CharacterBase::CheckGround()
+/*void CharacterBase::CheckGround()
 {
 	const float scale = m_sceneScale;
 	const float footOffset = m_footOffset * scale;
@@ -197,187 +199,79 @@ void CharacterBase::CheckGround()
 	m_gravity = 0.0f;
 
 	// 上り下りの瞬間移動を見た目だけ滑らかにする
-	/*if (wasGround && std::abs(diff) > 0.001f)
-		m_stepVisualOffset -= diff;*/
-}
+	//if (wasGround && std::abs(diff) > 0.001f)		m_stepVisualOffset -= diff;
+}*/
 
-void CharacterBase::ResolveCollision(const Math::Vector3& moveDir)
+void CharacterBase::CheckGround()
 {
-	// =========================================================
-	// 移動していないなら何もしない
-	// =========================================================
-	if (moveDir.LengthSquared() <= 0.000001f)
+	const float scale = m_sceneScale;
+	const float footOffset = m_footOffset * scale;
+	const float stepHeight = m_stepHeight * scale;
+
+	const bool wasGround = m_isGround;
+	m_isGround = false;
+
+	const float footY = m_pos.y - footOffset;
+
+	KdCollider::RayInfo ray;
+	ray.m_pos = { m_pos.x, footY + stepHeight, m_pos.z };
+	ray.m_dir = { 0.0f, -1.0f, 0.0f };
+	ray.m_type = KdCollider::TypeGround;
+
+	// 接地中は下り段差にも吸着、空中なら重力ぶんだけ
+	const float snapDown = wasGround ? stepHeight : std::abs(m_gravity);
+	ray.m_range = stepHeight + snapDown;
+
+	// 一番高い面を採用 + そのオブジェクトも記録 
+	bool hit = false;
+	float best = 0.0f;
+	Math::Vector3 groundPos;
+	std::shared_ptr<KdGameObject> groundObj;
+	for (auto& obj : SceneManager::Instance().GetObjList())
 	{
+		if (!obj || obj.get() == this) continue;
+
+		std::list<KdCollider::CollisionResult> objHits;
+		if (!obj->Intersects(ray, &objHits)) continue;
+
+		for (auto& r : objHits)
+		{
+			if (!hit || r.m_overlapDistance > best)
+			{
+				best = r.m_overlapDistance;
+				groundPos = r.m_hitPos;
+				groundObj = obj;
+				hit = true;
+			}
+		}
+	}
+	if (!hit)
+	{
+		m_groundType = Ground::GroundType::None;
 		return;
 	}
 
-	// =========================================================
-	// プレイヤーの移動方向
-	// =========================================================
-	Math::Vector3 direction = moveDir;
-	direction.Normalize();
-
-	// =========================================================
-	// 最大反復回数
-	//
-	// 壁＋壁、壁＋角などに対応するため、
-	// 押し戻す → 再判定を数回行う
-	// =========================================================
-	const int maxIterations = 4;
-
-	for (int iteration = 0; iteration < maxIterations; ++iteration)
+	// 地面素材を更新
+	m_groundType = Ground::GroundType::None;
+	if (auto ground = std::dynamic_pointer_cast<Ground>(groundObj))
 	{
-		// =====================================================
-		// プレイヤーの衝突Sphere
-		// =====================================================
-		KdCollider::SphereInfo sphere;
-
-		sphere.m_sphere.Center = m_pos;
-		sphere.m_sphere.Radius = m_collisionRadius * m_sceneScale;
-
-		sphere.m_type = KdCollider::TypeBump;
-
-		// =====================================================
-		// 衝突結果
-		// =====================================================
-		std::list<KdCollider::CollisionResult> collisionList;
-
-
-		// =====================================================
-		// シーン内のオブジェクトと衝突判定
-		// =====================================================
-		for (auto& obj : SceneManager::Instance().GetObjList())
-		{
-			if (!obj)
-			{
-				continue;
-			}
-
-			// 自分自身は除外
-			if (obj.get() == this)
-			{
-				continue;
-			}
-
-			if (auto mesh = std::dynamic_pointer_cast<StaticMeshObject>(obj))
-			{
-				if (mesh->IsCollisionEnabled() == false)
-				{
-					continue;
-				}
-			}
-
-			obj->Intersects(
-				sphere,
-				&collisionList
-			);
-		}
-
-		// =====================================================
-		// 衝突していない
-		// =====================================================
-		if (collisionList.empty())
-		{
-			break;
-		}
-
-		// =====================================================
-		// 今回一番深くめり込んでいる壁を探す
-		// =====================================================
-		bool foundCollision = false;
-
-		Math::Vector3 bestNormal = Math::Vector3::Zero;
-		float bestOverlap = 0.0f;
-
-
-		for (auto& collision : collisionList)
-		{
-			Math::Vector3 normal = collision.m_hitNDir;
-
-			// -------------------------------------------------
-			// 法線が取得できない場合
-			// -------------------------------------------------
-			if (normal.LengthSquared() <= 0.000001f)
-			{
-				continue;
-			}
-
-			normal.Normalize();
-
-			// -------------------------------------------------
-			// 地面・坂は無視
-			// -------------------------------------------------
-			if (normal.y > 0.7f)
-			{
-				continue;
-			}
-
-			// -------------------------------------------------
-			// 天井も壁として扱わない
-			// -------------------------------------------------
-			if (normal.y < -0.7f)
-			{
-				continue;
-			}
-
-			// -------------------------------------------------
-			// 水平方向だけを使用
-			// -------------------------------------------------
-			normal.y = 0.0f;
-
-			if (normal.LengthSquared() <= 0.000001f)
-			{
-				continue;
-			}
-
-			normal.Normalize();
-
-			// -------------------------------------------------
-			// 壁に向かって移動している場合だけ処理
-			// -------------------------------------------------
-			float dot = direction.Dot(normal);
-
-			if (dot >= 0.0f)
-			{
-				continue;
-			}
-
-			// -------------------------------------------------
-			// めり込み量
-			// -------------------------------------------------
-			float overlap = collision.m_overlapDistance;
-
-			if (overlap <= 0.0f)
-			{
-				continue;
-			}
-
-			// -------------------------------------------------
-			// 一番深い衝突を採用
-			// -------------------------------------------------
-			if (!foundCollision || overlap > bestOverlap)
-			{
-				foundCollision = true;
-				bestOverlap = overlap;
-				bestNormal = normal;
-			}
-		}
-
-		// =====================================================
-		// 壁との衝突がなければ終了
-		// =====================================================
-		if (!foundCollision)
-		{
-			break;
-		}
-
-		// =====================================================
-		// めり込みを完全に解消
-		// =====================================================
-		const float skin = 0.001f;
-
-		m_pos += bestNormal * (bestOverlap + skin);
+		m_groundType = ground->GetGroundType();
 	}
+
+	// 上昇中（ジャンプ中）は下り吸着しない
+	const bool rising = m_gravity > 0.0f;   // ※重力の符号はプロジェクトに合わせる
+	if (rising && groundPos.y < footY) return;
+
+	const float newY = groundPos.y + footOffset;
+	const float diff = newY - m_pos.y;      // + なら段差を上った
+
+	m_pos.y = newY;
+	m_isGround = true;
+	m_gravity = 0.0f;
+
+	// 上り下りの瞬間移動を見た目だけ滑らかにする
+	/*/if (wasGround && std::abs(diff) > 0.001f)
+	 		m_stepVisualOffset -= diff;*/
 }
 
 void CharacterBase::CollectWallHits(float radius, std::vector<WallHit>& out)
@@ -571,6 +465,27 @@ void CharacterBase::UpdateAnimation()
 	m_spModel->CalcNodeMatrices();
 }
 
+void CharacterBase::UpdateFootstep(const Math::Vector3& movedVec)
+{
+	float dist = movedVec.Length();
+	if (dist <= 0.0001f)
+	{
+		// 止まったら次の一歩をすぐ鳴らせるようにする
+		m_stepDistance = m_stepInterval;
+		return;
+	}
+
+	m_stepDistance += dist;
+	if (m_stepDistance < m_stepInterval * m_sceneScale)
+	{
+		return;
+	}
+	m_stepDistance = 0.0f;
+
+	// 煙と足音を発火
+	FootstepSystem::Instance().Play(m_groundType, m_pos, m_sceneScale);
+}
+
 bool CharacterBase::AddInventoryItem(const std::string& itemPath)
 {
 	if (itemPath.empty()) return false;
@@ -587,41 +502,51 @@ bool CharacterBase::HasInventoryItem(const std::string& itemPath) const
 	}
 	return false;
 }
-
+// NPC用：修復用途を持つアイテムがある
 bool CharacterBase::HasRepairItem() const
 {
 	for (const auto& item : m_inventory.GetItems())
 	{
 		if (item.IsEmpty()) continue;
-
 		ItemData data;
-		if (data.Load(item.itemPath) && data.IsRepairItem()) return true;
+		if (data.Load(item.itemPath) && data.HasRepairUse()) return true;
 	}
 	return false;
 }
 
+// NPC用：いたずら用途を持つアイテムがある（危険物かは問わない）
 bool CharacterBase::HasPrankItem() const
 {
 	for (const auto& item : m_inventory.GetItems())
 	{
 		if (item.IsEmpty()) continue;
-
 		ItemData data;
-		if (data.Load(item.itemPath) && data.IsPrankItem()) return true;
+		if (data.Load(item.itemPath) && data.HasPrankUse()) return true;
 	}
 	return false;
 }
 
-void CharacterBase::ConfiscatePrankItems()
+// 警察用：追跡・没収の対象（危険物）を持っている
+bool CharacterBase::HasDangerousItem() const
+{
+	for (const auto& item : m_inventory.GetItems())
+	{
+		if (item.IsEmpty()) continue;
+		ItemData data;
+		if (data.Load(item.itemPath) && data.IsDangerous()) return true;
+	}
+	return false;
+}
+
+void CharacterBase::ConfiscateDangerousItems()
 {
 	const auto& items = m_inventory.GetItems();
 
 	for (int i = 0; i < Inventory::MaxItem; ++i)
 	{
 		if (items[i].IsEmpty()) continue;
-
 		ItemData data;
-		if (data.Load(items[i].itemPath) && data.IsPrankItem())
+		if (data.Load(items[i].itemPath) && data.IsDangerous())
 		{
 			m_inventory.RemoveItem(i);
 		}
