@@ -129,6 +129,10 @@ public:
 	void OnArrested(const std::shared_ptr<Police>& police) override;
 	void OnReleased() override;
 
+protected:
+
+	void UpdateAnimation() override;
+
 private:
 
 	void Move();
@@ -148,6 +152,10 @@ private:
 	void TryDropItem();
 
 	void UpdateHandItem();
+
+	void PlayAnimation(const std::string& animName);
+
+	std::string m_currentAnimName;
 
 	std::weak_ptr<CameraBase> m_camera;
 

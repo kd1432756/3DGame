@@ -21,6 +21,8 @@
 
 #include "../../System/GrassField/GrassField.h"
 
+#include "../../System/FootStep/FootStep.h"
+
 #include "../../GameObject/UI/GameStateUI/GameStateUI.h"
 #include "../../GameObject/UI/ResultUI/ResultUI.h"
 
@@ -91,6 +93,9 @@ void GameScene::Update()
 
 void GameScene::Event()
 {
+	auto player = SceneManager::Instance().FindObject<Player>();
+	FootstepSystem::Instance().SetListenerPos(player->GetPos());
+
 	{
 		static float time = 0.0f;
 		time += 1.0f / 60.0f;	// フレーム固定なら。dtが取れるならそちらを使う
@@ -167,6 +172,8 @@ void GameScene::Start()
 		scale);
 
 	DayCycle::Instance().Init();
+
+	FootstepSystem::Instance().Init();
 
 	// 風有効化
 	KdShaderManager::Instance().SetWindEnable(true);

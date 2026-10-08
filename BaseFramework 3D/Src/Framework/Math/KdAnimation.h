@@ -68,6 +68,27 @@ public:
 	// アニメーションの更新
 	void AdvanceTime(std::vector<KdModelWork::Node>& rNodes, float speed = 1.0f);
 
+	// 現在の再生時間
+	float GetTime() const { return m_time; }
+
+	// 追加 ==========
+	// アニメーション全体の長さ
+	float GetMaxLength() const
+	{
+		return m_spAnimation ? m_spAnimation->m_maxLength : 0.0f;
+	}
+
+	// 0.0〜1.0 の再生位置
+	float GetPhase() const
+	{
+		const float len = GetMaxLength();
+		return (len > 0.0f) ? (m_time / len) : 0.0f;
+	}
+
+	// 再生中のアニメーションデータ(切り替え検知・名前判定用)
+	const KdAnimationData* GetAnimationData() const { return m_spAnimation.get(); }
+	// ===============
+
 private:
 
 	std::shared_ptr<KdAnimationData>	m_spAnimation = nullptr;	// 再生するアニメーションデータ

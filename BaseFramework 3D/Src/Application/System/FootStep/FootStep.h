@@ -13,7 +13,8 @@ public:
 
 	// 足音＋煙を発火
 	// scale: キャラの大きさやシーンスケール（m_sceneScale を渡す）
-	void Play(Ground::GroundType type, const Math::Vector3& footPos, float scale = 1.0f);
+	void Play(Ground::GroundType type, const Math::Vector3& footPos,
+		float scale = 1.0f, bool withSmoke = true);
 
 private:
 	FootstepSystem() = default;

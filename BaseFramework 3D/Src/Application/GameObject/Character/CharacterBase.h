@@ -8,6 +8,8 @@ class Police;
 
 #include "../Object/StaticMeshObject/Ground/Ground.h"
 
+#include "../../System/FootStep/FootStepPhaseTable.h"
+
 #include "../UI/EmoteIcon/EmoteIcon.h"
 
 class CharacterBase : public KdGameObject
@@ -108,9 +110,7 @@ protected:
 
 	void RotateToMoveDirection(const Math::Vector3& dir);
 
-	void UpdateAnimation();
-
-	void UpdateFootstep(const Math::Vector3& movedVec);
+	virtual void UpdateAnimation();
 
 	std::shared_ptr<KdModelWork>				m_spModel = nullptr;
 	std::shared_ptr<KdAnimator>					m_spAnimator = nullptr;
@@ -139,9 +139,15 @@ protected:
 
 	std::shared_ptr<EmoteIcon> m_spEmoteIcon = nullptr;
 
-	float m_stepDistance = 0.0f;
-	float m_stepInterval = 0.8f;
 	Ground::GroundType m_groundType = Ground::GroundType::None;
+
+	void UpdateFootstepByAnim(const KdAnimator& animator);
+	const std::vector<float>* GetStepPhases(const KdAnimationData* data) const;
+
+	bool  m_isMoving = false;     // 今フレーム実際に動いたか
+	float m_prevPhase = 0.0f;
+	const KdAnimationData* m_prevAnimData = nullptr;
+	int   m_stepCount = 0;
 
 	// ===== ray =====
 	

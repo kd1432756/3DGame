@@ -462,28 +462,63 @@ void CharacterBase::UpdateAnimation()
 	if (!m_spModel)return;
 
 	m_spAnimator->AdvanceTime(m_spModel->WorkNodes());
+	UpdateFootstepByAnim(*m_spAnimator);
 	m_spModel->CalcNodeMatrices();
 }
 
-void CharacterBase::UpdateFootstep(const Math::Vector3& movedVec)
+const std::vector<float>* CharacterBase::GetStepPhases(const KdAnimationData* data) const
 {
-	float dist = movedVec.Length();
-	if (dist <= 0.0001f)
+	if (!data) return nullptr;
+
+	if (data->m_name.find("Sprint") != std::string::npos) return &FootstepPhase::Sprint();
+	if (data->m_name.find("Walk") != std::string::npos) return &FootstepPhase::Walk();
+
+	return nullptr;   // 足音を鳴らさないアニメ
+}
+
+void CharacterBase::UpdateFootstepByAnim(const KdAnimator& animator)
+{
+	const KdAnimationData* data = animator.GetAnimationData();
+	const float phase = animator.GetPhase();
+
+	// アニメ切り替え直後は記録だけ
+	if (data != m_prevAnimData)
 	{
-		// 止まったら次の一歩をすぐ鳴らせるようにする
-		m_stepDistance = m_stepInterval;
+		m_prevAnimData = data;
+		m_prevPhase = phase;
 		return;
 	}
 
-	m_stepDistance += dist;
-	if (m_stepDistance < m_stepInterval * m_sceneScale)
+	const std::vector<float>* phases = GetStepPhases(data);
+	if (!phases || !m_isGround || !m_isMoving)
 	{
+		m_prevPhase = phase;
 		return;
 	}
-	m_stepDistance = 0.0f;
 
-	// 煙と足音を発火
-	FootstepSystem::Instance().Play(m_groundType, m_pos, m_sceneScale);
+	const bool looped = (phase < m_prevPhase);
+
+	for (float p : *phases)
+	{
+		bool crossed;
+		if (!looped)
+		{
+			crossed = (m_prevPhase < p && p <= phase);
+		}
+		else
+		{
+			crossed = (p > m_prevPhase) || (p <= phase);
+		}
+
+		if (crossed)
+		{
+			m_stepCount++;
+			const bool withSmoke = (m_stepCount % 2 == 0);   // 煙は2回に1回
+			FootstepSystem::Instance().Play(m_groundType, m_pos, m_sceneScale, withSmoke);
+		}
+	}
+
+	m_prevPhase = phase;
 }
 
 bool CharacterBase::AddInventoryItem(const std::string& itemPath)

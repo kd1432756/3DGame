@@ -36,7 +36,10 @@ void Player::Init()
 	);
 
 	m_spAnimator = std::make_shared<KdAnimator>();
-	m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Idle"));
+	m_currentAnimName = "Armature|Idle";
+	m_spAnimator->SetAnimation(
+		m_spModel->GetAnimation(m_currentAnimName)
+	);
 
 	m_pCollider = std::make_unique<KdCollider>();
 	m_pCollider->RegisterCollisionShape(
@@ -63,6 +66,8 @@ void Player::Init()
 
 void Player::Update()
 {
+	FootstepSystem::Instance().SetListenerPos(m_pos);
+
 	if (m_isArrested)
 	{
 		UpdateArrested();
@@ -116,8 +121,24 @@ void Player::DrawSprite()
 	}
 }
 
+void Player::UpdateAnimation()
+{
+	if (m_isMoving)
+	{
+		PlayAnimation("Armature|Sprint");
+	}
+	else
+	{
+		PlayAnimation("Armature|Idle");
+	}
+
+	CharacterBase::UpdateAnimation();
+}
+
 void Player::UpdateArrested()
 {
+	m_isMoving = false;
+
 	auto arrestCam = std::dynamic_pointer_cast<ArrestCamera>(m_camera.lock());
 
 	if (arrestCam)
@@ -220,6 +241,8 @@ void Player::SelectInventory(int index)
 
 void Player::Move()
 {
+	m_isMoving = false;
+
 	if (m_isUsing)
 	{
 		return;
@@ -268,13 +291,10 @@ void Player::Move()
 		}
 	}
 
+	const Math::Vector3 before = m_pos;
 	m_pos += move;
-
-	FootstepSystem::Instance().SetListenerPos(m_pos);
-
-	UpdateFootstep(move);
-
 	ResolveCollision();   // 念のための貫通解消
+	m_isMoving = (m_pos - before).LengthSquared() > 0.00000001f;
 }
 
 void Player::UpdateRotationByCamera()
@@ -565,7 +585,7 @@ void Player::UpdateUse()
 			// Use() の中で GetSkillResult() を見てスコア倍率などを変える
 			obj->Use(self);	
 			
-			KdAudioManager::Instance().Play("Asset/Audio/Test.wav");
+			KdAudioManager::Instance().Play("Asset/Sonud/Test.wav");
 
 			CancelUse();
 		}
@@ -729,6 +749,20 @@ void Player::UpdateHandItem()
 	Math::Matrix world = scale * rot * trans * camMat;
 
 	m_handItem->SetMatrix(world);
+}
+
+void Player::PlayAnimation(const std::string& animName)
+{
+	if (m_currentAnimName == animName)
+	{
+		return;
+	}
+
+	m_currentAnimName = animName;
+
+	m_spAnimator->SetAnimation(
+		m_spModel->GetAnimation(animName)
+	);
 }
 
 bool Player::CanHighlight()

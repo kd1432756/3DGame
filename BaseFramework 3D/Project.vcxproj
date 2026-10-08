@@ -335,6 +335,7 @@
     <ClInclude Include="Src\Application\Scene\TitleScene\TitleScene.h" />
     <ClInclude Include="Src\Application\System\DayCycle\DayCycle.h" />
     <ClInclude Include="Src\Application\System\FootStep\FootStep.h" />
+    <ClInclude Include="Src\Application\System\FootStep\FootStepPhaseTable.h" />
     <ClInclude Include="Src\Application\System\GrassField\GrassField.h" />
     <ClInclude Include="Src\Application\System\Interact\Interact.h" />
     <ClInclude Include="Src\Application\System\Inventory\Inventory.h" />

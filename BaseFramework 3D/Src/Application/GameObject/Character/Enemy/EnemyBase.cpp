@@ -72,6 +72,8 @@ void EnemyBase::SetMoveDirection(
 
 void EnemyBase::ApplyMove()
 {
+	m_isMoving = false;
+
 	if (m_moveDir.LengthSquared() <= 0.000001f)
 	{
 		return;
@@ -115,13 +117,16 @@ void EnemyBase::ApplyMove()
 		}
 	}
 
+	const Math::Vector3 before = m_pos;
+
 	// 移動
 	m_pos += moveVec;
 
-	UpdateFootstep(moveVec);
-
 	// 念のため残っためり込みを解消
 	ResolveCollision();
+
+	// 実際に動いた量で判定(壁に止められたら false)
+	m_isMoving = (m_pos - before).LengthSquared() > 0.00000001f;
 }
 
 //============================================================
