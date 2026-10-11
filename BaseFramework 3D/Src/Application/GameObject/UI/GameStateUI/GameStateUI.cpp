@@ -6,7 +6,6 @@ void GameStateUI::Init()
 {
 	m_timer = 0.0f;
 	m_count = 3;
-	m_count = 1;
 	m_displayState = DisplayState::CountDown;
 }
 

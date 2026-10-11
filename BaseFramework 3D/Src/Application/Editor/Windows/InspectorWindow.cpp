@@ -126,6 +126,12 @@ void InspectorWindow::DrawStaticMesh(
 
 		ImGui::EndDragDropTarget();
 	}
+		
+	bool isGround = obj->IsGround();
+	if (ImGui::Checkbox("Is Ground", &isGround))
+	{
+		obj->SetIsGround(isGround);
+	}
 }
 
 void InspectorWindow::DrawInteractive(std::shared_ptr<InteractiveObject> obj)

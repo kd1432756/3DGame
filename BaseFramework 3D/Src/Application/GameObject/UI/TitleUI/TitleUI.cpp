@@ -44,20 +44,28 @@ void TitleUI::Update()
 		m_mousePosY >= top &&
 		m_mousePosY <= bottom;
 
+	if (GetAsyncKeyState('Q') & 0x8000)
+	{
+		m_start = true;
+		SceneManager::Instance().SetStage(SceneManager::StageType::Stage1);
+	}
 	if (GetAsyncKeyState(VK_RETURN) & 0x8000)
 	{
 		m_start = true;
+		SceneManager::Instance().SetStage(SceneManager::StageType::Stage2);
 	}
 
 	if (GetAsyncKeyState(VK_SPACE) & 0x8000)
 	{
 		m_start = true;
+		SceneManager::Instance().SetStage(SceneManager::StageType::Stage2);
 	}
 
 	if (m_isHover &&
 		(GetAsyncKeyState(VK_LBUTTON) & 0x8000))
 	{
 		m_start = true;
+		SceneManager::Instance().SetStage(SceneManager::StageType::Stage2);
 	}
 }
 

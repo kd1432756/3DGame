@@ -59,6 +59,12 @@ void StageEditorWindow::Init()
 		},
 
 		{
+			"LotParking",
+			"Asset/Models/Ground/LotParking.gltf",
+			Ground::GroundType::Lot
+		},
+
+		{
 			"Concrete",
 			"Asset/Models/Ground/Concrete.gltf",
 			Ground::GroundType::Concrete

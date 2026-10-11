@@ -585,7 +585,7 @@ void Player::UpdateUse()
 			// Use() の中で GetSkillResult() を見てスコア倍率などを変える
 			obj->Use(self);	
 			
-			KdAudioManager::Instance().Play("Asset/Sonud/Test.wav");
+			KdAudioManager::Instance().Play("Asset/Sound/Test.wav");
 
 			CancelUse();
 		}

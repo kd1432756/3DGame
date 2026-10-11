@@ -7,10 +7,10 @@ void Ground::Init()
 
 void Ground::RegisterCollider()
 {
-	if (!m_pCollider)
-	{
-		m_pCollider = std::make_unique<KdCollider>();
-	}
+	m_pCollider.reset();
+	if (!m_spModel) return;
+
+	m_pCollider = std::make_unique<KdCollider>();
 
 	m_pCollider->RegisterCollisionShape(
 		"Ground",

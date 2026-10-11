@@ -46,6 +46,8 @@ bool SceneSerializer::Save(const std::string& path)
 		if (auto mesh = std::dynamic_pointer_cast<StaticMeshObject>(obj))
 		{
 			objData["ModelPath"] = mesh->GetModelPath();
+
+			objData["IsGround"] = mesh->IsGround();
 		}
 
 		if (auto ground =
@@ -136,14 +138,6 @@ bool SceneSerializer::Load(const std::string& path)
 		auto color = objData["Color"];
 		obj->SetColor({ color[0], color[1], color[2] });
 
-		if (auto mesh = std::dynamic_pointer_cast<StaticMeshObject>(obj))
-		{
-			if (objData.contains("ModelPath"))
-			{
-				mesh->SetModelPath(objData["ModelPath"]);
-			}
-		}
-
 		if (auto ground =
 			std::dynamic_pointer_cast<Ground>(obj))
 		{
@@ -152,6 +146,19 @@ bool SceneSerializer::Load(const std::string& path)
 				ground->SetGroundType(
 					static_cast<Ground::GroundType>(
 						objData["GroundType"].get<int>()));
+			}
+		}
+
+		if (auto mesh = std::dynamic_pointer_cast<StaticMeshObject>(obj))
+		{
+			if (objData.contains("ModelPath"))
+			{
+				mesh->SetModelPath(objData["ModelPath"]);
+			}
+
+			if (objData.contains("IsGround"))
+			{
+				mesh->SetIsGround(objData["IsGround"].get<bool>());
 			}
 		}
 
@@ -249,6 +256,11 @@ bool SceneSerializer::LoadWithScale(const std::string& path, float multiplier)
 			if (objData.contains("ModelPath"))
 			{
 				mesh->SetModelPath(objData["ModelPath"]);
+			}
+
+			if (objData.contains("IsGround"))
+			{
+				mesh->SetIsGround(objData["IsGround"].get<bool>());
 			}
 		}
 

@@ -13,18 +13,32 @@ void FPSCamera::Init()
 
 void FPSCamera::Update()
 {
-	// ターゲットの行列(有効な場合利用する)
-	Math::Matrix								_targetMat	= Math::Matrix::Identity;
-	const std::shared_ptr<const KdGameObject>	_spTarget	= m_wpTarget.lock();	
+	Math::Matrix _targetMat = Math::Matrix::Identity;
+	const std::shared_ptr<const KdGameObject> _spTarget = m_wpTarget.lock();
 	if (_spTarget)
 	{
-		_targetMat = Math::Matrix::CreateTranslation(_spTarget->GetPos());
+		Math::Vector3 targetPos = _spTarget->GetPos();
+
+		// 初回、または大きく離れた場合（テレポート等）は即座に合わせる
+		if (!m_smoothYInit || std::abs(targetPos.y - m_smoothY) > 5.0f)
+		{
+			m_smoothY = targetPos.y;
+			m_smoothYInit = true;
+		}
+		else
+		{
+			const float t = 1.0f - std::exp(-m_ySmoothSpeed * 1.0f / 60.0f);
+			m_smoothY += (targetPos.y - m_smoothY) * t;
+		}
+
+		targetPos.y = m_smoothY;
+		_targetMat = Math::Matrix::CreateTranslation(targetPos);
 	}
 
 	// カメラの回転
 	UpdateRotateByMouse();
 	m_mRotation = GetRotationMatrix();
-	m_mWorld	= m_mLocalPos *  m_mRotation * _targetMat;
+	m_mWorld = m_mLocalPos * m_mRotation * _targetMat;
 }
 
 void FPSCamera::SetEyeHeight(float height)

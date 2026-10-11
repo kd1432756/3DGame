@@ -11,8 +11,6 @@
 
 void TitleScene::Event()
 {
-	SceneManager::Instance().SetStage(SceneManager::StageType::Stage2);
-
 	const KdShaderManager::cbLight& cbLight = KdShaderManager::Instance().GetLightCB();
 
 	Math::Vector3 DLColor{ 2.5f,2.5f,2.5f };

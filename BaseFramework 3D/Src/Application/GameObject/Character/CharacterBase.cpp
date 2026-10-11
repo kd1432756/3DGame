@@ -145,63 +145,6 @@ void CharacterBase::CheckStep(const Math::Vector3& moveDir)
 	m_pos.y += heightDiff;
 }
 
-/*void CharacterBase::CheckGround()
-{
-	const float scale = m_sceneScale;
-	const float footOffset = m_footOffset * scale;
-	const float stepHeight = m_stepHeight * scale;
-
-	const bool wasGround = m_isGround;
-	m_isGround = false;
-
-	const float footY = m_pos.y - footOffset;
-
-	KdCollider::RayInfo ray;
-	ray.m_pos = { m_pos.x, footY + stepHeight, m_pos.z };
-	ray.m_dir = { 0.0f, -1.0f, 0.0f };
-	ray.m_type = KdCollider::TypeGround;
-
-	// 接地中は下り段差にも吸着、空中なら重力ぶんだけ
-	const float snapDown = wasGround ? stepHeight : std::abs(m_gravity);
-	ray.m_range = stepHeight + snapDown;
-
-	std::list<KdCollider::CollisionResult> hits;
-	for (auto& obj : SceneManager::Instance().GetObjList())
-	{
-		if (!obj || obj.get() == this) continue;
-		obj->Intersects(ray, &hits);
-	}
-
-	// 一番高い面（＝Rayの始点に最も近い面）を採用
-	bool hit = false;
-	float best = 0.0f;
-	Math::Vector3 groundPos;
-	for (auto& r : hits)
-	{
-		if (!hit || r.m_overlapDistance > best)
-		{
-			best = r.m_overlapDistance;
-			groundPos = r.m_hitPos;
-			hit = true;
-		}
-	}
-	if (!hit) return;
-
-	// 上昇中（ジャンプ中）は下り吸着しない
-	const bool rising = m_gravity > 0.0f;   // ※重力の符号はプロジェクトに合わせる
-	if (rising && groundPos.y < footY) return;
-
-	const float newY = groundPos.y + footOffset;
-	const float diff = newY - m_pos.y;      // + なら段差を上った
-
-	m_pos.y = newY;
-	m_isGround = true;
-	m_gravity = 0.0f;
-
-	// 上り下りの瞬間移動を見た目だけ滑らかにする
-	//if (wasGround && std::abs(diff) > 0.001f)		m_stepVisualOffset -= diff;
-}*/
-
 void CharacterBase::CheckGround()
 {
 	const float scale = m_sceneScale;
@@ -247,6 +190,10 @@ void CharacterBase::CheckGround()
 	}
 	if (!hit)
 	{
+		char buf[256];
+		sprintf_s(buf, "[CheckGround] no hit pos=(%.2f, %.2f, %.2f) rayY=%.2f range=%.2f\n",
+			m_pos.x, m_pos.y, m_pos.z, ray.m_pos.y, ray.m_range);
+		OutputDebugStringA(buf);
 		m_groundType = Ground::GroundType::None;
 		return;
 	}

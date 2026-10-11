@@ -37,7 +37,7 @@ struct InteractiveAction
 
 	bool needItem = true;
 
-	std::string actionText = "";	// needItem=false 用の表示文言
+	std::string actionText = "";
 
 	bool npcCanUse = true;
 };

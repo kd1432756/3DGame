@@ -52,6 +52,25 @@ public:
 		return m_collisionEnabled;
 	}
 
+	void SetIsGround(bool isGround)
+	{
+		if (m_isGround == isGround)
+			return;
+
+		m_isGround = isGround;
+
+		// 既にコライダーがある場合のみ再登録
+		if (m_spModel && m_collisionEnabled)
+		{
+			RegisterCollider();
+		}
+	}
+
+	bool IsGround() const
+	{
+		return m_isGround;
+	}
+
 protected:
 
 	std::shared_ptr<KdModelData> m_spModel = nullptr;
@@ -62,6 +81,8 @@ protected:
 	std::string m_modelPath;
 
 	bool m_collisionEnabled = true;
+
+	bool m_isGround = false;
 
 	void SetCollisionEnabled(bool enabled);
 

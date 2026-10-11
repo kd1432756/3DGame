@@ -180,7 +180,7 @@ void GameScene::Start()
 
 	auto field = std::make_shared<GrassField>();
 	SceneManager::Instance().AddObject(field);
-	field->Generate(50.0f, 0.3f * scale);
+	field->Generate(5.0f, 0.3f * scale);
 
 	auto time = std::make_shared<TimeUI>();
 	time->Init();
