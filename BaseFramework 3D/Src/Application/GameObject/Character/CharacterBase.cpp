@@ -235,10 +235,10 @@ void CharacterBase::CollectWallHits(float radius, std::vector<WallHit>& out)
 	for (auto& obj : SceneManager::Instance().GetObjList())
 	{
 		if (!obj || obj.get() == this) { continue; }
-
 		if (auto mesh = std::dynamic_pointer_cast<StaticMeshObject>(obj))
 		{
 			if (!mesh->IsCollisionEnabled()) { continue; }
+			if (mesh->IsGround()) { continue; }
 		}
 		obj->Intersects(sphere, &collisionList);
 	}

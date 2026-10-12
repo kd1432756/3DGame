@@ -47,7 +47,7 @@ private:
 
 	// Titleボタン
 	Math::Vector2 m_titleButtonPos = { 0.0f, -270.0f };
-	Math::Vector2 m_titleButtonSize = { 250.0f, 60.0f };
+	Math::Vector2 m_titleButtonSize = { 400.0f, 60.0f };
 
 	float m_animTime = 0.0f;
 	float m_animOffsetY = 0.0f;

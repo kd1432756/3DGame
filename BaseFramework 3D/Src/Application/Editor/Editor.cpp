@@ -1595,6 +1595,11 @@ void Editor::GenerateNavMeshVer2()
 			continue;
 		}
 
+		if (staticMeshObject->IsGround())
+		{
+			continue;
+		}
+
 		//----------------------------------------------------
 		// ModelData取得
 		//----------------------------------------------------

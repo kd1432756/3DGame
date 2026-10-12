@@ -7,6 +7,7 @@
 #include "../../../System/Score/ScoreManager.h"
 
 #include "../../Character/CharacterBase.h"
+#include "../../Character/Player/Player.h"
 
 void ResultUI::Init()
 {
@@ -196,6 +197,9 @@ void ResultUI::DrawSprite()
 		// 名前
 		std::string nameText = chara->GetName();
 
+		// 色
+		const Math::Color color = std::dynamic_pointer_cast<Player>(chara) ? kYellowColor : kWhiteColor;
+
 		// スコア
 		std::string scoreText =
 			std::to_string(chara->GetScore()) + " pt";
@@ -221,7 +225,7 @@ void ResultUI::DrawSprite()
 		// 名前
 		KdShaderManager::Instance().m_spriteShader.DrawFont(
 			Math::Vector2{ 250, y },
-			&kWhiteColor,
+			&color,
 			Math::Vector2{ 1.0f, 0.5f },
 			0.0f,
 			FontID::Future48,

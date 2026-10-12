@@ -7,31 +7,30 @@
 
 void WoodenFence::Init()
 {
-	SetModelPath("Asset/Models/Props/WoodenFence/WoodenFence.gltf");
+	SetModelPath("Asset/Models/Props/WoodFence/WoodFence_Repaired.gltf");
 
 	RegisterAction({
 		InteractiveState::Normal,
 		InteractiveState::Damaged,
 		ItemAction::Break,
-		"WoodenFence",
+		"WoodFence",
 		3.5f,
 		300,
 		"Wooden Fence Break!",
-		"Your Wodden Fence was Broken!",
-		"Asset/Models/Props/WoodenFence/WoodenFenceBroken.gltf"
+		"Your Wodd Fence was Broken!",
+		"Asset/Models/Props/WoodFence/WoodFence_Broken.gltf"
 		});
 
-	// ↓は仮
 	RegisterAction({
 		InteractiveState::Damaged,
-		InteractiveState::Repaired,
+		InteractiveState::Normal,
 		ItemAction::Repair,
-		"WoodenFence",
+		"WoodFence",
 		3.0f,
 		210,
-		"Wooden Fence Repair!",
+		"Wood Fence Repair!",
 		"",
-		"Asset/Models/Props/Flower/FlowerTape.gltf"
+		"Asset/Models/Props/WoodFence/WoodFence_Repaired.gltf"
 		});
 
 	StaticMeshObject::Init();

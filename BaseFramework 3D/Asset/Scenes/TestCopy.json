@@ -13,15 +13,15 @@
                 0.0
             ],
             "Rotation": [
-                -0.0,
+                90.0,
                 89.9999771118164,
-                -0.0
+                0.0
             ],
-			"Scale": [
-				1.0,
-				1.0,
-				1.0
-			],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
             "Type": "Player"
         },
         {
@@ -30,6 +30,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Lot.gltf",
             "Name": "Ground_846",
             "Position": [
@@ -55,6 +57,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Lot.gltf",
             "Name": "Ground_847",
             "Position": [
@@ -80,6 +84,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Lot.gltf",
             "Name": "Ground_848",
             "Position": [
@@ -105,6 +111,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Lot.gltf",
             "Name": "Ground_849",
             "Position": [
@@ -130,6 +138,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Lot.gltf",
             "Name": "Ground_850",
             "Position": [
@@ -155,6 +165,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Lot.gltf",
             "Name": "Ground_851",
             "Position": [
@@ -180,6 +192,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Lot.gltf",
             "Name": "Ground_852",
             "Position": [
@@ -205,6 +219,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Lot.gltf",
             "Name": "Ground_853",
             "Position": [
@@ -230,6 +246,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Lot.gltf",
             "Name": "Ground_854",
             "Position": [
@@ -255,6 +273,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Lot.gltf",
             "Name": "Ground_855",
             "Position": [
@@ -280,6 +300,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Lot.gltf",
             "Name": "Ground_856",
             "Position": [
@@ -305,6 +327,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_857",
             "Position": [
@@ -330,6 +354,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_858",
             "Position": [
@@ -355,6 +381,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_859",
             "Position": [
@@ -380,6 +408,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_860",
             "Position": [
@@ -405,6 +435,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_861",
             "Position": [
@@ -430,6 +462,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_862",
             "Position": [
@@ -455,6 +489,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_863",
             "Position": [
@@ -480,6 +516,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_864",
             "Position": [
@@ -505,6 +543,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_866",
             "Position": [
@@ -530,6 +570,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_867",
             "Position": [
@@ -555,6 +597,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_868",
             "Position": [
@@ -580,6 +624,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_869",
             "Position": [
@@ -605,6 +651,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_870",
             "Position": [
@@ -630,6 +678,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_871",
             "Position": [
@@ -655,6 +705,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_872",
             "Position": [
@@ -680,6 +732,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_873",
             "Position": [
@@ -705,6 +759,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_874",
             "Position": [
@@ -730,6 +786,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_875",
             "Position": [
@@ -755,6 +813,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_877",
             "Position": [
@@ -780,6 +840,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_878",
             "Position": [
@@ -805,6 +867,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Lot.gltf",
             "Name": "Ground_882",
             "Position": [
@@ -830,6 +894,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Lot.gltf",
             "Name": "Ground_883",
             "Position": [
@@ -855,6 +921,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Lot.gltf",
             "Name": "Ground_884",
             "Position": [
@@ -880,6 +948,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Lot.gltf",
             "Name": "Ground_885",
             "Position": [
@@ -905,6 +975,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_886",
             "Position": [
@@ -930,6 +1002,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_889",
             "Position": [
@@ -955,6 +1029,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_891",
             "Position": [
@@ -980,6 +1056,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_892",
             "Position": [
@@ -1005,6 +1083,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotExit.gltf",
             "Name": "Ground_900",
             "Position": [
@@ -1030,6 +1110,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotExit.gltf",
             "Name": "Ground_903",
             "Position": [
@@ -1055,6 +1137,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_907",
             "Position": [
@@ -1080,6 +1164,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_908",
             "Position": [
@@ -1105,6 +1191,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_909",
             "Position": [
@@ -1130,6 +1218,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_910",
             "Position": [
@@ -1155,6 +1245,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_911",
             "Position": [
@@ -1180,6 +1272,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_912",
             "Position": [
@@ -1205,6 +1299,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_913",
             "Position": [
@@ -1230,6 +1326,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_914",
             "Position": [
@@ -1255,6 +1353,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_915",
             "Position": [
@@ -1280,6 +1380,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_916",
             "Position": [
@@ -1305,6 +1407,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_917",
             "Position": [
@@ -1330,6 +1434,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_918",
             "Position": [
@@ -1355,6 +1461,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_919",
             "Position": [
@@ -1380,6 +1488,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_920",
             "Position": [
@@ -1405,6 +1515,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_921",
             "Position": [
@@ -1430,6 +1542,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_922",
             "Position": [
@@ -1455,6 +1569,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_923",
             "Position": [
@@ -1480,6 +1596,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_924",
             "Position": [
@@ -1505,6 +1623,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_925",
             "Position": [
@@ -1530,6 +1650,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_926",
             "Position": [
@@ -1555,6 +1677,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_927",
             "Position": [
@@ -1580,6 +1704,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_928",
             "Position": [
@@ -1605,6 +1731,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_929",
             "Position": [
@@ -1630,6 +1758,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_930",
             "Position": [
@@ -1655,6 +1785,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_933",
             "Position": [
@@ -1680,6 +1812,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_934",
             "Position": [
@@ -1705,6 +1839,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_935",
             "Position": [
@@ -1730,6 +1866,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_936",
             "Position": [
@@ -1755,6 +1893,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_937",
             "Position": [
@@ -1780,6 +1920,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_938",
             "Position": [
@@ -1805,6 +1947,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_939",
             "Position": [
@@ -1830,6 +1974,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_940",
             "Position": [
@@ -1855,6 +2001,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_941",
             "Position": [
@@ -1880,6 +2028,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_942",
             "Position": [
@@ -1905,6 +2055,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_943",
             "Position": [
@@ -1930,6 +2082,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_944",
             "Position": [
@@ -1955,6 +2109,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_945",
             "Position": [
@@ -1980,6 +2136,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_946",
             "Position": [
@@ -2005,6 +2163,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_947",
             "Position": [
@@ -2030,6 +2190,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_948",
             "Position": [
@@ -2055,6 +2217,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_949",
             "Position": [
@@ -2080,6 +2244,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_950",
             "Position": [
@@ -2105,6 +2271,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_951",
             "Position": [
@@ -2130,6 +2298,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_952",
             "Position": [
@@ -2155,6 +2325,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_953",
             "Position": [
@@ -2180,6 +2352,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_954",
             "Position": [
@@ -2205,6 +2379,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_955",
             "Position": [
@@ -2230,6 +2406,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_956",
             "Position": [
@@ -2255,6 +2433,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_957",
             "Position": [
@@ -2280,6 +2460,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_958",
             "Position": [
@@ -2305,6 +2487,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_959",
             "Position": [
@@ -2330,6 +2514,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_960",
             "Position": [
@@ -2355,6 +2541,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_961",
             "Position": [
@@ -2380,6 +2568,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_962",
             "Position": [
@@ -2405,6 +2595,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_963",
             "Position": [
@@ -2430,6 +2622,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_964",
             "Position": [
@@ -2455,6 +2649,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_965",
             "Position": [
@@ -2480,6 +2676,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_966",
             "Position": [
@@ -2505,6 +2703,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_967",
             "Position": [
@@ -2530,6 +2730,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_968",
             "Position": [
@@ -2555,6 +2757,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_969",
             "Position": [
@@ -2580,6 +2784,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_970",
             "Position": [
@@ -2605,6 +2811,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_971",
             "Position": [
@@ -2630,6 +2838,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_972",
             "Position": [
@@ -2655,6 +2865,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Dirt.gltf",
             "Name": "Ground_973",
             "Position": [
@@ -2680,6 +2892,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_974",
             "Position": [
@@ -2705,6 +2919,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_975",
             "Position": [
@@ -2730,6 +2946,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_976",
             "Position": [
@@ -2755,6 +2973,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_977",
             "Position": [
@@ -2780,6 +3000,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_978",
             "Position": [
@@ -2805,6 +3027,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_979",
             "Position": [
@@ -2830,6 +3054,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_980",
             "Position": [
@@ -2855,6 +3081,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_981",
             "Position": [
@@ -2880,6 +3108,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_982",
             "Position": [
@@ -2905,6 +3135,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_983",
             "Position": [
@@ -2930,6 +3162,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_984",
             "Position": [
@@ -2955,6 +3189,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_985",
             "Position": [
@@ -2980,6 +3216,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_986",
             "Position": [
@@ -3005,6 +3243,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_987",
             "Position": [
@@ -3030,6 +3270,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_988",
             "Position": [
@@ -3055,6 +3297,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotExit.gltf",
             "Name": "Ground_989",
             "Position": [
@@ -3080,6 +3324,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_990",
             "Position": [
@@ -3105,6 +3351,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_991",
             "Position": [
@@ -3130,6 +3378,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_992",
             "Position": [
@@ -3155,6 +3405,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_993",
             "Position": [
@@ -3180,6 +3432,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_994",
             "Position": [
@@ -3205,6 +3459,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_995",
             "Position": [
@@ -3230,6 +3486,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_996",
             "Position": [
@@ -3255,6 +3513,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotExit.gltf",
             "Name": "Ground_997",
             "Position": [
@@ -3280,6 +3540,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_998",
             "Position": [
@@ -3305,6 +3567,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_999",
             "Position": [
@@ -3330,6 +3594,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1000",
             "Position": [
@@ -3355,6 +3621,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1001",
             "Position": [
@@ -3380,6 +3648,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1002",
             "Position": [
@@ -3405,6 +3675,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1003",
             "Position": [
@@ -3430,6 +3702,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1004",
             "Position": [
@@ -3455,6 +3729,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1005",
             "Position": [
@@ -3480,6 +3756,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1006",
             "Position": [
@@ -3505,6 +3783,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1007",
             "Position": [
@@ -3530,6 +3810,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1008",
             "Position": [
@@ -3555,6 +3837,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1009",
             "Position": [
@@ -3580,6 +3864,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1010",
             "Position": [
@@ -3605,6 +3891,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1011",
             "Position": [
@@ -3630,6 +3918,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1012",
             "Position": [
@@ -3655,6 +3945,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1013",
             "Position": [
@@ -3680,6 +3972,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1014",
             "Position": [
@@ -3705,6 +3999,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1015",
             "Position": [
@@ -3730,6 +4026,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1016",
             "Position": [
@@ -3755,6 +4053,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1017",
             "Position": [
@@ -3780,6 +4080,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1018",
             "Position": [
@@ -3805,6 +4107,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1019",
             "Position": [
@@ -3830,6 +4134,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1020",
             "Position": [
@@ -3855,6 +4161,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1021",
             "Position": [
@@ -3880,6 +4188,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1022",
             "Position": [
@@ -3905,6 +4215,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1023",
             "Position": [
@@ -3930,6 +4242,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1024",
             "Position": [
@@ -3955,6 +4269,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1025",
             "Position": [
@@ -3980,6 +4296,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1026",
             "Position": [
@@ -4005,6 +4323,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1027",
             "Position": [
@@ -4030,6 +4350,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Concrete.gltf",
             "Name": "Ground_1031",
             "Position": [
@@ -4055,6 +4377,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Concrete.gltf",
             "Name": "Ground_1032",
             "Position": [
@@ -4080,6 +4404,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Concrete.gltf",
             "Name": "Ground_1033",
             "Position": [
@@ -4105,6 +4431,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Concrete.gltf",
             "Name": "Ground_1034",
             "Position": [
@@ -4130,6 +4458,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Concrete.gltf",
             "Name": "Ground_1035",
             "Position": [
@@ -4155,6 +4485,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Concrete.gltf",
             "Name": "Ground_1036",
             "Position": [
@@ -4180,6 +4512,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Concrete.gltf",
             "Name": "Ground_1037",
             "Position": [
@@ -4205,6 +4539,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Concrete.gltf",
             "Name": "Ground_1038",
             "Position": [
@@ -4230,6 +4566,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Concrete.gltf",
             "Name": "Ground_1039",
             "Position": [
@@ -4255,6 +4593,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Concrete.gltf",
             "Name": "Ground_1040",
             "Position": [
@@ -4280,6 +4620,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Concrete.gltf",
             "Name": "Ground_1041",
             "Position": [
@@ -4305,6 +4647,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Concrete.gltf",
             "Name": "Ground_1042",
             "Position": [
@@ -4330,6 +4674,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1043",
             "Position": [
@@ -4355,6 +4701,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1044",
             "Position": [
@@ -4380,6 +4728,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1045",
             "Position": [
@@ -4405,6 +4755,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Concrete.gltf",
             "Name": "Ground_1046",
             "Position": [
@@ -4430,6 +4782,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Concrete.gltf",
             "Name": "Ground_1047",
             "Position": [
@@ -4455,6 +4809,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Concrete.gltf",
             "Name": "Ground_1048",
             "Position": [
@@ -4480,6 +4836,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Concrete.gltf",
             "Name": "Ground_1049",
             "Position": [
@@ -4505,6 +4863,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Concrete.gltf",
             "Name": "Ground_1050",
             "Position": [
@@ -4530,6 +4890,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Concrete.gltf",
             "Name": "Ground_1051",
             "Position": [
@@ -4555,6 +4917,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotExit.gltf",
             "Name": "Ground_1052",
             "Position": [
@@ -4580,6 +4944,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1053",
             "Position": [
@@ -4605,6 +4971,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1054",
             "Position": [
@@ -4630,6 +4998,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1055",
             "Position": [
@@ -4655,6 +5025,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1056",
             "Position": [
@@ -4680,6 +5052,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1057",
             "Position": [
@@ -4705,6 +5079,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1058",
             "Position": [
@@ -4730,6 +5106,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1059",
             "Position": [
@@ -4755,6 +5133,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1060",
             "Position": [
@@ -4780,6 +5160,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1062",
             "Position": [
@@ -4805,6 +5187,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1063",
             "Position": [
@@ -4830,6 +5214,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1064",
             "Position": [
@@ -4855,6 +5241,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1065",
             "Position": [
@@ -4880,6 +5268,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1066",
             "Position": [
@@ -4905,6 +5295,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/TJunction.gltf",
             "Name": "Ground_1067",
             "Position": [
@@ -4930,6 +5322,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1087",
             "Position": [
@@ -4955,6 +5349,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1088",
             "Position": [
@@ -4980,6 +5376,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1089",
             "Position": [
@@ -5005,6 +5403,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1090",
             "Position": [
@@ -5030,6 +5430,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1091",
             "Position": [
@@ -5055,6 +5457,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1092",
             "Position": [
@@ -5080,6 +5484,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1093",
             "Position": [
@@ -5105,6 +5511,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1094",
             "Position": [
@@ -5130,6 +5538,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1095",
             "Position": [
@@ -5155,6 +5565,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1096",
             "Position": [
@@ -5180,6 +5592,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1097",
             "Position": [
@@ -5205,6 +5619,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Player_1",
             "Position": [
@@ -5230,6 +5646,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1099",
             "Position": [
@@ -5255,6 +5673,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1100",
             "Position": [
@@ -5280,6 +5700,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1101",
             "Position": [
@@ -5305,6 +5727,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1102",
             "Position": [
@@ -5330,6 +5754,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1103",
             "Position": [
@@ -5355,6 +5781,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1104",
             "Position": [
@@ -5380,6 +5808,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1105",
             "Position": [
@@ -5405,6 +5835,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1106",
             "Position": [
@@ -5430,6 +5862,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1107",
             "Position": [
@@ -5455,6 +5889,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1108",
             "Position": [
@@ -5480,6 +5916,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1109",
             "Position": [
@@ -5505,6 +5943,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1110",
             "Position": [
@@ -5530,6 +5970,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1111",
             "Position": [
@@ -5555,6 +5997,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/TJunction.gltf",
             "Name": "Ground_1112",
             "Position": [
@@ -5580,6 +6024,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1113",
             "Position": [
@@ -5605,6 +6051,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1114",
             "Position": [
@@ -5630,6 +6078,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1115",
             "Position": [
@@ -5655,6 +6105,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1116",
             "Position": [
@@ -5680,6 +6132,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1117",
             "Position": [
@@ -5705,6 +6159,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1118",
             "Position": [
@@ -5730,6 +6186,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1119",
             "Position": [
@@ -5755,6 +6213,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1120",
             "Position": [
@@ -5780,6 +6240,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1121",
             "Position": [
@@ -5805,6 +6267,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1122",
             "Position": [
@@ -5830,6 +6294,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1123",
             "Position": [
@@ -5855,6 +6321,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1124",
             "Position": [
@@ -5880,6 +6348,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1125",
             "Position": [
@@ -5905,6 +6375,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1126",
             "Position": [
@@ -5930,6 +6402,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1127",
             "Position": [
@@ -5955,6 +6429,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1128",
             "Position": [
@@ -5980,6 +6456,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1129",
             "Position": [
@@ -6005,6 +6483,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1130",
             "Position": [
@@ -6030,6 +6510,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1131",
             "Position": [
@@ -6055,6 +6537,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1132",
             "Position": [
@@ -6080,6 +6564,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1133",
             "Position": [
@@ -6105,6 +6591,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1134",
             "Position": [
@@ -6130,6 +6618,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1135",
             "Position": [
@@ -6155,6 +6645,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1136",
             "Position": [
@@ -6180,6 +6672,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1137",
             "Position": [
@@ -6205,6 +6699,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1138",
             "Position": [
@@ -6230,6 +6726,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1139",
             "Position": [
@@ -6255,6 +6753,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1140",
             "Position": [
@@ -6280,6 +6780,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1141",
             "Position": [
@@ -6305,6 +6807,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1142",
             "Position": [
@@ -6330,6 +6834,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1143",
             "Position": [
@@ -6355,6 +6861,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1144",
             "Position": [
@@ -6380,6 +6888,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1145",
             "Position": [
@@ -6405,6 +6915,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1146",
             "Position": [
@@ -6430,6 +6942,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1147",
             "Position": [
@@ -6455,6 +6969,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1148",
             "Position": [
@@ -6480,6 +6996,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1149",
             "Position": [
@@ -6505,6 +7023,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1150",
             "Position": [
@@ -6530,6 +7050,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1151",
             "Position": [
@@ -6555,6 +7077,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1152",
             "Position": [
@@ -6580,6 +7104,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1153",
             "Position": [
@@ -6605,6 +7131,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1154",
             "Position": [
@@ -6630,6 +7158,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1155",
             "Position": [
@@ -6655,6 +7185,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Straight.gltf",
             "Name": "Ground_1156",
             "Position": [
@@ -6680,6 +7212,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotExit.gltf",
             "Name": "Ground_1157",
             "Position": [
@@ -6705,6 +7239,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotExit.gltf",
             "Name": "Ground_1158",
             "Position": [
@@ -6730,6 +7266,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotExit.gltf",
             "Name": "Ground_1159",
             "Position": [
@@ -6755,6 +7293,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1160",
             "Position": [
@@ -6780,6 +7320,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1161",
             "Position": [
@@ -6805,6 +7347,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1162",
             "Position": [
@@ -6830,6 +7374,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1163",
             "Position": [
@@ -6855,6 +7401,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1164",
             "Position": [
@@ -6880,6 +7428,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1165",
             "Position": [
@@ -6905,6 +7455,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1166",
             "Position": [
@@ -6930,6 +7482,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1167",
             "Position": [
@@ -6955,6 +7509,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1168",
             "Position": [
@@ -6980,6 +7536,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1169",
             "Position": [
@@ -7005,6 +7563,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1170",
             "Position": [
@@ -7030,6 +7590,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1171",
             "Position": [
@@ -7055,6 +7617,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1172",
             "Position": [
@@ -7080,6 +7644,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1173",
             "Position": [
@@ -7105,6 +7671,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1174",
             "Position": [
@@ -7130,6 +7698,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1175",
             "Position": [
@@ -7155,6 +7725,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1176",
             "Position": [
@@ -7180,6 +7752,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1177",
             "Position": [
@@ -7205,6 +7779,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1178",
             "Position": [
@@ -7230,6 +7806,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1179",
             "Position": [
@@ -7255,6 +7833,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1180",
             "Position": [
@@ -7280,6 +7860,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1181",
             "Position": [
@@ -7305,6 +7887,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1182",
             "Position": [
@@ -7330,6 +7914,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1183",
             "Position": [
@@ -7355,6 +7941,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1184",
             "Position": [
@@ -7380,6 +7968,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1185",
             "Position": [
@@ -7405,6 +7995,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/LotBorder.gltf",
             "Name": "Ground_1186",
             "Position": [
@@ -7430,6 +8022,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_0",
             "Position": [
@@ -7455,6 +8048,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_1",
             "Position": [
@@ -7480,6 +8074,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_2",
             "Position": [
@@ -7505,6 +8100,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_3",
             "Position": [
@@ -7530,6 +8126,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_4",
             "Position": [
@@ -7555,6 +8152,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_5",
             "Position": [
@@ -7580,6 +8178,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_6",
             "Position": [
@@ -7605,6 +8204,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_7",
             "Position": [
@@ -7630,6 +8230,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_8",
             "Position": [
@@ -7655,6 +8256,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_9",
             "Position": [
@@ -7680,6 +8282,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_10",
             "Position": [
@@ -7705,6 +8308,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_11",
             "Position": [
@@ -7730,6 +8334,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_12",
             "Position": [
@@ -7755,6 +8360,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_13",
             "Position": [
@@ -7780,6 +8386,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_14",
             "Position": [
@@ -7805,6 +8412,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_15",
             "Position": [
@@ -7830,6 +8438,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_16",
             "Position": [
@@ -7855,6 +8464,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_17",
             "Position": [
@@ -7880,6 +8490,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_18",
             "Position": [
@@ -7905,6 +8516,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_19",
             "Position": [
@@ -7930,6 +8542,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_20",
             "Position": [
@@ -7955,6 +8568,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_21",
             "Position": [
@@ -7980,6 +8594,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_22",
             "Position": [
@@ -8005,6 +8620,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_23",
             "Position": [
@@ -8030,6 +8646,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_24",
             "Position": [
@@ -8055,6 +8672,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_25",
             "Position": [
@@ -8080,6 +8698,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_26",
             "Position": [
@@ -8105,6 +8724,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_27",
             "Position": [
@@ -8130,6 +8750,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_28",
             "Position": [
@@ -8155,6 +8776,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_29",
             "Position": [
@@ -8180,6 +8802,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_30",
             "Position": [
@@ -8205,6 +8828,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_31",
             "Position": [
@@ -8230,6 +8854,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_32",
             "Position": [
@@ -8255,6 +8880,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_33",
             "Position": [
@@ -8280,6 +8906,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_34",
             "Position": [
@@ -8305,6 +8932,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_35",
             "Position": [
@@ -8330,6 +8958,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_36",
             "Position": [
@@ -8355,6 +8984,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_37",
             "Position": [
@@ -8380,6 +9010,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_38",
             "Position": [
@@ -8405,6 +9036,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_39",
             "Position": [
@@ -8430,6 +9062,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_40",
             "Position": [
@@ -8455,6 +9088,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_41",
             "Position": [
@@ -8480,6 +9114,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_42",
             "Position": [
@@ -8505,6 +9140,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_43",
             "Position": [
@@ -8530,6 +9166,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_44",
             "Position": [
@@ -8555,6 +9192,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_45",
             "Position": [
@@ -8580,6 +9218,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_46",
             "Position": [
@@ -8605,6 +9244,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_47",
             "Position": [
@@ -8630,6 +9270,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_48",
             "Position": [
@@ -8655,6 +9296,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_49",
             "Position": [
@@ -8680,6 +9322,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_50",
             "Position": [
@@ -8705,6 +9348,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\ConcreteBarrier.gltf",
             "Name": "ConcreteBarrier_51",
             "Position": [
@@ -8730,6 +9374,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\PoliceStation\\PoliceStation.gltf",
             "Name": "PoliceStation_0",
             "Position": [
@@ -8755,6 +9400,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FenceEnd.gltf",
             "Name": "FenceEnd_0",
             "Position": [
@@ -8780,6 +9426,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_0",
             "Position": [
@@ -8805,6 +9452,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_1",
             "Position": [
@@ -8830,6 +9478,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_2",
             "Position": [
@@ -8855,6 +9504,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_3",
             "Position": [
@@ -8880,6 +9530,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_4",
             "Position": [
@@ -8905,6 +9556,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_5",
             "Position": [
@@ -8930,6 +9582,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_6",
             "Position": [
@@ -8955,6 +9608,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_7",
             "Position": [
@@ -8980,6 +9634,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_8",
             "Position": [
@@ -9005,6 +9660,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_9",
             "Position": [
@@ -9030,6 +9686,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_10",
             "Position": [
@@ -9055,6 +9712,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_11",
             "Position": [
@@ -9080,6 +9738,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_12",
             "Position": [
@@ -9105,6 +9764,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_13",
             "Position": [
@@ -9130,6 +9790,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_14",
             "Position": [
@@ -9155,6 +9816,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_15",
             "Position": [
@@ -9180,6 +9842,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_16",
             "Position": [
@@ -9205,6 +9868,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_17",
             "Position": [
@@ -9230,6 +9894,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_18",
             "Position": [
@@ -9255,6 +9920,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_19",
             "Position": [
@@ -9280,6 +9946,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_20",
             "Position": [
@@ -9305,6 +9972,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_21",
             "Position": [
@@ -9330,6 +9998,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_22",
             "Position": [
@@ -9355,6 +10024,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_23",
             "Position": [
@@ -9380,6 +10050,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_24",
             "Position": [
@@ -9405,6 +10076,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_25",
             "Position": [
@@ -9430,6 +10102,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_26",
             "Position": [
@@ -9455,6 +10128,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_27",
             "Position": [
@@ -9480,6 +10154,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_28",
             "Position": [
@@ -9505,6 +10180,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_29",
             "Position": [
@@ -9530,6 +10206,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_30",
             "Position": [
@@ -9555,6 +10232,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_31",
             "Position": [
@@ -9580,6 +10258,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_32",
             "Position": [
@@ -9605,6 +10284,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_33",
             "Position": [
@@ -9630,6 +10310,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_34",
             "Position": [
@@ -9655,6 +10336,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_35",
             "Position": [
@@ -9680,6 +10362,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_36",
             "Position": [
@@ -9705,6 +10388,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_37",
             "Position": [
@@ -9730,6 +10414,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_38",
             "Position": [
@@ -9755,6 +10440,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_39",
             "Position": [
@@ -9780,6 +10466,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_40",
             "Position": [
@@ -9805,6 +10492,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_41",
             "Position": [
@@ -9830,6 +10518,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_42",
             "Position": [
@@ -9855,6 +10544,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_43",
             "Position": [
@@ -9880,6 +10570,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_44",
             "Position": [
@@ -9905,6 +10596,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_45",
             "Position": [
@@ -9930,6 +10622,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_46",
             "Position": [
@@ -9955,6 +10648,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_47",
             "Position": [
@@ -9980,6 +10674,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_48",
             "Position": [
@@ -10005,6 +10700,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_49",
             "Position": [
@@ -10030,6 +10726,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_50",
             "Position": [
@@ -10055,6 +10752,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_51",
             "Position": [
@@ -10080,6 +10778,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_52",
             "Position": [
@@ -10105,6 +10804,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_53",
             "Position": [
@@ -10130,6 +10830,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_54",
             "Position": [
@@ -10155,6 +10856,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_55",
             "Position": [
@@ -10180,6 +10882,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_56",
             "Position": [
@@ -10205,6 +10908,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_57",
             "Position": [
@@ -10230,6 +10934,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
             "Name": "FencePiece_58",
             "Position": [
@@ -10255,6 +10960,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1187",
             "Position": [
@@ -10280,6 +10987,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1188",
             "Position": [
@@ -10305,6 +11014,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1189",
             "Position": [
@@ -10330,6 +11041,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1190",
             "Position": [
@@ -10355,6 +11068,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1191",
             "Position": [
@@ -10380,6 +11095,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1192",
             "Position": [
@@ -10405,6 +11122,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1193",
             "Position": [
@@ -10430,6 +11149,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1194",
             "Position": [
@@ -10455,6 +11176,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1195",
             "Position": [
@@ -10480,6 +11203,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1196",
             "Position": [
@@ -10505,6 +11230,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1197",
             "Position": [
@@ -10530,6 +11257,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1198",
             "Position": [
@@ -10555,6 +11284,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1199",
             "Position": [
@@ -10580,6 +11311,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1200",
             "Position": [
@@ -10605,6 +11338,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1201",
             "Position": [
@@ -10630,6 +11365,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1202",
             "Position": [
@@ -10655,6 +11392,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1203",
             "Position": [
@@ -10680,6 +11419,8 @@
                 1.0,
                 1.0
             ],
+            "GroundType": 0,
+            "IsGround": false,
             "ModelPath": "Asset/Models/Ground/Grass.gltf",
             "Name": "Ground_1204",
             "Position": [
@@ -10705,6 +11446,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\House\\House01.gltf",
             "Name": "House01_0",
             "Position": [
@@ -10730,6 +11472,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset/Models/Props/Flower/Flower.gltf",
             "Name": "Flower_0",
             "Owner": "",
@@ -10756,6 +11499,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset/Models/Props/Flower/Flower.gltf",
             "Name": "Flower_1",
             "Owner": "",
@@ -10782,6 +11526,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset/Models/Props/Flower/Flower.gltf",
             "Name": "Flower_2",
             "Owner": "",
@@ -10808,6 +11553,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\FlowerBed\\FlowerBed.gltf",
             "Name": "FlowerBed_0",
             "Position": [
@@ -10833,6 +11579,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset/Models/Props/Flower/Flower.gltf",
             "Name": "Flower_3",
             "Owner": "",
@@ -10883,6 +11630,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset/Models/Props/Flower/Flower.gltf",
             "Name": "Flower_4",
             "Owner": "Neighbor_0",
@@ -10909,6 +11657,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset/Models/Props/Flower/Flower.gltf",
             "Name": "Flower_5",
             "Owner": "Player_1",
@@ -10935,6 +11684,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset/Models/Props/Flower/Flower.gltf",
             "Name": "Flower_6",
             "Owner": "Player_1",
@@ -10961,6 +11711,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ModelPath": "Asset\\Models\\Props\\Bench\\Bench.gltf",
             "Name": "Bench_0",
             "Position": [
@@ -10986,6 +11737,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ItemPath": "Asset/Items/Scissors.item",
             "ModelPath": "Asset/Models/Item/Scissors/Scissors.gltf",
             "Name": "Item_0",
@@ -11012,6 +11764,7 @@
                 1.0,
                 1.0
             ],
+            "IsGround": false,
             "ItemPath": "Asset/Items/Scissors.item",
             "ModelPath": "Asset/Models/Item/Scissors/Scissors.gltf",
             "Name": "GameObject",
@@ -11045,9 +11798,9 @@
                 -11.0
             ],
             "Rotation": [
-                89.99995422363281,
+                90.0,
                 0.0,
-                -0.0
+                0.0
             ],
             "Scale": [
                 1.0,
@@ -11055,6 +11808,33 @@
                 0.9999929666519165
             ],
             "Type": "Police"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Props/PaintCan/PaintCan.gltf",
+            "Name": "PaintCan",
+            "Owner": "Neighbor_0",
+            "Position": [
+                -9.132817268371582,
+                0.5,
+                7.397213935852051
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                3.0,
+                3.0,
+                3.0
+            ],
+            "Type": "PaintCan"
         }
     ]
 }

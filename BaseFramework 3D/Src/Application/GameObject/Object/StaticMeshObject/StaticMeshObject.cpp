@@ -77,15 +77,11 @@ void StaticMeshObject::RegisterCollider()
 		m_pCollider = std::make_unique<KdCollider>();
 	}
 
-	UINT type = KdCollider::TypeEditor;
+	UINT type = KdCollider::TypeEditor | KdCollider::TypeBump;
 
 	if (m_isGround)
 	{
 		type |= KdCollider::TypeGround;
-	}
-	else
-	{
-		type |= KdCollider::TypeBump;
 	}
 
 	m_pCollider->RegisterCollisionShape(

@@ -10,7 +10,7 @@
 	"Uses": [
 		{
 			"Action": "Repair",
-			"Target": "WoddenFence",
+			"Target": "WoodFence",
 			"Text": "Repair"
 		}
 	],

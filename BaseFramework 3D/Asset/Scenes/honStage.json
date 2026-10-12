@@ -988,14 +988,14 @@
                 -12.0
             ],
             "Rotation": [
-                0.0,
-                270.0,
+                -0.0,
+                -89.9999771118164,
                 0.0
             ],
             "Scale": [
+                0.4999977946281433,
                 0.5,
-                0.5,
-                0.5
+                0.4999977946281433
             ],
             "Type": "Ground"
         },
@@ -1015,14 +1015,14 @@
                 -12.0
             ],
             "Rotation": [
-                0.0,
-                270.0,
+                -0.0,
+                -89.9999771118164,
                 0.0
             ],
             "Scale": [
+                0.49999284744262695,
                 0.5,
-                0.5,
-                0.5
+                0.49999284744262695
             ],
             "Type": "Ground"
         },
@@ -9757,9 +9757,9 @@
             "ModelPath": "Asset\\Models\\Props\\Tree\\Tree.gltf",
             "Name": "Tree_0",
             "Position": [
-                0.0,
-                0.5499997138977051,
-                0.0
+                -32.42061233520508,
+                0.5499996542930603,
+                7.794129371643066
             ],
             "Rotation": [
                 -0.0,
@@ -9808,7 +9808,7 @@
             "Name": "Player_0",
             "Position": [
                 0.0,
-                0.7100000977516174,
+                1.3500001430511475,
                 0.0
             ],
             "Rotation": [
@@ -9831,13 +9831,13 @@
             ],
             "Name": "Neighbor_0",
             "Position": [
-                3.1022329330444336,
-                0.6600000858306885,
-                4.174620628356934
+                4.0,
+                1.3000000715255737,
+                4.0
             ],
             "Rotation": [
                 90.0,
-                328.62408447265625,
+                0.0,
                 0.0
             ],
             "Scale": [
@@ -12755,9 +12755,9 @@
                 -0.0
             ],
             "Scale": [
-                1.4999998807907104,
-                1.4999998807907104,
-                1.4999998807907104
+                1.0,
+                1.0,
+                1.0
             ],
             "Type": "StaticMeshObject"
         },
@@ -12771,19 +12771,19 @@
             "ModelPath": "Asset\\Models\\Props\\Container\\Container.gltf",
             "Name": "Container_2",
             "Position": [
-                12.861930847167969,
+                12.976980209350586,
                 0.0,
-                30.137474060058594
+                31.28862762451172
             ],
             "Rotation": [
                 -0.0,
-                -41.898319244384766,
+                -8.344261169433594,
                 0.0
             ],
             "Scale": [
-                1.999996542930603,
+                1.9999942779541016,
                 2.0,
-                1.999996542930603
+                1.9999942779541016
             ],
             "Type": "StaticMeshObject"
         },
@@ -12979,7 +12979,7 @@
             "ModelPath": "Asset\\Models\\Props\\Corn\\Corn.gltf",
             "Name": "Corn_0",
             "Position": [
-                31.316682815551758,
+                32.152008056640625,
                 1.4659841554021114e-06,
                 20.983781814575195
             ],
@@ -12989,9 +12989,9 @@
                 -0.0
             ],
             "Scale": [
-                2.0,
-                2.0,
-                2.0
+                1.0,
+                1.0,
+                1.0
             ],
             "Type": "StaticMeshObject"
         },
@@ -13015,9 +13015,9 @@
                 -0.0
             ],
             "Scale": [
-                2.0,
-                2.0,
-                2.0
+                1.5,
+                1.5,
+                1.5
             ],
             "Type": "StaticMeshObject"
         },
@@ -13031,7 +13031,7 @@
             "ModelPath": "Asset\\Models\\Props\\ConcreteBarrier\\LowConcreteBarrier.gltf",
             "Name": "LowConcreteBarrier_1",
             "Position": [
-                33.72178649902344,
+                34.0,
                 -9.5367431640625e-07,
                 21.09162139892578
             ],
@@ -13041,9 +13041,9 @@
                 -0.0
             ],
             "Scale": [
-                2.0,
-                2.0,
-                2.0
+                1.5,
+                1.5,
+                1.5
             ],
             "Type": "StaticMeshObject"
         },
@@ -13327,9 +13327,9 @@
                 -0.0
             ],
             "Scale": [
-                1.999999761581421,
-                2.0,
-                1.999999761581421
+                1.5,
+                1.5,
+                1.5
             ],
             "Type": "StaticMeshObject"
         },
@@ -13353,9 +13353,9 @@
                 0.0
             ],
             "Scale": [
-                2.0,
-                2.0,
-                2.0
+                1.5,
+                1.5,
+                1.5
             ],
             "Type": "StaticMeshObject"
         },
@@ -13587,9 +13587,9 @@
                 -0.0
             ],
             "Scale": [
-                2.0,
-                2.0,
-                2.0
+                1.0,
+                1.0,
+                1.0
             ],
             "Type": "StaticMeshObject"
         },
@@ -13603,9 +13603,9 @@
             "ModelPath": "Asset\\Models\\Props\\CinderBlock\\CinderBlock.gltf",
             "Name": "CinderBlock_0",
             "Position": [
-                24.78959846496582,
+                24.93748664855957,
                 0.3099997639656067,
-                15.631612777709961
+                15.270012855529785
             ],
             "Rotation": [
                 89.99996948242188,
@@ -13629,7 +13629,7 @@
             "ModelPath": "Asset\\Models\\Props\\CinderBlock\\CinderBlock.gltf",
             "Name": "CinderBlock_1",
             "Position": [
-                26.47370719909668,
+                27.08360481262207,
                 -2.384185791015625e-07,
                 14.421028137207031
             ],
@@ -13655,7 +13655,7 @@
             "ModelPath": "Asset\\Models\\Props\\CinderBlock\\CinderBlock.gltf",
             "Name": "CinderBlock_2",
             "Position": [
-                24.940990447998047,
+                25.475662231445313,
                 -2.384185791015625e-07,
                 14.421028137207031
             ],
@@ -13681,7 +13681,7 @@
             "ModelPath": "Asset\\Models\\Props\\CinderBlock\\CinderBlock.gltf",
             "Name": "CinderBlock_3",
             "Position": [
-                25.69814109802246,
+                26.149463653564453,
                 0.6800296902656555,
                 14.421028137207031
             ],
@@ -13717,9 +13717,9 @@
                 0.0
             ],
             "Scale": [
-                1.9999985694885254,
-                2.0,
-                1.9999985694885254
+                1.5,
+                1.5,
+                1.5
             ],
             "Type": "StaticMeshObject"
         },
@@ -13733,71 +13733,19 @@
             "ModelPath": "Asset\\Models\\Props\\Pallet\\Pallet.gltf",
             "Name": "Pallet_9",
             "Position": [
-                11.252533912658691,
+                11.399614334106445,
                 0.0,
-                32.69226837158203
+                34.07107925415039
             ],
             "Rotation": [
                 -0.0,
-                -42.063968658447266,
+                -8.343998908996582,
                 0.0
             ],
             "Scale": [
                 0.9999997615814209,
                 1.0,
                 0.9999997615814209
-            ],
-            "Type": "StaticMeshObject"
-        },
-        {
-            "Color": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "IsGround": false,
-            "ModelPath": "Asset\\Models\\Props\\Pallet\\Pallet.gltf",
-            "Name": "Pallet_10",
-            "Position": [
-                11.252533912658691,
-                0.1553429663181305,
-                32.69226837158203
-            ],
-            "Rotation": [
-                -0.0,
-                -42.06396484375,
-                0.0
-            ],
-            "Scale": [
-                0.9999997019767761,
-                1.0,
-                0.9999997019767761
-            ],
-            "Type": "StaticMeshObject"
-        },
-        {
-            "Color": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "IsGround": false,
-            "ModelPath": "Asset\\Models\\Props\\Pallet\\Pallet.gltf",
-            "Name": "Pallet_11",
-            "Position": [
-                11.252533912658691,
-                0.3100000023841858,
-                32.69226837158203
-            ],
-            "Rotation": [
-                -0.0,
-                -42.06396484375,
-                0.0
-            ],
-            "Scale": [
-                0.9999997019767761,
-                1.0,
-                0.9999997019767761
             ],
             "Type": "StaticMeshObject"
         },
@@ -14019,9 +13967,9 @@
             "ModelPath": "Asset\\Models\\Props\\PoliceStation\\PoliceStation.gltf",
             "Name": "PoliceStation_0",
             "Position": [
-                18.351699829101563,
+                19.796844482421875,
                 0.39999961853027344,
-                -19.96355628967285
+                -20.097843170166016
             ],
             "Rotation": [
                 -0.0,
@@ -14029,9 +13977,9 @@
                 0.0
             ],
             "Scale": [
-                21.999866485595703,
+                21.99983024597168,
                 22.0,
-                21.999866485595703
+                21.99983024597168
             ],
             "Type": "StaticMeshObject"
         },
@@ -14424,6 +14372,7049 @@
                 1.9999840259552002
             ],
             "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\BrokenCar\\BrokenCar.gltf",
+            "Name": "BrokenCar_0",
+            "Position": [
+                -20.748188018798828,
+                0.4000004827976227,
+                -20.331085205078125
+            ],
+            "Rotation": [
+                -0.0,
+                129.8560028076172,
+                0.0
+            ],
+            "Scale": [
+                0.999998927116394,
+                1.0,
+                0.999998927116394
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Structure\\ContainerStructure.gltf",
+            "Name": "ContainerStructure_0",
+            "Position": [
+                -17.985139846801758,
+                0.39999961853027344,
+                -31.86281394958496
+            ],
+            "Rotation": [
+                -0.0,
+                180.0,
+                0.0
+            ],
+            "Scale": [
+                1.2000000476837158,
+                1.2000000476837158,
+                1.2000000476837158
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Structure\\Structure.gltf",
+            "Name": "Structure_0",
+            "Position": [
+                -31.981653213500977,
+                0.39999866485595703,
+                -14.521954536437988
+            ],
+            "Rotation": [
+                -0.0,
+                -89.9999771118164,
+                0.0
+            ],
+            "Scale": [
+                0.999992311000824,
+                1.0,
+                0.999992311000824
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\SackTrench\\SackTrench.gltf",
+            "Name": "SackTrench_1",
+            "Position": [
+                -27.74062728881836,
+                0.3999972343444824,
+                -24.868215560913086
+            ],
+            "Rotation": [
+                -0.0,
+                -164.21383666992188,
+                0.0
+            ],
+            "Scale": [
+                0.9999973773956299,
+                1.0,
+                0.9999973773956299
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Barrier\\BarrierTrash.gltf",
+            "Name": "BarrierTrash_0",
+            "Position": [
+                -31.4446964263916,
+                0.3999996483325958,
+                -23.46750259399414
+            ],
+            "Rotation": [
+                -0.0,
+                -154.52841186523438,
+                0.0
+            ],
+            "Scale": [
+                0.9999998211860657,
+                1.0,
+                0.9999998211860657
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\GasTank\\GasTank.gltf",
+            "Name": "GasTank_1",
+            "Position": [
+                -32.9539909362793,
+                0.40000152587890625,
+                -21.286388397216797
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Trash\\TrashContainerOpen.gltf",
+            "Name": "TrashContainerOpen_0",
+            "Position": [
+                -32.5,
+                0.39999961853027344,
+                -26.681529998779297
+            ],
+            "Rotation": [
+                -0.0,
+                -89.9999771118164,
+                0.0
+            ],
+            "Scale": [
+                0.9999924898147583,
+                1.0,
+                0.9999924898147583
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Trash\\TrashContainer.gltf",
+            "Name": "TrashContainer_0",
+            "Position": [
+                -32.5,
+                0.39999961853027344,
+                -30.174179077148438
+            ],
+            "Rotation": [
+                -0.0,
+                -89.9999771118164,
+                0.0
+            ],
+            "Scale": [
+                0.9999980926513672,
+                1.0,
+                0.9999980926513672
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Trash\\TrashContainer.gltf",
+            "Name": "TrashContainer_1",
+            "Position": [
+                -25.661405563354492,
+                0.39999914169311523,
+                -32.534690856933594
+            ],
+            "Rotation": [
+                -0.0,
+                180.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Barrel\\Barrel.gltf",
+            "Name": "Barrel_0",
+            "Position": [
+                -33.20684051513672,
+                0.40000057220458984,
+                -33.21426773071289
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Trash\\TrashBag.gltf",
+            "Name": "TrashBag_0",
+            "Position": [
+                -28.213268280029297,
+                0.40000057220458984,
+                -29.20530128479004
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.1799999475479126,
+                1.1799999475479126,
+                1.1799999475479126
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Trash\\TrashBag.gltf",
+            "Name": "TrashBag_1",
+            "Position": [
+                -27.968290328979492,
+                0.40000009536743164,
+                -28.7116641998291
+            ],
+            "Rotation": [
+                -0.0,
+                19.67743492126465,
+                -0.0
+            ],
+            "Scale": [
+                1.3600000143051147,
+                1.3600000143051147,
+                1.3600000143051147
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Trash\\TrashBag.gltf",
+            "Name": "TrashBag_2",
+            "Position": [
+                -27.49128532409668,
+                0.40000009536743164,
+                -29.115280151367188
+            ],
+            "Rotation": [
+                -0.0,
+                57.95404815673828,
+                -0.0
+            ],
+            "Scale": [
+                1.3899999856948853,
+                1.3899999856948853,
+                1.3899999856948853
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Trash\\TrashBag.gltf",
+            "Name": "TrashBag_3",
+            "Position": [
+                -27.979419708251953,
+                0.7028357982635498,
+                -29.21055793762207
+            ],
+            "Rotation": [
+                9.436890602111816,
+                -5.349209785461426,
+                -11.834233283996582
+            ],
+            "Scale": [
+                0.9999997615814209,
+                0.9999994039535522,
+                0.9999992847442627
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\TrashCan\\RecycleBox.gltf",
+            "Name": "RecycleBox_0",
+            "Position": [
+                -15.071732521057129,
+                0.9450619220733643,
+                -26.951292037963867
+            ],
+            "Rotation": [
+                -86.70100402832031,
+                180.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                0.9999923706054688,
+                0.9999923706054688
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\TrashCan\\TrashCan.gltf",
+            "Name": "TrashCan_0",
+            "Position": [
+                -13.998814582824707,
+                0.40000009536743164,
+                -27.995868682861328
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Trash\\TrashBag.gltf",
+            "Name": "TrashBag_4",
+            "Position": [
+                -15.976530075073242,
+                0.39999961853027344,
+                -24.632314682006836
+            ],
+            "Rotation": [
+                -29.339536666870117,
+                -15.624222755432129,
+                -38.04082107543945
+            ],
+            "Scale": [
+                0.9999995827674866,
+                0.9999997019767761,
+                0.9999997615814209
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Trash\\TrashBag.gltf",
+            "Name": "TrashBag_5",
+            "Position": [
+                -15.503608703613281,
+                0.40000009536743164,
+                -27.999523162841797
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.649999976158142,
+                1.649999976158142,
+                1.649999976158142
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Trash\\TrashBag.gltf",
+            "Name": "TrashBag_6",
+            "Position": [
+                -16.102256774902344,
+                0.39999961853027344,
+                -27.505882263183594
+            ],
+            "Rotation": [
+                5.170962333679199,
+                56.621192932128906,
+                2.7304341793060303
+            ],
+            "Scale": [
+                1.4684998989105225,
+                1.4685001373291016,
+                1.468499779701233
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\MetalFence\\MetalFenceLong.gltf",
+            "Name": "MetalFenceLong_0",
+            "Position": [
+                -26.22368049621582,
+                0.39999961853027344,
+                -12.277202606201172
+            ],
+            "Rotation": [
+                -0.0,
+                -1.9772008657455444,
+                0.0
+            ],
+            "Scale": [
+                0.9999961256980896,
+                1.0,
+                0.9999961256980896
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\MetalFence\\MetalFenceLong.gltf",
+            "Name": "MetalFenceLong_1",
+            "Position": [
+                -23.317039489746094,
+                0.39999938011169434,
+                -12.317825317382813
+            ],
+            "Rotation": [
+                -0.0,
+                1.0899711847305298,
+                -0.0
+            ],
+            "Scale": [
+                0.9999997615814209,
+                1.0,
+                0.9999997615814209
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\MetalFence\\MetalFence.gltf",
+            "Name": "MetalFence_0",
+            "Position": [
+                -24.836408615112305,
+                0.40000104904174805,
+                -19.557167053222656
+            ],
+            "Rotation": [
+                -0.0,
+                -2.6624205112457275,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\MetalFence\\MetalFence.gltf",
+            "Name": "MetalFence_1",
+            "Position": [
+                -29.362600326538086,
+                0.40000057220458984,
+                -20.536041259765625
+            ],
+            "Rotation": [
+                -0.0,
+                -19.700864791870117,
+                0.0
+            ],
+            "Scale": [
+                0.9999995827674866,
+                1.0,
+                0.9999995827674866
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Tire\\Tires.gltf",
+            "Name": "Tires_2",
+            "Position": [
+                -21.08293914794922,
+                0.39999961853027344,
+                -12.682999610900879
+            ],
+            "Rotation": [
+                -0.0,
+                -18.786882400512695,
+                0.0
+            ],
+            "Scale": [
+                1.4200001955032349,
+                1.4199999570846558,
+                1.4200001955032349
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\CinderBlock\\CinderBlock.gltf",
+            "Name": "CinderBlock_4",
+            "Position": [
+                -19.27699089050293,
+                0.39999961853027344,
+                -13.046916961669922
+            ],
+            "Rotation": [
+                -0.0,
+                76.62434387207031,
+                -0.0
+            ],
+            "Scale": [
+                0.9999979734420776,
+                1.0,
+                0.9999979734420776
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\CinderBlock\\CinderBlock.gltf",
+            "Name": "CinderBlock_5",
+            "Position": [
+                -18.53339195251465,
+                0.39999961853027344,
+                -12.963360786437988
+            ],
+            "Rotation": [
+                -0.0,
+                76.62433624267578,
+                -0.0
+            ],
+            "Scale": [
+                0.9999979734420776,
+                1.0,
+                0.9999979734420776
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\CardboardBox\\CardboardBox.gltf",
+            "Name": "CardboardBox_0",
+            "Position": [
+                -18.898344039916992,
+                0.6306319236755371,
+                -13.069901466369629
+            ],
+            "Rotation": [
+                -0.0,
+                51.53038024902344,
+                -0.0
+            ],
+            "Scale": [
+                0.9999994039535522,
+                1.0,
+                0.9999994039535522
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\CardboardBox\\CardboardBoxes.gltf",
+            "Name": "CardboardBoxes_0",
+            "Position": [
+                -19.81888198852539,
+                0.40000081062316895,
+                -14.055243492126465
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\CardboardBox\\CardboardBox.gltf",
+            "Name": "CardboardBox_1",
+            "Position": [
+                -18.308910369873047,
+                0.39999914169311523,
+                -14.116913795471191
+            ],
+            "Rotation": [
+                -0.0,
+                -27.7904109954834,
+                0.0
+            ],
+            "Scale": [
+                1.3499996662139893,
+                1.350000023841858,
+                1.3499996662139893
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Barrel\\Barrel.gltf",
+            "Name": "Barrel_1",
+            "Position": [
+                -13.385522842407227,
+                0.40000057220458984,
+                -21.075912475585938
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.3600000143051147,
+                1.3600000143051147,
+                1.3600000143051147
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Barrel\\Barrel.gltf",
+            "Name": "Barrel_2",
+            "Position": [
+                -13.746089935302734,
+                0.40000057220458984,
+                -20.208154678344727
+            ],
+            "Rotation": [
+                -0.0,
+                41.38801193237305,
+                -0.0
+            ],
+            "Scale": [
+                1.2784003019332886,
+                1.2784000635147095,
+                1.2784003019332886
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Trash\\TrashBag.gltf",
+            "Name": "TrashBag_7",
+            "Position": [
+                -12.480594635009766,
+                0.39999914169311523,
+                -20.10833740234375
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.8899999856948853,
+                1.8899999856948853,
+                1.8899999856948853
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\CardboardBox\\CardboardBox.gltf",
+            "Name": "CardboardBox_2",
+            "Position": [
+                -22.75449562072754,
+                0.40000009536743164,
+                -32.68603515625
+            ],
+            "Rotation": [
+                -0.0,
+                -79.70030212402344,
+                0.0
+            ],
+            "Scale": [
+                1.599995493888855,
+                1.5999999046325684,
+                1.599995493888855
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\MetalFence\\MetalFence.gltf",
+            "Name": "MetalFence_2",
+            "Position": [
+                -12.81308364868164,
+                0.40000009536743164,
+                -16.2841739654541
+            ],
+            "Rotation": [
+                -0.0,
+                73.58071899414063,
+                -0.0
+            ],
+            "Scale": [
+                0.9999871253967285,
+                1.0,
+                0.9999871253967285
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fountain\\Fountain.gltf",
+            "Name": "Fountain_0",
+            "Position": [
+                -21.0,
+                0.5000038146972656,
+                21.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.7000000476837158,
+                1.7000000476837158,
+                1.7000000476837158
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Slide\\Slide.gltf",
+            "Name": "Slide_0",
+            "Position": [
+                -32.61737823486328,
+                0.5000019073486328,
+                17.63284683227539
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                1.4999943971633911,
+                1.5,
+                1.4999943971633911
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Bush\\Bush.gltf",
+            "Name": "Bush_0",
+            "Position": [
+                -19.0,
+                0.5000019073486328,
+                35.022090911865234
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                2.0,
+                2.0,
+                2.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Bush\\Bush.gltf",
+            "Name": "Bush_1",
+            "Position": [
+                -16.0,
+                0.5000019073486328,
+                35.022090911865234
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                2.0,
+                2.0,
+                2.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Bush\\Bush.gltf",
+            "Name": "Bush_2",
+            "Position": [
+                -13.0,
+                0.5000019073486328,
+                35.022090911865234
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                2.0,
+                2.0,
+                2.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Bench\\Bench.gltf",
+            "Name": "Bench_0",
+            "Position": [
+                -14.46764087677002,
+                0.5000004768371582,
+                33.780460357666016
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                0.9999983906745911,
+                1.0,
+                0.9999983906745911
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Gazebo\\Gazebo.gltf",
+            "Name": "Gazebo_0",
+            "Position": [
+                -30.995983123779297,
+                0.5,
+                30.531627655029297
+            ],
+            "Rotation": [
+                -0.0,
+                -36.0,
+                0.0
+            ],
+            "Scale": [
+                2.0,
+                1.600000023841858,
+                2.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Pallet\\Pallet.gltf",
+            "Name": "Pallet_12",
+            "Position": [
+                11.399614334106445,
+                0.1550000011920929,
+                34.07107925415039
+            ],
+            "Rotation": [
+                -0.0,
+                -8.343998908996582,
+                0.0
+            ],
+            "Scale": [
+                0.9999997615814209,
+                1.0,
+                0.9999997615814209
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Pallet\\Pallet.gltf",
+            "Name": "Pallet_13",
+            "Position": [
+                11.399614334106445,
+                0.3100000023841858,
+                34.07107925415039
+            ],
+            "Rotation": [
+                -0.0,
+                -8.343998908996582,
+                0.0
+            ],
+            "Scale": [
+                0.9999997615814209,
+                1.0,
+                0.9999997615814209
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\FlowerBed\\FlowersBed.gltf",
+            "Name": "FlowersBed_0",
+            "Position": [
+                -12.720154762268066,
+                0.75,
+                26.593368530273438
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                0.800000011920929,
+                0.800000011920929,
+                0.800000011920929
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Flowers\\Flowers.gltf",
+            "Name": "Flowers_0",
+            "Position": [
+                -12.720000267028809,
+                0.5,
+                26.593000411987305
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": true,
+            "ModelPath": "Asset\\Models\\Props\\SandBox\\SandBox.gltf",
+            "Name": "SandBox_0",
+            "Position": [
+                -21.98903465270996,
+                0.5,
+                7.818802356719971
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Swing\\Swing.gltf",
+            "Name": "Swing_0",
+            "Position": [
+                -6.920716285705566,
+                0.5000019669532776,
+                19.525705337524414
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                1.4999905824661255,
+                1.5,
+                1.4999905824661255
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Seesaw\\Seesaw.gltf",
+            "Name": "Seesaw_0",
+            "Position": [
+                -13.267903327941895,
+                0.5,
+                11.067676544189453
+            ],
+            "Rotation": [
+                -0.0,
+                -89.9999771118164,
+                0.0
+            ],
+            "Scale": [
+                1.4999927282333374,
+                1.5,
+                1.4999927282333374
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\ClimbingDome\\ClimbingDome.gltf",
+            "Name": "ClimbingDome_0",
+            "Position": [
+                -26.024555206298828,
+                0.5,
+                13.353321075439453
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.5,
+                1.5,
+                1.5
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\FlowerBed\\FlowersBed.gltf",
+            "Name": "FlowersBed_1",
+            "Position": [
+                -8.42170238494873,
+                0.75,
+                28.40300941467285
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                0.800000011920929,
+                0.800000011920929,
+                0.800000011920929
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Flowers\\Flowers.gltf",
+            "Name": "Flowers_1",
+            "Position": [
+                -8.42199993133545,
+                0.5,
+                28.402999877929688
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Bench\\Bench.gltf",
+            "Name": "Bench_1",
+            "Position": [
+                -17.01941680908203,
+                0.5000004768371582,
+                33.780460357666016
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                0.9999953508377075,
+                1.0,
+                0.9999953508377075
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Bench\\Bench.gltf",
+            "Name": "Bench_2",
+            "Position": [
+                -13.538372993469238,
+                0.5,
+                5.903024673461914
+            ],
+            "Rotation": [
+                -0.0,
+                -89.9999771118164,
+                0.0
+            ],
+            "Scale": [
+                0.9999967813491821,
+                1.0,
+                0.9999967813491821
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\FlowerBed\\FlowersBed.gltf",
+            "Name": "FlowersBed_2",
+            "Position": [
+                -23.35267448425293,
+                0.75,
+                31.28371810913086
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                0.800000011920929,
+                0.800000011920929,
+                0.800000011920929
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Flowers\\Flowers.gltf",
+            "Name": "Flowers_2",
+            "Position": [
+                -23.35300064086914,
+                0.5,
+                31.284000396728516
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Tree\\Tree.gltf",
+            "Name": "Tree_1",
+            "Position": [
+                -6.198764801025391,
+                0.5499998331069946,
+                34.589866638183594
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                8.0,
+                8.0,
+                8.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Tree\\Tree.gltf",
+            "Name": "Tree_2",
+            "Position": [
+                -34.4163932800293,
+                0.5499998331069946,
+                24.600872039794922
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                8.0,
+                8.0,
+                8.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Tree\\Tree.gltf",
+            "Name": "Tree_3",
+            "Position": [
+                -6.087857246398926,
+                0.5499996542930603,
+                13.263011932373047
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                8.0,
+                8.0,
+                8.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Tree\\Tree.gltf",
+            "Name": "Tree_4",
+            "Position": [
+                -17.945207595825195,
+                0.5499995946884155,
+                4.738387584686279
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                8.0,
+                8.0,
+                8.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Tree\\Tree.gltf",
+            "Name": "Tree_5",
+            "Position": [
+                -17.945207595825195,
+                0.5499995946884155,
+                4.738387584686279
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                8.0,
+                8.0,
+                8.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Tree\\Tree.gltf",
+            "Name": "Tree_6",
+            "Position": [
+                -27.15679359436035,
+                0.5499998331069946,
+                35.46308517456055
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                8.0,
+                8.0,
+                8.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FenceEnd.gltf",
+            "Name": "FenceEnd_0",
+            "Position": [
+                25.968042373657227,
+                0.4999995231628418,
+                -15.0
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                1.9999898672103882,
+                2.0,
+                1.9999898672103882
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_0",
+            "Position": [
+                26.0,
+                0.4999990463256836,
+                -25.0
+            ],
+            "Rotation": [
+                -0.0,
+                -89.9999771118164,
+                0.0
+            ],
+            "Scale": [
+                1.9999704360961914,
+                2.0,
+                1.9999704360961914
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_1",
+            "Position": [
+                26.0,
+                0.4999990463256836,
+                -23.0
+            ],
+            "Rotation": [
+                -0.0,
+                -89.9999771118164,
+                0.0
+            ],
+            "Scale": [
+                1.9999526739120483,
+                2.0,
+                1.9999526739120483
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_2",
+            "Position": [
+                26.0,
+                0.4999990463256836,
+                -21.0
+            ],
+            "Rotation": [
+                -0.0,
+                -89.9999771118164,
+                0.0
+            ],
+            "Scale": [
+                1.9999526739120483,
+                2.0,
+                1.9999526739120483
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_3",
+            "Position": [
+                26.0,
+                0.4999990463256836,
+                -19.0
+            ],
+            "Rotation": [
+                -0.0,
+                -89.9999771118164,
+                0.0
+            ],
+            "Scale": [
+                1.9999526739120483,
+                2.0,
+                1.9999526739120483
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_4",
+            "Position": [
+                26.0,
+                0.4999990463256836,
+                -17.0
+            ],
+            "Rotation": [
+                -0.0,
+                -89.9999771118164,
+                0.0
+            ],
+            "Scale": [
+                1.9999526739120483,
+                2.0,
+                1.9999526739120483
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_5",
+            "Position": [
+                25.0,
+                0.4999990463256836,
+                -26.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.99996817111969,
+                2.0,
+                1.99996817111969
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_6",
+            "Position": [
+                23.0,
+                0.4999990463256836,
+                -26.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.99996817111969,
+                2.0,
+                1.99996817111969
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_7",
+            "Position": [
+                21.0,
+                0.4999990463256836,
+                -26.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.99996817111969,
+                2.0,
+                1.99996817111969
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_8",
+            "Position": [
+                19.0,
+                0.4999990463256836,
+                -26.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.99996817111969,
+                2.0,
+                1.99996817111969
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_9",
+            "Position": [
+                17.0,
+                0.4999990463256836,
+                -26.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.99996817111969,
+                2.0,
+                1.99996817111969
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_10",
+            "Position": [
+                15.0,
+                0.4999990463256836,
+                -26.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.99996817111969,
+                2.0,
+                1.99996817111969
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_11",
+            "Position": [
+                13.0,
+                0.4999990463256836,
+                -26.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.99996817111969,
+                2.0,
+                1.99996817111969
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_12",
+            "Position": [
+                11.0,
+                0.4999990463256836,
+                -26.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.99996817111969,
+                2.0,
+                1.99996817111969
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_13",
+            "Position": [
+                9.0,
+                0.4999990463256836,
+                -26.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.99996817111969,
+                2.0,
+                1.99996817111969
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_14",
+            "Position": [
+                7.0,
+                0.4999990463256836,
+                -26.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.99996817111969,
+                2.0,
+                1.99996817111969
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_15",
+            "Position": [
+                6.0,
+                0.4999990463256836,
+                -25.0
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                1.9999616146087646,
+                2.0,
+                1.9999616146087646
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_16",
+            "Position": [
+                6.0,
+                0.4999990463256836,
+                -23.0
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                1.9999563694000244,
+                2.0,
+                1.9999563694000244
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_17",
+            "Position": [
+                6.0,
+                0.4999990463256836,
+                -21.0
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                1.9999563694000244,
+                2.0,
+                1.9999563694000244
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_18",
+            "Position": [
+                6.0,
+                0.4999990463256836,
+                -19.0
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                1.9999563694000244,
+                2.0,
+                1.9999563694000244
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_19",
+            "Position": [
+                6.0,
+                0.4999990463256836,
+                -17.0
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                1.9999563694000244,
+                2.0,
+                1.9999563694000244
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\FencePiece.gltf",
+            "Name": "FencePiece_20",
+            "Position": [
+                6.0,
+                0.4999990463256836,
+                -15.0
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                1.9999563694000244,
+                2.0,
+                1.9999563694000244
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 5,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Concrete.gltf",
+            "Name": "Ground_466",
+            "Position": [
+                -0.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 5,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Concrete.gltf",
+            "Name": "Ground_467",
+            "Position": [
+                44.0,
+                0.0,
+                -0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 5,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Concrete.gltf",
+            "Name": "Ground_468",
+            "Position": [
+                -44.0,
+                0.0,
+                -0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_470",
+            "Position": [
+                4.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_471",
+            "Position": [
+                -4.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_473",
+            "Position": [
+                -8.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_474",
+            "Position": [
+                -12.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_475",
+            "Position": [
+                -16.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_476",
+            "Position": [
+                -20.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_477",
+            "Position": [
+                -24.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_478",
+            "Position": [
+                -28.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_479",
+            "Position": [
+                -32.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_480",
+            "Position": [
+                -36.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_481",
+            "Position": [
+                -40.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_482",
+            "Position": [
+                -44.0,
+                0.0,
+                -40.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_483",
+            "Position": [
+                -44.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_484",
+            "Position": [
+                -44.0,
+                0.0,
+                -36.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_485",
+            "Position": [
+                -44.0,
+                0.0,
+                -28.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_486",
+            "Position": [
+                -44.0,
+                0.0,
+                -32.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_487",
+            "Position": [
+                -44.0,
+                0.0,
+                -20.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_488",
+            "Position": [
+                -44.0,
+                0.0,
+                -24.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_489",
+            "Position": [
+                -44.0,
+                0.0,
+                -16.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_490",
+            "Position": [
+                -44.0,
+                0.0,
+                -12.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_491",
+            "Position": [
+                -44.0,
+                0.0,
+                -8.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_492",
+            "Position": [
+                -44.0,
+                -0.0,
+                -4.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_493",
+            "Position": [
+                -44.0,
+                0.0,
+                4.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_494",
+            "Position": [
+                -44.0,
+                0.0,
+                8.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_495",
+            "Position": [
+                -44.0,
+                -0.0,
+                12.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_496",
+            "Position": [
+                -44.0,
+                0.0,
+                16.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_497",
+            "Position": [
+                -44.0,
+                0.0,
+                20.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_498",
+            "Position": [
+                -44.0,
+                0.0,
+                24.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_499",
+            "Position": [
+                -44.0,
+                0.0,
+                28.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_500",
+            "Position": [
+                -44.0,
+                0.0,
+                32.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_501",
+            "Position": [
+                -44.0,
+                0.0,
+                36.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_502",
+            "Position": [
+                -44.0,
+                0.0,
+                40.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_503",
+            "Position": [
+                -44.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_504",
+            "Position": [
+                -40.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_505",
+            "Position": [
+                -36.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_506",
+            "Position": [
+                -32.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_507",
+            "Position": [
+                -28.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_508",
+            "Position": [
+                -24.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_509",
+            "Position": [
+                -20.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_510",
+            "Position": [
+                -16.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_511",
+            "Position": [
+                -12.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_512",
+            "Position": [
+                -8.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_513",
+            "Position": [
+                -4.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_514",
+            "Position": [
+                4.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_515",
+            "Position": [
+                12.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_516",
+            "Position": [
+                8.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_517",
+            "Position": [
+                16.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_518",
+            "Position": [
+                20.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_519",
+            "Position": [
+                24.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_520",
+            "Position": [
+                28.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_521",
+            "Position": [
+                32.0,
+                -0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_522",
+            "Position": [
+                36.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_523",
+            "Position": [
+                40.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_524",
+            "Position": [
+                44.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_525",
+            "Position": [
+                44.0,
+                0.0,
+                40.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_526",
+            "Position": [
+                44.0,
+                0.0,
+                36.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_527",
+            "Position": [
+                44.0,
+                0.0,
+                32.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_528",
+            "Position": [
+                44.0,
+                0.0,
+                28.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_529",
+            "Position": [
+                44.0,
+                0.0,
+                24.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_530",
+            "Position": [
+                44.0,
+                0.0,
+                20.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_531",
+            "Position": [
+                44.0,
+                0.0,
+                12.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_532",
+            "Position": [
+                44.0,
+                0.0,
+                16.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_533",
+            "Position": [
+                44.0,
+                0.0,
+                8.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_534",
+            "Position": [
+                44.0,
+                0.0,
+                4.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_535",
+            "Position": [
+                44.0,
+                0.0,
+                -4.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_536",
+            "Position": [
+                44.0,
+                0.0,
+                -8.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_537",
+            "Position": [
+                44.0,
+                0.0,
+                -12.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_538",
+            "Position": [
+                44.0,
+                0.0,
+                -16.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_539",
+            "Position": [
+                44.0,
+                0.0,
+                -20.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_540",
+            "Position": [
+                44.0,
+                0.0,
+                -24.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_541",
+            "Position": [
+                44.0,
+                0.0,
+                -28.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_542",
+            "Position": [
+                44.0,
+                0.0,
+                -32.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_543",
+            "Position": [
+                44.0,
+                0.0,
+                -36.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_544",
+            "Position": [
+                44.0,
+                -0.0,
+                -40.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_545",
+            "Position": [
+                44.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_546",
+            "Position": [
+                40.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_547",
+            "Position": [
+                36.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_548",
+            "Position": [
+                32.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_549",
+            "Position": [
+                28.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_550",
+            "Position": [
+                24.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_551",
+            "Position": [
+                20.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_552",
+            "Position": [
+                16.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_553",
+            "Position": [
+                12.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_554",
+            "Position": [
+                8.0,
+                0.0,
+                -44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_556",
+            "Position": [
+                4.0,
+                0.0,
+                48.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_557",
+            "Position": [
+                8.0,
+                0.0,
+                48.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_559",
+            "Position": [
+                -4.0,
+                0.0,
+                48.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_560",
+            "Position": [
+                -8.0,
+                0.0,
+                48.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_562",
+            "Position": [
+                -8.0,
+                0.0,
+                52.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_563",
+            "Position": [
+                -4.0,
+                0.0,
+                52.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_564",
+            "Position": [
+                0.0,
+                0.0,
+                52.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_565",
+            "Position": [
+                4.0,
+                0.0,
+                52.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_566",
+            "Position": [
+                8.0,
+                0.0,
+                52.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_567",
+            "Position": [
+                8.0,
+                0.0,
+                56.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_568",
+            "Position": [
+                4.0,
+                0.0,
+                56.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_569",
+            "Position": [
+                -4.0,
+                0.0,
+                56.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_570",
+            "Position": [
+                -8.0,
+                0.0,
+                56.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_571",
+            "Position": [
+                -0.0,
+                0.0,
+                56.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_572",
+            "Position": [
+                -8.0,
+                0.0,
+                60.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_573",
+            "Position": [
+                -4.0,
+                0.0,
+                60.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_574",
+            "Position": [
+                -0.0,
+                0.0,
+                60.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_575",
+            "Position": [
+                4.0,
+                0.0,
+                60.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_576",
+            "Position": [
+                8.0,
+                0.0,
+                60.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_578",
+            "Position": [
+                12.0,
+                0.0,
+                52.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_579",
+            "Position": [
+                12.0,
+                0.0,
+                56.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_580",
+            "Position": [
+                12.0,
+                0.0,
+                60.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_581",
+            "Position": [
+                12.0,
+                0.0,
+                64.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_582",
+            "Position": [
+                8.0,
+                0.0,
+                64.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_583",
+            "Position": [
+                4.0,
+                0.0,
+                64.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_584",
+            "Position": [
+                0.0,
+                0.0,
+                64.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_585",
+            "Position": [
+                -4.0,
+                0.0,
+                64.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_586",
+            "Position": [
+                -8.0,
+                0.0,
+                64.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_587",
+            "Position": [
+                -12.0,
+                0.0,
+                64.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_588",
+            "Position": [
+                -12.0,
+                0.0,
+                60.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_589",
+            "Position": [
+                -12.0,
+                0.0,
+                56.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_590",
+            "Position": [
+                -12.0,
+                0.0,
+                52.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_591",
+            "Position": [
+                -12.0,
+                0.0,
+                48.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_592",
+            "Position": [
+                -12.0,
+                0.0,
+                68.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_593",
+            "Position": [
+                -8.0,
+                0.0,
+                68.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_594",
+            "Position": [
+                -4.0,
+                0.0,
+                68.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_595",
+            "Position": [
+                -0.0,
+                0.0,
+                68.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_596",
+            "Position": [
+                4.0,
+                0.0,
+                68.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_597",
+            "Position": [
+                8.0,
+                0.0,
+                68.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_598",
+            "Position": [
+                12.0,
+                0.0,
+                68.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\House\\House01.gltf",
+            "Name": "House01_0",
+            "Position": [
+                -5.047207832336426,
+                0.5000047087669373,
+                59.63252639770508
+            ],
+            "Rotation": [
+                -0.0,
+                180.0,
+                0.0
+            ],
+            "Scale": [
+                7.0,
+                7.0,
+                7.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Shed\\Shed.gltf",
+            "Name": "Shed_0",
+            "Position": [
+                5.8504204750061035,
+                0.4999995529651642,
+                51.034461975097656
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                1.1999976634979248,
+                1.0,
+                1.1999976634979248
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\FlowerBed\\FlowerBed.gltf",
+            "Name": "FlowerBed_0",
+            "Position": [
+                -6.851491928100586,
+                0.6000000238418579,
+                48.445255279541016
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\FlowerBed\\FlowerBed.gltf",
+            "Name": "FlowerBed_1",
+            "Position": [
+                6.850707054138184,
+                0.5999999046325684,
+                53.48918533325195
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_599",
+            "Position": [
+                12.0,
+                0.0,
+                48.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\WoodFence\\WoodFence_01.gltf",
+            "Name": "WoodFence_01_0",
+            "Position": [
+                -14.0,
+                0.5000005960464478,
+                68.0
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                2.0998942852020264,
+                2.0,
+                2.0998942852020264
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\WoodFence.gltf",
+            "Name": "WoodFence_0",
+            "Position": [
+                -4.0,
+                0.5000010132789612,
+                46.0
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                0.19999749958515167,
+                0.20000000298023224,
+                0.19999749958515167
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\WoodFence.gltf",
+            "Name": "WoodFence_1",
+            "Position": [
+                -8.0,
+                0.5000010132789612,
+                46.0
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                0.19999666512012482,
+                0.20000000298023224,
+                0.19999666512012482
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\WoodFence.gltf",
+            "Name": "WoodFence_2",
+            "Position": [
+                -12.0,
+                0.5000010132789612,
+                46.0
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                0.19999749958515167,
+                0.20000000298023224,
+                0.19999749958515167
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\WoodFence.gltf",
+            "Name": "WoodFence_3",
+            "Position": [
+                4.0,
+                0.5000010132789612,
+                46.0
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                0.19999749958515167,
+                0.20000000298023224,
+                0.19999749958515167
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\WoodFence.gltf",
+            "Name": "WoodFence_4",
+            "Position": [
+                8.0,
+                0.5000010132789612,
+                46.0
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                0.19999749958515167,
+                0.20000000298023224,
+                0.19999749958515167
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Fence\\WoodFence.gltf",
+            "Name": "WoodFence_5",
+            "Position": [
+                12.0,
+                0.5000010132789612,
+                46.0
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                0.19999749958515167,
+                0.20000000298023224,
+                0.19999749958515167
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\WoodFence\\WoodFence_01.gltf",
+            "Name": "WoodFence_01_2",
+            "Position": [
+                14.0,
+                0.5,
+                48.0
+            ],
+            "Rotation": [
+                -0.0,
+                -89.9999771118164,
+                0.0
+            ],
+            "Scale": [
+                2.0999858379364014,
+                2.0,
+                2.0999858379364014
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\WoodFence\\WoodFence_01.gltf",
+            "Name": "WoodFence_01_3",
+            "Position": [
+                14.0,
+                0.5,
+                52.0
+            ],
+            "Rotation": [
+                -0.0,
+                -89.9999771118164,
+                0.0
+            ],
+            "Scale": [
+                2.0999858379364014,
+                2.0,
+                2.0999858379364014
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\WoodFence\\WoodFence_01.gltf",
+            "Name": "WoodFence_01_4",
+            "Position": [
+                14.0,
+                0.5,
+                56.0
+            ],
+            "Rotation": [
+                -0.0,
+                -89.9999771118164,
+                0.0
+            ],
+            "Scale": [
+                2.0999858379364014,
+                2.0,
+                2.0999858379364014
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\WoodFence\\WoodFence_01.gltf",
+            "Name": "WoodFence_01_5",
+            "Position": [
+                14.0,
+                0.5,
+                64.0
+            ],
+            "Rotation": [
+                -0.0,
+                -89.9999771118164,
+                0.0
+            ],
+            "Scale": [
+                2.0999858379364014,
+                2.0,
+                2.0999858379364014
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\WoodFence\\WoodFence_01.gltf",
+            "Name": "WoodFence_01_6",
+            "Position": [
+                14.0,
+                0.5,
+                68.0
+            ],
+            "Rotation": [
+                -0.0,
+                -89.9999771118164,
+                0.0
+            ],
+            "Scale": [
+                2.0999858379364014,
+                2.0,
+                2.0999858379364014
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Bush\\Bush.gltf",
+            "Name": "Bush_3",
+            "Position": [
+                12.0,
+                0.5000019073486328,
+                70.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                2.5,
+                2.5,
+                2.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Bush\\Bush.gltf",
+            "Name": "Bush_4",
+            "Position": [
+                8.0,
+                0.5000019073486328,
+                70.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                2.5,
+                2.5,
+                2.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Bush\\Bush.gltf",
+            "Name": "Bush_5",
+            "Position": [
+                4.0,
+                0.5000019073486328,
+                70.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                2.5,
+                2.5,
+                2.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Bush\\Bush.gltf",
+            "Name": "Bush_6",
+            "Position": [
+                0.0,
+                0.5000019073486328,
+                70.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                2.5,
+                2.5,
+                2.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Bush\\Bush.gltf",
+            "Name": "Bush_7",
+            "Position": [
+                -4.0,
+                0.5000019073486328,
+                70.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                2.5,
+                2.5,
+                2.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Bush\\Bush.gltf",
+            "Name": "Bush_8",
+            "Position": [
+                -8.0,
+                0.5000019073486328,
+                70.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                2.5,
+                2.5,
+                2.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Bush\\Bush.gltf",
+            "Name": "Bush_9",
+            "Position": [
+                -12.0,
+                0.5000019073486328,
+                70.0
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                2.5,
+                2.5,
+                2.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\WoodFence\\WoodFence_01.gltf",
+            "Name": "WoodFence_01_8",
+            "Position": [
+                -14.0,
+                0.5000005960464478,
+                60.0
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                2.0998942852020264,
+                2.0,
+                2.0998942852020264
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\WoodFence\\WoodFence_01.gltf",
+            "Name": "WoodFence_01_9",
+            "Position": [
+                -14.0,
+                0.5000005960464478,
+                56.0
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                2.0998942852020264,
+                2.0,
+                2.0998942852020264
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\WoodFence\\WoodFence_01.gltf",
+            "Name": "WoodFence_01_10",
+            "Position": [
+                -14.0,
+                0.5000005960464478,
+                52.0
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                2.0998942852020264,
+                2.0,
+                2.0998942852020264
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\WoodFence\\WoodFence_01.gltf",
+            "Name": "WoodFence_01_11",
+            "Position": [
+                -14.0,
+                0.5000005960464478,
+                48.0
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                2.0998942852020264,
+                2.0,
+                2.0998942852020264
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Gate\\Gate.gltf",
+            "Name": "Gate_0",
+            "Position": [
+                0.0,
+                0.3499999940395355,
+                46.0
+            ],
+            "Rotation": [
+                -0.0,
+                180.0,
+                0.0
+            ],
+            "Scale": [
+                1.0499999523162842,
+                1.0,
+                1.0
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_600",
+            "Position": [
+                16.0,
+                0.0,
+                48.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_601",
+            "Position": [
+                16.0,
+                0.0,
+                52.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_602",
+            "Position": [
+                16.0,
+                0.0,
+                56.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_603",
+            "Position": [
+                16.0,
+                0.0,
+                60.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_604",
+            "Position": [
+                16.0,
+                0.0,
+                64.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_605",
+            "Position": [
+                16.0,
+                0.0,
+                68.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_606",
+            "Position": [
+                16.0,
+                0.0,
+                72.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_607",
+            "Position": [
+                12.0,
+                0.0,
+                72.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_608",
+            "Position": [
+                8.0,
+                0.0,
+                72.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_609",
+            "Position": [
+                4.0,
+                0.0,
+                72.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_610",
+            "Position": [
+                0.0,
+                0.0,
+                72.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_611",
+            "Position": [
+                -4.0,
+                0.0,
+                72.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_612",
+            "Position": [
+                -8.0,
+                0.0,
+                72.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_613",
+            "Position": [
+                -12.0,
+                0.0,
+                72.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_614",
+            "Position": [
+                -16.0,
+                0.0,
+                72.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_615",
+            "Position": [
+                -16.0,
+                0.0,
+                68.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_616",
+            "Position": [
+                -16.0,
+                0.0,
+                64.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_617",
+            "Position": [
+                -16.0,
+                0.0,
+                60.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_618",
+            "Position": [
+                -16.0,
+                0.0,
+                56.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_619",
+            "Position": [
+                -16.0,
+                0.0,
+                52.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 2,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Grass.gltf",
+            "Name": "Ground_620",
+            "Position": [
+                -16.0,
+                0.0,
+                48.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 5,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Concrete.gltf",
+            "Name": "Ground_622",
+            "Position": [
+                0.0,
+                0.0,
+                48.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "GroundType": 5,
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Ground/Concrete.gltf",
+            "Name": "Ground_623",
+            "Position": [
+                0.0,
+                0.0,
+                44.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                0.5,
+                0.5,
+                0.5
+            ],
+            "Type": "Ground"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset\\Models\\Props\\Trash\\TrashBag.gltf",
+            "Name": "TrashBag_8",
+            "Position": [
+                -15.135029792785645,
+                0.40000009536743164,
+                -27.5143985748291
+            ],
+            "Rotation": [
+                -0.0,
+                36.802127838134766,
+                -0.0
+            ],
+            "Scale": [
+                1.2540004253387451,
+                1.253999948501587,
+                1.2540004253387451
+            ],
+            "Type": "StaticMeshObject"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Props/WoodFence/WoodFence_Repaired.gltf",
+            "Name": "WoodenFence",
+            "Owner": "Player_0",
+            "Position": [
+                14.0,
+                0.5,
+                60.0
+            ],
+            "Rotation": [
+                0.0,
+                -90.0,
+                0.0
+            ],
+            "Scale": [
+                2.0999999046325684,
+                2.0,
+                2.0999999046325684
+            ],
+            "Type": "WoodenFence"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ModelPath": "Asset/Models/Props/WoodFence/WoodFence_Repaired.gltf",
+            "Name": "WoodenFence_1",
+            "Owner": "Player_0",
+            "Position": [
+                -14.0,
+                0.5,
+                64.0
+            ],
+            "Rotation": [
+                -0.0,
+                89.9999771118164,
+                -0.0
+            ],
+            "Scale": [
+                2.0999770164489746,
+                2.0,
+                2.0999770164489746
+            ],
+            "Type": "WoodenFence"
         }
     ]
 }
