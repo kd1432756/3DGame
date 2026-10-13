@@ -1,0 +1,27 @@
+{
+	"Name": "Nail",
+
+	"ModelPath": "Asset/Models/Item/Nail/Nail.gltf",
+
+	"IconPath": "Asset/Textures/Icon/Nail.png",
+
+	"Dangerous": true,
+
+	"Uses": [
+		{
+			"Action": "Pirece",
+			"Target": "Car",
+			"Text": "Puncture"
+		}
+	],
+
+	"MaxCount": 3,
+
+	"WorldScale": [ 0.1, 0.1, 0.1 ],
+
+	"HandOffset": [ 0.15, -0.12, 0.30 ],
+
+	"HandRotation": [ -20, 60, -10 ],
+
+	"HandScale": [ 0.05, 0.05, 0.05 ]
+}

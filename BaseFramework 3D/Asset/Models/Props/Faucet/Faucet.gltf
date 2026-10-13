@@ -11,7 +11,8 @@
 		{
 			"name":"Scene",
 			"nodes":[
-				0
+				0,
+				1
 			]
 		}
 	],
@@ -20,15 +21,23 @@
 			"mesh":0,
 			"name":"faucet",
 			"rotation":[
-				0.7071068286895752,
+				0.70710688829422,
 				0,
 				0,
-				0.7071068286895752
+				0.7071066498756409
 			],
 			"translation":[
 				0,
 				0.8196201920509338,
 				0.19765815138816833
+			]
+		},
+		{
+			"name":"WaterSpawnPoint",
+			"translation":[
+				0,
+				0.5699999928474426,
+				0.5199999809265137
 			]
 		}
 	],
@@ -72,29 +81,29 @@
 		{
 			"bufferView":0,
 			"componentType":5126,
-			"count":1248,
+			"count":1276,
 			"max":[
-				1.8043709993362427,
-				3.9441158771514893,
-				2.910628080368042
+				0.1804371029138565,
+				0.3944115936756134,
+				0.2910628020763397
 			],
 			"min":[
-				-1.804371953010559,
-				-2.9050302505493164,
-				-2.0528578758239746
+				-0.18043719232082367,
+				-0.29050302505493164,
+				-0.20528578758239746
 			],
 			"type":"VEC3"
 		},
 		{
 			"bufferView":1,
 			"componentType":5126,
-			"count":1248,
+			"count":1276,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":2,
 			"componentType":5126,
-			"count":1248,
+			"count":1276,
 			"type":"VEC2"
 		},
 		{
@@ -107,32 +116,32 @@
 	"bufferViews":[
 		{
 			"buffer":0,
-			"byteLength":14976,
+			"byteLength":15312,
 			"byteOffset":0,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":14976,
-			"byteOffset":14976,
+			"byteLength":15312,
+			"byteOffset":15312,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":9984,
-			"byteOffset":29952,
+			"byteLength":10208,
+			"byteOffset":30624,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":4176,
-			"byteOffset":39936,
+			"byteOffset":40832,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":44112,
+			"byteLength":45008,
 			"uri":"Faucet.bin"
 		}
 	]

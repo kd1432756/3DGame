@@ -1,4 +1,5 @@
-﻿
+﻿#include "KdEffekseerManager.h"
+
 void KdEffekseerManager::Create(int w, int h)
 {
 	// エフェクトのレンダラーの作成
@@ -132,6 +133,11 @@ void KdEffekseerManager::SetRotation(const int handle, const Math::Vector3& axis
 	Effekseer::Vector3D efkAxis = GetEfkVec3D(axis);
 
 	m_efkManager->SetRotation(handle, efkAxis, angle);
+}
+
+void KdEffekseerManager::SetRotation(const int handle, const Math::Vector3& rotateRadian)
+{
+	m_efkManager->SetRotation(handle, rotateRadian.x, rotateRadian.y, rotateRadian.z);
 }
 
 void KdEffekseerManager::SetWorldMatrix(const int handle, const Math::Matrix& mWorld)

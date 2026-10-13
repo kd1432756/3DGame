@@ -22,9 +22,11 @@ namespace
 
 ItemAction ItemData::ParseAction(const std::string& str)
 {
-	if (str == "Cut")    return ItemAction::Cut;
 	if (str == "Repair") return ItemAction::Repair;
+	if (str == "Cut")    return ItemAction::Cut;
 	if (str == "Break")  return ItemAction::Break;
+	if (str == "Wrench")  return ItemAction::Wrench;
+	if (str == "Pirece")  return ItemAction::Pirece;
 	return ItemAction::None;
 }
 

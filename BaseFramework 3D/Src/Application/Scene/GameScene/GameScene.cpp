@@ -178,16 +178,18 @@ void GameScene::Start()
 	// 風有効化
 	KdShaderManager::Instance().SetWindEnable(true);
 
-	auto field = std::make_shared<GrassField>();
-	SceneManager::Instance().AddObject(field);
-	field->Generate(5.0f, 0.3f * scale);
+	auto player = SceneManager::Instance().FindObject<Player>();
 
 	auto time = std::make_shared<TimeUI>();
 	time->Init();
 	time->SetName("TimeUI");
 	m_objList.push_back(time);
 
-	auto player = SceneManager::Instance().FindObject<Player>();
+	auto field = std::make_shared<GrassField>();
+	SceneManager::Instance().AddObject(field);
+	field->Generate(5.0f, 0.3f * scale);
+	field->SetPlayer(player);
+	field->SetDrawDistance(25.0f * scale);
 
 	float height = 0.8f * SceneManager::Instance().GetSceneScale();
 	m_spGameCamera->SetEyeHeight(height);

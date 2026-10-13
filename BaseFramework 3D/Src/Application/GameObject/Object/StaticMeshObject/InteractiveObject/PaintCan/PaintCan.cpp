@@ -17,7 +17,7 @@ void PaintCan::Init()
 		1.5f,
 		100,
 		"PaintCan Spilled!",
-		"Your PaintCan was Spilled!",
+		"Your PaintCan has been Spilled!",
 		"Asset/Models/Props/PaintCan/SpilledPaintCan.gltf",
 		false,
 		"Spill"
@@ -30,14 +30,10 @@ void PaintCan::Init()
 		"PaintCan",
 		2.0f,
 		60,
-		"PaintCan Repair!",
+		"PaintCan Cleaned Up!",
 		"",
-		"Asset/Models/Props/PaintCan/PaintCan.gltf",
-		false,
-		"Clean up"
+		"Asset/Models/Props/PaintCan/PaintCan.gltf"
 		});
-
-	SetCollisionEnabled(false);
 
 	StaticMeshObject::Init();
 }

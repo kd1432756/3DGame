@@ -2716,6 +2716,29 @@ void Editor::DrawMenuBar()
 					}
 				}
 
+				if (ImGui::MenuItem("Faucet"))
+				{
+					auto obj = SceneManager::Instance().CreateObject("Faucet");
+
+					if (obj)
+					{
+						obj->SetName("Faucet");
+
+						m_selectObject = obj;
+					}
+				}
+				if (ImGui::MenuItem("Car"))
+				{
+					auto obj = SceneManager::Instance().CreateObject("Car");
+
+					if (obj)
+					{
+						obj->SetName("Car");
+
+						m_selectObject = obj;
+					}
+				}
+
 				ImGui::EndMenu();
 			}
 

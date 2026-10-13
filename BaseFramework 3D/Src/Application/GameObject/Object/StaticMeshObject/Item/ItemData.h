@@ -5,7 +5,9 @@ enum class ItemAction
 	None,
 	Repair,
 	Cut,
-	Break
+	Break,
+	Wrench,
+	Pirece
 };
 
 struct ItemUse

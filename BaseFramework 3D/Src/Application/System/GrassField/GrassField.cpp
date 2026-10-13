@@ -4,6 +4,8 @@
 
 #include "../../Scene/SceneManager.h"
 
+#include "../../GameObject/Character/Player/Player.h"
+
 void GrassField::Generate(float density, float obstacleRadius)
 {
 	m_model = std::make_shared<KdModelData>();
@@ -61,11 +63,31 @@ void GrassField::DrawLit()
 {
 	if (!m_model) { return; }
 
+	// プレイヤー位置を取得(いなければ全部描画)
+	bool useCull = false;
+	Math::Vector3 center;
+	if (auto player = m_wpPlayer.lock())
+	{
+		center = player->GetPos();
+		useCull = true;
+	}
+
+	const float distSq = m_drawDistance * m_drawDistance;
+
 	auto& sm = KdShaderManager::Instance();
 	sm.ChangeRasterizerState(KdRasterizerState::CullNone);
 
 	for (const auto& m : m_instances)
 	{
+		if (useCull)
+		{
+			// XZ平面の距離で判定(高さは無視)
+			const Math::Vector3 p = m.Translation();
+			const float dx = p.x - center.x;
+			const float dz = p.z - center.z;
+			if (dx * dx + dz * dz > distSq) { continue; }
+		}
+
 		sm.m_StandardShader.SetWindEffectEnable(true);
 		sm.m_StandardShader.DrawModel(*m_model, m);
 	}

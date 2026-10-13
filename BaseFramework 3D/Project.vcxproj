@@ -297,6 +297,8 @@
     <ClInclude Include="Src\Application\GameObject\Character\Police\Police.h" />
     <ClInclude Include="Src\Application\GameObject\Effect\AlertIcon\AlertIcon.h" />
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\Ground\Ground.h" />
+    <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Car\Car.h" />
+    <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Faucet\Faucet.h" />
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Flower\Flower.h" />
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Hose\Hose.h" />
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\InteractiveObject.h" />
@@ -447,6 +449,8 @@
     <ClCompile Include="Src\Application\GameObject\Character\Police\Police.cpp" />
     <ClCompile Include="Src\Application\GameObject\Effect\AlertIcon\AlertIcon.cpp" />
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\Ground\Ground.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Car\Car.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Faucet\Faucet.cpp" />
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Flower\Flower.cpp" />
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Hose\Hose.cpp" />
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\InteractiveObject.cpp" />

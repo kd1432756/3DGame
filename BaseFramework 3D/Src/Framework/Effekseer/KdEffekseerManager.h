@@ -38,6 +38,8 @@ public:
 
 	void SetPos(const int handle, const Math::Vector3& pos);
 	void SetRotation(const int handle, const Math::Vector3& axis, const float angle);
+	// 追加
+	void SetRotation(const int handle, const Math::Vector3& rotateRadian);
 	void SetWorldMatrix(const int handle, const Math::Matrix& mWorld);
 
 	void SetScale(const int handle, const Math::Vector3& scale);
@@ -168,6 +170,12 @@ public:
 	KdEffekseerManager::PlayEfkInfo& WorkPlayEfkInfo()				{ return m_info; }
 	const KdEffekseerManager::PlayEfkInfo& GetPlayEfkInfo() const	{ return m_info; }
 
+	// 追加 角度
+	void SetRotation(const Math::Vector3& rotateDegree)
+	{
+		m_info.Rotate = rotateDegree;
+		KdEffekseerManager::GetInstance().SetRotation(m_handle, ConvertToRadian(rotateDegree));
+	}
 private:
 
 	Effekseer::ManagerRef				m_parentManager = nullptr;

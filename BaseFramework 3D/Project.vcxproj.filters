@@ -295,6 +295,12 @@
     <Filter Include="Src\Application\System\FootStep">
       <UniqueIdentifier>{32fed343-7d4f-443d-9727-7e67d0025ae7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Faucet">
+      <UniqueIdentifier>{38596656-397f-4cec-8122-60dbfb26f9ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Car">
+      <UniqueIdentifier>{04d37ed0-f3af-4e5c-82a0-799d2702c153}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -750,6 +756,12 @@
     <ClInclude Include="Src\Application\System\FootStep\FootStepPhaseTable.h">
       <Filter>Src\Application\System\FootStep</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Faucet\Faucet.h">
+      <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Faucet</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Car\Car.h">
+      <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Car</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1160,6 +1172,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\System\FootStep\FootStep.cpp">
       <Filter>Src\Application\System\FootStep</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Faucet\Faucet.cpp">
+      <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Faucet</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Car\Car.cpp">
+      <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Car</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
