@@ -171,8 +171,6 @@ void GameScene::Start()
 		LocationPointManager::Instance(),
 		scale);
 
-	DayCycle::Instance().Init();
-
 	FootstepSystem::Instance().Init();
 
 	// 風有効化
@@ -278,6 +276,8 @@ void GameScene::Init()
 	CameraManager::Instance().SetCamera(m_spGameCamera);
 
 	ScoreManager::Instance().Init();
+
+	DayCycle::Instance().Init();
 
 	//RoadNodeManager::Instance().Init();
 }

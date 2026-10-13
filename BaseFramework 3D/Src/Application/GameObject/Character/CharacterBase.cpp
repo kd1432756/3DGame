@@ -274,7 +274,7 @@ void CharacterBase::CollectWallHits(float radius, std::vector<WallHit>& out)
 
 void CharacterBase::ResolveCollision()
 {
-	const float radius = m_collisionRadius * m_sceneScale;
+/*	const float radius = m_collisionRadius * m_sceneScale;
 	const float skin = 0.001f;
 
 	std::vector<WallHit> walls;
@@ -295,6 +295,31 @@ void CharacterBase::ResolveCollision()
 		if (len > radius) { push *= radius / len; }
 
 		m_pos += push;
+	}*/
+
+	/*const float radius = m_collisionRadius * m_sceneScale;*/
+	const float radius = (m_collisionRadius * m_sceneScale) - 0.002f * m_sceneScale;
+	const float skin = 0.001f * m_sceneScale;
+	const float maxPush = radius * 0.5f;   // 1回の最大押し出し
+
+	std::vector<WallHit> walls;
+
+	for (int i = 0; i < 8; ++i)
+	{
+		CollectWallHits(radius, walls);
+		if (walls.empty()) { break; }
+
+		// 最も深くめり込んでいる壁を1つだけ解消
+		const WallHit* deepest = &walls[0];
+		for (auto& w : walls)
+		{
+			if (w.overlap > deepest->overlap) { deepest = &w; }
+		}
+
+		float d = deepest->overlap + skin;
+		if (d > maxPush) { d = maxPush; }
+
+		m_pos += deepest->normal * d;
 	}
 }
 

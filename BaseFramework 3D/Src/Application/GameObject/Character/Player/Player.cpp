@@ -276,7 +276,8 @@ void Player::Move()
 	const float margin = 0.02f * m_sceneScale;   // 先読み距離。移動量より小さめに
 
 	std::vector<WallHit> walls;
-	CollectWallHits(radius + margin, walls);
+	/*CollectWallHits(radius + margin, walls);*/
+	CollectWallHits(radius, walls);
 
 	// 壁に向かう成分を除去(角に備えて2周)
 	for (int pass = 0; pass < 2; ++pass)

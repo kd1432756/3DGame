@@ -8,7 +8,8 @@
 		{
 			"name":"Scene",
 			"nodes":[
-				0
+				0,
+				1
 			]
 		}
 	],
@@ -17,10 +18,24 @@
 			"mesh":0,
 			"name":"Bush_2x2",
 			"rotation":[
-				0.7071068286895752,
+				0.70710688829422,
 				0,
 				0,
-				0.7071068286895752
+				0.7071066498756409
+			]
+		},
+		{
+			"mesh":1,
+			"name":"COL",
+			"scale":[
+				0.800000011920929,
+				0.699999988079071,
+				0.5
+			],
+			"translation":[
+				0,
+				0.699999988079071,
+				0
 			]
 		}
 	],
@@ -48,6 +63,19 @@
 					},
 					"indices":3,
 					"material":0
+				}
+			]
+		},
+		{
+			"name":"\u7acb\u65b9\u4f53",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":4,
+						"NORMAL":5,
+						"TEXCOORD_0":6
+					},
+					"indices":7
 				}
 			]
 		}
@@ -99,6 +127,40 @@
 			"componentType":5123,
 			"count":2868,
 			"type":"SCALAR"
+		},
+		{
+			"bufferView":4,
+			"componentType":5126,
+			"count":24,
+			"max":[
+				1,
+				1,
+				1
+			],
+			"min":[
+				-1,
+				-1,
+				-1
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":5,
+			"componentType":5126,
+			"count":24,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":6,
+			"componentType":5126,
+			"count":24,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":7,
+			"componentType":5123,
+			"count":36,
+			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
@@ -125,6 +187,30 @@
 			"byteLength":5736,
 			"byteOffset":33600,
 			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":288,
+			"byteOffset":39336,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":288,
+			"byteOffset":39624,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":192,
+			"byteOffset":39912,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":72,
+			"byteOffset":40104,
+			"target":34963
 		}
 	],
 	"samplers":[
@@ -135,7 +221,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":39336,
+			"byteLength":40176,
 			"uri":"Bush.bin"
 		}
 	]
