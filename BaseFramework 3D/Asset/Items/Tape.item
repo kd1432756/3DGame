@@ -12,6 +12,11 @@
 			"Action": "Repair",
 			"Target": "Flower",
 			"Text": "Repair"
+		},
+		{
+			"Action": "Repair",
+			"Target": "Window",
+			"Text": "Repair"
 		}
 	],
 

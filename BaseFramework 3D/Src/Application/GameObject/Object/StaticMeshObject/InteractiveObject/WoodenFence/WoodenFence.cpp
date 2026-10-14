@@ -17,7 +17,7 @@ void WoodenFence::Init()
 		3.5f,
 		300,
 		"Wooden Fence Break!",
-		"Your Wodd Fence was Broken!",
+		"Your Wodd Fence has been Broken!",
 		"Asset/Models/Props/WoodFence/WoodFence_Broken.gltf"
 		});
 
@@ -38,7 +38,15 @@ void WoodenFence::Init()
 
 void WoodenFence::OnAction(const InteractiveAction& action, const std::shared_ptr<Player>& player)
 {
+	KdEffekseerManager::GetInstance().Play("interact.efkefc", m_pos, SceneManager::Instance().GetSceneScale() * 5.0f);
 
+	if (m_state == InteractiveState::Damaged)
+	{
+		Math::Vector3 pos = m_pos + Math::Vector3{0, GetScale().y, 0};
+		Math::Vector3 dir = m_mWorld.Backward();
+		auto effect = KdEffekseerManager::GetInstance().Play("fenceBreak.efkefc", pos, SceneManager::Instance().GetSceneScale() * 5.0f);
+		effect.lock()->SetRotation(dir);
+	}
 }
 
 void WoodenFence::RegisterCollider()

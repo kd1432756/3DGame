@@ -303,6 +303,7 @@
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Hose\Hose.h" />
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\InteractiveObject.h" />
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\PaintCan\PaintCan.h" />
+    <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Window\Window.h" />
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\WoodenFence\WoodenFence.h" />
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\Item\Item.h" />
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\Item\ItemData.h" />
@@ -455,6 +456,7 @@
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Hose\Hose.cpp" />
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\InteractiveObject.cpp" />
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\PaintCan\PaintCan.cpp" />
+    <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Window\Window.cpp" />
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\WoodenFence\WoodenFence.cpp" />
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\Item\Item.cpp" />
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\Item\ItemData.cpp" />

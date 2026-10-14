@@ -73,7 +73,7 @@ void Faucet::Update()
 
 void Faucet::OnAction(const InteractiveAction& action, const std::shared_ptr<Player>& player)
 {
-	KdEffekseerManager::GetInstance().Play("interact.efkefc", m_pos, SceneManager::Instance().GetSceneScale() * 3.0f);
+	KdEffekseerManager::GetInstance().Play("interact.efkefc", m_pos, SceneManager::Instance().GetSceneScale() * 2.0f);
 }
 
 void Faucet::RegisterCollider()

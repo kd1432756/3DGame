@@ -301,6 +301,9 @@
     <Filter Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Car">
       <UniqueIdentifier>{04d37ed0-f3af-4e5c-82a0-799d2702c153}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Window">
+      <UniqueIdentifier>{650e52ce-771b-4353-8ebf-5b3cec7761e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -762,6 +765,9 @@
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Car\Car.h">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Car</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Window\Window.h">
+      <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Window</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1178,6 +1184,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Car\Car.cpp">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Car</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Window\Window.cpp">
+      <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

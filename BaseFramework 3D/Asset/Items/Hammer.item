@@ -15,7 +15,7 @@
 		},
 		{
 			"Action": "Break",
-			"Target": "StoneStatue",
+			"Target": "Window",
 			"Text": "Break"
 		}
 	],

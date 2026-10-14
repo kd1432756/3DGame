@@ -88,7 +88,7 @@ void Car::Update()
 
 void Car::OnAction(const InteractiveAction& action, const std::shared_ptr<Player>& player)
 {
-	KdEffekseerManager::GetInstance().Play("interact.efkefc", m_pos, SceneManager::Instance().GetSceneScale() * 4.0f);
+	KdEffekseerManager::GetInstance().Play("interact.efkefc", m_pos, SceneManager::Instance().GetSceneScale() * 10.0f);
 }
 
 void Car::RegisterCollider()

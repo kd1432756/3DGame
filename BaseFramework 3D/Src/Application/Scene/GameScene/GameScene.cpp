@@ -171,6 +171,9 @@ void GameScene::Start()
 		LocationPointManager::Instance(),
 		scale);
 
+//	KdShaderManager::Instance().WorkAmbientController().SetFogEnable(true, false);
+//	KdShaderManager::Instance().WriteCBDistanceFog({ 1,1,1 }, 0.0005f);
+
 	FootstepSystem::Instance().Init();
 
 	// 風有効化

@@ -38,6 +38,19 @@ void PaintCan::Init()
 	StaticMeshObject::Init();
 }
 
+void PaintCan::OnAction(const InteractiveAction& action, const std::shared_ptr<Player>& player)
+{
+	KdEffekseerManager::GetInstance().Play("interact.efkefc", m_pos, SceneManager::Instance().GetSceneScale() * 1.0f);
+
+	if (m_state == InteractiveState::Damaged)
+	{
+		Math::Vector3 pos = m_pos + Math::Vector3{ 0, GetScale().y, 0 };
+		Math::Vector3 dir = m_mWorld.Backward();
+		auto effect = KdEffekseerManager::GetInstance().Play("paintSpill.efkefc", pos, SceneManager::Instance().GetSceneScale() * 1.0f);
+		effect.lock()->SetRotation(dir);
+	}
+}
+
 void PaintCan::RegisterCollider()
 {
 	if (!m_pCollider)

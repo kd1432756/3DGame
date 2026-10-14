@@ -19,6 +19,7 @@
 #include "../GameObject/Object/StaticMeshObject/InteractiveObject/WoodenFence/WoodenFence.h"
 #include "../GameObject/Object/StaticMeshObject/InteractiveObject/Faucet/Faucet.h"
 #include "../GameObject/Object/StaticMeshObject/InteractiveObject/Car/Car.h"
+#include "../GameObject/Object/StaticMeshObject/InteractiveObject/Window/Window.h"
 
 #include "../GameObject/Object/StaticMeshObject/Item/ItemManager.h"
 
@@ -325,6 +326,14 @@ void SceneManager::RegisterGameObjects()
 		[]()
 		{
 			return std::make_shared<Car>();
+		}
+	);
+
+	m_factory.RegisterCreateFunction(
+		"Window",
+		[]()
+		{
+			return std::make_shared<Window>();
 		}
 	);
 }

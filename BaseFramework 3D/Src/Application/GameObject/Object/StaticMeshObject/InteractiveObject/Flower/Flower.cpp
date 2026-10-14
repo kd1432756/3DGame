@@ -41,6 +41,16 @@ void Flower::Init()
 void Flower::OnAction(const InteractiveAction& action, const std::shared_ptr<Player>& player)
 {
 	KdEffekseerManager::GetInstance().Play("interact.efkefc", m_pos, SceneManager::Instance().GetSceneScale() * 3.0f);
+
+	if (m_state == InteractiveState::Damaged)
+	{
+		Math::Vector3 pos;
+		if (const KdModelData::Node* pNode = m_spModel->FindNode("FlowerCutPoint"))
+		{
+			pos = (pNode->m_worldTransform * m_mWorld).Translation();
+			KdEffekseerManager::GetInstance().Play("flowerCut.efkefc", pos, SceneManager::Instance().GetSceneScale() * 1.0f);
+		}
+	}
 }
 
 void Flower::RegisterCollider()

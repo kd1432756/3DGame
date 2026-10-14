@@ -2727,6 +2727,7 @@ void Editor::DrawMenuBar()
 						m_selectObject = obj;
 					}
 				}
+
 				if (ImGui::MenuItem("Car"))
 				{
 					auto obj = SceneManager::Instance().CreateObject("Car");
@@ -2734,6 +2735,18 @@ void Editor::DrawMenuBar()
 					if (obj)
 					{
 						obj->SetName("Car");
+
+						m_selectObject = obj;
+					}
+				}
+
+				if (ImGui::MenuItem("Window"))
+				{
+					auto obj = SceneManager::Instance().CreateObject("Window");
+
+					if (obj)
+					{
+						obj->SetName("Window");
 
 						m_selectObject = obj;
 					}
