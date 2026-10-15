@@ -21,6 +21,8 @@ public:
 
 	void Init() override;
 
+	void GenerateDepthMapFromLight() override;
+
 	const char* GetTypeName() const override
 	{
 		return "Ground";

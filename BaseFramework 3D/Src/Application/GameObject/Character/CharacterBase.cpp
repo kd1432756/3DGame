@@ -190,10 +190,6 @@ void CharacterBase::CheckGround()
 	}
 	if (!hit)
 	{
-		char buf[256];
-		sprintf_s(buf, "[CheckGround] no hit pos=(%.2f, %.2f, %.2f) rayY=%.2f range=%.2f\n",
-			m_pos.x, m_pos.y, m_pos.z, ray.m_pos.y, ray.m_range);
-		OutputDebugStringA(buf);
 		m_groundType = Ground::GroundType::None;
 		return;
 	}
@@ -509,14 +505,15 @@ bool CharacterBase::HasInventoryItem(const std::string& itemPath) const
 	}
 	return false;
 }
+
 // NPC用：修復用途を持つアイテムがある
 bool CharacterBase::HasRepairItem() const
 {
 	for (const auto& item : m_inventory.GetItems())
 	{
 		if (item.IsEmpty()) continue;
-		ItemData data;
-		if (data.Load(item.itemPath) && data.HasRepairUse()) return true;
+		const ItemData* d = ItemData::Get(item.itemPath);
+		if (d && d->HasRepairUse()) return true;
 	}
 	return false;
 }
@@ -527,8 +524,8 @@ bool CharacterBase::HasPrankItem() const
 	for (const auto& item : m_inventory.GetItems())
 	{
 		if (item.IsEmpty()) continue;
-		ItemData data;
-		if (data.Load(item.itemPath) && data.HasPrankUse()) return true;
+		const ItemData* d = ItemData::Get(item.itemPath);
+		if (d && d->HasPrankUse()) return true;
 	}
 	return false;
 }
@@ -539,8 +536,8 @@ bool CharacterBase::HasDangerousItem() const
 	for (const auto& item : m_inventory.GetItems())
 	{
 		if (item.IsEmpty()) continue;
-		ItemData data;
-		if (data.Load(item.itemPath) && data.IsDangerous()) return true;
+		const ItemData* d = ItemData::Get(item.itemPath);
+		if (d && d->IsDangerous()) return true;
 	}
 	return false;
 }
@@ -552,8 +549,8 @@ void CharacterBase::ConfiscateDangerousItems()
 	for (int i = 0; i < Inventory::MaxItem; ++i)
 	{
 		if (items[i].IsEmpty()) continue;
-		ItemData data;
-		if (data.Load(items[i].itemPath) && data.IsDangerous())
+		const ItemData* d = ItemData::Get(items[i].itemPath);
+		if (d && d->IsDangerous())
 		{
 			m_inventory.RemoveItem(i);
 		}

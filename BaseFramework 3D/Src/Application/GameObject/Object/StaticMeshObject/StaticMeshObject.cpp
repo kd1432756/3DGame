@@ -13,6 +13,7 @@ void StaticMeshObject::Init()
 void StaticMeshObject::DrawLit()
 {
 	if (!m_spModel) return;
+	if (!IsInView()) return;
 
 	KdShaderManager::Instance().m_StandardShader.DrawModel(
 		*m_spModel,
@@ -23,6 +24,7 @@ void StaticMeshObject::DrawLit()
 void StaticMeshObject::GenerateDepthMapFromLight()
 {
 	if (!m_spModel) return;
+	if (!IsInShadowRange()) return;
 
 	KdShaderManager::Instance().m_StandardShader.DrawModel(
 		*m_spModel,
@@ -65,6 +67,7 @@ void StaticMeshObject::ReloadModel()
 	m_spModel =
 		KdAssets::Instance().m_modeldatas.GetData(m_modelPath);
 
+	CalcLocalBounds();
 	RegisterCollider();
 }
 
@@ -108,3 +111,60 @@ void StaticMeshObject::SetCollisionEnabled(bool enabled)
 		RegisterCollider();
 	}
 }
+
+// ===== 描画関連 =====
+void StaticMeshObject::SetCullingCamera(const KdCamera& camera)
+{
+	// 射影行列 → ビュー空間の視錐台
+	DirectX::BoundingFrustum::CreateFromMatrix(s_frustum, camera.GetProjMatrix());
+
+	// カメラのワールド行列でワールド空間へ
+	const Math::Matrix mCam = camera.GetCameraMatrix();
+	s_frustum.Transform(s_frustum, mCam);
+
+	s_camPos = mCam.Translation();
+}
+void StaticMeshObject::CalcLocalBounds()
+{
+	m_hasBounds = false;
+	if (!m_spModel) return;
+
+	const auto& nodes = m_spModel->GetOriginalNodes();
+	bool first = true;
+
+	for (int idx : m_spModel->GetDrawMeshNodeIndices())
+	{
+		const auto& node = nodes[idx];
+		if (!node.m_spMesh) continue;
+
+		// ノード行列を掛けて、DrawModelの描画位置と一致させる
+		DirectX::BoundingBox box;
+		node.m_spMesh->GetBoundingBox().Transform(box, node.m_worldTransform);
+
+		if (first) { m_localBox = box; first = false; }
+		else { DirectX::BoundingBox::CreateMerged(m_localBox, m_localBox, box); }
+	}
+
+	m_hasBounds = !first;
+}
+bool StaticMeshObject::IsInView() const
+{
+	if (!m_hasBounds) return true;   // 不明なものは描く(安全側)
+
+	DirectX::BoundingBox worldBox;
+	m_localBox.Transform(worldBox, m_mWorld);
+	return s_frustum.Intersects(worldBox);
+}
+bool StaticMeshObject::IsInShadowRange() const
+{
+	if (!m_hasBounds) return true;
+
+	DirectX::BoundingBox worldBox;
+	m_localBox.Transform(worldBox, m_mWorld);
+
+	const Math::Vector3 center(worldBox.Center.x, worldBox.Center.y, worldBox.Center.z);
+	const float radius = Math::Vector3(worldBox.Extents.x, worldBox.Extents.y, worldBox.Extents.z).Length();
+
+	return (center - s_camPos).Length() - radius <= s_shadowDistance;
+}
+// ====================

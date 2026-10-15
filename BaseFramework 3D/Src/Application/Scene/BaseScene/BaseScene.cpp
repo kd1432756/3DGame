@@ -2,6 +2,8 @@
 
 #include "../../Editor/Editor.h"
 
+#include "../CameraManager/CameraManager.h"
+
 void BaseScene::PreUpdate()
 {
 	// Updateの前の更新処理
@@ -60,6 +62,11 @@ void BaseScene::PreDraw()
 	for (auto& obj : m_objList)
 	{
 		obj->PreDraw();
+	}
+
+	if (auto camera = CameraManager::Instance().GetCamera())
+	{
+		StaticMeshObject::SetCullingCamera(*camera->GetCamera());
 	}
 }
 

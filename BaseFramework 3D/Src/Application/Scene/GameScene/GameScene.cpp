@@ -171,6 +171,11 @@ void GameScene::Start()
 		LocationPointManager::Instance(),
 		scale);
 
+	char buf[256];
+	sprintf_s(buf, "object = %d\n",
+		SceneManager::Instance().GetObjList().size());
+	OutputDebugStringA(buf);
+
 //	KdShaderManager::Instance().WorkAmbientController().SetFogEnable(true, false);
 //	KdShaderManager::Instance().WriteCBDistanceFog({ 1,1,1 }, 0.0005f);
 

@@ -71,6 +71,14 @@ public:
 		return m_isGround;
 	}
 
+	// ===== 描画関連 =====
+	// 毎フレーム1回、シーン側から呼ぶ
+	static void SetCullingCamera(const KdCamera& camera);
+
+	// 影を落とす最大距離(カメラからの距離)
+	static inline float s_shadowDistance = 10.0f;
+	// ====================
+
 protected:
 
 	std::shared_ptr<KdModelData> m_spModel = nullptr;
@@ -86,4 +94,15 @@ protected:
 
 	void SetCollisionEnabled(bool enabled);
 
+	// ===== 描画関連 =====
+	static inline DirectX::BoundingFrustum s_frustum;
+	static inline Math::Vector3            s_camPos;
+
+	DirectX::BoundingBox m_localBox;     // モデルローカルのAABB
+	bool                 m_hasBounds = false;
+
+	void CalcLocalBounds();
+	bool IsInView() const;
+	bool IsInShadowRange() const;
+	// ====================
 };

@@ -5,6 +5,11 @@ void Ground::Init()
 	StaticMeshObject::Init();
 }
 
+void Ground::GenerateDepthMapFromLight()
+{
+
+}
+
 void Ground::RegisterCollider()
 {
 	m_pCollider.reset();
@@ -18,7 +23,6 @@ void Ground::RegisterCollider()
 		KdCollider::TypeEditor | KdCollider::TypeGround);
 }
 
-// Ground.cpp
 void Ground::CollectGrassPoints(std::vector<Math::Vector3>& out, float density) const
 {
 	if (!IsGrass() || !m_spModel) { return; }

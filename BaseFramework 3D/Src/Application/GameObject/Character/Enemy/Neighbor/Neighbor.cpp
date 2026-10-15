@@ -97,7 +97,9 @@ void Neighbor::SelectInventory(int index)
 		return;
 	}
 
-	m_currentItemData.Load(item->itemPath);
+	const ItemData* d = ItemData::Get(item->itemPath);
+
+	m_currentItemData = d ? *d : ItemData();
 }
 
 void Neighbor::OnItemsConfiscated()
@@ -351,19 +353,19 @@ void Neighbor::UpdateUtility()
 				continue;
 			}
 
-			ItemData itemData;
+			const ItemData* data = ItemData::Get(items[i].itemPath);
 
-			if (!itemData.Load(items[i].itemPath))
+			if (!data)
 			{
 				continue;
 			}
 
-			if (!itemData.HasRepairUse())
+			if (!data->HasRepairUse())
 			{
 				continue;
 			}
 
-			if (!target->CanNPCUse(itemData, GetName()))
+			if (!target->CanNPCUse(*data, GetName()))
 			{
 				continue;
 			}
@@ -552,11 +554,6 @@ float Neighbor::EvaluateUrgentRepair()
 {
 	CleanupUrgentRepairTargets();
 
-	OutputDebugStringA(
-		("EvaluateUrgentRepair: queue size after cleanup = " +
-			std::to_string(m_urgentRepairTargets.size()) + "\n").c_str()
-	);
-
 	m_debugInfo.urgentRepairQueueSize =
 		static_cast<int>(m_urgentRepairTargets.size());
 
@@ -573,30 +570,17 @@ float Neighbor::EvaluateUrgentRepair()
 
 	if (!best)
 	{
-		OutputDebugStringA("  -> SelectBestUrgentRepairTarget returned null\n");
 		m_wpSelectedUrgentRepairTarget.reset();
 
 		m_debugInfo.bestUrgentRepairTarget = "None";
 
 		return 0.0f;
 	}
-	OutputDebugStringA(
-		("  m_urgentRepairUtility (member) = " +
-			std::to_string(m_urgentRepairUtility) + "\n").c_str()
-	);
 
 	m_wpSelectedUrgentRepairTarget = best;
 
-	OutputDebugStringA(
-		("  -> selected, utility = " +
-			std::to_string(m_urgentRepairUtility) + "\n").c_str()
-	);
 	m_debugInfo.bestUrgentRepairTarget = best->GetName();
 
-	OutputDebugStringA(
-		("  -> selected, utility = " +
-			std::to_string(m_urgentRepairUtility) + "\n").c_str()
-	);
 	return m_urgentRepairBaseUtility;
 }
 
@@ -1305,10 +1289,10 @@ void Neighbor::PickupSearchItem()
 			{
 				if (items[i].IsEmpty()) continue;
 
-				ItemData data;
-				if (!data.Load(items[i].itemPath)) continue;
+				const ItemData* data = ItemData::Get(items[i].itemPath);
+				if (!data) continue;
 
-				if (!urgentTarget->CanNPCUse(data, GetName()))
+				if (!urgentTarget->CanNPCUse(*data, GetName()))
 				{
 					swapIndex = i;
 					break;
@@ -1721,7 +1705,9 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 	{
 		const bool bare = (inventoryIndex < 0);
 
-		ItemData itemData;
+		static const ItemData kEmpty;
+		const ItemData* itemData = &kEmpty;
+
 		std::string itemPath = "(bare hands)";
 
 		if (!bare)
@@ -1729,8 +1715,10 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 			const InventoryItem& inventoryItem = items[inventoryIndex];
 
 			if (inventoryItem.IsEmpty()) { continue; }
-			if (!itemData.Load(inventoryItem.itemPath)) { continue; }
-			if (!itemData.HasPrankUse()) { continue; }
+
+			itemData = ItemData::Get(inventoryItem.itemPath);
+
+			if (!itemData || !itemData->HasPrankUse()) continue;
 
 			itemPath = inventoryItem.itemPath;
 		}
@@ -1780,7 +1768,7 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 
 			const bool canNPCUse = bare
 				? target->CanNPCUseBare(GetName())
-				: target->CanNPCUse(itemData, GetName());
+				: target->CanNPCUse(*itemData, GetName());
 
 			log.canNPCUse = canNPCUse;
 
@@ -1836,7 +1824,7 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 			float utility =
 				EvaluatePrankCandidate(
 					target,
-					itemData,
+					*itemData,
 					pathDistance
 				);
 
@@ -2231,7 +2219,9 @@ bool Neighbor::FindBestRepairCandidate(
 	{
 		const bool bare = (inventoryIndex < 0);
 
-		ItemData itemData;
+		static const ItemData kEmpty;
+		const ItemData* itemData = &kEmpty;
+
 		std::string itemPath = "(bare hands)";
 
 		if (!bare)
@@ -2240,9 +2230,9 @@ bool Neighbor::FindBestRepairCandidate(
 
 			if (inventoryItem.IsEmpty()) { continue; }
 
-			itemData.Load(inventoryItem.itemPath);
+			itemData = ItemData::Get(inventoryItem.itemPath);
 
-			if (!itemData.HasRepairUse()) { continue; }
+			if (!itemData->HasRepairUse()) { continue; }
 
 			itemPath = inventoryItem.itemPath;
 		}
@@ -2293,7 +2283,7 @@ bool Neighbor::FindBestRepairCandidate(
 
 			const bool canNPCUse = bare
 				? target->CanNPCUseBare(GetName())
-				: target->CanNPCUse(itemData, GetName());
+				: target->CanNPCUse(*itemData, GetName());
 
 			log.canNPCUse = canNPCUse;
 
@@ -2346,7 +2336,7 @@ bool Neighbor::FindBestRepairCandidate(
 			float utility =
 				EvaluateRepairCandidate(
 					target,
-					itemData
+					*itemData
 				);
 
 			log.utility = utility;
@@ -2825,14 +2815,14 @@ bool Neighbor::IsInventoryAllRepair() const
 			continue;
 		}
 
-		ItemData data;
+		const ItemData* data = ItemData::Get(items[i].itemPath);
 
-		if (!data.Load(items[i].itemPath))
+		if (!data)
 		{
 			continue;
 		}
 
-		if (data.HasPrankUse())
+		if (data->HasPrankUse())
 		{
 			return false;   // いたずらにも使えるなら「全部修復用」ではない
 		}
@@ -2867,8 +2857,8 @@ int Neighbor::FindSwapSlotForPrank() const
 	{
 		if (items[i].IsEmpty()) continue;
 
-		ItemData data;
-		if (!data.Load(items[i].itemPath)) continue;
+		const ItemData* data = ItemData::Get(items[i].itemPath);
+		if (!data) continue;
 
 		bool needed = false;
 
@@ -2878,7 +2868,7 @@ int Neighbor::FindSwapSlotForPrank() const
 
 			if (!target || target->GetOwner() != GetName()) continue;
 
-			if (target->CanNPCUse(data, GetName()))
+			if (target->CanNPCUse(*data, GetName()))
 			{
 				needed = true;
 				break;

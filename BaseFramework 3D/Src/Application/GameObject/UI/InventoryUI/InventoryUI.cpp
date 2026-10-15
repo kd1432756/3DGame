@@ -139,15 +139,14 @@ void InventoryUI::DrawItemIcon(
 
 	if (it == m_iconTextures.end())
 	{
-		ItemData itemData;
+		const ItemData* data = ItemData::Get(item.itemPath);
 
-		if (!itemData.Load(item.itemPath))
+		if (!data)
 		{
 			return;
 		}
 
-		const std::string& iconPath =
-			itemData.GetIconPath();
+		const std::string& iconPath = data->GetIconPath();
 
 		if (iconPath.empty())
 		{

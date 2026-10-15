@@ -30,6 +30,8 @@ void InteractiveObject::DrawLit()
 	KdShaderManager::Instance().m_StandardShader.SetLimLight(color, pow);
 
 	StaticMeshObject::DrawLit();
+
+	KdShaderManager::Instance().m_StandardShader.SetLimLightEnable(false);
 }
 
 void InteractiveObject::DrawBright()

@@ -23,6 +23,12 @@ public:
 
 	bool Load(const std::string& path);
 
+	// キャッシュ経由で取得（失敗時はnullptr）。返したポインタは有効なまま
+	static const ItemData* Get(const std::string& path);
+
+	// .itemファイルを編集して再読み込みしたい時用
+	static void ClearCache();
+
 	//--------------------------------------------------
 	// 基本情報
 	//--------------------------------------------------

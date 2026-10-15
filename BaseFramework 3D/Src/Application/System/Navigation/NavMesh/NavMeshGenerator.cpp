@@ -263,10 +263,6 @@ void NavMeshGenerator::GenerateSoloMesh(
 	const std::vector<NavMeshObstacleBounds>& obstacles,
 	NavMeshManager& navMeshManager)
 {
-	OutputDebugStringA(
-		("Obstacle Count = " +
-			std::to_string(obstacles.size()) +
-			"\n").c_str());
 	//--------------------------------------------------------
 	// Clear
 	//--------------------------------------------------------
@@ -294,15 +290,6 @@ void NavMeshGenerator::GenerateSoloMesh(
 		region,
 		vertices,
 		triangles);
-	OutputDebugStringA(
-		("Vertices = " +
-			std::to_string(vertices.size()) +
-			"\n").c_str());
-
-	OutputDebugStringA(
-		("Triangles = " +
-			std::to_string(triangles.size()) +
-			"\n").c_str());
 
 	//--------------------------------------------------------
 	// TriangleをNavMeshへ登録
@@ -356,12 +343,6 @@ void NavMeshGenerator::GenerateSoloMesh(
 				p1,
 				p2
 			});
-		OutputDebugStringA(
-			("NavMesh Polygons = " +
-				std::to_string(
-					navMeshManager.GetPolygons().size()) +
-				"\n").c_str());
-
 	}
 
 	//--------------------------------------------------------
@@ -1712,10 +1693,7 @@ void NavMeshGenerator::DelaunayTriangulate(
 	}
 
 	triangles.clear();
-	OutputDebugStringA(
-		("Before Region Check = " +
-			std::to_string(result.size()) +
-			"\n").c_str());
+
 	for (const auto& triangle : result)
 	{
 		const Math::Vector3& p0 =
@@ -1739,10 +1717,6 @@ void NavMeshGenerator::DelaunayTriangulate(
 		triangles.push_back(
 			triangle);
 	}
-	OutputDebugStringA(
-		("Delaunay Raw Triangles = " +
-			std::to_string(triangles.size()) +
-			"\n").c_str());
 
 	//--------------------------------------------------------
 	// Super Triangle頂点を削除

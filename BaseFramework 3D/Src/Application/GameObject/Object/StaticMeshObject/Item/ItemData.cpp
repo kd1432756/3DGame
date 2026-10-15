@@ -2,6 +2,41 @@
 
 #include <json.hpp>
 
+namespace
+{
+	std::unordered_map<std::string, std::unique_ptr<ItemData>>& Cache()
+	{
+		static std::unordered_map<std::string, std::unique_ptr<ItemData>> s_cache;
+		return s_cache;
+	}
+}
+
+const ItemData* ItemData::Get(const std::string& path)
+{
+	std::string key = path;
+	std::replace(key.begin(), key.end(), '\\', '/');   // Loadと同じ正規化
+
+	auto& cache = Cache();
+
+	auto it = cache.find(key);
+	if (it != cache.end())
+	{
+		return it->second.get();   // 失敗済みならnullptr
+	}
+
+	auto data = std::make_unique<ItemData>();
+	if (!data->Load(key))
+	{
+		cache.emplace(key, nullptr);   // 失敗も記録して、毎回ファイルを開かない
+		return nullptr;
+	}
+
+	const ItemData* p = data.get();
+	cache.emplace(key, std::move(data));
+	return p;
+}
+
+void ItemData::ClearCache() { Cache().clear(); }
 using json = nlohmann::json;
 
 namespace
