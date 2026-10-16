@@ -172,11 +172,11 @@ private:
 	// State Settings
 	//============================================================
 
-	float m_patrolSpeed = 0.006f;
-	float m_chaseSpeed = 0.016f;
+	float m_patrolSpeed = 0.01f;
+	float m_chaseSpeed = 0.026f;
 	float m_returnSpeed = 0.01f;
-	float m_escortSpeed = 0.014f;
-	float m_investigateSpeed = 0.012f;
+	float m_escortSpeed = 0.016f;
+	float m_investigateSpeed = 0.018f;
 
 	//============================================================
 	// A*
@@ -225,7 +225,7 @@ private:
 
 	Math::Vector3 m_investigatePos = Math::Vector3::Zero;
 
-	float m_hearRange = 15.0f;
+	float m_hearRange = 25.0f;
 
 	float m_investigateCooldown = 0.0f;
 
@@ -239,7 +239,7 @@ private:
 
 	float m_arrestTime = 0.0f;
 
-	float m_arrestDistance = 1.25f;
+	float m_arrestDistance = 1.6f;
 
 	//============================================================
 	// lose sight

@@ -652,7 +652,29 @@ bool Neighbor::CalculatePathDistance(
 //============================================================
 
 void Neighbor::UpdateTask()
-{
+{	
+	//============================================================
+	// 到着後の待機中
+	//============================================================
+
+	if (m_isTaskIdling)
+	{
+		m_taskIdleTimer -= 1.0f / 60.0f;
+
+		m_debugInfo.taskMoveStatus = "Waiting";
+
+		SetMoveDirection(Math::Vector3::Zero);
+
+		PlayAnimation("Armature|Idle");
+
+		if (m_taskIdleTimer <= 0.0f)
+		{
+			m_isTaskIdling = false;
+		}
+
+		return;
+	}
+
 	auto destPoint = m_wpTaskDestination.lock();
 
 	if (!destPoint)
@@ -696,7 +718,7 @@ void Neighbor::UpdateTask()
 	{
 		m_debugInfo.taskMoveStatus = "Moving";
 
-		PlayAnimation("Armature|Walk");
+		PlayAnimation("Armature|Sprint");
 
 		return;
 	}
@@ -708,6 +730,12 @@ void Neighbor::UpdateTask()
 	else
 	{
 		m_debugInfo.taskMoveStatus = "Arrived";
+
+		// 到着時のみ待機を開始（Failedの場合は待たない）
+		m_isTaskIdling = true;
+
+		m_taskIdleTimer = m_taskIdleMin +
+			KdRandom::GetFloat(0.0f, 1.0f) * (m_taskIdleMax - m_taskIdleMin);
 	}
 
 	m_wpTaskDestination.reset();
@@ -2068,7 +2096,7 @@ void Neighbor::UpdateRepair()
 
 	if (moveResult == MoveResult::Moving)
 	{
-		PlayAnimation("Armature|Walk");
+		PlayAnimation("Armature|Sprint");
 
 		return;
 	}
@@ -2907,6 +2935,10 @@ void Neighbor::ChangeState(State newState)
 
 	m_navPathIndex = 0;
 
+	m_isTaskIdling = false;
+
+	m_taskIdleTimer = 0.0f;
+
 	m_isInteracting = false;
 
 	m_interactTimer = 0.0f;
@@ -2966,7 +2998,7 @@ void Neighbor::ApplyStateSettings()
 
 		SetMoveSpeed(m_repairSpeed);
 
-		PlayAnimation("Armature|Walk");
+		PlayAnimation("Armature|Sprint");
 
 		break;
 	}

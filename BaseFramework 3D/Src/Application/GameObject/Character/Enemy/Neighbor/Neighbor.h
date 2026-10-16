@@ -401,13 +401,13 @@ private:
 	// State Settings
 	//============================================================
 
-	float m_taskSpeed = 0.006f;
+	float m_taskSpeed = 0.016f;
 
-	float m_searchItemSpeed = 0.01f;
+	float m_searchItemSpeed = 0.02f;
 
-	float m_prankSpeed = 0.01f;
+	float m_prankSpeed = 0.02f;
 
-	float m_repairSpeed = 0.01f;
+	float m_repairSpeed = 0.02f;
 
 	//============================================================
 	// Animation
@@ -453,6 +453,14 @@ private:
 
 	float m_taskBaseUtility = 10.0f;
 
+	float m_taskIdleTimer = 0.0f;      // 残り待機時間
+
+	bool  m_isTaskIdling = false;     // 待機中か
+
+	float m_taskIdleMin = 0.2f;      // 最小待機秒
+
+	float m_taskIdleMax = 1.0f;      // 最大待機秒
+
 	//============================================================
 	// Prank
 	//============================================================
@@ -467,9 +475,9 @@ private:
 
 	float m_prankDesire = 0.3f;
 
-	float m_prankSearchRadius = 8.0f;
+	float m_prankSearchRadius = 10.0f;
 
-	float m_prankInteractDistance = 1.5f;
+	float m_prankInteractDistance = 3.0f;
 
 	//============================================================
 	// Repair
@@ -481,9 +489,9 @@ private:
 
 	int m_repairInventoryIndex = -1;
 
-	float m_repairInteractDistance = 1.5f;
+	float m_repairInteractDistance = 3.0f;
 
-	float m_repairSearchRadius = 8.0f;
+	float m_repairSearchRadius = 10.0f;
 
 	private:
 

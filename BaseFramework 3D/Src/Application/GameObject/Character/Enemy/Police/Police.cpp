@@ -109,6 +109,7 @@ void Police::UpdateExtra()
 	// 視界（コーンライト）の更新
 	if (m_state == State::Arrest || m_state == State::Escort)
 	{
+
 	}
 	else
 	{
@@ -1402,6 +1403,11 @@ void Police::ChangeState(State newState)
 		m_searchStartRotY = m_rot.y;
 	}
 
+	if (m_state == State::Arrest)
+	{
+		//KdShaderManager::Instance().WorkAmbientController().
+	}
+
 	ApplyStateSettings();
 
 	switch (m_state)
@@ -1451,7 +1457,7 @@ void Police::ApplyStateSettings()
 		break;
 	case State::Escort:
 		SetMoveSpeed(m_escortSpeed);
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Walk"));
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Sprint"));
 		break;
 	case State::LastSeen:
 		SetMoveSpeed(m_returnSpeed);
@@ -1467,7 +1473,7 @@ void Police::ApplyStateSettings()
 		break;
 	case State::Investigate:
 		SetMoveSpeed(m_investigateSpeed);
-		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Walk"));
+		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Sprint"));
 		break;
 	}
 }
