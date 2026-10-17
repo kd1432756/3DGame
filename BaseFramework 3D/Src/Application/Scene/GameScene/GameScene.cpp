@@ -24,6 +24,7 @@
 #include "../../System/FootStep/FootStep.h"
 
 #include "../../GameObject/UI/GameStateUI/GameStateUI.h"
+#include "../../GameObject/UI/ConfettiUI/ConfettiUI.h"
 #include "../../GameObject/UI/ResultUI/ResultUI.h"
 
 #include "../../GameObject/SkyBox/SkyBox.h"
@@ -45,6 +46,7 @@ void GameScene::Update()
 
 	// UIはゲーム停止中でも更新する
 	m_gameStateUI->Update();
+	m_confettiUI->Update();
 	m_resultUI->Update();
 
 	// シーン毎のイベント処理
@@ -69,6 +71,8 @@ void GameScene::Update()
 			camera->SetMouseLock(false);
 		}
 
+		KdAudioManager::Instance().StopAllSound();
+
 		m_gameStateUI->ShowFinish();
 
 		return;
@@ -82,12 +86,30 @@ void GameScene::Update()
 			continue;
 		}
 
+		if (obj == m_confettiUI)
+		{
+			continue;
+		}
+
 		if (obj == m_resultUI)
 		{
 			continue;
 		}
 
 		obj->Update();
+	}
+}
+
+void GameScene::PostUpdate()
+{
+	if (!m_gameUpdate)
+	{
+		return;
+	}
+
+	for (auto& obj : m_objList)
+	{
+		obj->PostUpdate();
 	}
 }
 
@@ -245,13 +267,19 @@ void GameScene::Start()
 				shared_from_this()));
 		m_objList.push_back(m_gameStateUI);
 
+		m_confettiUI = std::make_shared<ConfettiUI>();
+		m_confettiUI->Init();
+
 		m_resultUI = std::make_shared<ResultUI>();
 		m_resultUI->Init();
 		m_resultUI->SetName("ResultUI");
 		m_resultUI->SetGameScene(
 			std::dynamic_pointer_cast<GameScene>(
 				shared_from_this()));
+		m_resultUI->SetConfetti(m_confettiUI);
+
 		m_objList.push_back(m_resultUI);
+		m_objList.push_back(m_confettiUI);
 	}
 
 	{

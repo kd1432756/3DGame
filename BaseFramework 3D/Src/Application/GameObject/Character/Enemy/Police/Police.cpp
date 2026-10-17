@@ -60,6 +60,20 @@ void Police::Init()
 	//============================================================
 
 	ApplyStateSettings();
+
+	ChangeState(State::Return);
+}
+
+void Police::Release()
+{
+	KdShaderManager::Instance().WorkAmbientController().AddConeLight(
+		{},
+		0.0f,
+		{},
+		0.0f,
+		{},
+		false
+	);
 }
 	
 void Police::UpdateBehavior()

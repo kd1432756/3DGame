@@ -148,7 +148,7 @@ void Item::Drop(const Math::Vector3& pos, const Math::Vector3& dir)
 
 	SetPos(pos);
 
-	m_rot.y = std::atan2f(dir.x, dir.z);
+	m_rot.y = DirectX::XMConvertToDegrees(std::atan2f(dir.x, dir.z));
 	SetRot(m_rot);
 
 	Math::Vector3 _dir = dir;

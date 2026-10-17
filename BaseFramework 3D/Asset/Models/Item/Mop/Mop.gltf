@@ -22,9 +22,9 @@
 			"name":"Broom_515",
 			"rotation":[
 				0,
-				-1,
+				0.7071068286895752,
 				0,
-				4.371138828673793e-08
+				0.7071067094802856
 			]
 		}
 	],
@@ -202,7 +202,7 @@
 		{
 			"bufferView":8,
 			"componentType":5126,
-			"count":145,
+			"count":146,
 			"max":[
 				0.6577383279800415,
 				0.12508545815944672,
@@ -218,13 +218,13 @@
 		{
 			"bufferView":9,
 			"componentType":5126,
-			"count":145,
+			"count":146,
 			"type":"VEC3"
 		},
 		{
 			"bufferView":10,
 			"componentType":5126,
-			"count":145,
+			"count":146,
 			"type":"VEC2"
 		},
 		{
@@ -285,32 +285,32 @@
 		},
 		{
 			"buffer":0,
-			"byteLength":1740,
+			"byteLength":1752,
 			"byteOffset":31452,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1740,
-			"byteOffset":33192,
+			"byteLength":1752,
+			"byteOffset":33204,
 			"target":34962
 		},
 		{
 			"buffer":0,
-			"byteLength":1160,
-			"byteOffset":34932,
+			"byteLength":1168,
+			"byteOffset":34956,
 			"target":34962
 		},
 		{
 			"buffer":0,
 			"byteLength":852,
-			"byteOffset":36092,
+			"byteOffset":36124,
 			"target":34963
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":36944,
+			"byteLength":36976,
 			"uri":"Mop.bin"
 		}
 	]

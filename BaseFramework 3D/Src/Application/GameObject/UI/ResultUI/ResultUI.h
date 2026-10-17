@@ -5,6 +5,8 @@ class ScoreManager;
 
 class CharacterBase;
 
+class ConfettiUI;
+
 class ResultUI : public KdGameObject
 {
 public:
@@ -17,6 +19,8 @@ public:
 	{
 		m_wpGameScene = gameScene;
 	}
+
+	void SetConfetti(const std::shared_ptr<ConfettiUI>& confetti) { m_wpConfetti = confetti; }
 
 private:
 
@@ -53,4 +57,7 @@ private:
 	float m_animOffsetY = 0.0f;
 
 	bool m_isTitleButtonHover = false;
+
+	std::weak_ptr<ConfettiUI> m_wpConfetti;
+	bool m_confettiStarted = false;
 };

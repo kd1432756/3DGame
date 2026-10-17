@@ -304,6 +304,15 @@
     <Filter Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Window">
       <UniqueIdentifier>{650e52ce-771b-4353-8ebf-5b3cec7761e0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Character\TitleChaser">
+      <UniqueIdentifier>{d9eb12de-1509-49ef-86ac-03b1848e61ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Object\TitleProp">
+      <UniqueIdentifier>{7eb75c9b-679c-4e34-b5bb-6e47a1004c67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\ConfettiUI">
+      <UniqueIdentifier>{41e99fc6-fc16-49d6-b5c6-2153c36353a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -768,6 +777,15 @@
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Window\Window.h">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Window</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Character\TitleChaser\TitleChaser.h">
+      <Filter>Src\Application\GameObject\Character\TitleChaser</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Object\TitleProp\TitleProp.h">
+      <Filter>Src\Application\GameObject\Object\TitleProp</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\ConfettiUI\ConfettiUI.h">
+      <Filter>Src\Application\GameObject\UI\ConfettiUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1187,6 +1205,15 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Window\Window.cpp">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Character\TitleChaser\TitleChaser.cpp">
+      <Filter>Src\Application\GameObject\Character\TitleChaser</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Object\TitleProp\TitleProp.cpp">
+      <Filter>Src\Application\GameObject\Object\TitleProp</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\ConfettiUI\ConfettiUI.cpp">
+      <Filter>Src\Application\GameObject\UI\ConfettiUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

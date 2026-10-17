@@ -22,6 +22,9 @@
 #include "../GameObject/Object/StaticMeshObject/InteractiveObject/Window/Window.h"
 
 #include "../GameObject/Object/StaticMeshObject/Item/ItemManager.h"
+#include "../System/Node/AStarNode/AStarNodeManager.h"
+#include "../System/Navigation/NavMesh/NavMeshManager.h"
+#include "../System/Location/LocationPointManager.h"
 
 void SceneManager::PreUpdate()
 {
@@ -29,6 +32,10 @@ void SceneManager::PreUpdate()
 	if (m_currentSceneType != m_nextSceneType)
 	{
 		ItemManager::Instance().Reset();
+
+		AStarNodeManager::Instance().Clear();
+		NavMeshManager::Instance().Clear();
+		LocationPointManager::Instance().Clear();
 
 		ChangeScene(m_nextSceneType);
 	}

@@ -9,6 +9,8 @@
 #include "../../Character/CharacterBase.h"
 #include "../../Character/Player/Player.h"
 
+#include "../ConfettiUI/ConfettiUI.h"
+
 void ResultUI::Init()
 {
 	m_ranking.clear();
@@ -82,6 +84,17 @@ void ResultUI::Update()
 		}
 
 		return;
+	}
+
+	// 全ての結果が表示された瞬間に一度だけ紙吹雪
+	if (!m_confettiStarted)
+	{
+		m_confettiStarted = true;
+
+		if (auto confetti = m_wpConfetti.lock())
+		{
+			confetti->Start();
+		}
 	}
 
 	m_animTime += 0.05f;

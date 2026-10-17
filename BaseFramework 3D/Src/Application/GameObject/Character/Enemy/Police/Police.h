@@ -12,8 +12,11 @@ class AlertIcon;
 class Police : public EnemyBase
 {
 public:
+	Police() {}
+	~Police() { Release(); }
 
 	void Init() override;
+	void Release();
 
 	const char* GetTypeName() const override
 	{
