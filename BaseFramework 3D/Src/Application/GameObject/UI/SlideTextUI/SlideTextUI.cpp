@@ -2,6 +2,7 @@
 
 void SlideTextUI::Init()
 {
+	m_updateGroup = UpdateGroup::Always;
 	m_pos.x = m_startX;	// 画面左端から開始
 	m_pos.y = 150.0f;
 }

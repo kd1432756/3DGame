@@ -88,9 +88,12 @@ void DayCycle::UpdateLighting()
 	float angle =
 		normalizedTime * DirectX::XM_PI;
 
+	// 太陽の高さ補正（大きいほど真上から当たる）
+	const float sunHeightScale = 2.5f;  // 昼の高さの倍率
+	const float sunHeightBias = 0.6f;  // 朝夕でも最低限確保する高さ
 
 	float x = cosf(angle);
-	float y = -sinf(angle);
+	float y = -(sinf(angle) * sunHeightScale + sunHeightBias);
 	float z = 1.0f;
 
 
@@ -160,95 +163,70 @@ void DayCycle::UpdateLighting()
 		1.0f
 	};
 
-
 	//------------------------------------------------------------
 	// ④ 時間に応じて補間
 	//------------------------------------------------------------
 
-	DirectX::XMFLOAT3 lightColor;
+	// SkyBox::Update の Evening: 15.0 / 16.5 / 18.0 / 19.5 と対応
+	const float redStartTime = 15.0f;  // 赤くなり始める
+	const float eveningStartTime = 16.5f;  // 夕方の光が完全になる
+	const float eveningEndTime = 18.0f;  // 夕方の光が終わり始める
+	const float nightFullTime = 19.5f;  // 夜の光が完全になる
 
+	DirectX::XMFLOAT3 lightColor;
 	DirectX::XMFLOAT4 ambientColor;
 
+	// 2色の線形補間
+	auto LerpColor3 = [](const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3& b, float t)
+		{
+			return DirectX::XMFLOAT3
+			{
+				a.x + (b.x - a.x) * t,
+				a.y + (b.y - a.y) * t,
+				a.z + (b.z - a.z) * t
+			};
+		};
+	auto LerpColor4 = [](const DirectX::XMFLOAT4& a, const DirectX::XMFLOAT4& b, float t)
+		{
+			return DirectX::XMFLOAT4
+			{
+				a.x + (b.x - a.x) * t,
+				a.y + (b.y - a.y) * t,
+				a.z + (b.z - a.z) * t,
+				1.0f
+			};
+		};
 
-	if (m_currentTime < 17.0f)
+	if (m_currentTime < redStartTime)
 	{
-		// 6:00 ～ 17:00
-		//
-		// 昼の光 → 夕方の光
-
-		float t =
-			(m_currentTime - 6.0f) / 11.0f;
-
+		// 6:00 ～ 15:00 : 昼の光のまま
+		lightColor = dayLight;
+		ambientColor = dayAmbient;
+	}
+	else if (m_currentTime < eveningStartTime)
+	{
+		// 15:00 ～ 16:30 : 昼 → 夕方
+		float t = (m_currentTime - redStartTime) / (eveningStartTime - redStartTime);
 		t = std::clamp(t, 0.0f, 1.0f);
 
-
-		lightColor =
-		{
-			dayLight.x +
-			(eveningLight.x - dayLight.x) * t,
-
-			dayLight.y +
-			(eveningLight.y - dayLight.y) * t,
-
-			dayLight.z +
-			(eveningLight.z - dayLight.z) * t
-		};
-
-
-		ambientColor =
-		{
-			dayAmbient.x +
-			(eveningAmbient.x - dayAmbient.x) * t,
-
-			dayAmbient.y +
-			(eveningAmbient.y - dayAmbient.y) * t,
-
-			dayAmbient.z +
-			(eveningAmbient.z - dayAmbient.z) * t,
-
-			1.0f
-		};
+		lightColor = LerpColor3(dayLight, eveningLight, t);
+		ambientColor = LerpColor4(dayAmbient, eveningAmbient, t);
+	}
+	else if (m_currentTime < eveningEndTime)
+	{
+		// 16:30 ～ 18:00 : 夕方の光のまま
+		lightColor = eveningLight;
+		ambientColor = eveningAmbient;
 	}
 	else
 	{
-		// 17:00 ～ 22:00
-		//
-		// 夕方の光 → 夜の光
-
-		float t =
-			(m_currentTime - 17.0f) / 5.0f;
-
+		// 18:00 ～ 19:30 : 夕方 → 夜（19:30以降は夜のまま）
+		float t = (m_currentTime - eveningEndTime) / (nightFullTime - eveningEndTime);
 		t = std::clamp(t, 0.0f, 1.0f);
 
-
-		lightColor =
-		{
-			eveningLight.x +
-			(nightLight.x - eveningLight.x) * t,
-
-			eveningLight.y +
-			(nightLight.y - eveningLight.y) * t,
-
-			eveningLight.z +
-			(nightLight.z - eveningLight.z) * t
-		};
-
-
-		ambientColor =
-		{
-			eveningAmbient.x +
-			(nightAmbient.x - eveningAmbient.x) * t,
-
-			eveningAmbient.y +
-			(nightAmbient.y - eveningAmbient.y) * t,
-
-			eveningAmbient.z +
-			(nightAmbient.z - eveningAmbient.z) * t,
-
-			1.0f
-		};
+		lightColor = LerpColor3(eveningLight, nightLight, t);
+		ambientColor = LerpColor4(eveningAmbient, nightAmbient, t);
 	}
-
 
 	//------------------------------------------------------------
 	// ⑤ シェーダーに反映

@@ -322,6 +322,7 @@
     <ClInclude Include="Src\Application\GameObject\UI\InteractionPrompt\InteractionPrompt.h" />
     <ClInclude Include="Src\Application\GameObject\UI\InventoryUI\InventoryUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\LoadingUI\LoadingUI.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\ResultUI\ResultFadeUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\ResultUI\ResultUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\Reticle\Reticle.h" />
     <ClInclude Include="Src\Application\GameObject\UI\ScoreUI\ScoreUI.h" />
@@ -478,6 +479,7 @@
     <ClCompile Include="Src\Application\GameObject\UI\InteractionPrompt\InteractionPrompt.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\InventoryUI\InventoryUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\LoadingUI\LoadingUI.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\ResultUI\ResultFadeUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\ResultUI\ResultUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\Reticle\Reticle.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\ScoreUI\ScoreUI.cpp" />

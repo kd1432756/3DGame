@@ -15,6 +15,29 @@ void SkyBox::Init()
 
 	SetPos({0,5,0});
 	SetScale(50.0f);
+	SetRot({ 0,-75,0 });
+
+	// 初期時刻に合わせてSkyBoxのアルファ値を設定
+	float time = DayCycle::Instance().GetCurrentTime();
+
+	auto CalcAlpha = [](float t, float start,
+		float peakStart, float peakEnd, float end)
+		{
+			if (t < start || t > end) return 0.0f;
+			if (t >= peakStart && t <= peakEnd) return 1.0f;
+
+			if (t < peakStart)
+				return (t - start) / (peakStart - start);
+
+			return (end - t) / (end - peakEnd);
+		};
+
+	m_dayAlpha = CalcAlpha(time, 6.0f, 6.0f, 15.0f, 17.0f);
+	m_eveningAlpha = CalcAlpha(time, 15.0f, 16.5f, 18.0f, 19.5f);
+	m_nightAlpha = CalcAlpha(time, 18.0f, 19.5f, 22.0f, 22.0f);
+
+	// 初回Updateを待たずにワールド行列も設定
+	UpdateWorldMatrix();
 }
 
 void SkyBox::Update()

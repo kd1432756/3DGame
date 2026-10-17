@@ -50,6 +50,20 @@ void Flower::OnAction(const InteractiveAction& action, const std::shared_ptr<Pla
 			pos = (pNode->m_worldTransform * m_mWorld).Translation();
 			KdEffekseerManager::GetInstance().Play("flowerCut.efkefc", pos, SceneManager::Instance().GetSceneScale() * 1.0f);
 		}
+						   
+		if (auto se = KdAudioManager::Instance().Play3D("Asset/Sound/Intaract/scissors.wav", m_pos))
+		{
+			se->SetVolume(0.3f);
+			se->SetCurveDistanceScaler(SceneManager::Instance().GetSceneScale());
+		}
+	}
+	else if (m_state == InteractiveState::Repaired)
+	{
+		if (auto se = KdAudioManager::Instance().Play3D("Asset/Sound/Intaract/tape.wav", m_pos))
+		{
+			se->SetVolume(0.2f);
+			se->SetCurveDistanceScaler(SceneManager::Instance().GetSceneScale());
+		}
 	}
 }
 

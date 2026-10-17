@@ -1,7 +1,9 @@
 ﻿#include "FloatingTextUI.h"
 
 void FloatingTextUI::Init()
-{}
+{
+	m_updateGroup = UpdateGroup::Always;
+}
 
 void FloatingTextUI::Update()
 {

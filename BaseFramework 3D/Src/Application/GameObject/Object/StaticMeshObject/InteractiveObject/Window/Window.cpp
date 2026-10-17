@@ -14,10 +14,10 @@ void Window::Init()
 		InteractiveState::Damaged,
 		ItemAction::Break,
 		"Window",
-		3.5f,
-		300,
+		2.0f,
+		140,
 		"Window Break!",
-		"Your Wodd Fence has been Broken!",
+		"Your Window has been Broken!",
 		"Asset/Models/Props/House/WindowBroken.gltf"
 		});
 
@@ -26,8 +26,8 @@ void Window::Init()
 		InteractiveState::Repaired,
 		ItemAction::Repair,
 		"Window",
-		3.0f,
-		210,
+		1.5f,
+		100,
 		"Window Repair!",
 		"",
 		"Asset/Models/Props/House/WindowRepaired.gltf"
@@ -45,6 +45,20 @@ void Window::OnAction(const InteractiveAction& action, const std::shared_ptr<Pla
 		Math::Vector3 dir = m_mWorld.Backward();
 		auto effect = KdEffekseerManager::GetInstance().Play("windowBreak.efkefc", m_pos, SceneManager::Instance().GetSceneScale() * 3.0f);
 		effect.lock()->SetRotation(dir);
+
+		if (auto se = KdAudioManager::Instance().Play3D("Asset/Sound/Intaract/glass.wav", m_pos))
+		{
+			se->SetVolume(0.2f);
+			se->SetCurveDistanceScaler(SceneManager::Instance().GetSceneScale());
+		}
+	}
+	else if (m_state == InteractiveState::Repaired)
+	{
+		if (auto se = KdAudioManager::Instance().Play3D("Asset/Sound/Intaract/tape.wav", m_pos))
+		{
+			se->SetVolume(0.2f);
+			se->SetCurveDistanceScaler(SceneManager::Instance().GetSceneScale());
+		}
 	}
 }
 

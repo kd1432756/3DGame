@@ -1,5 +1,7 @@
 ﻿#include "ResultUI.h"
 
+#include "ResultFadeUI.h"
+
 #include "../../../Scene/GameScene/GameScene.h"
 
 #include "../../../Scene/SceneManager.h"
@@ -13,6 +15,8 @@
 
 void ResultUI::Init()
 {
+	m_updateGroup = UpdateGroup::Always;
+
 	m_ranking.clear();
 
 	m_visible = false;
@@ -52,6 +56,11 @@ void ResultUI::Update()
 	if (!m_resultInitialized)
 	{
 		ShowResult();
+
+		m_spFadeUI = std::make_shared<ResultFadeUI>();
+		m_spFadeUI->Init();
+		SceneManager::Instance().AddObject(m_spFadeUI);
+
 		return;
 	}
 
@@ -67,6 +76,11 @@ void ResultUI::Update()
 			SceneManager::Instance().SetNextScene(
 				SceneManager::SceneType::Title
 			);
+		}
+
+		if (m_spFadeUI)
+		{
+			m_spFadeUI->SetAlpha(m_alpha);
 		}
 
 		return;
@@ -130,7 +144,12 @@ void ResultUI::Update()
 	if (m_isTitleButtonHover &&
 		(GetAsyncKeyState(VK_LBUTTON) & 0x8000))
 	{
-		m_fadeOut = true;
+		m_fadeOut = true;	
+		
+		if (auto confetti = m_wpConfetti.lock())
+		{
+			confetti->Stop();
+		}
 	}
 
 }
@@ -298,29 +317,6 @@ void ResultUI::DrawSprite()
 			nullptr,
 			&kWhiteColor,
 			Math::Vector2{ 0.3f, 0.8f }
-		);
-	}
-
-	// =============================
-	// Fade
-	// =============================
-
-	if (m_fadeOut)
-	{
-		Math::Color fadeColor =
-		{
-			0.0f,
-			0.0f,
-			0.0f,
-			m_alpha
-		};
-
-		KdShaderManager::Instance().m_spriteShader.DrawBox(
-			0,
-			0,
-			640,
-			360,
-			&fadeColor
 		);
 	}
 }

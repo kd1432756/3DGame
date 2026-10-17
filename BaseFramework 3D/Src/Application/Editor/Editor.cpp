@@ -1872,6 +1872,79 @@ void Editor::GenerateNavMeshVer3(float agentRadius)
 	}
 
 	//============================================================
+	// Obstacles (InteractiveObject)
+	//============================================================
+
+	for (auto& obj :
+		SceneManager::Instance().GetObjList())
+	{
+		auto interactive =
+			std::dynamic_pointer_cast<InteractiveObject>(obj);
+
+		if (!interactive ||
+			!interactive->IsCollisionEnabled())
+		{
+			continue;
+		}
+
+		//----------------------------------------------------
+		// ModelData取得
+		//----------------------------------------------------
+
+		auto modelData =
+			interactive->GetModelData();
+
+		if (!modelData)
+		{
+			continue;
+		}
+
+		const Math::Matrix worldMatrix =
+			interactive->GetMatrix();
+
+		const auto& nodes =
+			modelData->GetOriginalNodes();
+
+		const auto& collisionNodeIndices =
+			modelData->GetCollisionMeshNodeIndices();
+
+		//----------------------------------------------------
+		// COL Nodeごとに処理
+		//----------------------------------------------------
+
+		for (int nodeIndex : collisionNodeIndices)
+		{
+			if (nodeIndex < 0 ||
+				nodeIndex >= static_cast<int>(nodes.size()))
+			{
+				continue;
+			}
+
+			const auto& node = nodes[nodeIndex];
+
+			if (!node.m_spMesh)
+			{
+				continue;
+			}
+
+			DirectX::BoundingBox worldAABB;
+
+			node.m_spMesh->GetBoundingBox().Transform(
+				worldAABB,
+				node.m_worldTransform * worldMatrix);
+
+			NavMeshPolygonBuilder::Obstacle obstacle;
+
+			obstacle.minX = worldAABB.Center.x - worldAABB.Extents.x;
+			obstacle.maxX = worldAABB.Center.x + worldAABB.Extents.x;
+			obstacle.minZ = worldAABB.Center.z - worldAABB.Extents.z;
+			obstacle.maxZ = worldAABB.Center.z + worldAABB.Extents.z;
+
+			input.obstacles.push_back(obstacle);
+		}
+	}
+
+	//============================================================
 	// Polygon Boolean
 	//============================================================
 

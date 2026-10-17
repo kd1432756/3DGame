@@ -28,7 +28,7 @@ void PaintCan::Init()
 		InteractiveState::Normal,
 		ItemAction::Repair,
 		"PaintCan",
-		2.0f,
+		2.5f,
 		60,
 		"PaintCan Cleaned Up!",
 		"",
@@ -48,6 +48,20 @@ void PaintCan::OnAction(const InteractiveAction& action, const std::shared_ptr<P
 		Math::Vector3 dir = m_mWorld.Backward();
 		auto effect = KdEffekseerManager::GetInstance().Play("paintSpill.efkefc", pos, SceneManager::Instance().GetSceneScale() * 1.0f);
 		effect.lock()->SetRotation(dir);
+							
+		if (auto se = KdAudioManager::Instance().Play3D("Asset/Sound/Intaract/splash.wav", m_pos))
+		{
+			se->SetVolume(0.4f);
+			se->SetCurveDistanceScaler(SceneManager::Instance().GetSceneScale());   // 足音と同様、スケールに合わせる
+		}
+	}
+	else if (m_state == InteractiveState::Normal)
+	{
+		if (auto se = KdAudioManager::Instance().Play3D("Asset/Sound/Intaract/swab.wav", m_pos))
+		{
+			se->SetVolume(0.2f);
+			se->SetCurveDistanceScaler(SceneManager::Instance().GetSceneScale());
+		}
 	}
 }
 

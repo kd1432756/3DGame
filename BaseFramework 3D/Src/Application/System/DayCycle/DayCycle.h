@@ -47,7 +47,7 @@ private:
 private:
 	float m_currentTime = StartTime;
 
-	float m_timeScale = 3.0f;
+	float m_timeScale = 16.0f / 3.0f;
 
 	TimeZone m_timeZone = TimeZone::Day;
 

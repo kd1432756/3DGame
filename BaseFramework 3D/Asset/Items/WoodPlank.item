@@ -15,7 +15,7 @@
 		}
 	],
 
-	"MaxCount": 3,
+	"MaxCount": 5,
 
 	"WorldScale": [ 0.24, 0.24, 0.24 ],
 

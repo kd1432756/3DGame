@@ -15,6 +15,13 @@ public:
 		eDrawTypeDepthOfShadow = 1 << 4,
 	};
 
+	// 追加
+	enum class UpdateGroup
+	{
+		World,      // ゲーム停止で止まる（キャラ、ギミック、世界のUIなど）
+		Always,     // 停止中も動く（結果UI、紙吹雪、ARRESTED演出など）
+	};
+
 	KdGameObject() { UpdateWorldMatrix(); }
 	virtual ~KdGameObject() { Release(); }
 
@@ -158,6 +165,9 @@ public:
 		return ObjectCategory::Other;
 	}
 
+	// 追加
+	UpdateGroup GetUpdateGroup() const { return m_updateGroup; }
+
 protected:
 
 	void Release() {}
@@ -205,6 +215,9 @@ protected:
 			rotMat *
 			Math::Matrix::CreateTranslation(m_pos);
 	}
+
+	// 追加
+	UpdateGroup m_updateGroup = UpdateGroup::World;
 
 private:
 

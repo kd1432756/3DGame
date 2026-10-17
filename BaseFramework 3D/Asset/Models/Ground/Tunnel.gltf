@@ -9,7 +9,8 @@
 			"name":"Scene",
 			"nodes":[
 				0,
-				1
+				1,
+				2
 			]
 		}
 	],
@@ -18,20 +19,34 @@
 			"mesh":0,
 			"name":"road-tunnel-entry_Cube.169",
 			"rotation":[
-				0.7071068286895752,
+				0.70710688829422,
 				0,
 				0,
-				0.7071068286895752
+				0.7071066498756409
 			]
 		},
 		{
 			"mesh":1,
 			"name":"road-tunnel-entry_Cube.001",
 			"rotation":[
-				0.7071068286895752,
+				0.70710688829422,
 				0,
 				0,
-				0.7071068286895752
+				0.7071066498756409
+			]
+		},
+		{
+			"mesh":2,
+			"name":"COL",
+			"scale":[
+				4,
+				4,
+				4
+			],
+			"translation":[
+				0,
+				3,
+				0
 			]
 		}
 	],
@@ -88,6 +103,19 @@
 					},
 					"indices":7,
 					"material":1
+				}
+			]
+		},
+		{
+			"name":"\u7acb\u65b9\u4f53",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":8,
+						"NORMAL":9,
+						"TEXCOORD_0":10
+					},
+					"indices":11
 				}
 			]
 		}
@@ -173,6 +201,40 @@
 			"componentType":5123,
 			"count":15,
 			"type":"SCALAR"
+		},
+		{
+			"bufferView":8,
+			"componentType":5126,
+			"count":24,
+			"max":[
+				1,
+				1,
+				1
+			],
+			"min":[
+				-1,
+				-1,
+				-1
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":9,
+			"componentType":5126,
+			"count":24,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":10,
+			"componentType":5126,
+			"count":24,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":11,
+			"componentType":5123,
+			"count":36,
+			"type":"SCALAR"
 		}
 	],
 	"bufferViews":[
@@ -223,6 +285,30 @@
 			"byteLength":30,
 			"byteOffset":9140,
 			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":288,
+			"byteOffset":9172,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":288,
+			"byteOffset":9460,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":192,
+			"byteOffset":9748,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":72,
+			"byteOffset":9940,
+			"target":34963
 		}
 	],
 	"samplers":[
@@ -233,7 +319,7 @@
 	],
 	"buffers":[
 		{
-			"byteLength":9172,
+			"byteLength":10012,
 			"uri":"Tunnel.bin"
 		}
 	]

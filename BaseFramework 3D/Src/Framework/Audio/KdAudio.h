@@ -56,6 +56,10 @@ public:
 	// 解放
 	void Release();
 
+	// 追加 マスターボリューム設定 (1.0が100%)
+	void SetMasterVolume(float vol);
+	float GetMasterVolume() const { return m_masterVolume; }
+
 private:
 
 	// サウンドデータの取得orロード
@@ -72,6 +76,9 @@ private:
 
 	// サウント管理マップ
 	std::unordered_map< std::string, std::shared_ptr<KdSoundEffect>> m_soundMap;
+
+	// 追加 最大音量
+	float m_masterVolume = 1.0f;
 
 	// シングルトンパターン
 public:

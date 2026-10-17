@@ -45,9 +45,12 @@ void GameScene::Update()
 	}
 
 	// UIはゲーム停止中でも更新する
-	m_gameStateUI->Update();
-	m_confettiUI->Update();
-	m_resultUI->Update();
+	for (auto& obj : m_objList)
+	{
+		if (obj->GetUpdateGroup() == KdGameObject::UpdateGroup::World)
+			continue;
+		obj->Update();
+	}
 
 	// シーン毎のイベント処理
 	Event();
@@ -81,21 +84,8 @@ void GameScene::Update()
 	// KdGameObjectを継承した全てのオブジェクトの更新 (ポリモーフィズム)
 	for (auto& obj : m_objList)
 	{
-		if (obj == m_gameStateUI)
-		{
+		if (obj->GetUpdateGroup() == KdGameObject::UpdateGroup::Always)
 			continue;
-		}
-
-		if (obj == m_confettiUI)
-		{
-			continue;
-		}
-
-		if (obj == m_resultUI)
-		{
-			continue;
-		}
-
 		obj->Update();
 	}
 }
@@ -153,6 +143,11 @@ void GameScene::Event()
 		(
 			SceneManager::SceneType::Title
 		);
+	}
+
+	if (GetAsyncKeyState('Z') & 0x8000)
+	{
+		KdAudioManager::Instance().GetAudioEngine()->SetMasterVolume(0.2f);
 	}
 
 	// Yキー：30分戻す
@@ -267,36 +262,19 @@ void GameScene::Start()
 				shared_from_this()));
 		m_objList.push_back(m_gameStateUI);
 
-		m_confettiUI = std::make_shared<ConfettiUI>();
-		m_confettiUI->Init();
+		auto confettiUI = std::make_shared<ConfettiUI>();
+		confettiUI->Init();
 
-		m_resultUI = std::make_shared<ResultUI>();
-		m_resultUI->Init();
-		m_resultUI->SetName("ResultUI");
-		m_resultUI->SetGameScene(
+		auto resultUI = std::make_shared<ResultUI>();
+		resultUI->Init();
+		resultUI->SetName("ResultUI");
+		resultUI->SetGameScene(
 			std::dynamic_pointer_cast<GameScene>(
 				shared_from_this()));
-		m_resultUI->SetConfetti(m_confettiUI);
+		resultUI->SetConfetti(confettiUI);
 
-		m_objList.push_back(m_resultUI);
-		m_objList.push_back(m_confettiUI);
-	}
-
-	{
-		for (auto& obj : m_objList)
-		{
-			if (obj == m_gameStateUI)
-			{
-				continue;
-			}
-
-			if (obj == m_resultUI)
-			{
-				continue;
-			}
-
-			obj->Update();
-		}
+		m_objList.push_back(resultUI);
+		m_objList.push_back(confettiUI);
 	}
 }
 

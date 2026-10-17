@@ -1545,8 +1545,16 @@ void Neighbor::UpdatePrank()
 			//====================================================
 
 			auto self = std::dynamic_pointer_cast<Neighbor>(shared_from_this());
+			const int usedIndex = m_inventory.GetSelectIndex();
+
 			if (bare) target->NPCUseBare(self);
 			else      target->NPCUse(itemData, self);
+
+			if (!bare && usedIndex >= 0)
+			{
+				m_inventory.RemoveItem(usedIndex);
+				SelectInventory(-1);
+			}
 
 			ShowEmote(EmoteIcon::IconType::Laugh, 2.0f);
 
@@ -2044,8 +2052,16 @@ void Neighbor::UpdateRepair()
 			//====================================================
 
 			auto self = std::dynamic_pointer_cast<Neighbor>(shared_from_this());
+			const int usedIndex = m_inventory.GetSelectIndex();
+
 			if (bare) target->NPCUseBare(self);
 			else      target->NPCUse(itemData, self);
+
+			if (!bare && usedIndex >= 0)
+			{
+				m_inventory.RemoveItem(usedIndex);
+				SelectInventory(-1);
+			}
 
 			ShowEmote(EmoteIcon::IconType::Music, 2.0f);
 

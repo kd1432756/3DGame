@@ -4,6 +4,8 @@
 
 void GameStateUI::Init()
 {
+	m_updateGroup = UpdateGroup::Always;
+
 	m_timer = 0.0f;
 	m_count = 3;
 	m_displayState = DisplayState::CountDown;

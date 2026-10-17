@@ -205,6 +205,17 @@ void KdAudioManager::Release()
 	m_audioEng = nullptr;
 }
 
+// マスターボリューム設定 (1.0が100%)
+void KdAudioManager::SetMasterVolume(float vol)
+{
+	if (!m_audioEng) { return; }
+
+	// 0.0以上にクランプ
+	m_masterVolume = std::max(vol, 0.0f);
+
+	m_audioEng->SetMasterVolume(m_masterVolume);
+}
+
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 // サウンドアセットの取得
 // ・

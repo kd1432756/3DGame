@@ -20,7 +20,7 @@
 		}
 	],
 
-	"MaxCount": 3,
+	"MaxCount": 8,
 
 	"WorldScale": [ 0.06, 0.06, 0.06 ],
 

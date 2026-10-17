@@ -1,7 +1,9 @@
 ﻿#include "ShakeTextUI.h"
 
 void ShakeTextUI::Init()
-{}
+{
+	m_updateGroup = UpdateGroup::Always;
+}
 
 void ShakeTextUI::Update()
 {

@@ -15,13 +15,13 @@
 		}
 	],
 
-	"MaxCount": 3,
+	"MaxCount": 5,
 
-	"WorldScale": [ 0.2, 0.2, 0.2 ],
+	"WorldScale": [ 0.36, 0.36, 0.36 ],
 
-	"HandOffset": [ 0.24, -0.06, 0.30 ],
+	"HandOffset": [ 0.24, -0.16, 0.30 ],
 
-	"HandRotation": [ -75, 80, -15 ],
+	"HandRotation": [ -10, -15, -90 ],
 
 	"HandScale": [ 0.06, 0.06, 0.06 ]
 }

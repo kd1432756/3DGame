@@ -16,8 +16,8 @@ void WoodenFence::Init()
 		"WoodFence",
 		3.5f,
 		300,
-		"Wooden Fence Break!",
-		"Your Wodd Fence has been Broken!",
+		"Wood Fence Break!",
+		"Your Wood Fence has been Broken!",
 		"Asset/Models/Props/WoodFence/WoodFence_Broken.gltf"
 		});
 
@@ -42,10 +42,24 @@ void WoodenFence::OnAction(const InteractiveAction& action, const std::shared_pt
 
 	if (m_state == InteractiveState::Damaged)
 	{
-		Math::Vector3 pos = m_pos + Math::Vector3{0, GetScale().y, 0};
+		Math::Vector3 pos = m_pos + Math::Vector3{ 0, GetScale().y, 0 };
 		Math::Vector3 dir = m_mWorld.Backward();
 		auto effect = KdEffekseerManager::GetInstance().Play("fenceBreak.efkefc", pos, SceneManager::Instance().GetSceneScale() * 5.0f);
 		effect.lock()->SetRotation(dir);
+
+		if (auto se = KdAudioManager::Instance().Play3D("Asset/Sound/Intaract/break.wav", m_pos))
+		{
+			se->SetVolume(0.2f);
+			se->SetCurveDistanceScaler(SceneManager::Instance().GetSceneScale());
+		}
+	}
+	else if (m_state == InteractiveState::Normal)
+	{
+		if (auto se = KdAudioManager::Instance().Play3D("Asset/Sound/Intaract/hammer.wav", m_pos))
+		{
+			se->SetVolume(0.2f);
+			se->SetCurveDistanceScaler(SceneManager::Instance().GetSceneScale());
+		}
 	}
 }
 

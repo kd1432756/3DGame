@@ -40,6 +40,8 @@ void SkillCheckBase::Update()
 		return;
 	}
 
+	PlayKeyDownSound();
+
 	OnUpdate(kDeltaTime);
 }
 
@@ -62,6 +64,24 @@ int SkillCheckBase::KeyIndex(int vk)
 		if (SkillKeyUI::ToVirtualKey(static_cast<SkillKey>(i)) == vk) return i;
 	}
 	return -1;
+}
+
+// 入力受付中に、いずれかのキーが押されたフレームでSEを鳴らす
+void SkillCheckBase::PlayKeyDownSound() const
+{
+	for (int i = 0; i < kKeyCount; ++i)
+	{
+		if (m_keyPressed[i])
+		{
+			// 同じフレームに複数押されても、鳴らすのは1回だけ			;
+			if (auto se = KdAudioManager::Instance().Play("Asset/Sound/KeyDown/KeyDown.wav"))
+			{
+				se->SetVolume(0.2f);
+				se->SetPitch(-0.2f);
+			}
+			return;
+		}
+	}
 }
 
 void SkillCheckBase::PollKeys()

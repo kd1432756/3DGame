@@ -97,6 +97,8 @@ public:
 	bool IsRepairAction(
 		const std::shared_ptr<Player>& player) const override;
 
+	bool IsDamaged() const { return m_state == InteractiveState::Damaged; }
+
 protected:
 
 	// 実際に状態が変わった後の特殊処理

@@ -7,14 +7,14 @@ void FootstepSystem::Init()
 	// ---- 既定（None など）----
 	m_default.sePaths = { "Asset/Sound/Footstep/default_01.wav",
 							"Asset/Sound/Footstep/default_02.wav" };
-	m_default.seVolume = 0.5f;
+	m_default.seVolume = 0.2f;
 
 	// ---- 道路（アスファルト）----
 	{
 		FootstepData d;
 		d.sePaths = { "Asset/Sound/Footstep/concrete_01.wav",
 						"Asset/Sound/Footstep/concrete_02.wav" };
-		d.seVolume = 0.5f;
+		d.seVolume = 0.2f;
 		d.smokeScale = 0.6f;
 		m_table[GT::Road] = d;
 	}
@@ -24,7 +24,7 @@ void FootstepSystem::Init()
 		FootstepData d;
 		d.sePaths = { "Asset/Sound/Footstep/grass_01.wav",
 						"Asset/Sound/Footstep/grass_02.wav" };
-		d.seVolume = 0.4f;
+		d.seVolume = 0.1f;
 		d.smokeScale = 0.8f;
 		m_table[GT::Grass] = d;
 	}
@@ -34,7 +34,7 @@ void FootstepSystem::Init()
 		FootstepData d;
 		d.sePaths = { "Asset/Sound/Footstep/dirt_01.wav",
 						 "Asset/Sound/Footstep/dirt_02.wav" };
-		d.seVolume = 0.5f;
+		d.seVolume = 0.2f;
 		d.smokeScale = 1.2f;
 		m_table[GT::Dirt] = d;
 	}
@@ -44,7 +44,7 @@ void FootstepSystem::Init()
 		FootstepData d;
 		d.sePaths = { "Asset/Sound/Footstep/concrete_01.wav",
 						 "Asset/Sound/Footstep/concrete_02.wav" };
-		d.seVolume = 0.5f;
+		d.seVolume = 0.2f;
 		d.smokeScale = 0.6f;
 		m_table[GT::Lot] = d;
 	}
@@ -54,7 +54,7 @@ void FootstepSystem::Init()
 		FootstepData d;
 		d.sePaths = { "Asset/Sound/Footstep/concrete_01.wav",
 						 "Asset/Sound/Footstep/concrete_02.wav" };
-		d.seVolume = 0.55f;
+		d.seVolume = 0.2f;
 		d.smokeScale = 0.6f;               // 小さめの砂埃
 		m_table[GT::Concrete] = d;
 	}
@@ -102,13 +102,10 @@ void FootstepSystem::PlaySE(const FootstepData& data, const Math::Vector3& pos, 
 	   // 距離減衰を調整したい場合
 	   inst->SetCurveDistanceScaler(scale);
    }
-   
-	(void)path; (void)pos; (void)scale;
 }
 
 void FootstepSystem::SpawnSmoke(const FootstepData& data, const Math::Vector3& pos, float scale)
 {
 	Math::Vector3 spawnPos = pos + Math::Vector3{ 0,scale * -0.7f,0 };
 	KdEffekseerManager::GetInstance().Play("footstep.efkefc", spawnPos, data.smokeScale * scale);
-	(void)data; (void)pos; (void)scale;
 }

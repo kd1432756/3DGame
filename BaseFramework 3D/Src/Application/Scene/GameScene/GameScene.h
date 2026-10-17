@@ -6,9 +6,7 @@ class FPSCamera;
 
 class ScoreManager;
 class DayCycle;
-class GameStateUI; 
-class ConfettiUI;
-class ResultUI;
+class GameStateUI;
 
 class GameScene : public BaseScene
 {
@@ -58,6 +56,4 @@ private:
 	GameState m_state = GameState::Ready;
 
 	std::shared_ptr<GameStateUI> m_gameStateUI;
-	std::shared_ptr<ConfettiUI> m_confettiUI;
-	std::shared_ptr<ResultUI> m_resultUI;
 };

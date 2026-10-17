@@ -22,6 +22,8 @@ namespace
 
 void ConfettiUI::Init()
 {
+	m_updateGroup = UpdateGroup::Always;
+
 	m_particles.clear();
 	m_particles.reserve(kMaxParticles);
 	m_active = false;
@@ -72,7 +74,8 @@ void ConfettiUI::Burst(bool isLeft)
 
 		// 画面中央へ向かって斜め上に発射（水平から50〜85度）
 		float angle = DirectX::XMConvertToRadians(Rand(50.0f, 85.0f));
-		float speed = Rand(700.0f, 1500.0f);
+		//float speed = Rand(700.0f, 1500.0f);
+		float speed = Rand(1500.0f, 2500.0f);
 
 		float dirX = cosf(angle) * (isLeft ? 1.0f : -1.0f);
 		float dirY = sinf(angle);

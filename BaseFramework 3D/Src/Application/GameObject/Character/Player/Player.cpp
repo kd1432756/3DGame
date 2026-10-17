@@ -61,12 +61,16 @@ void Player::Init()
 
 	InitEmoteIcon();
 
+	m_collisionRadius = 0.5f;
+
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 }
 
 void Player::Update()
 {
 	FootstepSystem::Instance().SetListenerPos(m_pos);
+
+	UpdateNeglect();
 
 	if (m_isArrested)
 	{
@@ -164,11 +168,58 @@ void Player::UpdateArrested()
 	UpdateWorldMatrix();
 }
 
+void Player::UpdateNeglect()
+{
+	const float dt = 1 / 60.0f;
+
+	for (auto it = m_neglected.begin(); it != m_neglected.end();)
+	{
+		auto obj = it->obj.lock();
+
+		// 消えた or 修復された
+		if (!obj || !obj->IsDamaged())
+		{
+			it = m_neglected.erase(it);
+			continue;
+		}
+
+		it->elapsed += dt;
+
+		if (it->elapsed >= m_neglectGrace)
+		{
+			it->tickTimer += dt;
+
+			if (it->tickTimer >= m_neglectInterval)
+			{
+				it->tickTimer = 0.0f;
+
+				// 0未満にはしない
+				const int penalty = std::min(m_neglectPenalty, GetScore());
+				if (penalty > 0)
+				{
+					AddScore(-penalty);
+
+					auto text = std::make_shared<FloatingTextUI>();
+					text->Init();
+					text->SetText("-" + std::to_string(penalty));
+					text->SetColor({ 0.9f, 0.3f, 0.3f, 1.0f });
+					text->SetPosition({ 500, 270 });
+					SceneManager::Instance().AddObject(text);
+				}
+			}
+		}
+
+		++it;
+	}
+}
+
 void Player::OnPrankSuccess(int score, const std::string& message)
 {
 	AddScore(score);
 
 	auto floatingText = std::make_shared<FloatingTextUI>();
+
+	floatingText->Init();
 
 	floatingText->SetText(
 		message + "  + " + std::to_string(score)
@@ -183,11 +234,19 @@ void Player::OnPranked(const std::shared_ptr<InteractiveObject>& object, const I
 {
 	auto slideText = std::make_shared<SlideTextUI>();
 
+	slideText->Init();
+
 	slideText->SetText(action.ownerMessage);
 
 	slideText->SetPosition({ -500, 130 });
 
 	SceneManager::Instance().AddObject(slideText);
+
+	for (auto& e : m_neglected)
+	{
+		if (e.obj.lock() == object) return;
+	}
+	m_neglected.push_back({ object, 0.0f, 0.0f });
 }
 
 void Player::EquipItem(const std::string& itemPath)
@@ -563,6 +622,7 @@ void Player::UpdateUse()
 			}
 
 			auto floatingText = std::make_shared<FloatingTextUI>();
+			floatingText->Init();
 			floatingText->SetText(text);
 			floatingText->SetColor(color);
 			floatingText->SetFont(FontID::Future16);
@@ -583,10 +643,20 @@ void Player::UpdateUse()
 
 		if (m_useTimer <= 0)
 		{
+			const int usedIndex = m_inventory.GetSelectIndex();
+
 			// Use() の中で GetSkillResult() を見てスコア倍率などを変える
 			obj->Use(self);	
 			
-			KdAudioManager::Instance().Play("Asset/Sound/Test.wav");
+			if (auto se = KdAudioManager::Instance().Play("Asset/Sound/Test.wav"))
+			{
+				se->SetVolume(0.2f);
+			}
+
+			if (usedIndex >= 0)
+			{
+				ConsumeItem(usedIndex);
+			}
 
 			CancelUse();
 		}
@@ -673,9 +743,23 @@ void Player::SwapItem(
 	}
 }
 
+void Player::ConsumeItem(int index)
+{
+	m_inventory.RemoveItem(index);
+
+	if (m_handItem)
+	{
+		m_handItem->Destroy();
+		m_handItem.reset();
+	}
+
+	m_inventory.SelectIndex(-1);
+	EquipItem("");
+}
+
 void Player::TryDropItem()
 {
-	if (!(GetAsyncKeyState('G') & 0x0001))
+	if (!(GetAsyncKeyState('Q') & 0x0001))
 	{
 		return;
 	}
@@ -816,6 +900,8 @@ void Player::OnArrested(const std::shared_ptr<Police>& police)
 
 	{
 		auto shakeText = std::make_shared<ShakeTextUI>();
+
+		shakeText->Init();
 
 		shakeText->SetText(
 			"ARRESTED!!"

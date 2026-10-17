@@ -5,6 +5,7 @@ class ScoreManager;
 
 class CharacterBase;
 
+class ResultFadeUI;
 class ConfettiUI;
 
 class ResultUI : public KdGameObject
@@ -29,6 +30,7 @@ private:
 	void GetMousePos(POINT* mousePos);
 
 	std::weak_ptr<GameScene> m_wpGameScene;
+	std::shared_ptr<ResultFadeUI> m_spFadeUI;
 
 	std::vector<std::shared_ptr<CharacterBase>> m_ranking;
 

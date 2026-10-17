@@ -84,6 +84,8 @@ private:
 	void ClearPressed();	// 保持している「押された」を捨てる(準備時間・開始時用)
 	static int KeyIndex(int vk);
 
+	void PlayKeyDownSound() const;
+
 	static constexpr int kKeyCount = static_cast<int>(SkillKey::Count);
 	bool m_keyDown[kKeyCount] = {};
 	bool m_keyPressed[kKeyCount] = {};

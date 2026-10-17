@@ -89,6 +89,21 @@ void Car::Update()
 void Car::OnAction(const InteractiveAction& action, const std::shared_ptr<Player>& player)
 {
 	KdEffekseerManager::GetInstance().Play("interact.efkefc", m_pos, SceneManager::Instance().GetSceneScale() * 10.0f);
+
+	if (m_state == InteractiveState::Damaged)
+	{						   
+		if (auto se = KdAudioManager::Instance().Play("Asset/Sound/Intaract/punk.wav"))
+		{
+			se->SetVolume(0.2f);
+		}
+	}
+	else if (m_state == InteractiveState::Normal)
+	{
+		if (auto se = KdAudioManager::Instance().Play("Asset/Sound/Intaract/pump.wav"))
+		{
+			se->SetVolume(0.2f);
+		}
+	}
 }
 
 void Car::RegisterCollider()

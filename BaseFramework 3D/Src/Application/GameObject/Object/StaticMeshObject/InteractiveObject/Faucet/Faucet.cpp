@@ -14,8 +14,8 @@ void Faucet::Init()
 		InteractiveState::Damaged,
 		ItemAction::Wrench,
 		"Faucet",
-		1.5f,
-		200,
+		3.0f,
+		300,
 		"Faucet Loosened!",
 		"Your Faucet has been Loosened!",
 		""
@@ -27,7 +27,7 @@ void Faucet::Init()
 		ItemAction::Repair,
 		"Faucet",
 		3.0f,
-		80,
+		220,
 		"Faucet Tightened!",
 		"",
 		""
@@ -74,6 +74,12 @@ void Faucet::Update()
 void Faucet::OnAction(const InteractiveAction& action, const std::shared_ptr<Player>& player)
 {
 	KdEffekseerManager::GetInstance().Play("interact.efkefc", m_pos, SceneManager::Instance().GetSceneScale() * 2.0f);
+
+	if (auto se = KdAudioManager::Instance().Play3D("Asset/Sound/Intaract/wrench.wav", m_pos))
+	{
+		se->SetVolume(0.3f);
+		se->SetCurveDistanceScaler(SceneManager::Instance().GetSceneScale());
+	}
 }
 
 void Faucet::RegisterCollider()

@@ -786,6 +786,9 @@
     <ClInclude Include="Src\Application\GameObject\UI\ConfettiUI\ConfettiUI.h">
       <Filter>Src\Application\GameObject\UI\ConfettiUI</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\ResultUI\ResultFadeUI.h">
+      <Filter>Src\Application\GameObject\UI\ResultUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1214,6 +1217,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\ConfettiUI\ConfettiUI.cpp">
       <Filter>Src\Application\GameObject\UI\ConfettiUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\ResultUI\ResultFadeUI.cpp">
+      <Filter>Src\Application\GameObject\UI\ResultUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

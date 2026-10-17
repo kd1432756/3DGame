@@ -58,6 +58,8 @@ public:
 		const std::shared_ptr<Item>& newItem,
 		int index);
 
+	void ConsumeItem(int index);
+
 	bool CanHighlight();
 
 	std::shared_ptr<Item> GetHandItem() const
@@ -146,6 +148,7 @@ private:
 	void StartUse();
 	void UpdateUse();
 	void UpdateArrested();
+	void UpdateNeglect();
 
 	void OnItemsConfiscated() override;
 	void SelectInventory(int index) override;
@@ -184,4 +187,18 @@ private:
 	bool m_isReleasing = false;
 
 	std::shared_ptr<FPSCamera> m_fpsCamera;
+
+	// ===== 放置ペナルティ =====
+	struct NeglectedEntry
+	{
+		std::weak_ptr<InteractiveObject> obj;
+		float elapsed = 0.0f;     // いたずらされてからの経過秒
+		float tickTimer = 0.0f;   // 減点間隔用
+	};
+
+	std::vector<NeglectedEntry> m_neglected;
+
+	float m_neglectGrace = 10.0f;  // 猶予(秒)
+	float m_neglectInterval = 5.0f;   // 減点間隔(秒)
+	int   m_neglectPenalty = 1;      // 1回あたりの減点
 };

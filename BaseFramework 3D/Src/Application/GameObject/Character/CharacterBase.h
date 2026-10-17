@@ -166,7 +166,7 @@ protected:
 	// ===== sphere =====
 
 	// 壁判定Sphereの半径
-	float m_collisionRadius = 0.5f;
+	float m_collisionRadius = 0.3f;
 
 	Math::Vector3 m_wallNormal = Math::Vector3::Zero;
 };
