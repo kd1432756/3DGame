@@ -131,6 +131,8 @@ public:
 	void OnArrested(const std::shared_ptr<Police>& police) override;
 	void OnReleased() override;
 
+	int GetDamagedCount() const { return m_neglected.size(); }
+
 protected:
 
 	void UpdateAnimation() override;
@@ -199,6 +201,6 @@ private:
 	std::vector<NeglectedEntry> m_neglected;
 
 	float m_neglectGrace = 10.0f;  // 猶予(秒)
-	float m_neglectInterval = 5.0f;   // 減点間隔(秒)
+	float m_neglectInterval = 1.0f;   // 減点間隔(秒)
 	int   m_neglectPenalty = 1;      // 1回あたりの減点
 };

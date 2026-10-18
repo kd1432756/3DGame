@@ -69,6 +69,6 @@ void SkillCheckReaction::OnDraw()
 		DrawRect(0, kY, 16, 16, { 1.0f, 1.0f, 1.0f, 1.0f });
 	}
 
-	DrawKey(SkillKey::Space, 0.0f, kY - 90.0f,
+	DrawKey(SkillKey::MouseLeft, 0.0f, kY - 90.0f,
 		m_signal ? SkillKeyAnim::Timing : SkillKeyAnim::Static);
 }

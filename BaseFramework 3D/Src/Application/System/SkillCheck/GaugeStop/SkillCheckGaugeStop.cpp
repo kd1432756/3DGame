@@ -57,5 +57,5 @@ void SkillCheckGaugeStop::OnDraw()
 	// カーソル
 	DrawRect(toX(m_cursor), kBarY, 3, halfH + 8, { 1.0f, 1.0f, 1.0f, a });
 
-	DrawKey(SkillKey::Space, 0.0f, kBarY - 45.0f, SkillKeyAnim::Timing);
+	DrawKey(SkillKey::MouseLeft, 0.0f, kBarY - 45.0f, SkillKeyAnim::Timing);
 }

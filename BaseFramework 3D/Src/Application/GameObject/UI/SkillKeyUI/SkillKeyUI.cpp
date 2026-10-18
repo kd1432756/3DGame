@@ -1,38 +1,50 @@
 ﻿#include "SkillKeyUI.h"
 
-#include <cmath>
-
 namespace
 {
-	// 画像の3コマ
+	// 見た目の2段階(画像は 通常 / 押された の2枚)
 	enum Frame
 	{
 		kNormal = 0,	// 通常
 		kPressed = 1,	// 押された
-		kHalf = 2,	// ちょい押し
 	};
 
-	// Frame → 画像内の位置(左から何コマ目か)
-	// 画像の並びが「通常 / 押された / ちょい押し」と違う場合は、ここだけ変更する
-	constexpr int kSrcIndex[3] = { 0, 1, 2 };
+	//---------------------------------------------------
+	// 各段階の見せ方 ここで「押した時の反応」を調整する
+	//  image     : 使う画像 (0=通常 / 1=押された)
+	//  scale     : 大きさの倍率
+	//  offsetY   : 下へ沈める量(キーの高さに対する割合。マイナスが下)
+	//  brightness: 明るさ(1.0で元の色)
+	//  ※ 「押された」を画像の差し替えだけにしたいなら、
+	//    scale=1.0 / offsetY=0 / brightness=1.0 にする
+	//---------------------------------------------------
+	struct FrameStyle
+	{
+		int   image;
+		float scale;
+		float offsetY;
+		float brightness;
+	};
 
-	// アニメーションの1コマ分(どの画像を何秒見せるか)
+	constexpr FrameStyle kStyle[2] =
+	{
+		/* 通常     */ { 0, 1.00f,  0.00f, 1.00f },
+		/* 押された */ { 1, 0.90f, -0.06f, 0.90f },
+	};
+
+	// アニメーションの1コマ分(どの段階を何秒見せるか)
 	struct Step
 	{
 		Frame frame;
 		float duration;
 	};
 
-	//---------------------------------------------------
-	// アニメーションパターン 見た目を調整するならここ
-	//---------------------------------------------------
-	// タイミング: 1回だけ「ぐっ」と押して戻る
+	// タイミング: 1回だけ押して戻る
 	constexpr Step kTiming[] =
 	{
-		{ kNormal,  0.60f },
-		{ kHalf,    0.10f },
-		{ kPressed, 0.15f },
-		{ kNormal,  0.15f },
+		{ kNormal,  0.70f },
+		{ kPressed, 0.20f },
+		{ kNormal,  0.10f },
 	};
 
 	// 連打: 素早く上下する
@@ -42,12 +54,11 @@ namespace
 		{ kPressed, 0.07f },
 	};
 
-	// 長押し: 押し込んだまま維持して、離す
+	// 長押し: 押したまま維持して、離す
 	constexpr Step kHold[] =
 	{
 		{ kNormal,  0.40f },
-		{ kHalf,    0.15f },
-		{ kPressed, 0.95f },
+		{ kPressed, 1.10f },
 		{ kNormal,  0.30f },
 	};
 
@@ -81,44 +92,63 @@ void SkillKeyUI::LoadIfNeeded()
 	if (m_loaded) return;
 	m_loaded = true;
 
+	// ※ ファイル名は Kenney Input Prompts の命名を想定した仮のものです。
+	//    実際のファイル名に合わせてください。
+	//    「通常」と「押された」にどちらの画像を使うかも、ここで入れ替えられます。
+	const std::string dir = "Asset/Textures/UI/Key/";
+
 	struct Def
 	{
 		SkillKey    key;
-		const char* path;
-		int         frameW;
-		int         frameH;
+		const char* normal;		// 通常
+		const char* pressed;	// 押された
 	};
 
-	// ※ W/A/S/D のファイル名は仮です。実際のファイル名に合わせてください
 	const Def defs[] =
 	{
-		{ SkillKey::Space, "Asset/Textures/UI/SpaceKey.png", 41, 21 },
-		{ SkillKey::W,     "Asset/Textures/UI/WKey.png",     19, 21 },
-		{ SkillKey::A,     "Asset/Textures/UI/AKey.png",     19, 21 },
-		{ SkillKey::S,     "Asset/Textures/UI/SKey.png",     19, 21 },
-		{ SkillKey::D,     "Asset/Textures/UI/DKey.png",     19, 21 },
+		{ SkillKey::MouseLeft, "mouse_outline.png",  "mouse_left_outline.png"     },
+		{ SkillKey::A,         "keyboard_a.png",     "keyboard_a.png"     },
+		{ SkillKey::S,         "keyboard_s.png",     "keyboard_s.png"     },
+		{ SkillKey::W,         "keyboard_w.png",     "keyboard_w.png"     },
+		{ SkillKey::D,         "keyboard_d.png",     "keyboard_d.png"     },
 	};
 
 	for (const auto& d : defs)
 	{
 		KeyData& k = m_keys[static_cast<int>(d.key)];
 
-		k.tex = std::make_shared<KdTexture>();
-		k.tex->Load(d.path);
-		k.frameW = d.frameW;
-		k.frameH = d.frameH;
+		const char* names[2] = { d.normal, d.pressed };
+
+		for (int i = 0; i < 2; ++i)
+		{
+			auto tex = std::make_shared<KdTexture>();
+
+			if (!tex->Load(dir + names[i])) continue;
+
+			// 画像サイズから縦横比を取得(サイズが違う画像でもそのまま使える)
+			const auto& info = tex->GetInfo();
+
+			k.tex[i] = tex;
+			k.aspect[i] = static_cast<float>(info.Width) / static_cast<float>(info.Height);
+		}
+
+		// 「押された」画像が読めなければ、通常画像で代用
+		if (!k.tex[1])
+		{
+			k.tex[1] = k.tex[0];
+			k.aspect[1] = k.aspect[0];
+		}
 	}
 }
 
 void SkillKeyUI::Draw(SkillKey key, float x, float y,
-	SkillKeyAnim anim, float time, bool isDown, float alpha, int scale)
+	SkillKeyAnim anim, float time, bool isDown, float alpha)
 {
 	LoadIfNeeded();
 
 	const KeyData& k = m_keys[static_cast<int>(key)];
-	if (!k.tex) return;
 
-	// 実際に押している間は、アニメより優先して「押された」画像
+	// 実際に押している間は、アニメより優先して「押された」表現
 	Frame frame = kNormal;
 
 	if (isDown)
@@ -144,26 +174,35 @@ void SkillKeyUI::Draw(SkillKey key, float x, float y,
 		}
 	}
 
-	// 3コマ並びの画像から、該当コマだけを切り出す
-	Math::Rectangle src = { kSrcIndex[frame] * k.frameW, 0, k.frameW, k.frameH };
-	Math::Color color = { 1.0f, 1.0f, 1.0f, alpha };
+	const FrameStyle& style = kStyle[frame];
+
+	const auto& tex = k.tex[style.image];
+	if (!tex) return;
+
+	// 縦を基準にして、横は画像の縦横比から決める
+	const float h = kKeyHeight * style.scale;
+	const float w = h * k.aspect[style.image];
+
+	const float drawY = y + kKeyHeight * style.offsetY;	// マイナス = 下に沈む
+
+	Math::Color color = { style.brightness, style.brightness, style.brightness, alpha };
 
 	KdShaderManager::Instance().m_spriteShader.DrawTex(
-		k.tex.get(),
-		static_cast<int>(x), static_cast<int>(y),
-		k.frameW * scale, k.frameH * scale,
-		&src, &color);
+		tex.get(),
+		static_cast<int>(x), static_cast<int>(drawY),
+		static_cast<int>(w), static_cast<int>(h),
+		nullptr, &color);
 }
 
 int SkillKeyUI::ToVirtualKey(SkillKey key)
 {
 	switch (key)
 	{
-	case SkillKey::Space: return VK_SPACE;
-	case SkillKey::W:     return 'W';
-	case SkillKey::A:     return 'A';
-	case SkillKey::S:     return 'S';
-	case SkillKey::D:     return 'D';
-	default:              return 0;
+	case SkillKey::MouseLeft: return VK_LBUTTON;
+	case SkillKey::W:         return 'W';
+	case SkillKey::A:         return 'A';
+	case SkillKey::S:         return 'S';
+	case SkillKey::D:         return 'D';
+	default:                  return 0;
 	}
 }

@@ -10,6 +10,9 @@ enum class FontID
 	Future64,
 	FutureNormal64,
 	Future128,
+	Gothic32,
+	Gothic48,
+	Gothic64,
 	Gothic96
 };
 

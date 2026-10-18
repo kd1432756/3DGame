@@ -3,7 +3,7 @@
 // 表示するキーの種類
 enum class SkillKey
 {
-	Space,
+	MouseLeft,
 	W,
 	A,
 	S,
@@ -15,15 +15,16 @@ enum class SkillKey
 enum class SkillKeyAnim
 {
 	Static,		// 静止(通常の画像のまま)
-	Timing,		// タイミングよく押す … 通常 → ちょい押し → 押された → 通常 を1回ずつ繰り返す
+	Timing,		// タイミングよく押す … 通常 → 押された → 通常 を1回だけ押して戻る動きの繰り返し
 	Mash,		// 連打する           … 通常 ⇔ 押された を素早く繰り返す
-	Hold,		// 長押しする         … 通常 → ちょい押し → 押された(しばらく維持) → 通常
+	Hold,		// 長押しする         … 通常 → 押された(しばらく維持) → 通常
 };
 
 //==================================================
-// スキルチェック用のキー表示
-//  ・テクスチャは横に3コマ並び: 通常 / 押された / ちょい押し
-//  ・Spaceは1コマ 41x21、W/A/S/Dは1コマ 19x21
+// スキルチェック用のキー表示(Kenney Input Prompts 用)
+//  ・1キーにつき画像は2枚: 通常 / 押された(2段階のみ)
+//  ・「押された」は2枚目の画像 + 少し縮小 + 少し下げ + 少し暗く(kStyle で調整)
+//  ・表示サイズは画像の縦横比から自動計算(画像サイズに依存しない)
 //  ・テクスチャは初回の描画時にだけ読み込む
 //==================================================
 class SkillKeyUI
@@ -33,12 +34,11 @@ public:
 
 	// x, y    : 画面中央原点・ピクセル(キー画像の中心)
 	// time    : アニメーション用の経過時間(秒)
-	// isDown  : 実際にそのキーを押している間 true (アニメより優先して「押された」画像にする)
+	// isDown  : 実際にそのキーを押している間 true (アニメより優先して「押された」表現にする)
 	// alpha   : 透明度
-	// scale   : 整数倍率(ドット絵がにじまないよう整数推奨)
 	void Draw(SkillKey key, float x, float y,
 		SkillKeyAnim anim, float time, bool isDown,
-		float alpha = 1.0f, int scale = kDefaultScale);
+		float alpha = 1.0f);
 
 	// SkillKey → 仮想キーコード
 	static int ToVirtualKey(SkillKey key);
@@ -46,9 +46,8 @@ public:
 private:
 	struct KeyData
 	{
-		std::shared_ptr<KdTexture> tex;
-		int frameW = 0;
-		int frameH = 0;
+		std::shared_ptr<KdTexture> tex[2];	// 0=通常 / 1=押された
+		float aspect[2] = { 1.0f, 1.0f };	// 横 / 縦
 	};
 
 	void LoadIfNeeded();
@@ -56,5 +55,5 @@ private:
 	KeyData m_keys[static_cast<int>(SkillKey::Count)];
 	bool   m_loaded = false;
 
-	static constexpr int kDefaultScale = 2;
+	static constexpr float kKeyHeight = 44.0f;	// 画面上でのキーの高さ(px)
 };

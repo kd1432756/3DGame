@@ -21,6 +21,8 @@ void Police::Init()
 	m_spAnimator = std::make_shared<KdAnimator>();
 	m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Idle"));
 
+	UpdateAnimation();
+
 	m_pCollider = std::make_unique<KdCollider>();
 
 	m_pCollider->RegisterCollisionShape(

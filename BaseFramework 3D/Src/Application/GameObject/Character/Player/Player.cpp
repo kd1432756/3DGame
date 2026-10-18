@@ -23,6 +23,8 @@
 #include "../../UI/SlideTextUI/SlideTextUI.h"
 #include "../../UI/ShakeTextUI/ShakeTextUI.h"
 
+#include "../../UI/DamageIndicatorUI/DamageIndicatorUI.h"
+
 #include "../../../System/FootStep/FootStep.h"
 
 void Player::Init()
@@ -40,6 +42,8 @@ void Player::Init()
 	m_spAnimator->SetAnimation(
 		m_spModel->GetAnimation(m_currentAnimName)
 	);
+
+	UpdateAnimation();
 
 	m_pCollider = std::make_unique<KdCollider>();
 	m_pCollider->RegisterCollisionShape(
@@ -60,6 +64,11 @@ void Player::Init()
 	}
 
 	InitEmoteIcon();
+
+	auto indicator = std::make_shared<DamageIndicatorUI>();
+	indicator->Init();
+	indicator->SetOwner(std::dynamic_pointer_cast<Player>(shared_from_this()));
+	SceneManager::Instance().AddObject(indicator);
 
 	m_collisionRadius = 0.5f;
 
@@ -677,6 +686,7 @@ void Player::CancelUse()
 	m_useTotal = 0.0f;
 	m_useObject.reset();
 	m_skillCheck.reset();
+	GetAsyncKeyState(VK_LBUTTON);
 }
 
 void Player::SwapItem(
@@ -883,6 +893,27 @@ void Player::OnArrested(const std::shared_ptr<Police>& police)
 
 	// いたずら/インタラクト/スキルチェック中の状態をキャンセル
 	CancelUse();
+
+	// ===== 逮捕ペナルティ =====
+	{
+		const float penaltyRate = 0.2f;
+
+		int calculatedPenalty = static_cast<int>(GetScore() * penaltyRate);
+
+		// 0未満にはしない（マイナススコアの救済、またはスコアが0のとき）
+		const int penalty = std::min(calculatedPenalty, GetScore());
+		if (penalty > 0)
+		{
+			AddScore(-penalty);
+
+			auto text = std::make_shared<FloatingTextUI>();
+			text->Init();
+			text->SetText("Arrest Penalty  -" + std::to_string(penalty));
+			text->SetColor({ 0.9f, 0.3f, 0.3f, 1.0f });
+			text->SetPosition({ 0, 60 });
+			SceneManager::Instance().AddObject(text);
+		}
+	}
 
 	// フォーカス解除(ハイライトが残らないように)
 	auto oldObj = m_focusObject.lock();

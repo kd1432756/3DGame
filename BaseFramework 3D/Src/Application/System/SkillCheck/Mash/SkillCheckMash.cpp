@@ -51,5 +51,5 @@ void SkillCheckMash::OnDraw()
 
 	DrawRect(-halfW + fillHalf, kBarY, fillHalf, halfH, fillColor);
 
-	DrawKey(SkillKey::Space, 0.0f, kBarY - 45.0f, SkillKeyAnim::Mash);
+	DrawKey(SkillKey::MouseLeft, 0.0f, kBarY - 45.0f, SkillKeyAnim::Mash);
 }

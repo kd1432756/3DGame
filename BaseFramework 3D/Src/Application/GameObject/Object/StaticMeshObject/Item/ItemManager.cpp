@@ -92,6 +92,8 @@ void ItemManager::RegisterSpawner(
 		return;
 	}
 
+	m_spawners.push_back(spawner);
+
 	const std::string& path = spawner->GetItemPath();
 
 	if (CountTotal(path) < GetMaxCount(path))

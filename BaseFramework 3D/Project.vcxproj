@@ -315,6 +315,7 @@
     <ClInclude Include="Src\Application\GameObject\Object\TitleProp\TitleProp.h" />
     <ClInclude Include="Src\Application\GameObject\SkyBox\SkyBox.h" />
     <ClInclude Include="Src\Application\GameObject\UI\ConfettiUI\ConfettiUI.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\DamageIndicatorUI\DamageIndicatorUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\EmoteIcon\EmoteIcon.h" />
     <ClInclude Include="Src\Application\GameObject\UI\FloatingTextUI\FloatingTextUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\GameStateUI\GameStateUI.h" />
@@ -472,6 +473,7 @@
     <ClCompile Include="Src\Application\GameObject\Object\TitleProp\TitleProp.cpp" />
     <ClCompile Include="Src\Application\GameObject\SkyBox\SkyBox.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\ConfettiUI\ConfettiUI.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\DamageIndicatorUI\DamageIndicatorUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\EmoteIcon\EmoteIcon.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\FloatingTextUI\FloatingTextUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\GameStateUI\GameStateUI.cpp" />

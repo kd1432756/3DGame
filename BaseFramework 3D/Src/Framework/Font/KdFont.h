@@ -140,7 +140,7 @@ private:
 		HFONT hFont;														// フォントハンドル
 		std::array<std::shared_ptr<KdFontData>, 65536>	CreatedFontDataTbl;	// 作成済みフォントデータ配列
 	};
-	std::array<FontData, 10>			m_FontTbl;							// 登録されたフォントの配列
+	std::array<FontData, 32>			m_FontTbl;							// 登録されたフォントの配列
 
 	HWND								m_hWnd = 0;							// ウィンドウハンドル
 	HDC									m_hDC = 0;							// デバイスコンテキスト

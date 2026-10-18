@@ -51,8 +51,11 @@ protected:
 
 	void Finish(SkillResult result);
 
-	// 決定キー(スペース)が押されたフレームか
-	bool IsActionPressed() const { return IsKeyPressed(VK_SPACE); }
+	// 決定操作(左クリック)。操作を変えるときはこの3行だけ直す
+	static constexpr SkillKey kActionKey = SkillKey::MouseLeft;
+	static constexpr int      kActionVK = VK_LBUTTON;
+	bool IsActionPressed() const { return IsKeyPressed(kActionVK); }	// 押したフレーム
+	bool IsActionDown()    const { return IsKeyDown(kActionVK); }		// 押している間
 
 	// 準備時間中か(操作アイコンを見せる猶予)
 	bool IsReady() const { return m_elapsed >= m_readyTime; }

@@ -313,6 +313,9 @@
     <Filter Include="Src\Application\GameObject\UI\ConfettiUI">
       <UniqueIdentifier>{41e99fc6-fc16-49d6-b5c6-2153c36353a2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\UI\DamageIndicatorUI">
+      <UniqueIdentifier>{37295df1-e534-433a-a705-680adaeb0f27}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -789,6 +792,9 @@
     <ClInclude Include="Src\Application\GameObject\UI\ResultUI\ResultFadeUI.h">
       <Filter>Src\Application\GameObject\UI\ResultUI</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\DamageIndicatorUI\DamageIndicatorUI.h">
+      <Filter>Src\Application\GameObject\UI\DamageIndicatorUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1220,6 +1226,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\ResultUI\ResultFadeUI.cpp">
       <Filter>Src\Application\GameObject\UI\ResultUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\DamageIndicatorUI\DamageIndicatorUI.cpp">
+      <Filter>Src\Application\GameObject\UI\DamageIndicatorUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

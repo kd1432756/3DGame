@@ -270,6 +270,21 @@ bool Application::Init(int w, int h)
 		128
 	);
 	KdFontManager::Instance().AddFont(
+		FontID::Gothic32,
+		"Delta Gothic One",
+		32	
+	);
+	KdFontManager::Instance().AddFont(
+		FontID::Gothic48,
+		"Delta Gothic One",
+		48
+	);
+	KdFontManager::Instance().AddFont(
+		FontID::Gothic64,
+		"Delta Gothic One",
+		64
+	);
+	KdFontManager::Instance().AddFont(
 		FontID::Gothic96,
 		"Delta Gothic One",
 		96

@@ -50,5 +50,5 @@ void SkillCheckShrinkRing::OnDraw()
 	// 縮む枠(白)
 	DrawFrame(0, kY, half, 3, { 1.0f, 1.0f, 1.0f, a });
 
-	DrawKey(SkillKey::Space, 0.0f, kY - kStartHalf - 30.0f, SkillKeyAnim::Timing);
+	DrawKey(SkillKey::MouseLeft, 0.0f, kY - kStartHalf - 30.0f, SkillKeyAnim::Timing);
 }
