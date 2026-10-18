@@ -14,7 +14,7 @@ public:
 
 private:
 	void GetMousePos(POINT* mousePos);
-
+	
 	bool m_start = false;
 	float m_alpha = 0.0f;
 
@@ -58,4 +58,6 @@ private:
 		std::string text;
 	};
 	std::vector<ControlInfo> m_controls;
+
+	std::shared_ptr<KdSoundInstance> m_bgm;
 };

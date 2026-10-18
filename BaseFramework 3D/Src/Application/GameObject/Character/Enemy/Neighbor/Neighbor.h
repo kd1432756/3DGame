@@ -475,7 +475,7 @@ private:
 
 	float m_prankDesire = 0.3f;
 
-	float m_prankSearchRadius = 15.0f;
+	float m_prankSearchRadius = 25.0f;
 
 	float m_prankInteractDistance = 3.0f;
 
@@ -489,7 +489,7 @@ private:
 
 	int m_repairInventoryIndex = -1;
 
-	float m_repairSearchRadius = 15.0f;
+	float m_repairSearchRadius = 25.0f;
 
 	float m_repairInteractDistance = 3.0f;
 

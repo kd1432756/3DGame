@@ -40,6 +40,12 @@ void GameStateUI::Update()
 				// ゲーム開始
 				gameScene->SetGameUpdate(true);
 				gameScene->SetGameState(GameScene::GameState::Playing);
+
+				m_bgm = KdAudioManager::Instance().Play("Asset/Sound/BGM/GameBGM.wav", true);
+				if (m_bgm)
+				{
+					m_bgm->SetVolume(0.2f);
+				}
 			}
 		}
 
@@ -57,6 +63,13 @@ void GameStateUI::Update()
 		break;
 
 	case DisplayState::Finish:
+
+		if (m_bgm)
+		{
+			float volume = 0.2f * (1.0f - (m_timer / 2.0f));
+			if (volume < 0.0f) volume = 0.0f;
+			m_bgm->SetVolume(volume);
+		}
 
 		if (m_timer >= 2.0f)
 		{

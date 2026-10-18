@@ -35,4 +35,6 @@ private:
 	int m_count = 3;
 
 	DisplayState m_displayState = DisplayState::CountDown;
+
+	std::shared_ptr<KdSoundInstance> m_bgm;
 };

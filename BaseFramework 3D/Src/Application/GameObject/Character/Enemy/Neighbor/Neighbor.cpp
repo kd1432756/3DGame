@@ -75,10 +75,8 @@ void Neighbor::Init()
 	// 仮アイテム
 	//============================================================
 
-	AddInventoryItem("Asset/Items/Scissors.item");
+	AddInventoryItem("Asset/Items/Tape.item");
 	
-	//AddInventoryItem("Asset/Items/Hammer.item");
-
 	SelectInventory(0);
 }
 

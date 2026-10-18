@@ -30,6 +30,11 @@ void TitleUI::Init()
 		{ { load("mouse_right_outline.png") },																	"中断" },
 		{ { load("keyboard_w.png"), load("keyboard_a.png"), load("keyboard_s.png"), load("keyboard_d.png") },	"スキルチェック（方向入力）" },
 	};
+
+	if (m_bgm = KdAudioManager::Instance().Play("Asset/Sound/BGM/TitleBGM.wav", true))
+	{
+		m_bgm->SetVolume(0.2f);
+	}
 }
 
 void TitleUI::Update()
@@ -37,6 +42,15 @@ void TitleUI::Update()
 	if (m_start)
 	{
 		m_alpha += 0.02f;
+
+		// フェードに合わせたBGMの音量調整
+		if (m_bgm)
+		{
+			// m_alphaが1.0に向かうにつれて音量を0に近づける（初期音量が0.2fの場合）
+			float volume = 0.2f * (1.0f - m_alpha);
+			if (volume < 0.0f) volume = 0.0f;
+			m_bgm->SetVolume(volume);
+		}
 
 		if (m_alpha > 1.0f)
 		{

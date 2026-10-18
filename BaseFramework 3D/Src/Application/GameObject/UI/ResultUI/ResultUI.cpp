@@ -69,6 +69,14 @@ void ResultUI::Update()
 	{
 		m_alpha += 0.02f;
 
+		if (m_resultBgm)
+		{
+			// m_alphaが0.0から1.0に向かうの連動させて音量を下げる（初期音量が0.3fの場合）
+			float volume = 0.3f * (1.0f - m_alpha);
+			if (volume < 0.0f) volume = 0.0f;
+			m_resultBgm->SetVolume(volume);
+		}
+
 		if (m_alpha >= 1.0f)
 		{
 			m_alpha = 1.0f;
@@ -100,14 +108,34 @@ void ResultUI::Update()
 		return;
 	}
 
-	// 全ての結果が表示された瞬間に一度だけ紙吹雪
+	// 全ての結果が表示された瞬間に一度だけ紙吹雪とBGMを再生
 	if (!m_confettiStarted)
 	{
 		m_confettiStarted = true;
 
-		if (auto confetti = m_wpConfetti.lock())
+		if (!m_ranking.empty() && m_ranking[0])
 		{
-			confetti->Start();
+			bool isPlayerFirst = std::dynamic_pointer_cast<Player>(m_ranking[0]) != nullptr;
+
+			if (isPlayerFirst)
+			{
+				// 1位（プレイヤー勝利）用のBGM ＆ 紙吹雪
+				m_resultBgm = KdAudioManager::Instance().Play("Asset/Sound/BGM/WinBGM.wav", true);
+
+				if (auto confetti = m_wpConfetti.lock())
+				{
+					confetti->Start();
+				}
+			}
+			else
+			{
+				m_resultBgm = KdAudioManager::Instance().Play("Asset/Sound/BGM/ResultBGM.wav", true);
+			}
+
+			if (m_resultBgm)
+			{
+				m_resultBgm->SetVolume(0.3f);
+			}
 		}
 	}
 
