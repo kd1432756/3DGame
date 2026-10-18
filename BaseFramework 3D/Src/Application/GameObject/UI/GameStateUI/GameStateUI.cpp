@@ -9,6 +9,7 @@ void GameStateUI::Init()
 	m_timer = 0.0f;
 	m_count = 3;
 	m_displayState = DisplayState::CountDown;
+
 }
 
 void GameStateUI::Update()
@@ -32,6 +33,14 @@ void GameStateUI::Update()
 
 			m_count--;
 
+			if (m_count > 0)
+			{
+				if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Count.wav"))
+				{
+					se->SetVolume(0.2f);
+				}
+			}
+
 			if (m_count <= 0)
 			{
 				// START! 表示へ
@@ -40,6 +49,11 @@ void GameStateUI::Update()
 				// ゲーム開始
 				gameScene->SetGameUpdate(true);
 				gameScene->SetGameState(GameScene::GameState::Playing);
+
+				if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Start.wav"))
+				{
+					se->SetVolume(0.2f);
+				}
 
 				m_bgm = KdAudioManager::Instance().Play("Asset/Sound/BGM/GameBGM.wav", true);
 				if (m_bgm)

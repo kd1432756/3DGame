@@ -103,6 +103,11 @@ void ResultUI::Update()
 		{
 			m_timer = 0.0f;
 			m_displayRankCount++;
+
+			if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Count.wav"))
+			{
+				se->SetVolume(0.2f);
+			}
 		}
 
 		return;
@@ -125,6 +130,11 @@ void ResultUI::Update()
 				if (auto confetti = m_wpConfetti.lock())
 				{
 					confetti->Start();
+				}
+
+				if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/PartyPopper.wav"))
+				{
+					se->SetVolume(0.2f);
 				}
 			}
 			else

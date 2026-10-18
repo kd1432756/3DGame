@@ -78,6 +78,11 @@ void GameScene::Update()
 
 		m_gameStateUI->ShowFinish();
 
+		if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Finish.wav"))
+		{
+			se->SetVolume(0.2f);
+		}
+
 		return;
 	}
 

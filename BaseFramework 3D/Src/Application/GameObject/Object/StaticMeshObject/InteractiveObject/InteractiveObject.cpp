@@ -230,6 +230,11 @@ void InteractiveObject::Use(
 		player->OnPrankSuccess(score, action->message);
 	}
 
+	if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Blip_Up.wav"))
+	{
+		se->SetVolume(0.2f);
+	}
+
 	NotifyOwner(*action);
 
 	// 個別特殊処理

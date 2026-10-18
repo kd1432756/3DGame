@@ -866,6 +866,8 @@ std::shared_ptr<LocationPoint> Neighbor::SelectOtherHousePoint()
 	static const LocationTag houseTags[] =
 	{
 		LocationTag::PlayerHouse,
+		LocationTag::PlayerHouse,
+		LocationTag::PlayerHouse,
 		LocationTag::NeighborHouse1,
 		LocationTag::NeighborHouse2,
 		LocationTag::NeighborHouse3,

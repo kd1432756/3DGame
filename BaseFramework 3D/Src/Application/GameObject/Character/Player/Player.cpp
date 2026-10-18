@@ -251,6 +251,11 @@ void Player::OnPranked(const std::shared_ptr<InteractiveObject>& object, const I
 
 	SceneManager::Instance().AddObject(slideText);
 
+	if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Blip_Down.wav"))
+	{
+		se->SetVolume(0.2f);
+	}
+
 	for (auto& e : m_neglected)
 	{
 		if (e.obj.lock() == object) return;
@@ -657,11 +662,6 @@ void Player::UpdateUse()
 			// Use() の中で GetSkillResult() を見てスコア倍率などを変える
 			obj->Use(self);	
 			
-			if (auto se = KdAudioManager::Instance().Play("Asset/Sound/Test.wav"))
-			{
-				se->SetVolume(0.2f);
-			}
-
 			if (usedIndex >= 0)
 			{
 				ConsumeItem(usedIndex);
@@ -913,6 +913,11 @@ void Player::OnArrested(const std::shared_ptr<Police>& police)
 			text->SetPosition({ 0, 240 });
 			SceneManager::Instance().AddObject(text);
 		}
+	}
+
+	if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Arrested.wav"))
+	{
+		se->SetVolume(0.2f);
 	}
 
 	// フォーカス解除(ハイライトが残らないように)

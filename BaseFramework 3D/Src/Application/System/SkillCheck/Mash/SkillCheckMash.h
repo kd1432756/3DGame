@@ -19,7 +19,7 @@ protected:
 	void OnDraw() override;
 
 private:
-	int   m_required = 10;
+	int   m_required = 15;
 	float m_gauge = 0.0f;		// 0.0〜1.0
 	float m_inputTime = 0.0f;		// 入力受付開始からの経過時間
 	float m_perfectTime = 1.5f;
