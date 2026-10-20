@@ -126,6 +126,29 @@ void SkillCheckBase::DrawRect(float x, float y, float halfW, float halfH, const 
 		&c, true);
 }
 
+
+void SkillCheckBase::DrawCircle(float x, float y, float radius, const Math::Color& color, bool fill)
+{
+	if (radius <= 0.0f) return;
+
+	Math::Color c = color;
+	KdShaderManager::Instance().m_spriteShader.DrawCircle(
+		static_cast<int>(x), static_cast<int>(y + kLayoutOffsetY),
+		static_cast<int>(radius),
+		&c, fill);
+}
+
+void SkillCheckBase::DrawRing(float x, float y, float radius, float thickness, const Math::Color& color)
+{
+	// 半径を1pxずつずらした輪郭を重ねて太く見せる
+	const float half = thickness * 0.5f;
+
+	for (float d = -half; d <= half; d += 1.0f)
+	{
+		DrawCircle(x, y, radius + d, color, false);
+	}
+}
+
 void SkillCheckBase::DrawKey(SkillKey key, float x, float y, SkillKeyAnim anim, float alphaMul) const
 {
 	const bool isDown = IsReady() && IsKeyDown(SkillKeyUI::ToVirtualKey(key));

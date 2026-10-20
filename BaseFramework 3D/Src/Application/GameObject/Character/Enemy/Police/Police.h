@@ -40,6 +40,14 @@ public:
 		Investigate
 	};
 
+	//============================================================
+	// Dispatch
+	//============================================================
+
+	bool CanDispatch() const;
+
+	void Dispatch(const Math::Vector3& pos);
+
 protected:
 
 	//============================================================
@@ -130,6 +138,9 @@ private:
 
 	bool IsWanted(const std::shared_ptr<CharacterBase>& c) const
 	{
+		// 妨害中は追跡対象にしない（アイテム所持・いたずら条件より優先）
+		if (c->IsHindering()) return false;
+
 		return c->HasDangerousItem() || c->IsPranking();
 	}
 

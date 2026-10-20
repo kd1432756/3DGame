@@ -136,6 +136,12 @@ bool Item::Pickup(Inventory& inventory, int replaceIndex)
 
 	KdEffekseerManager::GetInstance().Play("itemPickup.efkefc", m_pos, SceneManager::Instance().GetSceneScale() * 2.0f);
 
+	if (auto se = KdAudioManager::Instance().Play3D("Asset/Sound/SE/PickUp_Item.wav", m_pos))
+	{
+		se->SetVolume(0.2f);
+		se->SetCurveDistanceScaler(SceneManager::Instance().GetSceneScale());
+	}
+
 	Destroy();
 	return true;
 }

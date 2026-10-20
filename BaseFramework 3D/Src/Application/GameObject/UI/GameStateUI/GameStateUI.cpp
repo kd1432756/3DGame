@@ -10,6 +10,10 @@ void GameStateUI::Init()
 	m_count = 3;
 	m_displayState = DisplayState::CountDown;
 
+/*	if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Count.wav"))
+	{
+		se->SetVolume(0.2f);
+	}*/
 }
 
 void GameStateUI::Update()
@@ -58,7 +62,7 @@ void GameStateUI::Update()
 				m_bgm = KdAudioManager::Instance().Play("Asset/Sound/BGM/GameBGM.wav", true);
 				if (m_bgm)
 				{
-					m_bgm->SetVolume(0.2f);
+					m_bgm->SetVolume(0.075f);
 				}
 			}
 		}

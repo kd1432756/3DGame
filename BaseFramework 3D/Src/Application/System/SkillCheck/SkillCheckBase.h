@@ -70,6 +70,12 @@ protected:
 	// 画面中央原点・ピクセル指定の矩形描画(halfW/halfH は半分のサイズ)
 	static void  DrawRect(float x, float y, float halfW, float halfH, const Math::Color& color);
 
+	// 円(塗りつぶし / 輪郭)。レイアウトのオフセットが掛かる
+	static void DrawCircle(float x, float y, float radius, const Math::Color& color, bool fill = true);
+
+	// 太い輪郭の円(DrawCircle の輪郭は細いので、半径をずらして重ねる)
+	static void DrawRing(float x, float y, float radius, float thickness, const Math::Color& color);
+
 	// 操作キーの表示(実際に押している間は「押された」画像になる)
 	//  anim    : Static=静止 / Timing=タイミング / Mash=連打 / Hold=長押し
 	//  alphaMul: 追加の透明度(押さないキーを薄くする用)

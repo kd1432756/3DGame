@@ -751,6 +751,34 @@ bool Police::DetectPrankSound()
 	return false;
 }
 
+bool Police::CanDispatch() const
+{
+	// 追跡・確保・連行・最後の目撃地点へ移動中は呼べない
+	switch (m_state)
+	{
+	case State::Patrol:
+	case State::Return:
+	case State::Search:
+	case State::Investigate:
+		return true;
+	default:
+		return false;
+	}
+}
+
+void Police::Dispatch(const Math::Vector3& pos)
+{
+	if (!CanDispatch()) return;
+
+	m_investigatePos = pos;
+	m_navPath.clear();      // 既存の経路を破棄して新しい地点へ
+	m_navPathIndex = 0;
+	m_wpTarget.reset();
+	m_chasingForPrank = false;
+
+	ChangeState(State::Investigate);
+}
+
 void Police::FindPatrolPath()
 {
 	if (!m_pNodeManager)

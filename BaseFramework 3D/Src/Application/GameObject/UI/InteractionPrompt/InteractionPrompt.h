@@ -27,4 +27,7 @@ private:
 	std::string m_prompt = "";
 
 	bool m_visible = false;
+
+	KdTexture m_texKeyE;
+	bool m_showKeyIcon = false;
 };

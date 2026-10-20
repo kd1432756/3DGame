@@ -35,6 +35,9 @@
 #include "../../GameObject/UI/InventoryUI/InventoryUI.h"
 #include "../../GameObject/UI/TimeUI/TimeUI.h"
 #include "../../GameObject/UI/ScoreUI/ScoreUI.h"
+#include "../../GameObject/UI/HomeDirectionUI/HomeDirectionUI.h"
+#include "../../GameObject/UI/HinderUI/HinderUI.h"
+#include "../../GameObject/UI/ReportUI/ReportUI.h"
 
 void GameScene::Update()
 {
@@ -150,11 +153,6 @@ void GameScene::Event()
 		);
 	}
 
-	if (GetAsyncKeyState('Z') & 0x8000)
-	{
-		KdAudioManager::Instance().GetAudioEngine()->SetMasterVolume(0.2f);
-	}
-
 	// Yキー：30分戻す
 	if (GetAsyncKeyState('Y') & 0x8000)
 	{
@@ -198,8 +196,8 @@ void GameScene::Start()
 		SceneManager::Instance().GetObjList().size());
 	OutputDebugStringA(buf);
 
-//	KdShaderManager::Instance().WorkAmbientController().SetFogEnable(true, false);
-//	KdShaderManager::Instance().WriteCBDistanceFog({ 1,1,1 }, 0.0005f);
+	//KdShaderManager::Instance().WorkAmbientController().SetFogEnable(true, false);
+	//KdShaderManager::Instance().WriteCBDistanceFog({ 0.5f,0.5f,0.5f }, 0.005f);
 
 	FootstepSystem::Instance().Init();
 
@@ -227,6 +225,12 @@ void GameScene::Start()
 	m_objList.push_back(skyBox);
 
 	{
+		auto homeDirection = std::make_shared<HomeDirectionUI>();
+		homeDirection->Init();
+		homeDirection->SetName("HomeDirectionUI");
+		homeDirection->SetOwner(player);
+		m_objList.push_back(homeDirection);
+
 		auto score = std::make_shared<ScoreUI>();
 		score->Init();
 		score->SetName("ScoreUI");
@@ -256,6 +260,16 @@ void GameScene::Start()
 		inventory->SetName("InventoryUI");
 		inventory->SetPlayer(player);
 		m_objList.push_back(inventory);
+
+		auto hinderUI = std::make_shared<HinderUI>();
+		hinderUI->Init();
+		hinderUI->SetPlayer(player);
+		m_objList.push_back(hinderUI);
+
+		auto reportUI = std::make_shared<ReportUI>();
+		reportUI->Init();
+		reportUI->SetPlayer(player);
+		m_objList.push_back(reportUI);
 	}
 
 	{

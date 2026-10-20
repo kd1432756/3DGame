@@ -27,6 +27,8 @@
 
 #include "../../../System/FootStep/FootStep.h"
 
+#include "../Enemy/Police/Police.h"
+
 void Player::Init()
 {
 	CharacterBase::Init();
@@ -87,25 +89,48 @@ void Player::Update()
 		return;
 	}
 
-	UpdateRotationByCamera();
+	// 妨害終了後のカメラ復帰中は操作不可
+	if (m_isHinderCamReturning)
+	{
+		UpdateHinderCamera();
+		m_isMoving = false;
+		ApplyGravity();
+		UpdateWorldMatrix();
+		return;
+	}
+
+	// TPS中はカメラ向きでプレイヤーを回さない
+	if (!m_isHindering)
+	{
+		UpdateRotationByCamera();
+	}
+
+	UpdateHinder();
+
+	// UpdateHinder内で妨害が終わった場合
+	if (m_isHinderCamReturning)
+	{
+		m_isMoving = false;
+		ApplyGravity();
+		UpdateWorldMatrix();
+		return;
+	}
 
 	Move();
 
-	//Jump();
-
 	ApplyGravity();
 
-	UpdateInventorySelect();
+	if (!m_isRestrained)
+	{
+		UpdateInventorySelect();
+		UpdateFocusObject();
+		TryInteract();
+		StartUse();
+		UpdateUse();
+		TryDropItem();
+	}
 
-	UpdateFocusObject();
-
-	TryInteract();
-
-	StartUse();
-
-	UpdateUse();
-
-	TryDropItem();
+	UpdateReport();
 
 	UpdateWorldMatrix();
 }
@@ -222,6 +247,248 @@ void Player::UpdateNeglect()
 	}
 }
 
+void Player::UpdateReport()
+{
+	if (m_reportTimer > 0.0f)
+	{
+		m_reportTimer -= 1 / 60.0f;
+		return;
+	}
+
+	if (!(GetAsyncKeyState('R') & 0x0001))
+	{
+		return;
+	}
+
+	if (TryReport())
+	{
+		m_reportTimer = m_reportCooldown;
+	}
+}
+
+bool Player::TryReport()
+{
+	// 通報地点 = プレイヤーの現在位置
+	const Math::Vector3 reportPos = m_pos;
+
+	// 通報地点から最も近く、追跡中でない警察官を探す
+	std::shared_ptr<Police> nearest;
+	float nearestSq = std::numeric_limits<float>::max();
+
+	// FindObjectsを使ってPoliceのリストを取得し、範囲ベースforで走査
+	for (auto& police : SceneManager::Instance().FindObjects<Police>())
+	{
+		// 出動可能かチェック
+		if (!police->CanDispatch()) continue;
+
+		Math::Vector3 diff = police->GetPos() - reportPos;
+		diff.y = 0.0f;
+		const float dSq = diff.LengthSquared();
+
+		if (dSq < nearestSq)
+		{
+			nearestSq = dSq;
+			nearest = police;
+		}
+	}
+
+	nearest->Dispatch(reportPos);
+
+	// フィードバック
+	auto text = std::make_shared<FloatingTextUI>();
+	text->Init();
+	text->SetText("Reported!");
+	text->SetColor({ 0.9f, 0.35f, 0.0f, 1.0f });
+	text->SetPosition({ 520, -210 });
+	text->SetFont(FontID::Future24);
+	SceneManager::Instance().AddObject(text);
+
+	if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Call.wav"))
+	{
+		se->SetVolume(0.1f);
+	}
+
+	return true;
+}
+
+void Player::UpdateHinder()
+{
+	if (m_hinderCooldownTimer > 0.0f)
+	{
+		m_hinderCooldownTimer = std::max(0.0f, m_hinderCooldownTimer - 1 / 60.0f);
+	}
+
+	// クールダウン中は妨害を開始できない
+	if (!m_isHindering)
+	{
+		if (m_hinderCooldownTimer > 0.0f)
+		{
+			return;
+		}
+
+		if ((GetAsyncKeyState('F') & 0x0001) && !m_isArrested)
+		{
+			TryBeginHinder();
+		}
+
+		return;
+	}
+
+	auto target = m_wpHinderTarget.lock();
+
+	// 対象が消えた／逮捕された／いたずらをやめた → 終了
+	if (!target || target->IsArrested() || !target->IsPranking())
+	{
+		EndHinder(true, false);
+		return;
+	}
+
+	// 連打で延長
+	if (GetAsyncKeyState(VK_SPACE) & 0x0001)
+	{
+		// 満タンのときは回復も減衰カウントも進めない（無駄押しで弱くならないように）
+		if (m_hinderRemaining < m_hinderBaseTime)
+		{
+			const float extend =
+				m_hinderMashExtend * std::pow(m_hinderMashDecay, static_cast<float>(m_hinderMashCount));
+
+			m_hinderRemaining = std::min(m_hinderRemaining + extend, m_hinderBaseTime);
+			m_hinderMashCount++;
+		}
+	}
+
+	m_hinderRemaining -= 1 / 60.0f;
+
+	if (m_hinderRemaining <= 0.0f)
+	{
+		EndHinder(true, true);
+	}
+}
+
+bool Player::TryBeginHinder()
+{
+	if (m_isHinderCamReturning) return false;
+
+	auto nearest = FindHinderTarget();
+	if (!nearest) return false;
+
+	// 自分のいたずら／修復中ならキャンセル
+	CancelUse();
+
+	m_wpHinderTarget = nearest;
+	m_hinderRemaining = m_hinderBaseTime;
+	m_hinderMashCount = 0;
+
+	m_isHindering = true;
+	m_isRestrained = true;
+	nearest->SetRestrained(true);
+
+	BeginHinderCamera();
+
+	return true;
+}
+
+std::shared_ptr<CharacterBase> Player::FindHinderTarget() const
+{
+	const float range = m_hinderRange * m_sceneScale;
+
+	std::shared_ptr<CharacterBase> nearest;
+	float nearestSq = range * range;
+
+	for (auto& obj : SceneManager::Instance().GetObjList())
+	{
+		auto ch = std::dynamic_pointer_cast<CharacterBase>(obj);
+		if (!ch || ch.get() == this) continue;
+		if (std::dynamic_pointer_cast<Police>(ch)) continue;
+		if (ch->IsArrested() || !ch->IsPranking()) continue;
+
+		Math::Vector3 diff = ch->GetPos() - m_pos;
+		diff.y = 0.0f;
+		const float dSq = diff.LengthSquared();
+
+		if (dSq <= nearestSq)
+		{
+			nearestSq = dSq;
+			nearest = ch;
+		}
+	}
+	return nearest;
+}
+
+void Player::EndHinder(bool restoreCamera, bool applyCooldown)
+{
+	if (auto target = m_wpHinderTarget.lock())
+	{
+		target->SetRestrained(false);
+	}
+
+	m_wpHinderTarget.reset();
+	m_hinderRemaining = 0.0f;	
+	m_hinderMashCount = 0;
+	if (applyCooldown)
+	{
+		m_hinderCooldownTimer = m_hinderCooldown;
+	}
+	m_isHindering = false;
+	m_isRestrained = false;
+
+	if (restoreCamera)
+	{
+		if (auto cam = std::dynamic_pointer_cast<ArrestCamera>(m_camera.lock()))
+		{
+			cam->StartPushIn();
+			m_isHinderCamReturning = true;
+		}
+	}
+}
+
+void Player::BeginHinderCamera()
+{
+	// 手持ちアイテムはTPSだと宙に浮くので外す
+	SelectInventory(-1);
+
+	// フォーカス解除（ハイライトが残らないように）
+	if (auto oldObj = m_focusObject.lock())
+	{
+		if (auto usable = std::dynamic_pointer_cast<Usable>(oldObj))
+		{
+			usable->SetFocused(false);
+		}
+	}
+	m_focusObject.reset();
+
+	m_isDrawEnabled = true;   // 自分のモデルを表示
+
+	auto cam = std::make_shared<ArrestCamera>();
+	cam->Init();
+	cam->SetTarget(std::dynamic_pointer_cast<Player>(shared_from_this()));
+	cam->SetEyeHeight(0.8f * m_sceneScale);
+	cam->SetDegAng(m_fpsCamera->GetDegAng());
+
+	CameraManager::Instance().SetCamera(cam);
+	SetCamera(cam);
+}
+
+void Player::UpdateHinderCamera()
+{
+	auto arrestCam = std::dynamic_pointer_cast<ArrestCamera>(m_camera.lock());
+
+	if (!arrestCam)
+	{
+		m_isHinderCamReturning = false;
+		return;
+	}
+
+	if (!arrestCam->IsTransitionFinished()) return;
+
+	m_fpsCamera->SetDegAng(arrestCam->GetDegAng());
+	CameraManager::Instance().SetCamera(m_fpsCamera);
+	SetCamera(m_fpsCamera);
+
+	m_isDrawEnabled = false;
+	m_isHinderCamReturning = false;
+}
+
 void Player::OnPrankSuccess(int score, const std::string& message)
 {
 	AddScore(score);
@@ -253,7 +520,7 @@ void Player::OnPranked(const std::shared_ptr<InteractiveObject>& object, const I
 
 	if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Blip_Down.wav"))
 	{
-		se->SetVolume(0.2f);
+		se->SetVolume(0.1f);
 	}
 
 	for (auto& e : m_neglected)
@@ -316,7 +583,7 @@ void Player::Move()
 {
 	m_isMoving = false;
 
-	if (m_isUsing)
+	if (m_isUsing || m_isRestrained)
 	{
 		return;
 	}
@@ -708,8 +975,8 @@ void Player::SwapItem(
 	if (!camera)
 	{
 		return;
-	}
-
+	}	
+	
 	//============================================================
 	// 交換対象（今そのスロットにあるアイテム）をワールドへ落とす
 	//============================================================
@@ -769,7 +1036,7 @@ void Player::ConsumeItem(int index)
 
 void Player::TryDropItem()
 {
-	if (!(GetAsyncKeyState('Q') & 0x0001))
+	if (!(GetAsyncKeyState('G') & 0x0001))
 	{
 		return;
 	}
@@ -893,6 +1160,10 @@ void Player::OnArrested(const std::shared_ptr<Police>& police)
 
 	// いたずら/インタラクト/スキルチェック中の状態をキャンセル
 	CancelUse();
+
+	// 妨害中なら解除
+	EndHinder(false, true);
+	m_isHinderCamReturning = false;
 
 	// ===== 逮捕ペナルティ =====
 	{

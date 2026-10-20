@@ -133,6 +133,30 @@ public:
 
 	int GetDamagedCount() const { return m_neglected.size(); }
 
+	// 妨害UI用
+	std::shared_ptr<CharacterBase> FindHinderTarget() const;
+
+	bool  CanHinder() const 
+	{
+		if (m_isHindering || m_isRestrained || m_isArrested || m_isHinderCamReturning)
+			return false;
+		if (m_hinderCooldownTimer > 0.0f) return false;
+		return FindHinderTarget() != nullptr;
+	}
+
+	float GetHinderRatio() const
+	{
+		if (!m_isHindering) return 0.0f;
+		return std::clamp(m_hinderRemaining / m_hinderBaseTime, 0.0f, 1.0f);
+	}
+
+	float GetReportRemaining() const { return m_reportTimer; }
+	float GetReportCooldownRatio() const
+	{
+		if (m_reportCooldown <= 0.0f) return 0.0f;
+		return std::clamp(m_reportTimer / m_reportCooldown, 0.0f, 1.0f);
+	}
+
 protected:
 
 	void UpdateAnimation() override;
@@ -145,12 +169,26 @@ private:
 	void UpdateRotationByCamera();
 
 	void UpdateFocusObject();
+
 	void TryInteract();
+
 	void UpdateInventorySelect();
+
 	void StartUse();
 	void UpdateUse();
+
 	void UpdateArrested();
+
 	void UpdateNeglect();
+
+	void UpdateReport();
+	bool TryReport();
+
+	void UpdateHinder();
+	bool TryBeginHinder();
+	void EndHinder(bool restoreCamera, bool applyCooldown);   // 既存の宣言を差し替え
+	void BeginHinderCamera();
+	void UpdateHinderCamera();
 
 	void OnItemsConfiscated() override;
 	void SelectInventory(int index) override;
@@ -190,6 +228,8 @@ private:
 
 	std::shared_ptr<FPSCamera> m_fpsCamera;
 
+	bool m_isHinderCamReturning = false;   // TPS → FPS に戻している最中
+
 	// ===== 放置ペナルティ =====
 	struct NeglectedEntry
 	{
@@ -203,4 +243,21 @@ private:
 	float m_neglectGrace = 10.0f;  // 猶予(秒)
 	float m_neglectInterval = 1.0f;   // 減点間隔(秒)
 	int   m_neglectPenalty = 1;      // 1回あたりの減点
+
+	// 通報
+	float m_reportCooldown = 30.0f;   // 初期値30秒
+	float m_reportTimer = 0.0f;    // 残りクールダウン
+
+	// 妨害
+	std::weak_ptr<CharacterBase> m_wpHinderTarget;
+	float m_hinderRemaining = 0.0f;
+
+	float m_hinderBaseTime = 3.0f;    // 基本拘束時間
+	float m_hinderMashExtend = 0.25f;   // 1回目の連打で延びる秒数
+	float m_hinderMashDecay = 0.96f;   // 1回押すごとの減衰率（小さいほど早く伸びなくなる）
+	int   m_hinderMashCount = 0;       // 今回の妨害での連打回数
+	float m_hinderRange = 2.0f;    // 妨害可能距離（×sceneScale）
+
+	float m_hinderCooldown = 5.0f;    // 妨害後のクールダウン（調整用）
+	float m_hinderCooldownTimer = 0.0f;
 };

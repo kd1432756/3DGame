@@ -654,3 +654,29 @@ void KdSpriteShader::DrawFont(const Math::Vector2& Pos, const Math::Color* color
 
 	DrawFont(fontSprite, Pos, color,pivot, angle, 0);
 }
+
+Math::Vector2 KdSpriteShader::CalcFontSize(const std::shared_ptr<KdFontSprite>& fontSprite) const
+{
+	if (!fontSprite || fontSprite->GetTexList().empty()) return { 0, 0 };
+
+	const float fontHeight = (float)fontSprite->GetTexList()[0]->FontTex->GetInfo().Height;
+	float totalWidth = 0, totalHeight = 0, lineWidth = 0;
+
+	for (auto& data : fontSprite->GetTexList())
+	{
+		if (data->Code == '\n')
+		{
+			totalWidth = std::max(totalWidth, lineWidth);
+			lineWidth = 0;
+			totalHeight += fontHeight;
+		}
+		else
+		{
+			lineWidth += (float)data->FontTex->GetInfo().Width;
+		}
+	}
+	totalWidth = std::max(totalWidth, lineWidth);
+	totalHeight += fontHeight;
+
+	return { totalWidth, totalHeight };
+}

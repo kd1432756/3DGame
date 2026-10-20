@@ -253,7 +253,8 @@ private:
 		SearchItemCandidate& outCandidate);
 
 	float EvaluateSearchItemCandidate(
-		const std::shared_ptr<Item>& item);
+		const std::shared_ptr<Item>& item,
+		float pathDistance);
 
 	void SelectSearchItemCandidate(
 		const SearchItemCandidate& candidate);
@@ -295,7 +296,8 @@ private:
 
 	float EvaluateRepairCandidate(
 		const std::shared_ptr<InteractiveObject>& target,
-		const ItemData& itemData);
+		const ItemData& itemData,
+		float pathDistance);
 
 	void SelectRepairCandidate(
 		const RepairCandidate& candidate);

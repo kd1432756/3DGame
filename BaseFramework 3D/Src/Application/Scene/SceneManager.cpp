@@ -31,6 +31,8 @@ void SceneManager::PreUpdate()
 	// シーン切替
 	if (m_currentSceneType != m_nextSceneType)
 	{
+		KdAudioManager::Instance().StopAllSound();
+
 		ItemManager::Instance().Reset();
 
 		AStarNodeManager::Instance().Clear();

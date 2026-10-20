@@ -319,10 +319,13 @@
     <ClInclude Include="Src\Application\GameObject\UI\EmoteIcon\EmoteIcon.h" />
     <ClInclude Include="Src\Application\GameObject\UI\FloatingTextUI\FloatingTextUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\GameStateUI\GameStateUI.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\HinderUI\HinderUI.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\HomeDirectionUI\HomeDirectionUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\InteractionProgress\InteractionProgress.h" />
     <ClInclude Include="Src\Application\GameObject\UI\InteractionPrompt\InteractionPrompt.h" />
     <ClInclude Include="Src\Application\GameObject\UI\InventoryUI\InventoryUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\LoadingUI\LoadingUI.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\ReportUI\ReportUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\ResultUI\ResultFadeUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\ResultUI\ResultUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\Reticle\Reticle.h" />
@@ -477,10 +480,13 @@
     <ClCompile Include="Src\Application\GameObject\UI\EmoteIcon\EmoteIcon.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\FloatingTextUI\FloatingTextUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\GameStateUI\GameStateUI.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\HinderUI\HinderUI.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\HomeDirectionUI\HomeDirectionUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\InteractionProgress\InteractionProgress.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\InteractionPrompt\InteractionPrompt.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\InventoryUI\InventoryUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\LoadingUI\LoadingUI.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\ReportUI\ReportUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\ResultUI\ResultFadeUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\ResultUI\ResultUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\Reticle\Reticle.cpp" />

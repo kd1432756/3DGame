@@ -76,6 +76,14 @@ public:
 	virtual bool IsPranking() const { return false; }
 	virtual Math::Vector3 GetPrankPos() const { return m_pos; }
 
+	// 拘束（移動不可・操作可）
+	bool IsRestrained() const { return m_isRestrained; }
+	void SetRestrained(bool isRestrained) { m_isRestrained = isRestrained; }
+
+	// 妨害中（プレイヤー側。警察の追跡対象から外す）
+	bool IsHindering() const { return m_isHindering; }
+	void SetHindering(bool isHindering) { m_isHindering = isHindering; }
+
 	void ShowEmote(EmoteIcon::IconType type, float duration = 0.0f, bool force = false);
 	void HideEmote();
 
@@ -148,6 +156,9 @@ protected:
 	float m_prevPhase = 0.0f;
 	const KdAnimationData* m_prevAnimData = nullptr;
 	int   m_stepCount = 0;
+
+	bool m_isRestrained = false;
+	bool m_isHindering = false;
 
 	// ===== ray =====
 	

@@ -584,6 +584,13 @@ void CharacterBase::InitEmoteIcon()
 void CharacterBase::ShowEmote(EmoteIcon::IconType type, float duration, bool force)
 {
 	if (m_spEmoteIcon) m_spEmoteIcon->SetIcon(type, duration, force);
+
+	if (auto se = KdAudioManager::Instance().Play3D("Asset/Sound/SE/Icon_Pop.wav", m_pos))
+	{
+		se->SetVolume(0.2f);
+		se->SetPitch(0.3f);
+		se->SetCurveDistanceScaler(m_sceneScale * 1.2f);
+	}
 }
 
 void CharacterBase::HideEmote()

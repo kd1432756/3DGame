@@ -1,13 +1,13 @@
 ﻿#include "DamageIndicatorUI.h"
-#include "../../Character/Player/Player.h"   // ★パスは環境に合わせて
+#include "../../Character/Player/Player.h"
 
 void DamageIndicatorUI::Init()
 {
 	m_texHouse = std::make_shared<KdTexture>();
-	m_texHouse->Load("Asset/Textures/UI/House.png");     // ★仮パス
+	m_texHouse->Load("Asset/Textures/UI/House.png");
 
 	m_texBadge = std::make_shared<KdTexture>();
-	m_texBadge->Load("Asset/Textures/UI/Badge.png");     // ★仮パス
+	m_texBadge->Load("Asset/Textures/UI/Badge.png");
 }
 
 void DamageIndicatorUI::Update()
@@ -67,13 +67,10 @@ void DamageIndicatorUI::DrawSprite()
 		(int)bx, (int)by,
 		(int)size, (int)size);
 
-	// 数字(★DrawString系の呼び出しは FloatingTextUI の実装に合わせる)
-	// 例: sprite.DrawString(bx - 6, by + 10, std::to_string(m_count), { 1,1,1,1 });
-
 	sprite.DrawFont(
 		Math::Vector2{ bx + 3, by - 0.5f },
 		&kWhiteColor,
-		Math::Vector2{ 0.5f, 0.5f },
+		Math::Vector2{ 0.5f, 0.5f },	//pivot
 		0.0f,
 		FontID::Future24,
 		std::to_string(m_count).c_str());

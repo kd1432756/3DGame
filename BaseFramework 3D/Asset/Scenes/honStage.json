@@ -57913,6 +57913,60 @@
                 0.029999999329447746
             ],
             "Type": "Item"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ItemPath": "Asset/Items/Nail.item",
+            "ModelPath": "Asset/Models/Item/Nail/Nail.gltf",
+            "Name": "Item_15",
+            "Position": [
+                -22.90662384033203,
+                0.44269859790802,
+                -20.34000015258789
+            ],
+            "Rotation": [
+                -0.0,
+                0.0,
+                -0.0
+            ],
+            "Scale": [
+                0.10000000149011612,
+                0.10000000149011612,
+                0.10000000149011612
+            ],
+            "Type": "Item"
+        },
+        {
+            "Color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "IsGround": false,
+            "ItemPath": "Asset/Items/Wrench.item",
+            "ModelPath": "Asset/Models/Item/Wrench/Wrench.gltf",
+            "Name": "Item_16",
+            "Position": [
+                36.99870681762695,
+                0.0394192636013031,
+                20.24130630493164
+            ],
+            "Rotation": [
+                -0.0,
+                27.054845809936523,
+                -0.0
+            ],
+            "Scale": [
+                0.10000000149011612,
+                0.10000000149011612,
+                0.10000000149011612
+            ],
+            "Type": "Item"
         }
     ]
 }

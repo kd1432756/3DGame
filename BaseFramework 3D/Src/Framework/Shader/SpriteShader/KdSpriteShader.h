@@ -164,6 +164,9 @@ public:
 		...
 	);
 
+	// フォントサイズ（追加）
+	Math::Vector2 CalcFontSize(const std::shared_ptr<KdFontSprite>& fontSprite) const;
+
 private:
 	// フォント描画
 	void DrawFont(std::shared_ptr<KdFontSprite>& fontSprite, const Math::Vector2& Pos, const Math::Color* color, const int antiAliasingFlag);

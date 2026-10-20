@@ -155,6 +155,17 @@ void Neighbor::UpdateBehavior()
 	}
 
 	//============================================================
+	// 拘束中：移動・思考・インタラクト進行を止める（進捗は保持）
+	//============================================================
+
+	if (m_isRestrained)
+	{
+		SetMoveDirection(Math::Vector3::Zero);
+		PlayAnimation("Armature|Idle");
+		return;
+	}
+
+	//============================================================
 	// Utility AI
 	//============================================================
 
@@ -1081,10 +1092,20 @@ bool Neighbor::FindBestSearchItem(SearchItemCandidate & outCandidate)
 		}
 
 		//========================================================
+		// 経路探索
+		//========================================================
+
+		float pathDistance = 0.0f;
+		if (!CalculatePathDistance(item->GetPos(), pathDistance))
+		{
+			continue; // 到達不能は除外
+		}
+
+		//========================================================
 		// このアイテムを拾う価値
 		//========================================================
 
-		float utility = EvaluateSearchItemCandidate(item);
+		float utility = EvaluateSearchItemCandidate(item, pathDistance);
 
 		if (utility <= bestUtility)
 		{
@@ -1105,7 +1126,7 @@ bool Neighbor::FindBestSearchItem(SearchItemCandidate & outCandidate)
 // Evaluate Search Item Candidate
 //============================================================
 
-float Neighbor::EvaluateSearchItemCandidate(const std::shared_ptr<Item>& item)
+float Neighbor::EvaluateSearchItemCandidate(const std::shared_ptr<Item>& item, float pathDistance)
 {
 	if (!item)
 	{
@@ -1135,13 +1156,8 @@ float Neighbor::EvaluateSearchItemCandidate(const std::shared_ptr<Item>& item)
 
 	float searchRadius = m_searchItemRadius * m_sceneScale;
 
-	float itemDistanceScore =
-		1.0f -
-		std::clamp(
-			itemDistance / searchRadius,
-			0.0f,
-			1.0f
-		);
+	const float pathScore =
+		1.0f - std::clamp(pathDistance / (searchRadius * 2.0f), 0.0f, 1.0f);
 
 	//============================================================
 	// 基本Utility
@@ -1149,7 +1165,7 @@ float Neighbor::EvaluateSearchItemCandidate(const std::shared_ptr<Item>& item)
 
 	float utility = 20.0f;
 
-	utility += itemDistanceScore * 20.0f;
+	utility += pathScore * 20.0f;
 
 	//============================================================
 	// Prankに使える
@@ -1179,6 +1195,15 @@ float Neighbor::EvaluateSearchItemCandidate(const std::shared_ptr<Item>& item)
 void Neighbor::SelectSearchItemCandidate(const SearchItemCandidate& candidate)
 {
 	if (!candidate.item)
+	{
+		return;
+	}
+
+	//============================================================
+	// 同じターゲットなら経路を維持
+	//============================================================
+
+	if (m_state == State::SearchItem && m_wpSearchItem.lock() == candidate.item)
 	{
 		return;
 	}
@@ -1400,47 +1425,6 @@ void Neighbor::PickupSearchItem()
 
 bool Neighbor::CanUseItemForPrank(const ItemData & itemData) const
 {
-/*	ただ、ここで一つ問題があります。
-
-	今の
-
-		CanUseItemForPrank()
-
-		は、
-
-		使えるターゲットが世界のどこかに一つでもある
-
-		だけです。
-
-		でも、
-
-		ハサミ
-		↓
-		花
-		↓
-		100m先
-
-		だったら、
-
-		ハサミを拾う価値はあるのか？
-
-		という問題があります。*/
-
-/*そこで最終的には、
-
-EvaluateSearchItemCandidate()
-
-の中で、
-
-Item
- ↓
-対応するInteractiveObject
- ↓
-ターゲットまでの距離
- ↓
-Utility
-
-まで見るのがおすすめです。*/
 
 	auto& objList = SceneManager::Instance().GetObjList();
 
@@ -1999,6 +1983,11 @@ void Neighbor::SelectPrankCandidate(const PrankCandidate& candidate)
 	// ターゲットを保存
 	//============================================================
 
+	if (m_wpPrankTarget.lock() != candidate.target)
+	{
+		m_navPath.clear();
+		m_navPathIndex = 0;
+	}
 	m_wpPrankTarget = candidate.target;
 
 	m_prankInventoryIndex = candidate.inventoryIndex;
@@ -2278,7 +2267,7 @@ bool Neighbor::FindBestRepairCandidate(
 
 			itemData = ItemData::Get(inventoryItem.itemPath);
 
-			if (!itemData->HasRepairUse()) { continue; }
+			if (!itemData || !itemData->HasRepairUse()) { continue; }
 
 			itemPath = inventoryItem.itemPath;
 		}
@@ -2382,7 +2371,8 @@ bool Neighbor::FindBestRepairCandidate(
 			float utility =
 				EvaluateRepairCandidate(
 					target,
-					*itemData
+					*itemData,
+					pathDistance
 				);
 
 			log.utility = utility;
@@ -2429,7 +2419,8 @@ bool Neighbor::FindBestRepairCandidate(
 
 float Neighbor::EvaluateRepairCandidate(
 	const std::shared_ptr<InteractiveObject>& target,
-	const ItemData& itemData)
+	const ItemData& itemData,
+	float pathDistance)
 {
 	if (!target)
 	{
@@ -2454,15 +2445,10 @@ float Neighbor::EvaluateRepairCandidate(
 
 	float searchRadius = m_repairSearchRadius * m_sceneScale;
 
-	float distanceScore =
-		1.0f -
-		std::clamp(
-			distance / searchRadius,
-			0.0f,
-			1.0f
-		);
+	const float pathScore =
+		1.0f - std::clamp(pathDistance / (searchRadius * 2.0f), 0.0f, 1.0f);
 
-	utility += distanceScore * 20.0f;
+	utility += pathScore * 20.0f;
 
 	return utility;
 }
@@ -2491,6 +2477,12 @@ void Neighbor::SelectRepairCandidate(
 	//============================================================
 	// ターゲットを保存
 	//============================================================
+
+	if (m_wpRepairTarget.lock() != candidate.target)
+	{
+		m_navPath.clear();
+		m_navPathIndex = 0;
+	}
 
 	m_wpRepairTarget = candidate.target;
 
@@ -2627,6 +2619,8 @@ void Neighbor::OnArrested(const std::shared_ptr<Police>& police)
 
 	m_isInteracting = false;
 	m_interactTimer = 0.0f;
+
+	m_isRestrained = false;
 
 	m_navPath.clear();
 	m_navPathIndex = 0;
@@ -3044,6 +3038,7 @@ void Neighbor::PlayAnimation(const std::string& animName)
 
 void Neighbor::DrawDebugUI()
 {
+	return;
 	if (ImGui::Begin("Neighbor AI Debug"))
 	{
 		ImGui::PushID(this);

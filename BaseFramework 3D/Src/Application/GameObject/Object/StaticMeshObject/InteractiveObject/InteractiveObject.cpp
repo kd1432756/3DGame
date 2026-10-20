@@ -232,7 +232,7 @@ void InteractiveObject::Use(
 
 	if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Blip_Up.wav"))
 	{
-		se->SetVolume(0.2f);
+		se->SetVolume(0.1f);
 	}
 
 	NotifyOwner(*action);

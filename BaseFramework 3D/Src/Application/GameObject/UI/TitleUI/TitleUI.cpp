@@ -33,7 +33,7 @@ void TitleUI::Init()
 
 	if (m_bgm = KdAudioManager::Instance().Play("Asset/Sound/BGM/TitleBGM.wav", true))
 	{
-		m_bgm->SetVolume(0.2f);
+		m_bgm->SetVolume(0.3f);
 	}
 }
 

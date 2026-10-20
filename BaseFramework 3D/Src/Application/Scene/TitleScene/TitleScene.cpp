@@ -23,6 +23,11 @@ void TitleScene::Event()
 			SceneManager::SceneType::Edit
 		);
 	}
+
+	if (GetAsyncKeyState('P') & 0x8000)
+	{
+		KdAudioManager::Instance().SetMasterVolume(3.0f);
+	}
 }
 
 void TitleScene::Init()

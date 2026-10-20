@@ -316,6 +316,15 @@
     <Filter Include="Src\Application\GameObject\UI\DamageIndicatorUI">
       <UniqueIdentifier>{37295df1-e534-433a-a705-680adaeb0f27}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\UI\HomeDirectionUI">
+      <UniqueIdentifier>{f1fa7d74-1d8e-4836-af57-fd873bb00210}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\HinderUI">
+      <UniqueIdentifier>{e19ef9e6-35c4-409e-9f99-1f7d916d8667}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\ReportUI">
+      <UniqueIdentifier>{4c549e87-fc2b-4a6c-8365-7a8062b5e907}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -795,6 +804,15 @@
     <ClInclude Include="Src\Application\GameObject\UI\DamageIndicatorUI\DamageIndicatorUI.h">
       <Filter>Src\Application\GameObject\UI\DamageIndicatorUI</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\HomeDirectionUI\HomeDirectionUI.h">
+      <Filter>Src\Application\GameObject\UI\HomeDirectionUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\HinderUI\HinderUI.h">
+      <Filter>Src\Application\GameObject\UI\HinderUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\ReportUI\ReportUI.h">
+      <Filter>Src\Application\GameObject\UI\ReportUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1229,6 +1247,15 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\DamageIndicatorUI\DamageIndicatorUI.cpp">
       <Filter>Src\Application\GameObject\UI\DamageIndicatorUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\HomeDirectionUI\HomeDirectionUI.cpp">
+      <Filter>Src\Application\GameObject\UI\HomeDirectionUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\HinderUI\HinderUI.cpp">
+      <Filter>Src\Application\GameObject\UI\HinderUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\ReportUI\ReportUI.cpp">
+      <Filter>Src\Application\GameObject\UI\ReportUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
