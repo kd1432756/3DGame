@@ -15,6 +15,7 @@ private:
 	std::weak_ptr<Player> m_wpPlayer;
 
 	KdTexture m_tex;
+	KdTexture m_texKeyR;
 
 	float m_remaining = 0.0f;
 	float m_ratio = 0.0f;       // 1=CT開始直後 → 0=使用可
@@ -27,4 +28,6 @@ private:
 	static constexpr int   kIconSize = 96;      // 画像の直径（円の大きさ）
 	static constexpr int   kRingWidth = 6;      // 外枠の太さ(px)
 	static constexpr float kFlashTime = 0.5f;
+
+	static constexpr float kKeySize = 28.0f;
 };

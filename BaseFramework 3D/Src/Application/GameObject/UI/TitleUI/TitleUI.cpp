@@ -8,9 +8,9 @@ void TitleUI::Init()
 	m_pointerTex = std::make_shared<KdTexture>();
 	m_pointerTex->Load("Asset/Textures/Cursor/Pointer.png");
 
-	m_buttons[BtnStart] = { Math::Vector2{ 0.0f,  -80.0f }, Math::Vector2{ 500.0f, 80.0f }, "Play Game",  FontID::FutureNormal64 };
-	m_buttons[BtnHowTo] = { Math::Vector2{ 0.0f, -180.0f }, Math::Vector2{ 500.0f, 60.0f }, "How To Play", FontID::FutureNormal64 };
-	m_buttons[BtnExit] = { Math::Vector2{ 0.0f, -280.0f }, Math::Vector2{ 500.0f, 60.0f }, "Quit Game",   FontID::FutureNormal64 };
+	m_buttons[BtnStart] = { Math::Vector2{ 0.0f,  -80.0f }, Math::Vector2{ 420.0f, 80.0f }, "Play Game",  FontID::FutureNormal64 };
+	m_buttons[BtnHowTo] = { Math::Vector2{ 0.0f, -180.0f }, Math::Vector2{ 480.0f, 60.0f }, "How To Play", FontID::FutureNormal64 };
+	m_buttons[BtnExit] = { Math::Vector2{ 0.0f, -280.0f }, Math::Vector2{ 400.0f, 60.0f }, "Quit Game",   FontID::FutureNormal64 };
 
 	auto load = [](const char* name)
 		{

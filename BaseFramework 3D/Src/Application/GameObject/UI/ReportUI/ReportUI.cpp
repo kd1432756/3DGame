@@ -5,6 +5,7 @@
 void ReportUI::Init()
 {
 	m_tex.Load("Asset/Textures/UI/ReportIcon.png");
+	m_texKeyR.Load("Asset/Textures/UI/Key/keyboard_r.png");
 }
 
 void ReportUI::Update()
@@ -37,6 +38,22 @@ void ReportUI::DrawSprite()
 	const bool cooling = m_remaining > 0.0f;
 	const int  radius = kIconSize / 2;
 	const Math::Vector2 centerPivot = { 0.5f, 0.5f };
+
+	//============================================================
+	// キー
+	//============================================================
+
+	const int keyOffsetY = 75;
+	const int keyPosY = kPosY + keyOffsetY;
+
+	Math::Color keyColor = kWhiteColor;
+	if (cooling)
+	{
+		keyColor = { 0.3f, 0.3f, 0.3f, 1.0f };
+	}
+
+	sprite.DrawTex(&m_texKeyR, kPosX, keyPosY, kKeySize, kKeySize,
+		nullptr, &keyColor, Math::Vector2{ 0.5f, 0.5f });
 
 	//============================================================
 	// アイコン（画像そのものが円）

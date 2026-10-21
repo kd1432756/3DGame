@@ -51,11 +51,17 @@ void SkillCheckAltMash::OnDraw()
 	const float a = GetAlpha();
 	const float halfW = kBarWidth * 0.5f;
 	const float halfH = kBarHeight * 0.5f;
+	const float keyX = halfW + kSideOffset;	// 左右のキーの位置
 
-	// ゲージ背景
-	DrawRect(0, kY, halfW, halfH, { 0.1f, 0.1f, 0.1f, 0.8f * a });
+	// 下地(左右のキーも含めて囲む) + 残り時間
+	DrawPanel(0, kY, keyX + 34.0f, 38.0f, a);
+	DrawTimeBar(0, kY + 28.0f, halfW, m_perfectTime);
 
-	// ゲージ(左端固定)。同じキー連打の瞬間は赤
+	// バー(白い枠 + 不透明の背景)
+	DrawRect(0, kY, halfW + 2.0f, halfH + 2.0f, { 1.0f, 1.0f, 1.0f, 0.6f * a });
+	DrawRect(0, kY, halfW, halfH, { 0.12f, 0.12f, 0.15f, a });
+
+	// ゲージ(左端固定)。同じキーを連続で押した瞬間は赤
 	const float gauge = (m_gauge > 1.0f) ? 1.0f : m_gauge;
 	const float fillHalf = halfW * gauge;
 
@@ -65,13 +71,26 @@ void SkillCheckAltMash::OnDraw()
 
 	DrawRect(-halfW + fillHalf, kY, fillHalf, halfH, fillColor);
 
-	// 左右のキー表示: 次に押す側だけ動かして明るく
+	// 区切り線
+	for (int i = 1; i < m_required; ++i)
+	{
+		const float x = -halfW + kBarWidth * static_cast<float>(i) / static_cast<float>(m_required);
+		DrawRect(x, kY, 1.0f, halfH, { 0.0f, 0.0f, 0.0f, 0.45f * a });
+	}
 
-	DrawKey(SkillKey::A, -halfW - kSideOffset, kY,
+	// 次に押す側のキーのリング(脈打たせて目を引く)
+	const Math::Color haloColor = (m_wrongFlash > 0.0f)
+		? Math::Color{ 1.0f, 0.25f, 0.25f, a }
+	: Math::Color{ 1.0f, 0.9f, 0.3f, a };
+
+	const float pulse = std::sin(m_elapsed * 12.0f) * 2.0f;
+	DrawRing(m_expectLeft ? -keyX : keyX, kY, 30.0f + pulse, 3.0f, haloColor);
+
+	// 左右のキー表示: 次に押す側だけ動かして明るく
+	DrawKey(SkillKey::A, -keyX, kY,
 		m_expectLeft ? SkillKeyAnim::Mash : SkillKeyAnim::Static,
 		m_expectLeft ? 1.0f : 0.4f);
-	DrawKey(SkillKey::D, halfW + kSideOffset, kY,
+	DrawKey(SkillKey::D, keyX, kY,
 		m_expectLeft ? SkillKeyAnim::Static : SkillKeyAnim::Mash,
 		m_expectLeft ? 0.4f : 1.0f);
-
 }

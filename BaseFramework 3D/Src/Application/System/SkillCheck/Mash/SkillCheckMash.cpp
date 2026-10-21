@@ -37,8 +37,13 @@ void SkillCheckMash::OnDraw()
 	const float halfW = kBarWidth * 0.5f;
 	const float halfH = kBarHeight * 0.5f;
 
-	// 背景
-	DrawRect(0, kBarY, halfW, halfH, { 0.1f, 0.1f, 0.1f, 0.8f * a });
+	// 下地 + 残り時間(Perfectが狙える間は黄色)
+	DrawPanel(0, kBarY - 17.0f, halfW + 30.0f, 51.0f, a);
+	DrawTimeBar(0, kBarY + 28.0f, halfW, m_perfectTime);
+
+	// バー(白い枠 + 不透明の背景)
+	DrawRect(0, kBarY, halfW + 2.0f, halfH + 2.0f, { 1.0f, 1.0f, 1.0f, 0.6f * a });
+	DrawRect(0, kBarY, halfW, halfH, { 0.12f, 0.12f, 0.15f, a });
 
 	// ゲージ(左端固定で右へ伸びる)
 	const float gauge = (m_gauge > 1.0f) ? 1.0f : m_gauge;
@@ -50,6 +55,13 @@ void SkillCheckMash::OnDraw()
 	: Math::Color{ 1.0f, 0.6f, 0.2f, a };
 
 	DrawRect(-halfW + fillHalf, kBarY, fillHalf, halfH, fillColor);
+
+	// 区切り線(1回押すごとに1目盛り進む)
+	for (int i = 1; i < m_required; ++i)
+	{
+		const float x = -halfW + kBarWidth * static_cast<float>(i) / static_cast<float>(m_required);
+		DrawRect(x, kBarY, 1.0f, halfH, { 0.0f, 0.0f, 0.0f, 0.45f * a });
+	}
 
 	DrawKey(SkillKey::MouseLeft, 0.0f, kBarY - 45.0f, SkillKeyAnim::Mash);
 }

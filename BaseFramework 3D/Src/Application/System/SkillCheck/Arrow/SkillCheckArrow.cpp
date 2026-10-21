@@ -53,39 +53,46 @@ void SkillCheckArrow::OnDraw()
 	const float a = GetAlpha();
 	const int   n = static_cast<int>(m_seq.size());
 
-	for (int i = 0; i < n; ++i)
-	{
-		const float kx = (i - (n - 1) * 0.5f) * kSpacing;
-		DrawKey(KeyOf(m_seq[i]), kx, kY - 75.0f,
-			(i == m_index) ? SkillKeyAnim::Timing : SkillKeyAnim::Static,
-			(i < m_index) ? 0.4f : 1.0f);
-	}
+	const float panelHalfW = n * kSpacing * 0.5f + 30.0f;
+
+	// 下地(スロット + 下のキー表示まで囲む) + 残り時間
+	DrawPanel(0, kY - 27.0f, panelHalfW, 73.0f, a);
+	DrawTimeBar(0, kY + 40.0f, panelHalfW - 12.0f, m_perfectTime);
+
+	const float pulse = 0.5f + 0.5f * std::sin(m_elapsed * 10.0f);	// 0〜1
 
 	for (int i = 0; i < n; ++i)
 	{
 		const float x = (i - (n - 1) * 0.5f) * kSpacing;
 
-		// 枠(入力済み=緑 / 今の入力=白 / これから=灰色)
-		Math::Color frame;
-		if (i < m_index)  frame = { 0.2f, 0.8f, 0.3f, a };
-		else if (i == m_index) frame = { 1.0f, 1.0f, 1.0f, a };
-		else                   frame = { 0.5f, 0.5f, 0.5f, a };
+		const bool done = (i < m_index);
+		const bool current = (i == m_index);
 
-		DrawRect(x, kY, kSlotHalf + 3, kSlotHalf + 3, frame);
-		DrawRect(x, kY, kSlotHalf, kSlotHalf, { 0.1f, 0.1f, 0.1f, 0.9f * a });
+		// 枠と矢印の色(入力済み=緑 / 今の入力=白 / これから=灰色)
+		Math::Color frame, arrowColor;
+		if (done) { frame = { 0.2f, 0.8f, 0.3f, a };  arrowColor = { 0.2f, 0.8f, 0.3f, 0.5f * a }; }
+		else if (current) { frame = { 1.0f, 1.0f, 1.0f, a };  arrowColor = { 1.0f, 1.0f, 1.0f, a }; }
+		else { frame = { 0.5f, 0.5f, 0.5f, a };  arrowColor = { 0.55f, 0.55f, 0.55f, a }; }
 
-		// 方向マーカー(中心から方向へずらした四角)
-		float dx = 0.0f, dy = 0.0f;
+		// 枠(今のスロットだけ脈打つ)
+		const float outer = kSlotHalf + 3.0f + (current ? pulse * 3.0f : 0.0f);
+		DrawRect(x, kY, outer, outer, frame);
+		DrawRect(x, kY, kSlotHalf, kSlotHalf, { 0.08f, 0.08f, 0.10f, 0.95f * a });
+
+		// 矢印(画面は上がプラス)
+		int fx = 0, fy = 0;
 		switch (m_seq[i])
 		{
-		case Up:    dy = kMarkerOffset; break;	// 画面は上がプラス
-		case Down:  dy = -kMarkerOffset; break;
-		case Left:  dx = -kMarkerOffset; break;
-		case Right: dx = kMarkerOffset; break;
+		case Up:    fy = 1; break;
+		case Down:  fy = -1; break;
+		case Left:  fx = -1; break;
+		case Right: fx = 1; break;
 		}
+		DrawArrowShape(x, kY, fx, fy, 18.0f, arrowColor);
 
-		// 中心の点(基準) + 方向マーカー(大きめ)
-		DrawRect(x, kY, 3, 3, { 0.6f, 0.6f, 0.6f, a });
-		DrawRect(x + dx, kY + dy, 8, 8, frame);
+		// 使用キー(今押すキーだけ動かす)
+		DrawKey(KeyOf(m_seq[i]), x, kY - 75.0f,
+			current ? SkillKeyAnim::Timing : SkillKeyAnim::Static,
+			done ? 0.4f : 1.0f);
 	}
 }

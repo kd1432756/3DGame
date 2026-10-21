@@ -47,10 +47,15 @@ void SkillCheckHoldRelease::OnDraw()
 	const float halfW = kBarWidth * 0.5f;
 	const float halfH = kBarHeight * 0.5f;
 
-	auto toX = [&](float t) { return (t - 0.5f) * kBarWidth; };
+	auto toX = [](float t) { return (t - 0.5f) * kBarWidth; };
 
-	// 背景
-	DrawRect(0, kBarY, halfW, halfH, { 0.1f, 0.1f, 0.1f, 0.8f * a });
+	// 下地 + 残り時間
+	DrawPanel(0, kBarY - 17.0f, halfW + 30.0f, 51.0f, a);
+	DrawTimeBar(0, kBarY + 28.0f, halfW);
+
+	// バー(白い枠 + 不透明の背景)
+	DrawRect(0, kBarY, halfW + 2.0f, halfH + 2.0f, { 1.0f, 1.0f, 1.0f, 0.6f * a });
+	DrawRect(0, kBarY, halfW, halfH, { 0.12f, 0.12f, 0.15f, a });
 
 	// Goodゾーン(右端から)
 	DrawRect(toX(1.0f - m_goodW * 0.5f), kBarY,
@@ -60,12 +65,24 @@ void SkillCheckHoldRelease::OnDraw()
 	DrawRect(toX(1.0f - m_perfW * 0.5f), kBarY,
 		kBarWidth * m_perfW * 0.5f, halfH, { 1.0f, 0.9f, 0.2f, a });
 
-	// 溜まった量(半透明の青を重ねる)
-	const float v = Clamp(m_value, 0.0f, 1.0f);
-	DrawRect(-halfW + halfW * v, kBarY, halfW * v, halfH, { 0.3f, 0.6f, 1.0f, 0.55f * a });
+	// 溜まった量(半透明。ゾーンに入ると色が変わる)
+	Math::Color fillColor;
+	if (m_value >= 0.97f)          fillColor = { 1.0f, 0.3f, 0.3f, 0.7f * a };	// もう離せ(溜めすぎ寸前)
+	else if (m_value >= 1.0f - m_perfW) fillColor = { 1.0f, 0.9f, 0.2f, 0.7f * a };	// Perfect
+	else if (m_value >= 1.0f - m_goodW) fillColor = { 0.3f, 0.9f, 0.4f, 0.7f * a };	// Good
+	else                                fillColor = { 0.3f, 0.6f, 1.0f, 0.6f * a };	// 溜め中
 
-	// 先端の線
-	DrawRect(toX(v), kBarY, 3, halfH + 8, { 1.0f, 1.0f, 1.0f, a });
+	const float v = Clamp(m_value, 0.0f, 1.0f);
+	DrawRect(-halfW + halfW * v, kBarY, halfW * v, halfH, fillColor);
+
+	// 先端(線 + 上の三角マーカー)
+	const float cx = toX(v);
+	DrawRect(cx, kBarY, 2.0f, halfH + 6.0f, { 1.0f, 1.0f, 1.0f, a });
+	DrawTriangle(
+		cx, kBarY + halfH + 1.0f,
+		cx - 6.0f, kBarY + halfH + 11.0f,
+		cx + 6.0f, kBarY + halfH + 11.0f,
+		{ 1.0f, 1.0f, 1.0f, a });
 
 	DrawKey(SkillKey::MouseLeft, 0.0f, kBarY - 45.0f, SkillKeyAnim::Hold);
 }

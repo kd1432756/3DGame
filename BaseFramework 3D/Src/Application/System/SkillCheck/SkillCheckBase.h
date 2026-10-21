@@ -76,6 +76,20 @@ protected:
 	// 太い輪郭の円(DrawCircle の輪郭は細いので、半径をずらして重ねる)
 	static void DrawRing(float x, float y, float radius, float thickness, const Math::Color& color);
 
+	// 三角形(塗りつぶし)。レイアウトのオフセットが掛かる
+	static void DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3,
+		const Math::Color& color);
+
+	// UIの下地(暗い板 + 細い白枠)
+	static void DrawPanel(float x, float y, float halfW, float halfH, float alpha);
+
+	// 矢印の図形(進行方向 fx,fy は軸方向のみ: 上(0,1) 下(0,-1) 左(-1,0) 右(1,0))
+	static void DrawArrowShape(float x, float y, int fx, int fy, float size, const Math::Color& color);
+
+	// 残り時間バー(入力受付開始からの経過を m_timeLimit に対して表示)
+	//  perfectTime を渡すと、その時間内だけ黄色(= Perfect が狙える)にする
+	void DrawTimeBar(float x, float y, float halfW, float perfectTime = 0.0f) const;
+
 	// 操作キーの表示(実際に押している間は「押された」画像になる)
 	//  anim    : Static=静止 / Timing=タイミング / Mash=連打 / Hold=長押し
 	//  alphaMul: 追加の透明度(押さないキーを薄くする用)

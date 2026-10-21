@@ -38,17 +38,30 @@ void SkillCheckShrinkRing::OnDraw()
 {
 	const float a = GetAlpha();
 
-	// 外枠の大きさ(重なる瞬間に kTargetHalf、その後も縮み続ける)
+	// 判定の帯の幅(px) = 縮む速さ(px/秒) × 判定の猶予(秒)
+	const float speed = (kStartHalf - kTargetHalf) / m_shrinkTime;
+	const float goodBand = speed * m_goodWin;
+	const float perfBand = speed * m_perfWin;
+
+	const Math::Color green = { 0.2f, 0.8f, 0.3f, 1.0f };
+	const Math::Color yellow = { 1.0f, 0.9f, 0.2f, 1.0f };
+	const Math::Color dark = { 0.06f, 0.07f, 0.10f, 1.0f };
+
+	// 下地
+	DrawCircle(0, kY, kStartHalf + 12.0f, { 0.06f, 0.07f, 0.10f, 0.92f * a });
+
+	// 判定の帯(外側から内側へ重ねる: 緑 → 黄 → 緑 → 暗い穴)
+	DrawCircle(0, kY, kTargetHalf + goodBand, green);
+	DrawCircle(0, kY, kTargetHalf + perfBand, yellow);
+	DrawCircle(0, kY, kTargetHalf - perfBand, green);
+	DrawCircle(0, kY, kTargetHalf - goodBand, dark);
+
+	// 縮む輪(重なる瞬間に kTargetHalf、その後も縮み続ける)
 	float t = m_timer / m_shrinkTime;
-	float half = kTargetHalf + (kStartHalf - kTargetHalf) * (1.0f - t);
-	if (half < 2.0f) half = 2.0f;
+	float r = kTargetHalf + (kStartHalf - kTargetHalf) * (1.0f - t);
+	if (r < 2.0f) r = 2.0f;
 
-	// 目標の枠(緑)と中心点(黄)
-	DrawFrame(0, kY, kTargetHalf, 3, { 0.2f, 0.8f, 0.3f, a });
-	DrawRect(0, kY, 3, 3, { 1.0f, 0.9f, 0.2f, a });
+	DrawRing(0, kY, r, 4.0f, { 1.0f, 1.0f, 1.0f, a });
 
-	// 縮む枠(白)
-	DrawFrame(0, kY, half, 3, { 1.0f, 1.0f, 1.0f, a });
-
-	DrawKey(SkillKey::MouseLeft, 0.0f, kY - kStartHalf - 30.0f, SkillKeyAnim::Timing);
+	DrawKey(SkillKey::MouseLeft, 0.0f, kY - kStartHalf - 40.0f, SkillKeyAnim::Timing);
 }

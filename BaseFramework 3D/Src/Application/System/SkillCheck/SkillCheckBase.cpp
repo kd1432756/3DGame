@@ -148,6 +148,71 @@ void SkillCheckBase::DrawRing(float x, float y, float radius, float thickness, c
 		DrawCircle(x, y, radius + d, color, false);
 	}
 }
+void SkillCheckBase::DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3,
+	const Math::Color& color)
+{
+	Math::Color c = color;
+	KdShaderManager::Instance().m_spriteShader.DrawTriangle(
+		static_cast<int>(x1), static_cast<int>(y1 + kLayoutOffsetY),
+		static_cast<int>(x2), static_cast<int>(y2 + kLayoutOffsetY),
+		static_cast<int>(x3), static_cast<int>(y3 + kLayoutOffsetY),
+		&c, true);
+}
+
+void SkillCheckBase::DrawPanel(float x, float y, float halfW, float halfH, float alpha)
+{
+	DrawRect(x, y, halfW + 2.0f, halfH + 2.0f, { 1.0f, 1.0f, 1.0f, 0.25f * alpha });	// 枠
+	DrawRect(x, y, halfW, halfH, { 0.04f, 0.04f, 0.06f, 0.65f * alpha });			// 板
+}
+
+void SkillCheckBase::DrawArrowShape(float x, float y, int fx, int fy, float s, const Math::Color& color)
+{
+	const float f_x = static_cast<float>(fx);
+	const float f_y = static_cast<float>(fy);
+	const float p_x = static_cast<float>(-fy);	// 進行方向に垂直な向き
+	const float p_y = static_cast<float>(fx);
+
+	// 矢じり(三角)
+	DrawTriangle(
+		x + f_x * s, y + f_y * s,
+		x + p_x * s * 0.9f, y + p_y * s * 0.9f,
+		x - p_x * s * 0.9f, y - p_y * s * 0.9f,
+		color);
+
+	// 軸(矩形)。進行方向が横なら横長、縦なら縦長
+	const float len = s * 0.55f;
+	const float wid = s * 0.32f;
+	const bool  horizontal = (fx != 0);
+
+	DrawRect(x - f_x * len, y - f_y * len,
+		horizontal ? len : wid,
+		horizontal ? wid : len,
+		color);
+}
+
+void SkillCheckBase::DrawTimeBar(float x, float y, float halfW, float perfectTime) const
+{
+	const float a = GetAlpha();
+	const float halfH = 3.0f;
+
+	float elapsed = m_elapsed - m_readyTime;	// 入力受付開始からの時間
+	if (elapsed < 0.0f) elapsed = 0.0f;
+
+	float remain = 1.0f - elapsed / m_timeLimit;
+	if (remain < 0.0f) remain = 0.0f;
+	if (remain > 1.0f) remain = 1.0f;
+
+	// 背景
+	DrawRect(x, y, halfW, halfH, { 0.0f, 0.0f, 0.0f, 0.6f * a });
+
+	// 色: Perfectが狙える間=黄 / 残りわずか=赤 / 通常=白
+	Math::Color color = { 1.0f, 1.0f, 1.0f, a };
+	if (perfectTime > 0.0f && elapsed <= perfectTime) color = { 1.0f, 0.9f, 0.2f, a };
+	else if (remain < 0.25f)                          color = { 1.0f, 0.3f, 0.3f, a };
+
+	// 左端固定で、左へ縮んでいく
+	DrawRect(x - halfW + halfW * remain, y, halfW * remain, halfH, color);
+}
 
 void SkillCheckBase::DrawKey(SkillKey key, float x, float y, SkillKeyAnim anim, float alphaMul) const
 {
