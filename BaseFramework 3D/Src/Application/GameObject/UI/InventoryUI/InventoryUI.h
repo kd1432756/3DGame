@@ -31,7 +31,8 @@ private:
 
 	void DrawItemIcon(
 		int index,
-		const InventoryItem& item);
+		const InventoryItem& item,
+		bool selected);
 
 private:
 
@@ -67,6 +68,9 @@ private:
 
 	// アイコン
 	static constexpr int IconSize = 80;
+
+	// 枠線ぶんの内側余白
+	static constexpr int BadgeMargin = 4;
 
 	std::vector<std::shared_ptr<KdTexture>> m_keyTex;   // 数字キー画像（スロット数ぶん）
 

@@ -33,6 +33,9 @@ void ResultUI::Init()
 	m_animTime = 0.0f;
 	m_animOffsetY = 0.0f;
 
+	for (auto& t : m_rowAnimTime) t = 0.0f;
+	m_prevDisplayRankCount = 0;
+
 	m_pointerTex = std::make_shared<KdTexture>();
 	m_pointerTex->Load("Asset/Textures/Cursor/Pointer.png");
 }
@@ -97,7 +100,7 @@ void ResultUI::Update()
 	// ランキング表示
 	if (m_displayRankCount < static_cast<int>(m_ranking.size()))
 	{
-		m_timer += Application::Instance().GetDeltaTime();
+		m_timer += 1.0f / 60.0f;
 
 		if (m_timer >= 0.5f)
 		{
@@ -110,7 +113,17 @@ void ResultUI::Update()
 			}
 		}
 
+		for (int i = 0; i < m_displayRankCount && i < 4; ++i)
+		{
+			m_rowAnimTime[i] += 1.0f / 60.0f;
+		}
+
 		return;
+	}
+
+	for (int i = 0; i < static_cast<int>(m_ranking.size()) && i < 4; ++i)
+	{
+		m_rowAnimTime[i] += 1.0f / 60.0f;
 	}
 
 	// 全ての結果が表示された瞬間に一度だけ紙吹雪とBGMを再生
@@ -265,16 +278,32 @@ void ResultUI::DrawSprite()
 		}
 
 		// 名前
-		std::string nameText = chara->GetName();
+		std::string nameText = chara->GetDisplayNameOrName();
 
-		// 色
-		const Math::Color color = std::dynamic_pointer_cast<Player>(chara) ? kYellowColor : kWhiteColor;
+		// 名前の色（Player と NPC で変える）
+		const bool isPlayer =
+			std::dynamic_pointer_cast<Player>(chara) != nullptr;
+
+		const Math::Color nameColor = isPlayer
+			? Math::Color{ 0.4f, 0.9f, 1.0f, 1.0f }   // Player：水色
+		: kWhiteColor;                            // NPC：白
+
+		// 順位の色（順位ごとに変える）
+		Math::Color rankColor = kWhiteColor;
+
+		switch (rankingIndex)
+		{
+		case 0: rankColor = { 1.0f, 0.84f, 0.0f, 1.0f };  break;  // 1位：金
+		case 1: rankColor = { 0.78f, 0.78f, 0.82f, 1.0f }; break;  // 2位：銀
+		case 2: rankColor = { 0.85f, 0.55f, 0.25f, 1.0f }; break;  // 3位：銅
+		default: break;                                            // 4位：白
+		}
 
 		// スコア
 		std::string scoreText =
 			std::to_string(chara->GetScore()) + " pt";
 
-		const float RankingBottomY = -140.0f;
+		const float RankingBottomY = -160.0f;
 		const float RankingHeight = 100.0f;
 
 		const float y =
@@ -282,30 +311,64 @@ void ResultUI::DrawSprite()
 			(static_cast<int>(m_ranking.size()) - 1 - rankingIndex)
 			* RankingHeight;
 
-		// 順位
+		const float kSlideDuration = 0.4f;    // スライドにかかる秒数
+		const float kSlideDistance = 700.0f;  // 画面外からの距離
+
+		float t = m_rowAnimTime[i] / kSlideDuration;
+		t = std::clamp(t, 0.0f, 1.0f);
+
+		// EaseOutCubic：最初は速く、最後にゆっくり止まる
+		const float ease = 1.0f - powf(1.0f - t, 3.0f);
+
+		const float offsetX = -kSlideDistance * (1.0f - ease);
+
+		// フェードイン（スライドと同時に濃くなる）
+		const float alpha = ease;
+
+		// ---- 行背景 ----
+		Math::Color rowColor = isPlayer
+			? Math::Color{ 0.4f, 0.9f, 1.0f, 0.25f }   // Player：水色の半透明
+		: Math::Color{ 1.0f, 1.0f, 1.0f, 0.08f };  // NPC：うっすら白
+
+		// 色にアルファを反映（元の色は変えず、コピーして使う）
+		Math::Color rowDrawColor = rowColor;   rowDrawColor.w *= alpha;
+		Math::Color rankDrawColor = rankColor;  rankDrawColor.w *= alpha;
+		Math::Color nameDrawColor = nameColor;  nameDrawColor.w *= alpha;
+
+		// ---- 行背景 ----
+		KdShaderManager::Instance().m_spriteShader.DrawBox(
+			static_cast<int>(0 + offsetX),
+			static_cast<int>(y),
+			400,
+			40,
+			&rowDrawColor,
+			true
+		);
+
+		// ---- 順位 ----
 		KdShaderManager::Instance().m_spriteShader.DrawFont(
-			Math::Vector2{ -250, y },
-			&kWhiteColor,
+			Math::Vector2{ -360 + offsetX, y },
+			&rankDrawColor,
 			Math::Vector2{ 0.0f, 0.5f },
 			0.0f,
 			FontID::Future64,
 			rankText.c_str()
 		);
 
-		// 名前
+		// ---- 名前 ----
 		KdShaderManager::Instance().m_spriteShader.DrawFont(
-			Math::Vector2{ 250, y },
-			&color,
-			Math::Vector2{ 1.0f, 0.5f },
+			Math::Vector2{ -180 + offsetX, y },
+			&nameDrawColor,
+			Math::Vector2{ 0.0f, 0.5f },
 			0.0f,
 			FontID::Future48,
 			nameText.c_str()
 		);
 
-		// スコア
+		// ---- スコア ----
 		KdShaderManager::Instance().m_spriteShader.DrawFont(
-			Math::Vector2{ 250, y - 45.0f },
-			&kWhiteColor,
+			Math::Vector2{ 360 + offsetX, y },
+			&nameDrawColor,
 			Math::Vector2{ 1.0f, 0.5f },
 			0.0f,
 			FontID::Future48,
@@ -340,7 +403,6 @@ void ResultUI::DrawSprite()
 		);
 	}
 
-
 	// =============================
 	// Pointer
 	// =============================
@@ -368,6 +430,9 @@ void ResultUI::ShowResult()
 
 	m_timer = 0.0f;
 	m_displayRankCount = 0;
+
+	for (auto& t : m_rowAnimTime) t = 0.0f;
+	m_prevDisplayRankCount = 0;
 }
 
 void ResultUI::GetMousePos(POINT* mousePos)

@@ -25,6 +25,17 @@ void AssetBrowserWindow::DrawDirectory(const std::string& path)
 {
 	for (auto& entry : fs::directory_iterator(path))
 	{
+		std::string filenameStr = entry.path().filename().string();
+
+		// "Asset" 直下の階層である場合、"Items" と "Models" 以外はスキップする
+		if (path == "Asset" && entry.is_directory())
+		{
+			if (filenameStr != "Items" && filenameStr != "Models")
+			{
+				continue;
+			}
+		}
+
 		if (entry.is_directory())
 		{
 			if (ImGui::TreeNode(

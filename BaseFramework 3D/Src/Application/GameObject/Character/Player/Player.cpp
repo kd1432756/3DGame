@@ -37,6 +37,8 @@ void Player::Init()
 
 	SetName("Player");
 
+	SetDisplayName("You");
+
 	m_spModel->SetModelData(
 		"Asset/Models/Character/Player/Player.gltf"
 	);

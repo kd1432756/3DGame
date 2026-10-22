@@ -125,7 +125,7 @@ void InventoryUI::DrawSlot(
 	// --- アイテムアイコン（空でなければ）---
 	if (!item.IsEmpty())
 	{
-		DrawItemIcon(index, item);
+		DrawItemIcon(index, item, selected);
 	}
 
 	// --- キーアイコン（空スロットでも常に表示）---
@@ -134,7 +134,8 @@ void InventoryUI::DrawSlot(
 
 void InventoryUI::DrawItemIcon(
 	int index,
-	const InventoryItem& item)
+	const InventoryItem& item,
+	bool selected)
 {
 	if (item.itemPath.empty())
 	{
@@ -186,25 +187,24 @@ void InventoryUI::DrawItemIcon(
 
 	{
 		const ItemData* data = ItemData::Get(item.itemPath);
-
-		bool dangerous = data->IsDangerous();
-
-		if (dangerous)
+		if (data && data->IsDangerous())
 		{
-			// スロット右上（Y上向き）
-			const int half = SlotSize / 2;
-			const int bx = x + half - BadgeRadius;
-			const int by = y + half - BadgeRadius;
+			// 実際に描画されているスロットサイズを基準にする
+			const int drawSize = selected ? SelectedSlotSize : SlotSize;
+			const int half = drawSize / 2;
 
-			const Math::Color badgeColor = Math::Color{ 0.8f, 0.2f, 0.2f, 1.0f };
+			// 角から「バッジ半径 + 余白」だけ内側に置く
+			const int bx = x + half - BadgeRadius - BadgeMargin;
+			const int by = y + half - BadgeRadius - BadgeMargin;
 
-			KdShaderManager::Instance().m_spriteShader.DrawCircle(bx, by, BadgeRadius, &badgeColor, true);
-			KdShaderManager::Instance().m_spriteShader.DrawCircle(bx, by, BadgeRadius, &kWhiteColor, false);   // 白縁で背景から浮かせる
+			const Math::Color badgeColor{ 0.8f, 0.2f, 0.2f, 1.0f };
+			auto& sprite = KdShaderManager::Instance().m_spriteShader;
 
-			int offsetX = 5;
+			sprite.DrawCircle(bx, by, BadgeRadius, &badgeColor, true);
+			sprite.DrawCircle(bx, by, BadgeRadius, &kWhiteColor, false);
 
-			KdShaderManager::Instance().m_spriteShader.DrawFont(
-				Math::Vector2{ static_cast<float>(bx) + offsetX, static_cast<float>(by) },
+			sprite.DrawFont(
+				Math::Vector2{ static_cast<float>(bx) + 5.0f, static_cast<float>(by) },
 				&kWhiteColor,
 				Math::Vector2{ 0.5f, 0.5f },
 				0.0f,

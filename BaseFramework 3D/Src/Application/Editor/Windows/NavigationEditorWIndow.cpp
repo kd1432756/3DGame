@@ -83,15 +83,15 @@ void NavigationEditorWindow::DrawNavigationActions()
 		Editor::Instance().GenerateNavMesh();
 	}*/
 
-	if (ImGui::Button(
+	/*if (ImGui::Button(
 		"Generate NavMesh",
 		{ -1, 0 }))
 	{
 		Editor::Instance().GenerateNavMeshVer2();
-	}
+	}*/
 
 	if (ImGui::Button(
-		"Generate NavMesh 2",
+		"Generate NavMesh",
 		{ -1, 0 }))
 	{
 		Editor::Instance().GenerateNavMeshVer3(m_navMeshAgentRadius);

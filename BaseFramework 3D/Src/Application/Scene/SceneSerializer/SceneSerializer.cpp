@@ -6,6 +6,7 @@
 #include "../..//GameObject/Object/StaticMeshObject/InteractiveObject/InteractiveObject.h"
 #include "../../GameObject/Object/StaticMeshObject/Item/Item.h"
 #include "../../GameObject/Object/StaticMeshObject/Item/ItemSpawner.h"
+#include "../../GameObject/Character/Enemy/Neighbor/Neighbor.h"
 
 #include "json.hpp"
 
@@ -66,6 +67,17 @@ bool SceneSerializer::Save(const std::string& path)
 		if (auto item = std::dynamic_pointer_cast<Item>(obj))
 		{
 			objData["ItemPath"] = item->GetItemPath();
+		}
+
+		if (auto neighbor = std::dynamic_pointer_cast<Neighbor>(obj))
+		{
+			objData["HouseTag"] = static_cast<int>(neighbor->GetHouseTag());
+			objData["NeighborModelPath"] = neighbor->GetModelPath();
+		}
+
+		if (auto character = std::dynamic_pointer_cast<CharacterBase>(obj))
+		{
+			objData["DisplayName"] = character->GetDisplayName();
 		}
 
 		root["Objects"].push_back(objData);
@@ -188,6 +200,29 @@ bool SceneSerializer::Load(const std::string& path)
 			}
 		}
 
+		if (auto neighbor = std::dynamic_pointer_cast<Neighbor>(obj))
+		{
+			if (objData.contains("HouseTag"))
+			{
+				neighbor->SetHouseTag(
+					static_cast<LocationTag>(objData["HouseTag"].get<int>()));
+			}
+
+			if (objData.contains("NeighborModelPath"))
+			{
+				neighbor->SetModelPath(objData["NeighborModelPath"]);
+			}
+		}
+
+		if (auto character = std::dynamic_pointer_cast<CharacterBase>(obj))
+		{
+			if (objData.contains("DisplayName"))
+			{
+				character->SetDisplayName(
+					objData["DisplayName"].get<std::string>());
+			}
+		}
+
 		SceneManager::Instance().AddObject(obj);
 	}
 
@@ -301,6 +336,29 @@ bool SceneSerializer::LoadWithScale(const std::string& path, float multiplier)
 
 				// Item本体はシーンに入れない（Spawnerが出すため）
 				continue;
+			}
+		}
+
+		if (auto neighbor = std::dynamic_pointer_cast<Neighbor>(obj))
+		{
+			if (objData.contains("HouseTag"))
+			{
+				neighbor->SetHouseTag(
+					static_cast<LocationTag>(objData["HouseTag"].get<int>()));
+			}
+
+			if (objData.contains("NeighborModelPath"))
+			{
+				neighbor->SetModelPath(objData["NeighborModelPath"]);
+			}
+		}
+
+		if (auto character = std::dynamic_pointer_cast<CharacterBase>(obj))
+		{
+			if (objData.contains("DisplayName"))
+			{
+				character->SetDisplayName(
+					objData["DisplayName"].get<std::string>());
 			}
 		}
 

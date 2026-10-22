@@ -9805,6 +9805,7 @@
                 1.0,
                 1.0
             ],
+            "DisplayName": "",
             "Name": "Player",
             "Position": [
                 0.0,
@@ -9829,7 +9830,10 @@
                 1.0,
                 1.0
             ],
+            "DisplayName": "Emma",
+            "HouseTag": 1,
             "Name": "Neighbor_1",
+            "NeighborModelPath": "Asset\\Models\\Character\\Neighbor\\Neighbor_3.gltf",
             "Position": [
                 51.0,
                 1.3000000715255737,
@@ -9853,6 +9857,7 @@
                 1.0,
                 1.0
             ],
+            "DisplayName": "",
             "Name": "Police_0",
             "Position": [
                 22.0,
@@ -9877,7 +9882,10 @@
                 1.0,
                 1.0
             ],
+            "DisplayName": "Toby",
+            "HouseTag": 2,
             "Name": "Neighbor_2",
+            "NeighborModelPath": "Asset\\Models\\Character\\Neighbor\\Crypto_Bro.gltf",
             "Position": [
                 0.0,
                 1.3000000715255737,
@@ -9901,7 +9909,10 @@
                 1.0,
                 1.0
             ],
+            "DisplayName": "Mike",
+            "HouseTag": 3,
             "Name": "Neighbor_3",
+            "NeighborModelPath": "Asset\\Models\\Character\\Neighbor\\Neighbor_2.gltf",
             "Position": [
                 -51.0,
                 1.3000000715255737,
@@ -57845,6 +57856,7 @@
                 1.0,
                 1.0
             ],
+            "DisplayName": "",
             "Name": "Police_1",
             "Position": [
                 18.0,
@@ -57869,6 +57881,7 @@
                 1.0,
                 1.0
             ],
+            "DisplayName": "",
             "Name": "Police_2",
             "Position": [
                 20.0,

@@ -78,6 +78,12 @@ public:
 		}
 	}
 
+	// 追加 ロード済みか
+	bool IsLoaded(std::string_view fileName) const
+	{
+		return m_spDatas.find(fileName.data()) != m_spDatas.end();
+	}
+
 private:
 	std::unordered_map<std::string, std::shared_ptr<DataType>> m_spDatas;
 };

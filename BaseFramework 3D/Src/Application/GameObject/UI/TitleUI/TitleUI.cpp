@@ -27,8 +27,10 @@ void TitleUI::Init()
 		{ { load("keyboard_w.png"), load("keyboard_a.png"), load("keyboard_s.png"), load("keyboard_d.png") },	"移動" },
 		{ { load("mouse_outline.png") },																		"視点" },
 		{ { load("keyboard_1.png"), load("keyboard_2.png"), load("keyboard_3.png") },							"アイテム選択" },
-		{ { load("keyboard_e.png") },																			"拾う" },
-		{ { load("keyboard_q.png") },																			"捨てる" },
+		{ { load("keyboard_e.png") },																			"アイテムを拾う" },
+		{ { load("keyboard_g.png") },																			"アイテムを捨てる" },
+		{ { load("keyboard_f.png") },																			"妨害" },
+		{ { load("keyboard_r.png") },																			"警察に通報" },
 		{ { load("mouse_left_outline.png") },																	"いたずら・修復・スキルチェック" },
 		{ { load("mouse_right_outline.png") },																	"中断" },
 		{ { load("keyboard_w.png"), load("keyboard_a.png"), load("keyboard_s.png"), load("keyboard_d.png") },	"スキルチェック（方向入力）" },
@@ -243,25 +245,26 @@ void TitleUI::DrawSprite()
 				"3. 自分の家がいたずらされたら、アイテムで修復しよう",
 				"4. いたずら・修復の成功でスコアゲット",
 				"5. 警察に見つかると交番へ連行。アイテムも没収！",
-				"※ いたずら中はミニゲーム（スキルチェック）が発生",
+				"6. 通報で警察を呼び、妨害で相手を足止めしよう",
+				"※ いたずら・修復中はミニゲーム（スキルチェック）が発生",
 				"※ 相手はNPC3人。みんなでいたずらし合うぞ"
 			};
 
-			float y = 150.0f;
+			float y = 160.0f;
 			for (const char* line : rules)
 			{
 				KdShaderManager::Instance().m_spriteShader.DrawFont(
 					Math::Vector2{ -480.0f, y }, &kWhiteColor,
 					Math::Vector2{ 0.0f, 0.5f }, 0.0f, FontID::Gothic32, line);
-				y -= 50.0f;
+				y -= 42.0f;
 			}
 		}
 		else
 		{
 			// ---- 2ページ目：操作方法（アイコン＋説明）----
-			const float iconSize = 44.0f;
-			const float iconStep = 50.0f;
-			float y = 150.0f;
+			const float iconSize = 38.0f;
+			const float iconStep = 42.0f;
+			float y = 160.0f;
 
 			for (const auto& info : m_controls)
 			{
@@ -281,7 +284,7 @@ void TitleUI::DrawSprite()
 					Math::Vector2{ 0.0f, 0.5f }, 0.0f, FontID::Gothic32,
 					info.text.c_str());
 
-				y -= 50.0f;
+				y -= 42.0f;
 			}
 		}
 

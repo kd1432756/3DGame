@@ -57,6 +57,8 @@ protected:
 	Math::Vector3 m_moveDir =
 		Math::Vector3::Zero;
 
+	float m_collisionRadius = 0.3f;
+
 	// =========================================
 	// NavMesh
 	// =========================================

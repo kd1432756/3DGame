@@ -6,6 +6,7 @@
 #include "../../GameObject/Object/StaticMeshObject/InteractiveObject/InteractiveObject.h"
 #include "../../GameObject/Object/StaticMeshObject/Item/Item.h"
 #include "../../GameObject/Character/Enemy/Neighbor/Neighbor.h"
+#include "../../GameObject/Character/CharacterBase.h"
 
 void InspectorWindow::Draw(std::shared_ptr<KdGameObject> obj)
 {
@@ -80,6 +81,14 @@ void InspectorWindow::Draw(std::shared_ptr<KdGameObject> obj)
 	if (item)
 	{
 		DrawItem(item);
+	}
+
+	auto character =
+		std::dynamic_pointer_cast<CharacterBase>(obj);
+
+	if (character)
+	{
+		DrawCharacter(character);
 	}
 
 	auto neighbor =
@@ -239,6 +248,27 @@ void InspectorWindow::DrawItem(std::shared_ptr<Item> obj)
 
 void InspectorWindow::DrawNeighbor(std::shared_ptr<Neighbor> obj)
 {
+	ImGui::SeparatorText("Model Path");
+
+	char buf[260];
+	strcpy_s(buf, obj->GetModelPath().c_str());
+
+	if (ImGui::InputText("Model Path", buf, sizeof(buf),
+		ImGuiInputTextFlags_EnterReturnsTrue))
+	{
+		obj->SetModelPath(buf);
+	}
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload =
+			ImGui::AcceptDragDropPayload("ASSET_PATH"))
+		{
+			obj->SetModelPath((const char*)payload->Data);
+		}
+		ImGui::EndDragDropTarget();
+	}
+
 	ImGui::SeparatorText("Neighbor");
 
 	LocationTag currentTag = obj->GetHouseTag();
@@ -277,5 +307,17 @@ void InspectorWindow::DrawNeighbor(std::shared_ptr<Neighbor> obj)
 		}
 
 		ImGui::EndCombo();
+	}
+}
+
+void InspectorWindow::DrawCharacter(std::shared_ptr<CharacterBase> obj)
+{
+	ImGui::SeparatorText("Character");
+
+	std::string displayName = obj->GetDisplayName();
+
+	if (ImGui::InputText("Display Name", &displayName))
+	{
+		obj->SetDisplayName(displayName);
 	}
 }

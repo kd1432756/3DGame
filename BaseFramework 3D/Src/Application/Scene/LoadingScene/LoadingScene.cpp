@@ -4,6 +4,8 @@
 #include "../SceneSerializer/SceneSerializer.h"
 #include "../../System/Node/AStarNode/AStarNodeSerializer.h"
 #include "../../System/Navigation/NavMesh/NavMeshSerializer.h"
+#include "../../System/Location/LocationPointSerializer.h"
+#include "../../System/Location/LocationPointManager.h"
 
 #include "../../GameObject/UI/LoadingUI/LoadingUI.h"
 
@@ -89,9 +91,9 @@ void LoadingScene::Event()
 			"LocationPoint"
 		);
 
-		NavMeshSerializer::LoadWithScale(
-			stage.navMeshPath,
-			NavMeshManager::Instance(),
+		LocationPointSerializer::LoadWithScale(
+			stage.locationPointPath,
+			LocationPointManager::Instance(),
 			SceneManager::Instance().GetSceneScale()
 		);
 
@@ -108,6 +110,12 @@ void LoadingScene::Event()
 
 	if (m_loadStep == LoadStep::Model)
 	{
+		while (m_modelIndex < m_modelPaths.size() &&
+			KdAssets::Instance().m_modeldatas.IsLoaded(m_modelPaths[m_modelIndex]))
+		{
+			++m_modelIndex;
+		}
+
 		if (m_modelIndex < m_modelPaths.size())
 		{
 			const std::string& modelPath =

@@ -157,6 +157,12 @@ public:
 		return std::clamp(m_reportTimer / m_reportCooldown, 0.0f, 1.0f);
 	}
 
+	bool IsGhost() const override 
+	{ 
+		if (m_isHindering)return true;		
+		return false; 
+	}
+
 protected:
 
 	void UpdateAnimation() override;

@@ -21,21 +21,13 @@ void Neighbor::Init()
 {
 	EnemyBase::Init();
 
-	m_spModel->SetModelData("Asset/Models/Character/Neighbor/Neighbor.gltf");
+	//============================================================
+	// Model
+	//============================================================
 
-	m_spAnimator = std::make_shared<KdAnimator>();
+	m_spModel = std::make_shared<KdModelWork>();
 
-	m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Idle"));
-
-	UpdateAnimation();
-
-	m_pCollider = std::make_unique<KdCollider>();
-
-	m_pCollider->RegisterCollisionShape(
-		"Neighbor",
-		m_spModel,
-		KdCollider::TypeEditor
-	);
+	ReloadModel();
 
 	//============================================================
 	// Score Manager
@@ -78,6 +70,27 @@ void Neighbor::Init()
 	AddInventoryItem("Asset/Items/Tape.item");
 	
 	SelectInventory(0);
+}
+
+//============================================================
+// Model
+//============================================================
+
+void Neighbor::ReloadModel()
+{
+	m_spModel->SetModelData(m_modelPath);
+
+	m_spAnimator = std::make_shared<KdAnimator>();
+	m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Idle"));
+
+	UpdateAnimation();
+
+	m_pCollider = std::make_unique<KdCollider>();
+	m_pCollider->RegisterCollisionShape(
+		"Neighbor",
+		m_spModel,
+		KdCollider::TypeEditor
+	);
 }
 
 //============================================================
@@ -877,11 +890,11 @@ std::shared_ptr<LocationPoint> Neighbor::SelectOtherHousePoint()
 	static const LocationTag houseTags[] =
 	{
 		LocationTag::PlayerHouse,
-		LocationTag::PlayerHouse,
-		LocationTag::PlayerHouse,
 		LocationTag::NeighborHouse1,
 		LocationTag::NeighborHouse2,
 		LocationTag::NeighborHouse3,
+		LocationTag::PlayerHouse,
+		LocationTag::PlayerHouse,
 	};
 
 	std::vector<std::shared_ptr<LocationPoint>> candidates;
@@ -906,7 +919,7 @@ std::shared_ptr<LocationPoint> Neighbor::SelectOtherHousePoint()
 		return nullptr;
 	}
 
-	int index = rand() % static_cast<int>(candidates.size());
+	int index = KdRandom::GetInt(0, candidates.size() - 1);
 
 	return candidates[index];
 }
@@ -1166,6 +1179,15 @@ float Neighbor::EvaluateSearchItemCandidate(const std::shared_ptr<Item>& item, f
 	float utility = 20.0f;
 
 	utility += pathScore * 20.0f;
+
+	//============================================================
+	// ヒステリシス
+	//============================================================
+
+	if (m_state == State::SearchItem && m_wpSearchItem.lock() == item)
+	{
+		utility += m_searchCommitBonus;
+	}
 
 	//============================================================
 	// Prankに使える
@@ -1925,36 +1947,24 @@ float Neighbor::EvaluatePrankCandidate(
 	utility += m_prankDesire * 40.0f;
 
 	//============================================================
+	// ヒステリシス
+	//============================================================
+
+	if (m_state == State::Prank && m_wpPrankTarget.lock() == target)
+	{
+		utility += m_prankCommitBonus;
+	}
+
+	//============================================================
 	// 距離
 	//============================================================
 
-	Math::Vector3 diff = target->GetPos() - m_pos;
-
-	diff.y = 0.0f;
-
-	float distance = diff.Length();
-
 	float searchRadius = m_prankSearchRadius * m_sceneScale;
 
-	float distanceScore =
-		1.0f -
-		std::clamp(
-			distance / searchRadius,
-			0.0f,
-			1.0f
-		);
-
-	utility += distanceScore * 10.0f;
-
 	float pathScore =
-		1.0f -
-		std::clamp(
-			pathDistance / searchRadius,
-			0.0f,
-			1.0f
-		);
+		1.0f - std::clamp(pathDistance / searchRadius, 0.0f, 1.0f);
 
-	utility += pathScore * 30.0f;
+	utility += pathScore * 40.0f;
 
 	return utility;
 }
@@ -2434,6 +2444,15 @@ float Neighbor::EvaluateRepairCandidate(
 	float utility = 50.0f;
 
 	//============================================================
+	// ヒステリシス
+	//============================================================
+
+	if (m_state == State::Repair && m_wpRepairTarget.lock() == target)
+	{
+		utility += m_searchCommitBonus;
+	}
+
+	//============================================================
 	// 距離
 	//============================================================
 
@@ -2764,22 +2783,38 @@ bool Neighbor::FindRepairItemForTarget(
 
 		diff.y = 0.0f;
 
+		//============================================================
+		// 足切り
+		//============================================================
+
 		if (diff.LengthSquared() > searchDistanceSq)
 		{
 			continue;
 		}
 
-		float distance = diff.Length();
+		//============================================================
+		// 経路距離
+		//============================================================
 
-		float distanceScore =
-			1.0f -
-			std::clamp(
-				distance / searchRadius,
-				0.0f,
-				1.0f
-			);
+		float pathDistance = 0.0f;
 
-		float utility = 20.0f + distanceScore * 20.0f;
+		if (!CalculatePathDistance(item->GetPos(), pathDistance))
+		{
+			continue;
+		}
+
+		float pathScore =
+			1.0f - std::clamp(pathDistance / (searchRadius * 2.0f), 0.0f, 1.0f);
+
+		float utility = 20.0f + pathScore * 20.0f;
+
+		//============================================================
+		// ヒステリシス
+		//============================================================
+		if (m_wpSearchItem.lock() == item)
+		{
+			utility += m_searchCommitBonus;
+		}
 
 		if (utility <= bestUtility)
 		{

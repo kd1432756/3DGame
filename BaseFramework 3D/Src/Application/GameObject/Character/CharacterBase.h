@@ -26,6 +26,16 @@ public:
 	virtual void DrawLit() override;
 	virtual void GenerateDepthMapFromLight() override;
 
+	// 表示用の名前（リザルト・通知UIなど）
+	const std::string& GetDisplayName() const { return m_displayName; }
+	void SetDisplayName(const std::string& name) { m_displayName = name; }
+
+	// 未設定なら内部Nameにフォールバック
+	const std::string& GetDisplayNameOrName() const
+	{
+		return m_displayName.empty() ? GetName() : m_displayName;
+	}
+
 	virtual void OnPrankSuccess(
 		int score,
 		const std::string& message)
@@ -139,6 +149,8 @@ protected:
 	float m_angle = 0.0f;
 
 	int m_score = 0;
+
+	std::string m_displayName;
 
 	virtual void OnItemsConfiscated() {}
 

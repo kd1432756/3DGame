@@ -41,10 +41,8 @@ private:
 
 	int m_displayRankCount = 0;
 
-
 	bool m_fadeOut = false;
 	float m_alpha = 0.0f;
-
 
 	float m_mousePosX = 0.0f;
 	float m_mousePosY = 0.0f;
@@ -59,6 +57,9 @@ private:
 	float m_animOffsetY = 0.0f;
 
 	bool m_isTitleButtonHover = false;
+
+	float m_rowAnimTime[4] = {};
+	int   m_prevDisplayRankCount = 0;
 
 	std::weak_ptr<ConfettiUI> m_wpConfetti;
 	bool m_confettiStarted = false;
