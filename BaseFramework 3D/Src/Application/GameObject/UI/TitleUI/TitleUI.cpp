@@ -8,6 +8,9 @@ void TitleUI::Init()
 	m_pointerTex = std::make_shared<KdTexture>();
 	m_pointerTex->Load("Asset/Textures/Cursor/Pointer.png");
 
+	m_titleLogoTex = std::make_shared<KdTexture>();
+	m_titleLogoTex->Load("Asset/Textures/Title_Logo.png");
+
 	m_buttons[BtnStart] = { Math::Vector2{ 0.0f,  -80.0f }, Math::Vector2{ 420.0f, 80.0f }, "Play Game",  FontID::FutureNormal64 };
 	m_buttons[BtnHowTo] = { Math::Vector2{ 0.0f, -180.0f }, Math::Vector2{ 480.0f, 60.0f }, "How To Play", FontID::FutureNormal64 };
 	m_buttons[BtnExit] = { Math::Vector2{ 0.0f, -280.0f }, Math::Vector2{ 400.0f, 60.0f }, "Quit Game",   FontID::FutureNormal64 };
@@ -61,7 +64,7 @@ void TitleUI::Update()
 	}
 
 	m_animTime += 0.05f;
-	m_animOffsetY = sinf(m_animTime) * 5.0f;
+	m_scaleOffset = sinf(m_animTime * 0.5f) * 5.0f;
 
 	POINT mouse;
 	GetMousePos(&mouse);
@@ -130,53 +133,68 @@ void TitleUI::Update()
 
 void TitleUI::DrawSprite()
 {
-	Math::Vector2 titlePos = { -150, 200 };
-	Math::Vector2 pivot = { 0.5f, 0.5f };
+	/*{
+		Math::Vector2 titlePos = { -150, 200 };
+		Math::Vector2 pivot = { 0.5f, 0.5f };
 
-	const float outlineSize = 3.0f;
+		const float outlineSize = 3.0f;
 
-	Math::Color titleColor = { 1.0f, 0.8f, 0.2f, 1.0f };
+		Math::Color titleColor = { 1.0f, 0.8f, 0.2f, 1.0f };
 
-	const Math::Vector2 offsets[] =
-	{
-		{-outlineSize, -outlineSize},
-		{ 0.0f,       -outlineSize},
-		{ outlineSize, -outlineSize},
+		const Math::Vector2 offsets[] =
+		{
+			{-outlineSize, -outlineSize},
+			{ 0.0f,       -outlineSize},
+			{ outlineSize, -outlineSize},
 
-		{-outlineSize,  0.0f},
-		{ outlineSize,  0.0f},
+			{-outlineSize,  0.0f},
+			{ outlineSize,  0.0f},
 
-		{-outlineSize,  outlineSize},
-		{ 0.0f,         outlineSize},
-		{ outlineSize,  outlineSize}
-	};
+			{-outlineSize,  outlineSize},
+			{ 0.0f,         outlineSize},
+			{ outlineSize,  outlineSize}
+		};
 
-	// 黒縁を描画
-	for (const auto& offset : offsets)
-	{
+		// 黒縁を描画
+		for (const auto& offset : offsets)
+		{
+			KdShaderManager::Instance().m_spriteShader.DrawFont(
+				titlePos + offset,
+				&kBlackColor,
+				pivot,
+				0.0f,
+				FontID::Gothic96,
+				"ご近所いたずら大戦"
+			);
+		}
+
 		KdShaderManager::Instance().m_spriteShader.DrawFont(
-			titlePos + offset,
-			&kBlackColor,
+			titlePos,
+			&titleColor,
 			pivot,
 			0.0f,
 			FontID::Gothic96,
 			"ご近所いたずら大戦"
 		);
-	}
+	}*/
 
-	KdShaderManager::Instance().m_spriteShader.DrawFont(
-		titlePos,
-		&titleColor,
-		pivot,
-		0.0f,
-		FontID::Gothic96,
-		"ご近所いたずら大戦"
-	);
+	Math::Vector2 titlePos = { 0, 160 };
+	Math::Vector2 LogoTexSize = { 1534, 1024 };
+	float LogoScale = 0.35f;
+	LogoScale *= 1 + m_scaleOffset * 0.005f;
+	Math::Vector2 LogoSize = LogoTexSize * LogoScale;
+
+
+	KdShaderManager::Instance().m_spriteShader.DrawTex(
+		m_titleLogoTex,
+		titlePos.x, titlePos.y,
+		LogoSize.x, LogoSize.y,
+		nullptr, &kWhiteColor, Math::Vector2{ 0.5f, 0.5f });
 
 	Math::Color color = kWhiteColor;
 
 	Math::Vector2 drawPos = m_startPos;
-	drawPos.y += m_animOffsetY;
+	drawPos.y += m_scaleOffset;
 
 	// ボタン描画（ホバー時は黄色）
 	for (int i = 0; i < BtnMax; i++)

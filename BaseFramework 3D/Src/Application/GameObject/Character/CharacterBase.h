@@ -87,6 +87,9 @@ public:
 	void ShowEmote(EmoteIcon::IconType type, float duration = 0.0f, bool force = false);
 	void HideEmote();
 
+	float GetBodyRadius() const { return m_bodyRadius; }
+	virtual bool IsGhost() const { return false; }
+
 protected:
 
 	virtual void UpdateWorldMatrix() override
@@ -160,6 +163,9 @@ protected:
 	bool m_isRestrained = false;
 	bool m_isHindering = false;
 
+	float m_bodyRadius = 0.6f;
+	float m_bodyHeight = 1.5f;   // Y差がこの範囲内のときだけ判定
+
 	// ===== ray =====
 	
 	// 最大で登れる段差
@@ -177,7 +183,7 @@ protected:
 	// ===== sphere =====
 
 	// 壁判定Sphereの半径
-	float m_collisionRadius = 0.3f;
+	float m_collisionRadius = 0.5f;
 
 	Math::Vector3 m_wallNormal = Math::Vector3::Zero;
 };

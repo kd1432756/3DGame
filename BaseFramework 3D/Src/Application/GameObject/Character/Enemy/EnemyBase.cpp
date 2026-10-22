@@ -2,6 +2,8 @@
 
 #include "../../../System/Navigation/NavMesh/NavMeshManager.h"
 
+#include "../../../Scene/SceneManager.h"
+
 void EnemyBase::Init()
 {
 	CharacterBase::Init();
@@ -73,60 +75,171 @@ void EnemyBase::SetMoveDirection(
 void EnemyBase::ApplyMove()
 {
 	m_isMoving = false;
+	m_hitCharacter = false;
 
-	if (m_moveDir.LengthSquared() <= 0.000001f)
+	UpdateGhost();
+
+	const bool wantMove = m_moveDir.LengthSquared() > 0.000001f;
+	const Math::Vector3 before = m_pos;
+
+	if (wantMove)
 	{
+		// 向きを移動方向へ変更
+		RotateToMoveDirection(m_moveDir);
+
+		Math::Vector3 moveVec = m_moveDir * m_moveSpeed;
+
+		// 壁の先読み
+		const float radius = m_collisionRadius * m_sceneScale;
+		const float margin = 0.02f * m_sceneScale;
+
+		std::vector<WallHit> walls;
+		CollectWallHits(radius + margin, walls);
+
+		// 壁に向かう移動成分を除去（角に備えて2回）
+		for (int pass = 0; pass < 2; ++pass)
+		{
+			for (auto& w : walls)
+			{
+				float into = moveVec.Dot(w.normal);
+				if (into < 0.0f)
+				{
+					moveVec -= w.normal * into;
+				}
+			}
+		}
+
+		m_pos += moveVec;
+	}
+
+	// キャラ同士（立っている時も判定する）
+	ResolveCharacterCollision();
+
+	// 壁を最優先で最後に解消
+	if (wantMove || m_hitCharacter)
+	{
+		ResolveCollision();
+	}
+
+	Math::Vector3 moved = m_pos - before;
+	moved.y = 0.0f;
+	const float movedDist = moved.Length();
+
+	// 動く意思があり、実際に動けたときだけ true（押されただけでは走りアニメにしない）
+	m_isMoving = wantMove && (movedDist * movedDist > 0.00000001f);
+
+	UpdateStuck(wantMove, movedDist);
+}
+
+//============================================================
+// キャラ同士の押し戻し（自分だけ退く）
+//============================================================
+void EnemyBase::ResolveCharacterCollision()
+{
+	if (m_isGhost || m_isArrested) return;
+
+	const float maxPush = m_maxCharaPush * m_sceneScale;
+
+	for (auto& obj : SceneManager::Instance().GetObjList())
+	{
+		auto other = std::dynamic_pointer_cast<CharacterBase>(obj);
+		if (!other || other.get() == this) continue;
+		if (other->IsArrested() || other->IsGhost()) continue;   // 連行中の相手はここで除外
+
+		Math::Vector3 diff = m_pos - other->GetPos();
+
+		if (std::abs(diff.y) > m_bodyHeight * m_sceneScale) continue;
+		diff.y = 0.0f;
+
+		const float minDist = (m_bodyRadius + other->GetBodyRadius()) * m_sceneScale;
+		const float dist = diff.Length();
+
+		if (dist >= minDist) continue;
+
+		Math::Vector3 n = (dist > 0.0001f) ? diff / dist : m_mWorld.Right();
+		n.y = 0.0f;
+		n.Normalize();
+
+		// 瞬間移動を避けるため、1回の押し出し量に上限を付ける
+		const float push = std::min(minDist - dist, maxPush);
+
+		m_pos += n * push;
+		m_hitCharacter = true;
+	}
+}
+
+bool EnemyBase::IsOverlappingCharacter() const
+{
+	for (auto& obj : SceneManager::Instance().GetObjList())
+	{
+		auto other = std::dynamic_pointer_cast<CharacterBase>(obj);
+		if (!other || other.get() == this) continue;
+		if (other->IsArrested()) continue;
+
+		Math::Vector3 diff = m_pos - other->GetPos();
+		if (std::abs(diff.y) > m_bodyHeight * m_sceneScale) continue;
+		diff.y = 0.0f;
+
+		const float minDist = (m_bodyRadius + other->GetBodyRadius()) * m_sceneScale;
+		if (diff.LengthSquared() < minDist * minDist) return true;
+	}
+	return false;
+}
+
+//============================================================
+// ゴースト（キャラ判定を一時的に無効化）
+//============================================================
+void EnemyBase::UpdateGhost()
+{
+	const float dt = 1.0f / 60.0f;
+
+	if (m_ghostCooldown > 0.0f) m_ghostCooldown -= dt;
+
+	if (!m_isGhost) return;
+
+	m_ghostTimer -= dt;
+
+	// 最低継続時間を過ぎ、かつ誰とも重なっていなければ復帰
+	if (m_ghostTimer <= 0.0f && !IsOverlappingCharacter())
+	{
+		m_isGhost = false;
+		m_ghostCooldown = m_ghostCooldownTime;
+		ResetStuck();
+	}
+}
+
+//============================================================
+// スタック判定 → 一定時間でゴースト化
+//============================================================
+void EnemyBase::UpdateStuck(bool wantMove, float movedDist)
+{
+	const float dt = 1.0f / 60.0f;
+
+	// 「動こうとしている」かつ「キャラに押し戻された」かつ「ほとんど進めていない」
+	// 壁が原因の詰まりは m_hitCharacter で除外される
+	const bool stuck =
+		wantMove &&
+		m_hitCharacter &&
+		movedDist < m_moveSpeed * m_stuckMoveRatio;
+
+	if (!stuck)
+	{
+		// 一瞬の途切れで即リセットしないよう、減衰させる
+		m_stuckTimer = std::max(0.0f, m_stuckTimer - dt * 2.0f);
 		return;
 	}
 
-	// 向きを移動方向へ変更
-	RotateToMoveDirection(m_moveDir);
+	m_stuckTimer += dt;
 
-	// 移動量
-	Math::Vector3 moveVec =
-		m_moveDir * m_moveSpeed;
-
-	// 壁の先読み
-	const float radius =
-		m_collisionRadius * m_sceneScale;
-
-	const float margin =
-		0.02f * m_sceneScale;
-
-	std::vector<WallHit> walls;
-
-	CollectWallHits(
-		radius + margin,
-		walls
-	);
-
-	// 壁に向かう移動成分を除去
-	// 角に備えて2回処理
-	for (int pass = 0; pass < 2; ++pass)
+	if (m_stuckTimer >= m_stuckToGhostTime &&
+		!m_isGhost &&
+		m_ghostCooldown <= 0.0f &&
+		CanBecomeGhost())
 	{
-		for (auto& w : walls)
-		{
-			float into =
-				moveVec.Dot(w.normal);
-
-			if (into < 0.0f)
-			{
-				moveVec -=
-					w.normal * into;
-			}
-		}
+		m_isGhost = true;
+		m_ghostTimer = m_ghostMinTime;
+		ResetStuck();
 	}
-
-	const Math::Vector3 before = m_pos;
-
-	// 移動
-	m_pos += moveVec;
-
-	// 念のため残っためり込みを解消
-	ResolveCollision();
-
-	// 実際に動いた量で判定(壁に止められたら false)
-	m_isMoving = (m_pos - before).LengthSquared() > 0.00000001f;
 }
 
 //============================================================

@@ -23,7 +23,7 @@ private:
 	float m_flashTimer = 0.0f;  // 使用可能になった瞬間の演出
 
 	// レイアウト
-	static constexpr int   kPosX = 520;
+	static constexpr int   kPosX = 540;
 	static constexpr int   kPosY = -260;
 	static constexpr int   kIconSize = 96;      // 画像の直径（円の大きさ）
 	static constexpr int   kRingWidth = 6;      // 外枠の太さ(px)

@@ -39,6 +39,8 @@
 #include "../../GameObject/UI/HinderUI/HinderUI.h"
 #include "../../GameObject/UI/ReportUI/ReportUI.h"
 
+#include "../../GameObject/UI/Notification/NotificationManager.h"
+
 void GameScene::Update()
 {
 	if (!m_started)
@@ -64,6 +66,8 @@ void GameScene::Update()
 	}
 
 	DayCycle::Instance().Update();
+
+	NotificationManager::Instance().Update();
 
 	if (DayCycle::Instance().IsFinished())
 	{
@@ -204,6 +208,8 @@ void GameScene::Start()
 	// 風有効化
 	KdShaderManager::Instance().SetWindEnable(true);
 
+	NotificationManager::Instance().Clear();
+
 	auto player = SceneManager::Instance().FindObject<Player>();
 
 	auto time = std::make_shared<TimeUI>();
@@ -213,7 +219,7 @@ void GameScene::Start()
 
 	auto field = std::make_shared<GrassField>();
 	SceneManager::Instance().AddObject(field);
-	field->Generate(5.0f, 0.3f * scale);
+	field->Generate(10.0f, 0.3f * scale);
 	field->SetPlayer(player);
 	field->SetDrawDistance(25.0f * scale);
 

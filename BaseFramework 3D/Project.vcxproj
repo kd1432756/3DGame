@@ -325,6 +325,8 @@
     <ClInclude Include="Src\Application\GameObject\UI\InteractionPrompt\InteractionPrompt.h" />
     <ClInclude Include="Src\Application\GameObject\UI\InventoryUI\InventoryUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\LoadingUI\LoadingUI.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\Notification\NotificationManager.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\Notification\NotificationUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\ReportUI\ReportUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\ResultUI\ResultFadeUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\ResultUI\ResultUI.h" />
@@ -486,6 +488,8 @@
     <ClCompile Include="Src\Application\GameObject\UI\InteractionPrompt\InteractionPrompt.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\InventoryUI\InventoryUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\LoadingUI\LoadingUI.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\Notification\NotificationManager.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\Notification\NotificationUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\ReportUI\ReportUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\ResultUI\ResultFadeUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\ResultUI\ResultUI.cpp" />

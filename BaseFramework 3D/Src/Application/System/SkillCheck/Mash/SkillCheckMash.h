@@ -19,13 +19,13 @@ protected:
 	void OnDraw() override;
 
 private:
-	int   m_required = 15;
+	int   m_required = 12;
 	float m_gauge = 0.0f;		// 0.0〜1.0
 	float m_inputTime = 0.0f;		// 入力受付開始からの経過時間
 	float m_perfectTime = 1.5f;
 	float m_pushFlash = 0.0f;
 
-	static constexpr float kDecay = 0.2f;	// 1秒あたりの減少量
+	static constexpr float kDecay = 0.1f;	// 1秒あたりの減少量
 	static constexpr float kBarWidth = 400.0f;
 	static constexpr float kBarHeight = 24.0f;
 	static constexpr float kBarY = -120.0f;

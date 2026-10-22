@@ -94,7 +94,7 @@ void Car::OnAction(const InteractiveAction& action, const std::shared_ptr<Player
 	{						   
 		if (auto se = KdAudioManager::Instance().Play("Asset/Sound/Intaract/punk.wav"))
 		{
-			se->SetVolume(0.2f);
+			se->SetVolume(0.1f);
 		}
 	}
 	else if (m_state == InteractiveState::Normal)

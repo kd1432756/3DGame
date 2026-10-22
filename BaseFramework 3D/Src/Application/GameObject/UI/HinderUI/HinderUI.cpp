@@ -69,7 +69,7 @@ void HinderUI::DrawSprite()
 		: Math::Color{ 1.0f, 1.0f, 1.0f, 1.0f };
 
 		// アイコンも文字も一緒に点滅
-		DrawKeyText(m_texKeySpace, Math::Vector2{ 0, -105 }, "MASH!", blink);
+		DrawKeyText(m_texKeySpace, Math::Vector2{ 0, -105 }, "Struggle!", blink);
 	}
 }
 

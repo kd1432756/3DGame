@@ -21,10 +21,13 @@
 #include "../GameObject/Object/StaticMeshObject/InteractiveObject/Car/Car.h"
 #include "../GameObject/Object/StaticMeshObject/InteractiveObject/Window/Window.h"
 
-#include "../GameObject/Object/StaticMeshObject/Item/ItemManager.h"
 #include "../System/Node/AStarNode/AStarNodeManager.h"
 #include "../System/Navigation/NavMesh/NavMeshManager.h"
 #include "../System/Location/LocationPointManager.h"
+
+#include "../GameObject/Object/StaticMeshObject/Item/ItemManager.h"
+
+#include "../GameObject/UI/Notification/NotificationManager.h"
 
 void SceneManager::PreUpdate()
 {
@@ -33,7 +36,11 @@ void SceneManager::PreUpdate()
 	{
 		KdAudioManager::Instance().StopAllSound();
 
+		KdEffekseerManager::GetInstance().Reset();
+
 		ItemManager::Instance().Reset();
+
+		NotificationManager::Instance().Clear();
 
 		AStarNodeManager::Instance().Clear();
 		NavMeshManager::Instance().Clear();

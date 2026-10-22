@@ -325,6 +325,9 @@
     <Filter Include="Src\Application\GameObject\UI\ReportUI">
       <UniqueIdentifier>{4c549e87-fc2b-4a6c-8365-7a8062b5e907}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\UI\NotificationUI">
+      <UniqueIdentifier>{a0317e59-41f8-4f4d-939e-1e45c1522e70}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -813,6 +816,12 @@
     <ClInclude Include="Src\Application\GameObject\UI\ReportUI\ReportUI.h">
       <Filter>Src\Application\GameObject\UI\ReportUI</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\Notification\NotificationManager.h">
+      <Filter>Src\Application\GameObject\UI\NotificationUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\Notification\NotificationUI.h">
+      <Filter>Src\Application\GameObject\UI\NotificationUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1256,6 +1265,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\ReportUI\ReportUI.cpp">
       <Filter>Src\Application\GameObject\UI\ReportUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\Notification\NotificationManager.cpp">
+      <Filter>Src\Application\GameObject\UI\NotificationUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\Notification\NotificationUI.cpp">
+      <Filter>Src\Application\GameObject\UI\NotificationUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

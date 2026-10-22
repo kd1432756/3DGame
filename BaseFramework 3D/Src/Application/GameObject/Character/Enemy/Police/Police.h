@@ -57,6 +57,17 @@ protected:
 	void UpdateBehavior() override;
 	void UpdateExtra() override;
 
+	//============================================================
+	// キャラクター当たり判定
+	//============================================================
+
+	bool CanBecomeGhost() const override
+	{
+		return m_state == State::Patrol ||
+			m_state == State::Return ||
+			m_state == State::Investigate;
+	}
+
 private:
 
 	//============================================================

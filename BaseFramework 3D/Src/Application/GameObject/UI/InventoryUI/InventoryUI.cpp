@@ -10,10 +10,21 @@
 
 void InventoryUI::Init()
 {
-	m_slotTex = std::make_shared<KdTexture>();
+/*	m_slotTex = std::make_shared<KdTexture>();
 	m_slotTex->Load("Asset/Textures/UI/InventorySlot.png");
 	m_slotSelectedTex = std::make_shared<KdTexture>();
-	m_slotSelectedTex->Load("Asset/Textures/UI/InventorySlotSelected.png");
+	m_slotSelectedTex->Load("Asset/Textures/UI/InventorySlotSelected.png");*/
+
+	m_keyTex.clear();
+	m_keyTex.resize(Inventory::MaxItem);
+	for (int i = 0; i < Inventory::MaxItem; ++i)
+	{
+		const std::string path =
+			"Asset/Textures/UI/Key/keyboard_" + std::to_string(i + 1) + ".png";
+
+		m_keyTex[i] = std::make_shared<KdTexture>();
+		m_keyTex[i]->Load(path);
+	}
 }
 
 void InventoryUI::Update()
@@ -55,75 +66,70 @@ void InventoryUI::DrawSlot(
 	const InventoryItem& item,
 	bool selected)
 {
-	const int x =
-		StartX +
-		index * (SlotSize + SlotSpace);
-
+/*	const int x = StartX + index * (SlotSize + SlotSpace);
 	const int y = StartY;
 
-	// --------------------------------
-	// スロット背景
-	// --------------------------------
-
-	std::shared_ptr<KdTexture> texture;
-
-	int drawSize = SlotSize;
-
-	if (selected)
-	{
-		texture = m_slotSelectedTex;
-		drawSize = SelectedSlotSize;
-	}
-	else
-	{
-		texture = m_slotTex;
-	}
+	// --- スロット背景 ---
+	std::shared_ptr<KdTexture> texture = selected ? m_slotSelectedTex : m_slotTex;
+	const int drawSize = selected ? SelectedSlotSize : SlotSize;
 
 	if (texture)
 	{
 		KdShaderManager::Instance().m_spriteShader.DrawTex(
-			texture,
-			x,
-			y,
-			drawSize,
-			drawSize);
-	}
+			texture, x, y, drawSize, drawSize);
+	}*/
 
-	// --------------------------------
-	// 空スロット
-	// --------------------------------
+	const int x = StartX + index * (SlotSize + SlotSpace);
+	const int y = StartY;
 
-	if (item.IsEmpty())
+	// --- 危険アイテム判定 ---
+	bool dangerous = false;
+	if (!item.IsEmpty() && !item.itemPath.empty())
 	{
-		return;
+		const ItemData* data = ItemData::Get(item.itemPath);
+		dangerous = (data && data->IsDangerous());
 	}
 
-	// --------------------------------
-	// アイテムアイコン
-	// --------------------------------
+	// --- 色の選択 ---
+	const Math::Color* bgColor;
+	const Math::Color* borderColor;
 
-	DrawItemIcon(index, item);
+	if (dangerous)
+	{
+		bgColor = selected ? &kSlotDangerSelectedBgColor : &kSlotDangerBgColor;
+		borderColor = &kSlotDangerBorderColor;
+	}
+	else
+	{
+		bgColor = selected ? &kSlotSelectedBgColor : &kSlotBgColor;
+		borderColor = selected ? &kSlotSelectedBorderColor : &kSlotBorderColor;
+	}
 
-	// --------------------------------
-	// スロット番号
-	// --------------------------------
+	// --- スロット背景（DrawBox）---
+	const int drawSize = selected ? SelectedSlotSize : SlotSize;
+	const int half = drawSize / 2;
 
-	const std::string number =
-		std::to_string(index + 1);
+	auto& sprite = KdShaderManager::Instance().m_spriteShader;
 
-	const float halfSize =
-		drawSize / 2.0f;
+	sprite.DrawBox(x, y, half, half, bgColor, true);      // 塗り
+	sprite.DrawBox(x, y, half, half, borderColor, false); // 枠
 
-	KdShaderManager::Instance().m_spriteShader.DrawFont(
-		Math::Vector2{
-			x - halfSize + 5.0f,
-			y + halfSize - 5.0f
-		},
-		&kWhiteColor,
-		Math::Vector2{ 0.35f, 0.35f },
-		0.0f,
-		FontID::Future32,
-		number.c_str());
+	// 選択時は枠を重ねて太く
+	if (selected)
+	{
+		sprite.DrawBox(x, y, half - 1, half - 1, borderColor, false);
+		sprite.DrawBox(x, y, half - 2, half - 2, borderColor, false);
+	}
+
+
+	// --- アイテムアイコン（空でなければ）---
+	if (!item.IsEmpty())
+	{
+		DrawItemIcon(index, item);
+	}
+
+	// --- キーアイコン（空スロットでも常に表示）---
+	DrawKeyIcon(index, selected);
 }
 
 void InventoryUI::DrawItemIcon(
@@ -177,4 +183,60 @@ void InventoryUI::DrawItemIcon(
 		y,
 		IconSize,
 		IconSize);
+
+	{
+		const ItemData* data = ItemData::Get(item.itemPath);
+
+		bool dangerous = data->IsDangerous();
+
+		if (dangerous)
+		{
+			// スロット右上（Y上向き）
+			const int half = SlotSize / 2;
+			const int bx = x + half - BadgeRadius;
+			const int by = y + half - BadgeRadius;
+
+			const Math::Color badgeColor = Math::Color{ 0.8f, 0.2f, 0.2f, 1.0f };
+
+			KdShaderManager::Instance().m_spriteShader.DrawCircle(bx, by, BadgeRadius, &badgeColor, true);
+			KdShaderManager::Instance().m_spriteShader.DrawCircle(bx, by, BadgeRadius, &kWhiteColor, false);   // 白縁で背景から浮かせる
+
+			int offsetX = 5;
+
+			KdShaderManager::Instance().m_spriteShader.DrawFont(
+				Math::Vector2{ static_cast<float>(bx) + offsetX, static_cast<float>(by) },
+				&kWhiteColor,
+				Math::Vector2{ 0.5f, 0.5f },
+				0.0f,
+				FontID::Future32,
+				"!");
+		}
+	}
+}
+
+void InventoryUI::DrawKeyIcon(int index, bool selected)
+{
+	if (index >= static_cast<int>(m_keyTex.size())) return;
+
+	const auto& texPtr = m_keyTex[index];
+	if (!texPtr || !texPtr->GetInfo().Width) return;
+
+	auto& sprite = KdShaderManager::Instance().m_spriteShader;
+
+	// 縦横比維持
+	const float iconW = KeyIconH *
+		static_cast<float>(texPtr->GetInfo().Width) /
+		static_cast<float>(texPtr->GetInfo().Height);
+
+	// スロット中央X / スロット上端のさらに上（拡大前のSlotSizeを基準にして固定）
+	const int x = StartX + index * (SlotSize + SlotSpace);
+	const int y = StartY + SlotSize / 2 + KeyGap + KeyIconH / 2;
+
+	const Math::Color color = selected
+		? Math::Color{ 1.0f, 1.0f, 1.0f, 1.0f }
+	: Math::Color{ 1.0f, 1.0f, 1.0f, KeyDimAlpha };
+
+	sprite.DrawTex(texPtr, x, y,
+		static_cast<int>(iconW), KeyIconH,
+		nullptr, &color, Math::Vector2{ 0.5f, 0.5f });
 }

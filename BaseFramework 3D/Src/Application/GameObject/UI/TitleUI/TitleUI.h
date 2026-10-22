@@ -36,12 +36,13 @@ private:
 	Math::Vector2 m_startSize = { 300.0f, 80.0f };
 
 	float m_animTime = 0.0f;
-	float m_animOffsetY = 0.0f;
+	float m_scaleOffset = 0.0f;
 
 	float m_mousePosX = 0.0f;
 	float m_mousePosY = 0.0f;
 
 	std::shared_ptr<KdTexture> m_pointerTex = nullptr;
+	std::shared_ptr<KdTexture> m_titleLogoTex = nullptr;
 
 	// 遊び方
 	int m_howToPage = 0;

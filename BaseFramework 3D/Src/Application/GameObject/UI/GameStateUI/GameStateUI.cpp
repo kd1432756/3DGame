@@ -25,7 +25,7 @@ void GameStateUI::Update()
 		return;
 	}
 
-	m_timer += Application::Instance().GetDeltaTime();
+	m_timer += 1.0f / 60.0f /*Application::Instance().GetDeltaTime()*/;
 
 	switch (m_displayState)
 	{
@@ -62,7 +62,7 @@ void GameStateUI::Update()
 				m_bgm = KdAudioManager::Instance().Play("Asset/Sound/BGM/GameBGM.wav", true);
 				if (m_bgm)
 				{
-					m_bgm->SetVolume(0.075f);
+					m_bgm->SetVolume(0.12f);
 				}
 			}
 		}

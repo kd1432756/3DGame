@@ -20,7 +20,7 @@ private:
 	std::shared_ptr<KdTexture> m_texHouse = nullptr;   // 家アイコン
 	std::shared_ptr<KdTexture> m_texBadge = nullptr;   // 赤い丸
 
-	Math::Vector2 m_uiPos = { 560.0f, 220.0f };
+	Math::Vector2 m_uiPos = { 540.0f, 220.0f };
 
 	int   m_count = 0;        // 現在の被害数
 	int   m_prevCount = 0;    // 前フレームの被害数(増加検知用)
@@ -35,4 +35,7 @@ private:
 
 	static constexpr float kHouseSize = 64.0f;
 	static constexpr float kBadgeSize = 28.0f;
+
+	static constexpr float kCicleRadius = 48.0f;
+	static constexpr int kRingWidth = 8;
 };

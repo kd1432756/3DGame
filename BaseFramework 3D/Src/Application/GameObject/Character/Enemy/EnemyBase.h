@@ -76,4 +76,35 @@ protected:
 
 	static constexpr float m_navSnapRadius = 2.0f;
 
+	// =========================================
+	// 当たり判定
+	// =========================================
+
+	virtual bool CanBecomeGhost() const { return true; }   // Policeはfalse
+
+public:
+
+	bool IsGhost() const override { return m_isGhost; }
+
+private:
+
+	void ResolveCharacterCollision();
+	bool IsOverlappingCharacter() const;
+	void UpdateGhost();
+	void UpdateStuck(bool wantMove, float movedDist);
+	void ResetStuck() { m_stuckTimer = 0.0f; }
+
+	bool  m_hitCharacter = false;   // このフレームにキャラに押し戻されたか
+	float m_stuckTimer = 0.0f;
+
+	bool  m_isGhost = false;
+	float m_ghostTimer = 0.0f;
+	float m_ghostCooldown = 0.0f;
+
+	// パラメータ
+	const float m_stuckToGhostTime = 2.0f;    // 詰まりがこの秒数続いたらゴースト化
+	const float m_stuckMoveRatio = 0.3f;      // 期待移動量のこの割合未満なら「進めていない」
+	const float m_ghostMinTime = 1.5f;        // ゴースト最低継続時間
+	const float m_ghostCooldownTime = 3.0f;   // 復帰後、再ゴースト化までの時間
+	const float m_maxCharaPush = 0.15f;       // 1フレームのキャラ押し出し上限（×スケール）
 };

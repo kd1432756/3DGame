@@ -46,9 +46,11 @@ void DamageIndicatorUI::Update()
 
 void DamageIndicatorUI::DrawSprite()
 {
-	// ★描画関数はフレームワークに合わせて調整
 	auto& sprite = KdShaderManager::Instance().m_spriteShader;
 
+	Math::Color ring = Math::Color{ 0.3f, 0.3f, 0.3f, 1.0f };
+	Math::Color circle = Math::Color{ 0.6f, 0.6f, 0.6f, 1.0f };
+		
 	// 家アイコン(常時表示)
 	sprite.DrawTex(m_texHouse,
 		(int)m_uiPos.x, (int)m_uiPos.y,

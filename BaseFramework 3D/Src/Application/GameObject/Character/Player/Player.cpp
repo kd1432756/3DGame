@@ -29,6 +29,8 @@
 
 #include "../Enemy/Police/Police.h"
 
+#include "../../UI/Notification/NotificationManager.h"
+
 void Player::Init()
 {
 	CharacterBase::Init();
@@ -508,15 +510,13 @@ void Player::OnPrankSuccess(int score, const std::string& message)
 
 void Player::OnPranked(const std::shared_ptr<InteractiveObject>& object, const InteractiveAction& action)
 {
-	auto slideText = std::make_shared<SlideTextUI>();
-
+	/*auto slideText = std::make_shared<SlideTextUI>();
 	slideText->Init();
-
 	slideText->SetText(action.ownerMessage);
-
 	slideText->SetPosition({ -500, 130 });
+	SceneManager::Instance().AddObject(slideText);*/
 
-	SceneManager::Instance().AddObject(slideText);
+	NotificationManager::Instance().Push(action.ownerMessage);
 
 	if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Blip_Down.wav"))
 	{
