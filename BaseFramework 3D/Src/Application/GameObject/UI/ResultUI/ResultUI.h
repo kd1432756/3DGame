@@ -63,6 +63,7 @@ private:
 
 	std::weak_ptr<ConfettiUI> m_wpConfetti;
 	bool m_confettiStarted = false;
+	float m_confettiWaitTimer = 0.0f;
 
 	std::shared_ptr<KdSoundInstance> m_resultBgm;
 };

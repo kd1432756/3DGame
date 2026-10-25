@@ -139,6 +139,8 @@ private:
 
 	bool MoveToNextNavPathPoint();
 
+	void OnRepathRequested() override;
+
 	//============================================================
 	// Search
 	//============================================================

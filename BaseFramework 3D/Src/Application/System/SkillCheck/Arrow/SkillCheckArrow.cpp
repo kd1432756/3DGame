@@ -2,10 +2,10 @@
 
 void SkillCheckArrow::OnStart()
 {
-	// 難易度1.0で3個。0.8なら2個、1.5以上なら4個
-	int count = 2 + static_cast<int>(m_difficulty);
-	if (count < 2) count = 2;
-	if (count > 4) count = 4;
+	// 難易度1.0で4個。0.8なら3個、1.5以上なら5個
+	int count = 3 + static_cast<int>(m_difficulty);
+	if (count < 3) count = 3;
+	if (count > 5) count = 5;
 
 	m_seq.clear();
 	for (int i = 0; i < count; ++i)

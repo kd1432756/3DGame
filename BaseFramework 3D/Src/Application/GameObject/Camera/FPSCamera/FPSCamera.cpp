@@ -40,7 +40,7 @@ void FPSCamera::Update()
 	// カメラの回転
 	UpdateRotateByMouse();
 	m_mRotation = GetRotationMatrix();
-	m_mWorld = m_mLocalPos * m_mRotation * _targetMat;
+	m_mWorld = m_mRotation  * m_mLocalPos * _targetMat;
 }
 
 void FPSCamera::SetEyeHeight(float height)

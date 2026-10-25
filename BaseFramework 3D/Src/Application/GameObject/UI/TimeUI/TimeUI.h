@@ -26,8 +26,8 @@ private:
 	std::shared_ptr<KdTexture> m_moonTex = nullptr;
 
 	// UIの位置
-	static constexpr int StartX = -428;
-	static constexpr int StartY = 308;
+	static constexpr int StartX = -410;
+	static constexpr int StartY = 300;
 
 	// ゲージのサイズ
 	static constexpr int GaugeWidth = 384;

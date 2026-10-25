@@ -36,6 +36,9 @@ void ResultUI::Init()
 	for (auto& t : m_rowAnimTime) t = 0.0f;
 	m_prevDisplayRankCount = 0;
 
+	m_confettiWaitTimer = 0.0f;
+	m_confettiStarted = false;
+
 	m_pointerTex = std::make_shared<KdTexture>();
 	m_pointerTex->Load("Asset/Textures/Cursor/Pointer.png");
 }
@@ -126,38 +129,54 @@ void ResultUI::Update()
 		m_rowAnimTime[i] += 1.0f / 60.0f;
 	}
 
+	if (!m_confettiStarted)
+	{
+		m_confettiWaitTimer += 1.0f / 60.0f;
+
+		if (m_confettiWaitTimer >= 0.7f)
+		{
+			m_confettiStarted = true;
+		}
+	}
+
 	// 全ての結果が表示された瞬間に一度だけ紙吹雪とBGMを再生
 	if (!m_confettiStarted)
 	{
-		m_confettiStarted = true;
+		m_confettiWaitTimer += 1.0f / 60.0f;
 
-		if (!m_ranking.empty() && m_ranking[0])
+		// 1位のスライド(0.4秒)＋余韻(0.3秒)
+		if (m_confettiWaitTimer >= 0.7f)
 		{
-			bool isPlayerFirst = std::dynamic_pointer_cast<Player>(m_ranking[0]) != nullptr;
+			m_confettiStarted = true;
 
-			if (isPlayerFirst)
+			if (!m_ranking.empty() && m_ranking[0])
 			{
-				// 1位（プレイヤー勝利）用のBGM ＆ 紙吹雪
-				m_resultBgm = KdAudioManager::Instance().Play("Asset/Sound/BGM/WinBGM.wav", true);
+				bool isPlayerFirst = std::dynamic_pointer_cast<Player>(m_ranking[0]) != nullptr;
 
-				if (auto confetti = m_wpConfetti.lock())
+				if (isPlayerFirst)
 				{
-					confetti->Start();
+					// 1位（プレイヤー勝利）用のBGM ＆ 紙吹雪
+					m_resultBgm = KdAudioManager::Instance().Play("Asset/Sound/BGM/WinBGM.wav", true);
+
+					if (auto confetti = m_wpConfetti.lock())
+					{
+						confetti->Start();
+					}
+
+					if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/PartyPopper.wav"))
+					{
+						se->SetVolume(0.2f);
+					}
+				}
+				else
+				{
+					m_resultBgm = KdAudioManager::Instance().Play("Asset/Sound/BGM/ResultBGM.wav", true);
 				}
 
-				if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/PartyPopper.wav"))
+				if (m_resultBgm)
 				{
-					se->SetVolume(0.2f);
+					m_resultBgm->SetVolume(0.3f);
 				}
-			}
-			else
-			{
-				m_resultBgm = KdAudioManager::Instance().Play("Asset/Sound/BGM/ResultBGM.wav", true);
-			}
-
-			if (m_resultBgm)
-			{
-				m_resultBgm->SetVolume(0.3f);
 			}
 		}
 	}
@@ -433,6 +452,9 @@ void ResultUI::ShowResult()
 
 	for (auto& t : m_rowAnimTime) t = 0.0f;
 	m_prevDisplayRankCount = 0;
+
+	m_confettiWaitTimer = 0.0f;
+	m_confettiStarted = false;
 }
 
 void ResultUI::GetMousePos(POINT* mousePos)

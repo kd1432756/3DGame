@@ -219,7 +219,7 @@ void GameScene::Start()
 
 	auto field = std::make_shared<GrassField>();
 	SceneManager::Instance().AddObject(field);
-	field->Generate(10.0f, 0.3f * scale);
+	field->Generate(8.0f, 0.3f * scale);
 	field->SetPlayer(player);
 	field->SetDrawDistance(25.0f * scale);
 

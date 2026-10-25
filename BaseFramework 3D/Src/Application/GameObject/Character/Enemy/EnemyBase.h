@@ -84,6 +84,24 @@ protected:
 
 	virtual bool CanBecomeGhost() const { return true; }   // Policeはfalse
 
+	// =========================================
+	// 再探索要求
+	// =========================================
+
+	bool ConsumeRepathRequest()
+	{
+		const bool r = m_needRepath;
+		m_needRepath = false;
+		return r;
+	}
+
+	virtual void OnRepathRequested()
+	{
+		m_navPath.clear();
+		m_navPathIndex = 0;
+	}
+
+
 public:
 
 	bool IsGhost() const override { return m_isGhost; }
@@ -109,4 +127,11 @@ private:
 	const float m_ghostMinTime = 1.5f;        // ゴースト最低継続時間
 	const float m_ghostCooldownTime = 3.0f;   // 復帰後、再ゴースト化までの時間
 	const float m_maxCharaPush = 0.15f;       // 1フレームのキャラ押し出し上限（×スケール）
+
+	float m_blockedTimer = 0.0f;
+	float m_repathCooldown = 0.0f;
+	bool  m_needRepath = false;
+
+	float m_stuckToRepathTime = 0.5f;   // この時間進めなければ再探索
+	float m_repathCooldownTime = 1.0f;  // 再探索の連発防止
 };

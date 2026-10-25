@@ -1136,6 +1136,22 @@ bool Police::MoveToNextNavPathPoint()
 	return true;
 }
 
+void Police::OnRepathRequested()
+{
+	EnemyBase::OnRepathRequested();
+
+	if (m_state == State::Patrol)
+	{
+		// 今いる場所に一番近いノードを起点に、巡回経路を引き直す
+		const int nearest = FindNearestPatrolNode(m_pos);
+		if (nearest >= 0)
+		{
+			m_currentStartNode = nearest;
+			FindPatrolPath();
+		}
+	}
+}
+
 bool Police::SearchTarget()
 {
 	auto& objList =

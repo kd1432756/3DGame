@@ -1338,7 +1338,7 @@ void Editor::SelectAStarNodeByID(int id)
 		node->GetID());
 }
 
-void Editor::GenerateNavMesh()
+/*void Editor::GenerateNavMesh()
 {
 	m_navMeshStartPolygon = nullptr;
 	m_navMeshGoalPolygon = nullptr;
@@ -1508,9 +1508,9 @@ void Editor::GenerateNavMesh()
 		NavMeshManager::Instance(),
 		meshes,
 		obstacles);
-}
+}*/
 
-void Editor::GenerateNavMeshVer2()
+/*void Editor::GenerateNavMeshVer2()
 {
 	m_navMeshStartPolygon = nullptr;
 	m_navMeshGoalPolygon = nullptr;
@@ -1718,7 +1718,7 @@ void Editor::GenerateNavMeshVer2()
 		NavMeshManager::Instance(),
 		stageTiles,
 		obstacles);
-}
+}*/
 
 void Editor::GenerateNavMeshVer3(float agentRadius)
 {

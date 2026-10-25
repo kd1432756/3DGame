@@ -22,5 +22,5 @@ private:
 	std::vector<Math::Matrix> m_instances;	// 草1本ごとのワールド行列
 
 	std::weak_ptr<Player> m_wpPlayer;
-	float m_drawDistance = 10.0f;
+	float m_drawDistance = 15.0f;
 };

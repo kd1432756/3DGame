@@ -1,7 +1,5 @@
 ﻿#include "PolygonBoolean.h"
 
-
-
 using namespace Clipper2Lib;
 
 namespace

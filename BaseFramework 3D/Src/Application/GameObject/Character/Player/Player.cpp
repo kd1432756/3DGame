@@ -1183,7 +1183,7 @@ void Player::OnArrested(const std::shared_ptr<Police>& police)
 			text->Init();
 			text->SetText("Arrest Penalty  -" + std::to_string(penalty));
 			text->SetColor({ 0.9f, 0.3f, 0.3f, 1.0f });
-			text->SetPosition({ 0, 240 });
+			text->SetPosition({ 0, 160 });
 			SceneManager::Instance().AddObject(text);
 		}
 	}

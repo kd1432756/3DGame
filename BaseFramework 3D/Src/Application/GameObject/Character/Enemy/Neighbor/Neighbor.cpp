@@ -894,7 +894,6 @@ std::shared_ptr<LocationPoint> Neighbor::SelectOtherHousePoint()
 		LocationTag::NeighborHouse2,
 		LocationTag::NeighborHouse3,
 		LocationTag::PlayerHouse,
-		LocationTag::PlayerHouse,
 	};
 
 	std::vector<std::shared_ptr<LocationPoint>> candidates;
@@ -1045,7 +1044,6 @@ bool Neighbor::FindBestSearchItem(SearchItemCandidate & outCandidate)
 	const float searchDistanceSq = searchRadius * searchRadius;
 
 	float bestUtility = 0.0f;
-	int bestLogIndex = -1;
 
 	for (auto& obj : objList)
 	{
@@ -1830,9 +1828,6 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 
 			diff.y = 0.0f;
 
-			const float distanceSq =
-				diff.LengthSquared();
-
 			if (diff.LengthSquared() > searchDistanceSq)
 			{
 				m_debugInfo.prankCandidateLog.push_back(log);
@@ -2449,7 +2444,7 @@ float Neighbor::EvaluateRepairCandidate(
 
 	if (m_state == State::Repair && m_wpRepairTarget.lock() == target)
 	{
-		utility += m_searchCommitBonus;
+		utility += m_repairCommitBonus;
 	}
 
 	//============================================================

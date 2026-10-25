@@ -20,6 +20,15 @@ void EnemyBase::Update()
 	m_moveDir = Math::Vector3::Zero;
 
 	// =========================================
+	// 詰まり検出からの再探索要求
+	// =========================================
+
+	if (ConsumeRepathRequest())
+	{
+		OnRepathRequested();
+	}
+
+	// =========================================
 	// 行動を決める
 	// =========================================
 
@@ -204,6 +213,7 @@ void EnemyBase::UpdateGhost()
 	{
 		m_isGhost = false;
 		m_ghostCooldown = m_ghostCooldownTime;
+		m_needRepath = true;
 		ResetStuck();
 	}
 }
@@ -215,12 +225,30 @@ void EnemyBase::UpdateStuck(bool wantMove, float movedDist)
 {
 	const float dt = 1.0f / 60.0f;
 
-	// 「動こうとしている」かつ「キャラに押し戻された」かつ「ほとんど進めていない」
-	// 壁が原因の詰まりは m_hitCharacter で除外される
-	const bool stuck =
-		wantMove &&
-		m_hitCharacter &&
-		movedDist < m_moveSpeed * m_stuckMoveRatio;
+	const bool notProgressing =
+		wantMove && movedDist < m_moveSpeed * m_stuckMoveRatio;
+
+	// ---- ① 原因を問わない詰まり → 経路再探索 ----
+	if (m_repathCooldown > 0.0f) m_repathCooldown -= dt;
+
+	if (notProgressing)
+	{
+		m_blockedTimer += dt;
+
+		if (m_blockedTimer >= m_stuckToRepathTime && m_repathCooldown <= 0.0f)
+		{
+			m_needRepath = true;
+			m_repathCooldown = m_repathCooldownTime;
+			m_blockedTimer = 0.0f;
+		}
+	}
+	else
+	{
+		m_blockedTimer = std::max(0.0f, m_blockedTimer - dt * 2.0f);
+	}
+
+	// ---- ② キャラ起因の詰まり → ゴースト（既存処理） ----
+	const bool stuck = notProgressing && m_hitCharacter;
 
 	if (!stuck)
 	{
