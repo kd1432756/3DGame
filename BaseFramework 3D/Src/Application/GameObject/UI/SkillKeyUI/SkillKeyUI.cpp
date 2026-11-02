@@ -92,9 +92,6 @@ void SkillKeyUI::LoadIfNeeded()
 	if (m_loaded) return;
 	m_loaded = true;
 
-	// ※ ファイル名は Kenney Input Prompts の命名を想定した仮のものです。
-	//    実際のファイル名に合わせてください。
-	//    「通常」と「押された」にどちらの画像を使うかも、ここで入れ替えられます。
 	const std::string dir = "Asset/Textures/UI/Key/";
 
 	struct Def

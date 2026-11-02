@@ -200,7 +200,7 @@ private:
 	//============================================================
 
 	float m_patrolSpeed = 0.01f;
-	float m_chaseSpeed = 0.026f;
+	float m_chaseSpeed = 0.030f;
 	float m_returnSpeed = 0.01f;
 	float m_escortSpeed = 0.016f;
 	float m_investigateSpeed = 0.018f;

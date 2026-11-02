@@ -2615,7 +2615,7 @@ void Editor::DrawMenuBar()
 			ImGui::EndMenu();
 		}
 
-		if (ImGui::BeginMenu("Window"))
+		/*if (ImGui::BeginMenu("Window"))
 		{
 			ImGui::MenuItem("Hierarchy", nullptr, &m_showHierarchy);
 			ImGui::MenuItem("Inspector", nullptr, &m_showInspector);
@@ -2623,7 +2623,7 @@ void Editor::DrawMenuBar()
 			ImGui::MenuItem("Asset Browser", nullptr, &m_showAssetBrowser);
 
 			ImGui::EndMenu();
-		}
+		}*/
 
 		if (ImGui::BeginMenu("GameObject"))
 		{

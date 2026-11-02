@@ -48,6 +48,13 @@ void AssetBrowserWindow::DrawDirectory(const std::string& path)
 		}
 		else
 		{
+			const auto extension = entry.path().extension();
+
+			if (extension != ".gltf" && extension != ".item")
+			{
+				continue;
+			}
+
 			if (ImGui::Selectable(
 				entry.path().filename().string().c_str(),
 				m_selectedPath == entry.path().string()))
