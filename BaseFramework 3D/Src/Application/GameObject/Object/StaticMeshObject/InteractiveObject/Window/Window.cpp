@@ -17,7 +17,7 @@ void Window::Init()
 		2.4f,
 		140,
 		"Window Break!",
-		"Your Window has been Broken!",
+		"Window has been Broken!",
 		"Asset/Models/Props/House/WindowBroken.gltf"
 		});
 

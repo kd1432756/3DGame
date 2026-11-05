@@ -328,6 +328,9 @@
     <Filter Include="Src\Application\GameObject\UI\NotificationUI">
       <UniqueIdentifier>{a0317e59-41f8-4f4d-939e-1e45c1522e70}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\System\DamageDirector">
+      <UniqueIdentifier>{39137420-202e-44fe-8536-0092def1ac8b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -822,6 +825,9 @@
     <ClInclude Include="Src\Application\GameObject\UI\Notification\NotificationUI.h">
       <Filter>Src\Application\GameObject\UI\NotificationUI</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\System\Damage\DamageDirector.h">
+      <Filter>Src\Application\System\DamageDirector</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1271,6 +1277,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\Notification\NotificationUI.cpp">
       <Filter>Src\Application\GameObject\UI\NotificationUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\Damage\DamageDirector.cpp">
+      <Filter>Src\Application\System\DamageDirector</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

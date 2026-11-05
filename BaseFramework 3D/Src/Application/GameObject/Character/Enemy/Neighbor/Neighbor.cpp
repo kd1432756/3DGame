@@ -13,6 +13,10 @@
 
 #include "../../../Object/StaticMeshObject/InteractiveObject/InteractiveObject.h"
 
+#include "../../../../System/DayCycle/DayCycle.h"
+
+#include "../../../../System/Damage/DamageDirector.h"
+
 //============================================================
 // Init
 //============================================================
@@ -28,14 +32,6 @@ void Neighbor::Init()
 	m_spModel = std::make_shared<KdModelWork>();
 
 	ReloadModel();
-
-	//============================================================
-	// Score Manager
-	//============================================================
-
-	ScoreManager::Instance().RegisterCharacter(
-		std::dynamic_pointer_cast<CharacterBase>(shared_from_this())
-	);
 
 	//============================================================
 	// Location Point Manager
@@ -63,13 +59,7 @@ void Neighbor::Init()
 
 	m_currentItemData = ItemData();
 
-	//============================================================
-	// 仮アイテム
-	//============================================================
-
-	AddInventoryItem("Asset/Items/Tape.item");
-	
-	SelectInventory(0);
+	m_prankCooldownTimer = KdRandom::GetFloat(5.0f, 12.0f);
 }
 
 //============================================================
@@ -158,6 +148,17 @@ bool Neighbor::HasInventoryItem(
 
 void Neighbor::UpdateBehavior()
 {
+	Updatetimer();
+
+	//============================================================
+	// 不要アイテムを削除
+	//============================================================
+
+	if (m_state != State::Prank)
+	{
+		DropUselessItems();
+	}
+
 	//============================================================
 	// 確保中は行動しない
 	//============================================================
@@ -210,12 +211,14 @@ void Neighbor::UpdateBehavior()
 		UpdatePrank();
 
 		break;
+	}
+}
 
-	case State::Repair:
-
-		UpdateRepair();
-
-		break;
+void Neighbor::Updatetimer()
+{
+	if (m_prankCooldownTimer > 0.0f)
+	{
+		m_prankCooldownTimer -= 1.0f / 60.0f;
 	}
 }
 
@@ -246,10 +249,6 @@ void Neighbor::UpdateUtility()
 
 	m_prankUtility = EvaluatePrank();
 
-	m_repairUtility = EvaluateRepair();
-
-	m_urgentRepairUtility = EvaluateUrgentRepair();
-
 	//============================================================
 	// 一番Utilityの高い行動を選択
 	//============================================================
@@ -267,8 +266,6 @@ void Neighbor::UpdateUtility()
 	m_debugInfo.taskUtility = m_taskUtility;
 	m_debugInfo.searchItemUtility = m_searchItemUtility;
 	m_debugInfo.prankUtility = m_prankUtility;
-	m_debugInfo.repairUtility = m_repairUtility;
-	m_debugInfo.urgentRepairUtility = m_urgentRepairUtility;
 
 	//============================================================
 	// Utility → FSM
@@ -300,131 +297,14 @@ void Neighbor::UpdateUtility()
 
 	case Action::Prank:
 	{
-		//========================================================
-		// EvaluatePrank()で選ばれた候補を使用
-		//========================================================
-
-		if (!m_bestPrankCandidate.target)
+		if (!m_bestPrankCandidate.target ||
+			!SelectPrankCandidate(m_bestPrankCandidate))
 		{
 			ChangeState(State::Task);
-
 			return;
 		}
-
-		//========================================================
-		// アイテムとターゲットを確定
-		//========================================================
-
-		SelectPrankCandidate(m_bestPrankCandidate);
 
 		ChangeState(State::Prank);
-
-		break;
-	}
-
-	case Action::Repair:
-	{
-		//========================================================
-		// Repair候補がない
-		//========================================================
-
-		if (!m_bestRepairCandidate.target)
-		{
-			ChangeState(State::Task);
-
-			return;
-		}
-
-		//========================================================
-		// アイテムとターゲットを確定
-		//========================================================
-
-		SelectRepairCandidate(m_bestRepairCandidate);
-
-		ChangeState(State::Repair);
-
-		break;
-	}
-
-	case Action::UrgentRepair:
-	{
-		auto target = m_wpSelectedUrgentRepairTarget.lock();
-
-		if (!target)
-		{
-			ChangeState(State::Task);
-
-			return;
-		}
-
-		if (target->CanNPCUseBare(GetName()))
-		{
-			SelectInventory(-1);
-			m_wpRepairTarget = target;
-			m_repairInventoryIndex = -1;
-			ChangeState(State::Repair);
-			break;
-		}
-
-		const auto& items = m_inventory.GetItems();
-
-		bool found = false;
-
-		for (int i = 0; i < Inventory::MaxItem; ++i)
-		{
-			if (items[i].IsEmpty())
-			{
-				continue;
-			}
-
-			const ItemData* data = ItemData::Get(items[i].itemPath);
-
-			if (!data)
-			{
-				continue;
-			}
-
-			if (!data->HasRepairUse())
-			{
-				continue;
-			}
-
-			if (!target->CanNPCUse(*data, GetName()))
-			{
-				continue;
-			}
-
-			SelectInventory(i);
-
-			m_wpRepairTarget = target;
-
-			m_repairInventoryIndex = i;
-
-			ChangeState(State::Repair);
-
-			found = true;
-
-			break;
-		}
-
-		if (found)
-		{
-			break;
-		}
-
-		SearchItemCandidate candidate;
-
-		if (FindRepairItemForTarget(target, candidate))
-		{
-			SelectSearchItemCandidate(candidate);
-
-			ChangeState(State::SearchItem);
-		}
-		else
-		{
-			ChangeState(State::Task);
-		}
-
 		break;
 	}
 	}
@@ -436,54 +316,22 @@ void Neighbor::UpdateUtility()
 
 Neighbor::Action Neighbor::DecideAction()
 {
-	float highestUtility = m_taskUtility;
+	float highest = m_taskUtility;
+	Action best = Action::Task;
 
-	Action bestAction = Action::Task;
-	
-	//------------------------------------------------------------
-	// Search Item
-	//------------------------------------------------------------
-
-	if (m_searchItemUtility > highestUtility)
+	if (m_searchItemUtility > highest)
 	{
-		highestUtility = m_searchItemUtility;
-
-		bestAction = Action::SearchItem;
+		highest = m_searchItemUtility;
+		best = Action::SearchItem;
 	}
 
-	//------------------------------------------------------------
-	// Prank
-	//------------------------------------------------------------
-
-	if (m_prankUtility > highestUtility)
+	if (m_prankUtility > highest)
 	{
-		highestUtility = m_prankUtility;
-
-		bestAction = Action::Prank;
+		highest = m_prankUtility;
+		best = Action::Prank;
 	}
 
-	//------------------------------------------------------------
-	// Repair
-	//------------------------------------------------------------
-
-	if (m_repairUtility > highestUtility)
-	{
-		highestUtility = m_repairUtility;
-
-		bestAction = Action::Repair;
-	}
-
-	//------------------------------------------------------------
-	// Urgent Repair
-	//------------------------------------------------------------
-
-	if (m_urgentRepairUtility > highestUtility)
-	{
-		highestUtility = m_urgentRepairUtility;
-		bestAction = Action::UrgentRepair;
-	}
-
-	return bestAction;
+	return best;
 }
 
 //============================================================
@@ -513,7 +361,6 @@ float Neighbor::EvaluateSearchItem()
 	return m_bestSearchItemCandidate.utility;
 }
 
-
 //============================================================
 // Prank Utility
 //============================================================
@@ -525,6 +372,20 @@ float Neighbor::EvaluatePrank()
 	//============================================================
 
 	m_bestPrankCandidate = PrankCandidate();
+
+	//============================================================
+	// 休憩と上限
+	//============================================================
+
+	if (m_prankCooldownTimer > 0.0f)
+	{
+		return 0.0f;
+	}
+
+	if (m_state != State::Prank && !DamageDirector::CanDamageMore())
+	{
+		return 0.0f;
+	}
 
 	//============================================================
 	// 最適なPrank候補を検索
@@ -540,72 +401,6 @@ float Neighbor::EvaluatePrank()
 	//============================================================
 
 	return m_bestPrankCandidate.utility;
-}
-
-//============================================================
-// Repair Utility
-//============================================================
-
-float Neighbor::EvaluateRepair()
-{
-	//============================================================
-	// 前回の候補をリセット
-	//============================================================
-
-	m_bestRepairCandidate = RepairCandidate();
-
-	//============================================================
-	// 最適なRepair候補を検索
-	//============================================================
-
-	if (!FindBestRepairCandidate(m_bestRepairCandidate))
-	{
-		return 0.0f;
-	}
-
-	//============================================================
-	// 見つかった候補のUtilityを返す
-	//============================================================
-
-	return m_bestRepairCandidate.utility;
-}
-
-//============================================================
-// Urgent Repair Utility
-//============================================================
-
-float Neighbor::EvaluateUrgentRepair()
-{
-	CleanupUrgentRepairTargets();
-
-	m_debugInfo.urgentRepairQueueSize =
-		static_cast<int>(m_urgentRepairTargets.size());
-
-	if (m_urgentRepairTargets.empty())
-	{
-		m_wpSelectedUrgentRepairTarget.reset();
-
-		m_debugInfo.bestUrgentRepairTarget = "None";
-
-		return 0.0f;
-	}
-
-	auto best = SelectBestUrgentRepairTarget();
-
-	if (!best)
-	{
-		m_wpSelectedUrgentRepairTarget.reset();
-
-		m_debugInfo.bestUrgentRepairTarget = "None";
-
-		return 0.0f;
-	}
-
-	m_wpSelectedUrgentRepairTarget = best;
-
-	m_debugInfo.bestUrgentRepairTarget = best->GetName();
-
-	return m_urgentRepairBaseUtility;
 }
 
 //============================================================
@@ -812,39 +607,16 @@ MoveResult Neighbor::MoveToTaskDestination(const std::shared_ptr<LocationPoint>&
 
 std::shared_ptr<LocationPoint> Neighbor::SelectTaskDestination()
 {
-	const bool hasEmptySlot = m_inventory.HasEmptySlot();
-
-	const bool hasPrankItem = HasPrankItem();
-
-	bool hasRepairItem = HasRepairItem();
-
-	//============================================================
-	// 優先度: 修復アイテムのみ > 空きスロット > いたずら > 修復 > ランダム徘徊
-	//============================================================
-	
-	if (ShouldSwapForPrankItem())
+	if (m_inventory.HasEmptySlot())
 	{
-		return SelectItemAreaPoint();
-	}
-
-	if (hasEmptySlot)
-	{
-		return SelectItemAreaPoint();
-	}
-
-	if (hasPrankItem)
-	{
-		return SelectOtherHousePoint();
-	}
-
-	if (hasRepairItem)
-	{
-		return SelectOwnHousePoint();
+		if (auto p = SelectItemAreaPoint())
+		{
+			return p;
+		}
 	}
 
 	return SelectRandomPoint();
 }
-
 //============================================================
 // アイテムエリア（公園・工事現場・ゴミ捨て場）から1つ選択
 //============================================================
@@ -879,57 +651,6 @@ std::shared_ptr<LocationPoint> Neighbor::SelectItemAreaPoint()
 	int index = rand() % static_cast<int>(candidates.size());
 
 	return candidates[index];
-}
-
-//============================================================
-// 他人の家から1つ選択（自分の家Tagは除外）
-//============================================================
-
-std::shared_ptr<LocationPoint> Neighbor::SelectOtherHousePoint()
-{
-	static const LocationTag houseTags[] =
-	{
-		LocationTag::PlayerHouse,
-		LocationTag::NeighborHouse1,
-		LocationTag::NeighborHouse2,
-		LocationTag::NeighborHouse3,
-		LocationTag::PlayerHouse,
-	};
-
-	std::vector<std::shared_ptr<LocationPoint>> candidates;
-
-	for (auto tag : houseTags)
-	{
-		if (tag == m_myHouseTag)
-		{
-			continue;
-		}
-
-		auto point = m_pLocationPointManager->FindByTag(tag);
-
-		if (point)
-		{
-			candidates.push_back(point);
-		}
-	}
-
-	if (candidates.empty())
-	{
-		return nullptr;
-	}
-
-	int index = KdRandom::GetInt(0, candidates.size() - 1);
-
-	return candidates[index];
-}
-
-//============================================================
-// 自分の家を選択
-//============================================================
-
-std::shared_ptr<LocationPoint> Neighbor::SelectOwnHousePoint()
-{
-	return m_pLocationPointManager->FindByTag(m_myHouseTag);
 }
 
 //============================================================
@@ -1031,8 +752,7 @@ bool Neighbor::FindBestSearchItem(SearchItemCandidate & outCandidate)
 {
 	outCandidate = SearchItemCandidate();
 
-	const bool swapMode = ShouldSwapForPrankItem();
-	if (!m_inventory.HasEmptySlot() && !swapMode)
+	if (!m_inventory.HasEmptySlot())
 	{
 		return false;
 	}
@@ -1081,17 +801,10 @@ bool Neighbor::FindBestSearchItem(SearchItemCandidate & outCandidate)
 			continue;
 		}
 
-		//========================================================
-		// いたずらに使えるアイテムだけ
-		//========================================================
-
 		const ItemData& itemData = item->GetItemData();
 
-		if (swapMode)
-		{
-			if (!itemData.HasPrankUse()) continue;
-			if (!CanUseItemForPrank(itemData)) continue;
-		}
+		if (!itemData.HasPrankUse()) continue;
+		if (!CanUseItemForPrank(itemData)) continue;
 
 		//========================================================
 		// すでにインベントリにあるアイテムなら不要
@@ -1194,15 +907,6 @@ float Neighbor::EvaluateSearchItemCandidate(const std::shared_ptr<Item>& item, f
 	if (CanUseItemForPrank(itemData))
 	{
 		utility += 50.0f;
-	}
-
-	//============================================================
-	// Repairに使える
-	//============================================================
-
-	if (CanUseItemForRepair(itemData))
-	{
-		utility += 40.0f;
 	}
 
 	return utility;
@@ -1337,7 +1041,7 @@ void Neighbor::PickupSearchItem()
 	}
 
 	//============================================================
-	// 拾う（空きがあれば通常、満杯なら緊急修復時のみ交換）
+	// 拾う（空きがあれば通常、満杯なら交換）
 	//============================================================
 
 	bool pickedUp = false;
@@ -1348,66 +1052,7 @@ void Neighbor::PickupSearchItem()
 	{
 		pickedUp = item->Pickup(m_inventory);
 	}
-	else
-	{
-		//========================================================
-		// 満杯：入れ替えるスロットを決める
-		//========================================================
-		int swapIndex = -1;
-
-		if (auto urgentTarget = m_wpSelectedUrgentRepairTarget.lock())
-		{
-			// 緊急修復：その対象に使えないアイテムを優先して手放す
-			const auto& items = m_inventory.GetItems();
-
-			for (int i = 0; i < Inventory::MaxItem; ++i)
-			{
-				if (items[i].IsEmpty()) continue;
-
-				const ItemData* data = ItemData::Get(items[i].itemPath);
-				if (!data) continue;
-
-				if (!urgentTarget->CanNPCUse(*data, GetName()))
-				{
-					swapIndex = i;
-					break;
-				}
-			}
-
-			// 全部使い道があるなら選択中、なければ0番
-			if (swapIndex < 0)
-			{
-				swapIndex = m_inventory.GetSelectIndex();
-				if (swapIndex < 0) swapIndex = 0;
-			}
-		}
-		else if (ShouldSwapForPrankItem())
-		{
-			// いたずらアイテムへの入れ替え：使い道のない修復アイテムを優先
-			swapIndex = FindSwapSlotForPrank();
-		}
-
-		if (swapIndex >= 0)
-		{
-			const std::string oldPath =
-				m_inventory.GetItems()[swapIndex].itemPath;
-
-			pickedUp = item->Pickup(m_inventory, swapIndex);
-
-			// 拾えた場合のみ、古いアイテムをワールドへ落とす
-			if (pickedUp)
-			{
-				pickedIndex = swapIndex;
-
-				if (!oldPath.empty())
-				{
-					Math::Vector3 dir = GetMatrix().Backward();
-					ItemManager::Instance().SpawnDropped(oldPath, m_pos, dir);
-				}
-			}
-		}
-	}
-
+	
 	m_wpSearchItem.reset();
 
 	if (!pickedUp)
@@ -1420,21 +1065,14 @@ void Neighbor::PickupSearchItem()
 	// 拾った/交換したアイテムを選択
 	//============================================================
 
-	if (pickedIndex >= 0)
-	{
-		SelectInventory(pickedIndex);
-	}
-	else
-	{
-		const auto& items = m_inventory.GetItems();
+	const auto& items = m_inventory.GetItems();
 
-		for (int i = 0; i < Inventory::MaxItem; ++i)
+	for (int i = 0; i < Inventory::MaxItem; ++i)
+	{
+		if (items[i].itemPath == newItemPath)
 		{
-			if (items[i].itemPath == newItemPath)
-			{
-				SelectInventory(i);
-				break;
-			}
+			SelectInventory(i);
+			break;
 		}
 	}
 
@@ -1458,11 +1096,6 @@ bool Neighbor::CanUseItemForPrank(const ItemData & itemData) const
 			continue;
 		}
 
-		if (target->GetOwner() == GetName())
-		{
-			continue;
-		}
-
 		if (target->CanNPCUse(itemData, GetName()))
 		{
 			return true;
@@ -1471,34 +1104,6 @@ bool Neighbor::CanUseItemForPrank(const ItemData & itemData) const
 
 	return false;
 
-}
-
-bool Neighbor::CanUseItemForRepair(const ItemData& itemData) const
-{
-	auto& objList = SceneManager::Instance().GetObjList();
-
-	for (auto& obj : objList)
-	{
-		auto target = 
-			std::dynamic_pointer_cast<InteractiveObject>(obj);
-
-		if (!target)
-		{
-			continue;
-		}
-
-		if (target->GetOwner() != GetName())
-		{
-			continue;
-		}
-
-		if (target->CanNPCUse(itemData, GetName()))
-		{
-			return true;
-		}
-	}
-
-	return false;
 }
 
 //============================================================
@@ -1561,6 +1166,8 @@ void Neighbor::UpdatePrank()
 				m_inventory.RemoveItem(usedIndex);
 				SelectInventory(-1);
 			}
+						
+			StartPrankCooldown();
 
 			ShowEmote(EmoteIcon::IconType::Laugh, 2.0f);
 
@@ -1568,9 +1175,7 @@ void Neighbor::UpdatePrank()
 			// いたずら終了
 			//====================================================
 
-			m_wpPrankTarget.reset();
-
-			m_prankInventoryIndex = -1;
+			ReleasePrankTarget();
 
 			ChangeState(State::Task);
 		}
@@ -1789,20 +1394,10 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 
 			DebugInfo::PrankLog log;
 			log.itemPath = itemPath;
-			log.targetOwner = target->GetOwner();
+			log.targetName = target->GetName();
 			log.utility = 0.0f;
 			log.canNPCUse = false;
 			log.selected = false;
-
-			//====================================================
-			// 自分の所有物にはいたずらしない
-			//====================================================
-		
-			if (target->GetOwner() == GetName())
-			{
-				m_debugInfo.prankCandidateLog.push_back(log);
-				continue;
-			}
 
 			//====================================================
 			// このItemでいたずら可能か
@@ -1815,6 +1410,12 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 			log.canNPCUse = canNPCUse;
 
 			if (!canNPCUse)
+			{
+				m_debugInfo.prankCandidateLog.push_back(log);
+				continue;
+			}
+
+			if (!target->CanBeTargetedBy(this))
 			{
 				m_debugInfo.prankCandidateLog.push_back(log);
 				continue;
@@ -1968,539 +1569,97 @@ float Neighbor::EvaluatePrankCandidate(
 // Select Prank Candidate
 //============================================================
 
-void Neighbor::SelectPrankCandidate(const PrankCandidate& candidate)
+bool Neighbor::SelectPrankCandidate(const PrankCandidate& candidate)
 {
-	if (!candidate.target)
-	{
-		return;
-	}
+	if (!candidate.target) return false;
 
 	if (candidate.inventoryIndex < -1 ||
-		candidate.inventoryIndex >= Inventory::MaxItem) return;
+		candidate.inventoryIndex >= Inventory::MaxItem) return false;
 
-	//============================================================
-	// アイテムを選択
-	//============================================================
+	auto self = std::dynamic_pointer_cast<Neighbor>(shared_from_this());
+	auto old = m_wpPrankTarget.lock();
+
+	if (old != candidate.target)
+	{
+		if (old)
+		{
+			old->ReleaseReservation(this);
+		}
+
+		// 評価から最大1秒ずれるので、予約に失敗することがある
+		if (!candidate.target->TryReserve(self))
+		{
+			return false;
+		}
+
+		m_navPath.clear();
+		m_navPathIndex = 0;
+	}
 
 	SelectInventory(candidate.inventoryIndex);
 
-	//============================================================
-	// ターゲットを保存
-	//============================================================
-
-	if (m_wpPrankTarget.lock() != candidate.target)
-	{
-		m_navPath.clear();
-		m_navPathIndex = 0;
-	}
 	m_wpPrankTarget = candidate.target;
-
 	m_prankInventoryIndex = candidate.inventoryIndex;
+
+	return true;
 }
 
-//============================================================
-// Repair
-//============================================================
-
-void Neighbor::UpdateRepair()
+void Neighbor::ReleasePrankTarget()
 {
-	auto target = m_wpRepairTarget.lock();
-
-	//============================================================
-	// ターゲットが消えた
-	//============================================================
-
-	if (!target)
+	if (auto target = m_wpPrankTarget.lock())
 	{
-		m_repairInventoryIndex = -1;
-
-		ChangeState(State::Task);
-
-		return;
+		target->ReleaseReservation(this);
 	}
 
-	const ItemData& itemData = GetCurrentItemData();
-	const bool bare = IsBareHanded();
-
-	auto canUse = [&]() {
-		return bare ? target->CanNPCUseBare(GetName()) : target->CanNPCUse(itemData, GetName());
-		};
-
-	//============================================================
-	// インタラクト中
-	//============================================================
-
-	if (m_isInteracting)
-	{
-		m_interactTimer += 1.0f / 60.0f;
-
-		float useTime = bare ? target->GetNPCUseTimeBare(GetName())
-			: target->GetNPCUseTime(itemData, GetName());
-
-		if (m_interactTimer >= useTime)
-		{
-			m_isInteracting = false;
-
-			m_interactTimer = 0.0f;
-
-			//====================================================
-			// 修復実行
-			//====================================================
-
-			auto self = std::dynamic_pointer_cast<Neighbor>(shared_from_this());
-			const int usedIndex = m_inventory.GetSelectIndex();
-
-			if (bare) target->NPCUseBare(self);
-			else      target->NPCUse(itemData, self);
-
-			if (!bare && usedIndex >= 0)
-			{
-				m_inventory.RemoveItem(usedIndex);
-				SelectInventory(-1);
-			}
-
-			ShowEmote(EmoteIcon::IconType::Music, 2.0f);
-
-			//====================================================
-			// 緊急修復キューから該当対象を除去
-			//====================================================
-
-			m_urgentRepairTargets.erase(
-				std::remove_if(
-					m_urgentRepairTargets.begin(),
-					m_urgentRepairTargets.end(),
-					[&target](const std::weak_ptr<InteractiveObject>& wp)
-					{
-						return wp.lock() == target;
-					}
-				),
-				m_urgentRepairTargets.end()
-			);
-
-			if (m_wpSelectedUrgentRepairTarget.lock() == target)
-			{
-				m_wpSelectedUrgentRepairTarget.reset();
-			}
-
-			//====================================================
-			// 修復終了
-			//====================================================
-
-			m_wpRepairTarget.reset();
-
-			m_repairInventoryIndex = -1;
-
-			ChangeState(State::Task);
-		}
-
-		return;
-	}
-
-	//============================================================
-	// ターゲットまで移動
-	//============================================================
-
-	MoveResult moveResult = MoveToRepairTarget();
-
-	//============================================================
-	// 移動中
-	//============================================================
-
-	if (moveResult == MoveResult::Moving)
-	{
-		PlayAnimation("Armature|Sprint");
-
-		return;
-	}
-
-	//============================================================
-	// 移動失敗
-	//============================================================
-
-	if (moveResult == MoveResult::Failed)
-	{
-		m_wpRepairTarget.reset();
-
-		m_repairInventoryIndex = -1;
-
-		ChangeState(State::Task);
-
-		return;
-	}
-
-	//============================================================
-	// 到着後、もう一度Use可能か確認
-	//============================================================
-
-	if (!canUse())
-	{
-		m_wpRepairTarget.reset();
-
-		m_repairInventoryIndex = -1;
-
-		ChangeState(State::Task);
-
-		return;
-	}
-
-	//============================================================
-	// 到着
-	//============================================================
-
-	SetMoveDirection(Math::Vector3::Zero);
-
-	m_isInteracting = true;
-
-	m_interactTimer = 0.0f;
-
-	PlayAnimation("Armature|Idle");
+	m_wpPrankTarget.reset();
+	m_prankInventoryIndex = -1;
 }
 
-//============================================================
-// Move To Repair Target
-//============================================================
-
-MoveResult Neighbor::MoveToRepairTarget()
+void Neighbor::StartPrankCooldown()
 {
-	auto target = m_wpRepairTarget.lock();
+	const float progress = DayCycle::Instance().GetTimeProgress();
 
-	//============================================================
-	// ターゲットが存在しない
-	//============================================================
+	const float base =
+		std::lerp(m_prankCooldownMax, m_prankCooldownMin, progress);
 
-	if (!target)
-	{
-		return MoveResult::Failed;
-	}
-
-	Math::Vector3 toTarget = target->GetPos() - m_pos;
-
-	toTarget.y = 0.0f;
-
-	const float interactDistance = m_repairInteractDistance * m_sceneScale;
-
-	//============================================================
-	// 到着判定
-	//============================================================
-
-	if (toTarget.LengthSquared() <= interactDistance * interactDistance)
-	{
-		m_navPath.clear();
-
-		m_navPathIndex = 0;
-
-		return MoveResult::Arrived;
-	}
-
-	//============================================================
-	// Path
-	//============================================================
-
-	if (m_navPath.empty())
-	{
-		FindPathTo(target->GetPos());
-
-		//========================================================
-		// Path生成失敗
-		//========================================================
-
-		if (m_navPath.empty())
-		{
-			return MoveResult::Failed;
-		}
-	}
-
-	//============================================================
-	// NavMesh上を移動
-	//============================================================
-
-	return MoveToNextNavPathPoint();
+	m_prankCooldownTimer = base * KdRandom::GetFloat(0.7f, 1.3f);
 }
 
-//============================================================
-// Find Best Repair Candidate
-//============================================================
-
-bool Neighbor::FindBestRepairCandidate(
-	RepairCandidate& outCandidate)
+void Neighbor::DropUselessItems()
 {
-	outCandidate = RepairCandidate();
-
-	m_debugInfo.repairCandidateLog.clear();
-
-	//============================================================
-	// Scene Object
-	//============================================================
-
-	auto& objList = SceneManager::Instance().GetObjList();
-
-	//============================================================
-	// Search Range
-	//============================================================
-
-	const float searchRadius = m_repairSearchRadius * m_sceneScale;
-
-	const float searchDistanceSq = searchRadius * searchRadius;
-
-	//============================================================
-	// Inventory
-	//============================================================
+	auto objects = SceneManager::Instance().FindObjects<InteractiveObject>();
 
 	const auto& items = m_inventory.GetItems();
 
-	float bestUtility = 0.0f;
-	int bestLogIndex = -1;
-
-	//============================================================
-	// Inventory全スロット
-	//============================================================
-
-	for (int inventoryIndex = -1; inventoryIndex < Inventory::MaxItem; ++inventoryIndex)
+	for (int i = 0; i < Inventory::MaxItem; ++i)
 	{
-		const bool bare = (inventoryIndex < 0);
+		if (items[i].IsEmpty()) continue;
 
-		static const ItemData kEmpty;
-		const ItemData* itemData = &kEmpty;
+		const ItemData* data = ItemData::Get(items[i].itemPath);
+		if (!data) continue;
 
-		std::string itemPath = "(bare hands)";
+		bool useful = false;
 
-		if (!bare)
+		for (auto& obj : objects)
 		{
-			const InventoryItem& inventoryItem = items[inventoryIndex];
-
-			if (inventoryItem.IsEmpty()) { continue; }
-
-			itemData = ItemData::Get(inventoryItem.itemPath);
-
-			if (!itemData || !itemData->HasRepairUse()) { continue; }
-
-			itemPath = inventoryItem.itemPath;
+			if (obj->CanEverBeBrokenBy(*data))
+			{
+				useful = true;
+				break;
+			}
 		}
 
-		//========================================================
-		// InteractiveObject全検索
-		//========================================================
+		if (useful) continue;
 
-		for (auto& obj : objList)
+		const bool selected = (m_inventory.GetSelectIndex() == i);
+
+		m_inventory.RemoveItem(i);
+
+		if (selected)
 		{
-			if (!obj)
-			{
-				continue;
-			}
-
-			auto target = std::dynamic_pointer_cast<InteractiveObject>(obj);
-
-			if (!target)
-			{
-				continue;
-			}
-
-			//====================================================
-			// Debug Log
-			//====================================================
-
-			DebugInfo::RepairLog log;
-
-			log.itemPath = itemPath;
-			log.targetOwner = target->GetOwner();
-			log.utility = 0.0f;
-			log.canNPCUse = false;
-			log.selected = false;
-
-			//====================================================
-			// 自分の所有物のみ修復する
-			//====================================================
-
-			if (target->GetOwner() != GetName())
-			{
-				m_debugInfo.repairCandidateLog.push_back(log);
-				continue;
-			}
-
-			//====================================================
-			// このアイテムでUse可能か
-			//====================================================
-
-			const bool canNPCUse = bare
-				? target->CanNPCUseBare(GetName())
-				: target->CanNPCUse(*itemData, GetName());
-
-			log.canNPCUse = canNPCUse;
-
-			if (!canNPCUse)
-			{
-				m_debugInfo.repairCandidateLog.push_back(log);
-				continue;
-			}
-			
-			//====================================================
-			// 距離
-			//====================================================
-
-			Math::Vector3 diff = target->GetPos() - m_pos;
-
-			diff.y = 0.0f;
-
-			if (diff.LengthSquared() > searchDistanceSq)
-			{
-				m_debugInfo.repairCandidateLog.push_back(log);
-				continue;
-			}
-
-			//============================================================
-			// ここまで来た候補だけPathfinding
-			//============================================================
-
-			float pathDistance = 0.0f;
-
-			const bool hasPath =
-				CalculatePathDistance(
-					target->GetPos(),
-					pathDistance
-				);
-
-			//============================================================
-			// 到達不能なら候補から除外
-			//============================================================
-
-			if (!hasPath)
-			{
-				m_debugInfo.repairCandidateLog.push_back(log);
-				continue;
-			}
-
-			//====================================================
-			// Candidate Utility
-			//====================================================
-
-			float utility =
-				EvaluateRepairCandidate(
-					target,
-					*itemData,
-					pathDistance
-				);
-
-			log.utility = utility;
-
-			m_debugInfo.repairCandidateLog.push_back(log);
-
-			//====================================================
-			// より高いUtilityなら更新
-			//====================================================
-
-			if (utility <= bestUtility)
-			{
-				continue;
-			}
-
-			bestUtility = utility;
-
-			bestLogIndex = static_cast<int>(m_debugInfo.repairCandidateLog.size()) - 1;
-
-			outCandidate.target = target;
-
-			outCandidate.inventoryIndex = inventoryIndex;
-
-			outCandidate.utility = utility;
+			SelectInventory(-1);
 		}
 	}
-
-	if (bestLogIndex >= 0)
-	{
-		m_debugInfo.repairCandidateLog[bestLogIndex].selected = true;
-	}
-
-	m_debugInfo.bestRepairTarget =
-		outCandidate.target
-		? outCandidate.target->GetName()
-		: "None";
-
-	return outCandidate.target != nullptr;
-}
-
-//============================================================
-// Evaluate Repair Candidate
-//============================================================
-
-float Neighbor::EvaluateRepairCandidate(
-	const std::shared_ptr<InteractiveObject>& target,
-	const ItemData& itemData,
-	float pathDistance)
-{
-	if (!target)
-	{
-		return 0.0f;
-	}
-
-	//============================================================
-	// 基本Utility
-	//============================================================
-
-	float utility = 50.0f;
-
-	//============================================================
-	// ヒステリシス
-	//============================================================
-
-	if (m_state == State::Repair && m_wpRepairTarget.lock() == target)
-	{
-		utility += m_repairCommitBonus;
-	}
-
-	//============================================================
-	// 距離
-	//============================================================
-
-	Math::Vector3 diff = target->GetPos() - m_pos;
-
-	diff.y = 0.0f;
-
-	float distance = diff.Length();
-
-	float searchRadius = m_repairSearchRadius * m_sceneScale;
-
-	const float pathScore =
-		1.0f - std::clamp(pathDistance / (searchRadius * 2.0f), 0.0f, 1.0f);
-
-	utility += pathScore * 20.0f;
-
-	return utility;
-}
-
-//============================================================
-// Select Repair Candidate
-//============================================================
-
-void Neighbor::SelectRepairCandidate(
-	const RepairCandidate& candidate)
-{
-	if (!candidate.target)
-	{
-		return;
-	}
-
-	if (candidate.inventoryIndex < -1 ||
-		candidate.inventoryIndex >= Inventory::MaxItem) return;
-
-	//============================================================
-	// 修復アイテムを選択
-	//============================================================
-
-	SelectInventory(candidate.inventoryIndex);
-
-	//============================================================
-	// ターゲットを保存
-	//============================================================
-
-	if (m_wpRepairTarget.lock() != candidate.target)
-	{
-		m_navPath.clear();
-		m_navPathIndex = 0;
-	}
-
-	m_wpRepairTarget = candidate.target;
-
-	m_repairInventoryIndex = candidate.inventoryIndex;
 }
 
 //============================================================
@@ -2624,12 +1783,8 @@ void Neighbor::OnArrested(const std::shared_ptr<Police>& police)
 	//============================================================
 
 	m_wpSearchItem.reset();
-	m_wpPrankTarget.reset();
-	m_wpRepairTarget.reset();
-	m_wpSelectedUrgentRepairTarget.reset();
 
-	m_prankInventoryIndex = -1;
-	m_repairInventoryIndex = -1;
+	ReleasePrankTarget();
 
 	m_isInteracting = false;
 	m_interactTimer = 0.0f;
@@ -2661,301 +1816,6 @@ void Neighbor::OnReleased()
 	ApplyStateSettings();
 }
 
-void Neighbor::OnPranked(
-	const std::shared_ptr<InteractiveObject>& target,
-	const InteractiveAction& action)
-{
-	if (!target)
-	{
-		return;
-	}
-
-	if (target->GetOwner() != GetName())
-	{
-		return;
-	}
-
-	for (const auto& wp : m_urgentRepairTargets)
-	{
-		if (wp.lock() == target)
-		{
-			return;
-		}
-	}
-
-	m_urgentRepairTargets.push_back(target);
-
-	ShowEmote(EmoteIcon::IconType::Anger, 1.0f);
-}
-
-//============================================================
-// Cleanup Urgent Repair Targets
-//============================================================
-
-void Neighbor::CleanupUrgentRepairTargets()
-{
-	m_urgentRepairTargets.erase(
-		std::remove_if(
-			m_urgentRepairTargets.begin(),
-			m_urgentRepairTargets.end(),
-			[this](const std::weak_ptr<InteractiveObject>& wp)
-			{
-				auto sp = wp.lock();
-
-				if (!sp)
-				{
-					return true;
-				}
-
-				if (sp->GetOwner() != GetName())
-				{
-					return true;
-				}
-
-				return false;
-			}
-		),
-		m_urgentRepairTargets.end()
-	);
-}
-
-bool Neighbor::FindRepairItemForTarget(
-	const std::shared_ptr<InteractiveObject>& target,
-	SearchItemCandidate& outCandidate)
-{
-	outCandidate = SearchItemCandidate();
-
-	if (!target)
-	{
-		return false;
-	}
-
-	auto& objList = SceneManager::Instance().GetObjList();
-
-	const float searchRadius = m_urgentRepairSearchRadius * m_sceneScale;
-
-	const float searchDistanceSq = searchRadius * searchRadius;
-
-	float bestUtility = 0.0f;
-
-	for (auto& obj : objList)
-	{
-		if (!obj)
-		{
-			continue;
-		}
-
-		auto item = std::dynamic_pointer_cast<Item>(obj);
-
-		if (!item)
-		{
-			continue;
-		}
-
-		if (item->GetMode() == ItemMode::InInventory)
-		{
-			continue;
-		}
-
-		const ItemData& itemData = item->GetItemData();
-
-		if (!itemData.HasRepairUse())
-		{
-			continue;
-		}
-
-		if (!target->CanNPCUse(itemData, GetName()))
-		{
-			continue;
-		}
-
-		if (HasInventoryItem(itemData.GetItemPath()))
-		{
-			continue;
-		}
-
-		Math::Vector3 diff = item->GetPos() - m_pos;
-
-		diff.y = 0.0f;
-
-		//============================================================
-		// 足切り
-		//============================================================
-
-		if (diff.LengthSquared() > searchDistanceSq)
-		{
-			continue;
-		}
-
-		//============================================================
-		// 経路距離
-		//============================================================
-
-		float pathDistance = 0.0f;
-
-		if (!CalculatePathDistance(item->GetPos(), pathDistance))
-		{
-			continue;
-		}
-
-		float pathScore =
-			1.0f - std::clamp(pathDistance / (searchRadius * 2.0f), 0.0f, 1.0f);
-
-		float utility = 20.0f + pathScore * 20.0f;
-
-		//============================================================
-		// ヒステリシス
-		//============================================================
-		if (m_wpSearchItem.lock() == item)
-		{
-			utility += m_searchCommitBonus;
-		}
-
-		if (utility <= bestUtility)
-		{
-			continue;
-		}
-
-		bestUtility = utility;
-
-		outCandidate.item = item;
-
-		outCandidate.utility = utility;
-	}
-
-	return outCandidate.item != nullptr;
-}
-
-//============================================================
-// Select Best Urgent Repair Target
-//============================================================
-
-std::shared_ptr<InteractiveObject> Neighbor::SelectBestUrgentRepairTarget()
-{
-	std::shared_ptr<InteractiveObject> best;
-
-	float bestDistanceSq = FLT_MAX;
-
-	for (const auto& wp : m_urgentRepairTargets)
-	{
-		auto sp = wp.lock();
-
-		if (!sp)
-		{
-			continue;
-		}
-
-		Math::Vector3 diff = sp->GetPos() - m_pos;
-
-		diff.y = 0.0f;
-
-		float distSq = diff.LengthSquared();
-
-		if (distSq < bestDistanceSq)
-		{
-			bestDistanceSq = distSq;
-
-			best = sp;
-		}
-	}
-
-	return best;
-}
-
-//============================================================
-// Inventory EX
-//============================================================
-
-// インベントリが満杯で、中身が全部修復アイテム
-bool Neighbor::IsInventoryAllRepair() const
-{
-	if (m_inventory.HasEmptySlot())
-	{
-		return false;
-	}
-
-	const auto& items = m_inventory.GetItems();
-
-	bool any = false;
-
-	for (int i = 0; i < Inventory::MaxItem; ++i)
-	{
-		if (items[i].IsEmpty())
-		{
-			continue;
-		}
-
-		const ItemData* data = ItemData::Get(items[i].itemPath);
-
-		if (!data)
-		{
-			continue;
-		}
-
-		if (data->HasPrankUse())
-		{
-			return false;   // いたずらにも使えるなら「全部修復用」ではない
-		}
-
-		any = true;
-	}
-
-	return any;
-}
-
-// 入れ替えを行うべきか
-bool Neighbor::ShouldSwapForPrankItem()
-{
-	// 自宅が壊されていて修復待ちなら、修復アイテムは手放さない
-	CleanupUrgentRepairTargets();
-
-	if (!m_urgentRepairTargets.empty())
-	{
-		return false;
-	}
-
-	return IsInventoryAllRepair();
-}
-
-// 捨てるスロットを選ぶ：今使い道のない修復アイテムを優先
-int Neighbor::FindSwapSlotForPrank() const
-{
-	const auto& items = m_inventory.GetItems();
-	auto& objList = SceneManager::Instance().GetObjList();
-
-	for (int i = 0; i < Inventory::MaxItem; ++i)
-	{
-		if (items[i].IsEmpty()) continue;
-
-		const ItemData* data = ItemData::Get(items[i].itemPath);
-		if (!data) continue;
-
-		bool needed = false;
-
-		for (auto& obj : objList)
-		{
-			auto target = std::dynamic_pointer_cast<InteractiveObject>(obj);
-
-			if (!target || target->GetOwner() != GetName()) continue;
-
-			if (target->CanNPCUse(*data, GetName()))
-			{
-				needed = true;
-				break;
-			}
-		}
-
-		if (!needed)
-		{
-			return i;
-		}
-	}
-
-	// 全部使い道があるなら選択中、なければ0番
-	int idx = m_inventory.GetSelectIndex();
-	return idx < 0 ? 0 : idx;
-}
-
 //============================================================
 // State
 //============================================================
@@ -2965,6 +1825,11 @@ void Neighbor::ChangeState(State newState)
 	if (m_state == newState)
 	{
 		return;
+	}
+
+	if (m_state == State::Prank && newState != State::Prank)
+	{
+		ReleasePrankTarget();
 	}
 
 	m_state = newState;
@@ -3035,14 +1900,6 @@ void Neighbor::ApplyStateSettings()
 		PlayAnimation("Armature|Sprint");
 
 		break;
-
-	case State::Repair:
-
-		SetMoveSpeed(m_repairSpeed);
-
-		PlayAnimation("Armature|Sprint");
-
-		break;
 	}
 }
 
@@ -3082,11 +1939,9 @@ void Neighbor::DrawDebugUI()
 			ImGui::Text(" Task         : %.1f", m_debugInfo.taskUtility);
 			ImGui::Text(" SearchItem   : %.1f", m_debugInfo.searchItemUtility);
 			ImGui::Text(" Prank        : %.1f", m_debugInfo.prankUtility);
-			ImGui::Text(" Repair       : %.1f", m_debugInfo.repairUtility);
-			ImGui::Text(" UrgentRepair : %.1f", m_debugInfo.urgentRepairUtility);
 
 			ImGui::Separator();
-			ImGui::Text("Task Destination  : %s", m_debugInfo.taskDestinationName.c_str());
+			ImGui::Text(" Task Destination  : %s", m_debugInfo.taskDestinationName.c_str());
 			ImGui::Text(" Distance  : %.2f", m_debugInfo.taskDestinationDistance);
 			ImGui::Text(" Status    : %s", m_debugInfo.taskMoveStatus.c_str());
 
@@ -3157,11 +2012,6 @@ void Neighbor::DrawDebugUI()
 
 			ImGui::Separator();
 			ImGui::Text("Best Prank Target : %s", m_debugInfo.bestPrankTarget.c_str());
-			ImGui::Text("Best Repair Target: %s", m_debugInfo.bestRepairTarget.c_str());
-
-			ImGui::Separator();
-			ImGui::Text("Urgent Repair Queue : %d", m_debugInfo.urgentRepairQueueSize);
-			ImGui::Text("Selected Target     : %s", m_debugInfo.bestUrgentRepairTarget.c_str());
 
 			ImGui::Separator();
 
@@ -3191,7 +2041,7 @@ void Neighbor::DrawDebugUI()
 						std::filesystem::path path(log.itemPath);
 						std::string itemName = path.stem().string();
 
-						std::string ownerName = log.targetOwner;
+						std::string ownerName = log.targetName;
 
 						if (ownerName.empty())
 						{
@@ -3210,87 +2060,6 @@ void Neighbor::DrawDebugUI()
 
 					ImGui::EndTable();
 				}
-				ImGui::TreePop();
-			}
-
-			if (ImGui::TreeNodeEx("Repair Candidates",
-				ImGuiTreeNodeFlags_DefaultOpen))
-			{
-				if (ImGui::BeginTable("RepairTable", 4, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
-				{
-					ImGui::TableSetupColumn("Item");
-					ImGui::TableSetupColumn("Owner");
-					ImGui::TableSetupColumn("CanUse");
-					ImGui::TableSetupColumn("Utility");
-
-					ImGui::TableHeadersRow();
-
-					for (const auto& log :
-						m_debugInfo.repairCandidateLog)
-					{
-						ImGui::TableNextRow();
-
-						if (log.selected)
-						{
-							ImGui::TableSetBgColor(
-								ImGuiTableBgTarget_RowBg0,
-								ImGui::GetColorU32(
-									ImVec4(
-										0.2f,
-										0.6f,
-										0.2f,
-										0.5f
-									)
-								)
-							);
-						}
-
-						std::filesystem::path path(
-							log.itemPath
-						);
-
-						std::string itemName =
-							path.stem().string();
-
-						std::string ownerName =
-							log.targetOwner;
-
-						if (ownerName.empty())
-						{
-							ownerName = "None";
-						}
-						else if (ownerName == GetName())
-						{
-							ownerName = "Self";
-						}
-
-						ImGui::TableNextColumn();
-						ImGui::TextUnformatted(
-							itemName.c_str()
-						);
-
-						ImGui::TableNextColumn();
-						ImGui::TextUnformatted(
-							ownerName.c_str()
-						);
-
-						ImGui::TableNextColumn();
-						ImGui::TextUnformatted(
-							log.canNPCUse
-							? "true"
-							: "false"
-						);
-
-						ImGui::TableNextColumn();
-						ImGui::Text(
-							"%.1f",
-							log.utility
-						);
-					}
-
-					ImGui::EndTable();
-				}
-
 				ImGui::TreePop();
 			}
 		}

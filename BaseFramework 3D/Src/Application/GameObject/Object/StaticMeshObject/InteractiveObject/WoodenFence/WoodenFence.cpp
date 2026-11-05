@@ -17,7 +17,7 @@ void WoodenFence::Init()
 		3.5f,
 		300,
 		"Wood Fence Break!",
-		"Your Wood Fence has been Broken!",
+		"Wood Fence has been Broken!",
 		"Asset/Models/Props/WoodFence/WoodFence_Broken.gltf"
 		});
 

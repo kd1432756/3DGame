@@ -16,6 +16,13 @@ enum class InteractiveState
 	Repaired
 };
 
+enum class DamageSource
+{
+	None,
+	Initial,	// 開始時から壊れている
+	NPC			// NPCに壊された
+};
+
 enum class ItemAction;
 
 struct InteractiveAction
@@ -53,20 +60,6 @@ public:
 	void DrawBright() override;
 
 	//==============================
-	// Owner
-	//==============================
-
-	void SetOwner(const std::string& owner)
-	{
-		m_owner = owner;
-	}
-
-	const std::string& GetOwner() const
-	{
-		return m_owner;
-	}
-
-	//==============================
 	// Usable
 	//==============================
 
@@ -99,6 +92,19 @@ public:
 
 	bool IsDamaged() const { return m_state == InteractiveState::Damaged; }
 
+	bool SetInitialDamaged();
+	DamageSource GetDamageSource() const { return m_damageSource; }
+	float GetDamagedTime() const { return m_damagedTime; }	// 壊れた時刻(DayCycleの時刻)
+
+	bool CanBeTargetedBy(const CharacterBase* npc) const;
+	bool TryReserve(const std::shared_ptr<CharacterBase>& npc);
+	void ReleaseReservation(const CharacterBase* npc);
+
+	float GetSecondsSinceDamaged() const;
+
+	// このアイテムで、今後NPCが壊せる可能性があるか(状態は問わない)
+	bool CanEverBeBrokenBy(const ItemData& item) const;
+
 protected:
 
 	// 実際に状態が変わった後の特殊処理
@@ -106,14 +112,6 @@ protected:
 		const InteractiveAction& action,
 		const std::shared_ptr<Player>& player)
 	{}
-
-	//==============================
-	// Owner Check
-	//==============================
-
-	bool IsOwner(const std::shared_ptr<Player>& player) const;
-
-	std::shared_ptr<CharacterBase>FindOwner() const;
 
 	// アクション登録
 	void RegisterAction(
@@ -130,14 +128,23 @@ protected:
 	void ExecuteNPCAction(const InteractiveAction& action,
 		const std::shared_ptr<Neighbor>& npc);
 
-	void NotifyOwner(const InteractiveAction& action);
+	virtual void OnInitialDamage() {}	// 初期損壊の時だけ呼ばれる演出用
+	void NotifyPlayer(const InteractiveAction& action);	// NotifyOwner の代わり
+	void OnStateChanged(DamageSource source);
 
 	// 現在の状態
 	InteractiveState m_state = InteractiveState::Normal;
 
-	std::string m_owner;
-
 	std::vector<InteractiveAction> m_actions;
 
 	float m_limLightTimer = 1.0f;
+
+	DamageSource m_damageSource = DamageSource::None;
+	float m_damagedTime = 0.0f;
+
+	std::weak_ptr<CharacterBase> m_reservedBy;
+	float m_repairedTime = -100.0f;
+
+	// 修復直後に再び壊されない時間(ゲーム内時間。0.5 = 実時間約10秒)
+	const float m_repairCooldownHours = 0.5f;
 };

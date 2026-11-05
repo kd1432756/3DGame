@@ -17,7 +17,7 @@ void Faucet::Init()
 		3.0f,
 		300,
 		"Faucet Loosened!",
-		"Your Faucet has been Loosened!",
+		"Faucet has been Loosened!",
 		""
 		});
 

@@ -56,7 +56,6 @@ public:
 		Task,
 		SearchItem,
 		Prank,
-		Repair
 	};
 
 	inline const char* StateToString(Neighbor::State state)
@@ -66,7 +65,6 @@ public:
 		case Neighbor::State::Task:       return "Task";
 		case Neighbor::State::SearchItem: return "SearchItem";
 		case Neighbor::State::Prank:      return "Prank";
-		case Neighbor::State::Repair:     return "Repair";
 		default:                          return "Unknown";
 		}
 	}
@@ -80,7 +78,6 @@ public:
 		Task,
 		SearchItem,
 		Prank,
-		Repair,
 		UrgentRepair
 	};
 
@@ -91,7 +88,6 @@ public:
 		case Neighbor::Action::Task:       return "Task";
 		case Neighbor::Action::SearchItem: return "SearchItem";
 		case Neighbor::Action::Prank:      return "Prank";
-		case Neighbor::Action::Repair:     return "Repair";
 		case Neighbor::Action::UrgentRepair: return "UrgentRepair";
 		default:                           return "Unknown";
 		}
@@ -125,18 +121,6 @@ public:
 		float pathDistance = 0.0f;
 	};
 
-	//============================================================
-	// Repair Candidate
-	//============================================================
-
-	struct RepairCandidate
-	{
-		std::shared_ptr<InteractiveObject> target;
-
-		int inventoryIndex = -1;
-
-		float utility = 0.0f;
-	};
 
 	//============================================================
 	// Model
@@ -166,29 +150,15 @@ public:
 	bool HasInventoryItem(const std::string& itemPath) const;
 
 	//============================================================
-	// House Tag
+	// Damage
 	//============================================================
 
-	void SetHouseTag(LocationTag tag)
-	{
-		m_myHouseTag = tag;
-	}
-
-	LocationTag GetHouseTag() const
-	{
-		return m_myHouseTag;
-	}
-
-	//============================================================
-	// Prank
-	//============================================================
-
-	bool IsPranking() const override
+	bool IsDamaging() const override
 	{
 		return m_state == State::Prank && m_isInteracting;
 	}
 
-	Math::Vector3 GetPrankPos() const override
+	Math::Vector3 GetDamagePos() const override
 	{
 		auto t = m_wpPrankTarget.lock();
 		return t ? t->GetPos() : m_pos;
@@ -202,15 +172,6 @@ public:
 
 	void OnReleased() override;
 
-	//============================================================
-	// On Pranked
-	//============================================================
-
-	void OnPranked(
-		const std::shared_ptr<InteractiveObject>& target,
-		const InteractiveAction& action) override;
-
-
 protected:
 
 	//============================================================
@@ -221,6 +182,8 @@ protected:
 
 
 private:
+
+	void Updatetimer();
 
 	//============================================================
 	// Model
@@ -242,8 +205,6 @@ private:
 
 	float EvaluatePrank();
 
-	float EvaluateRepair();
-
 	bool CalculatePathDistance(
 		const Math::Vector3& goal,
 		float& outDistance) const;
@@ -257,8 +218,6 @@ private:
 	std::shared_ptr<LocationPoint> SelectTaskDestination();
 
 	std::shared_ptr<LocationPoint> SelectItemAreaPoint();
-	std::shared_ptr<LocationPoint> SelectOtherHousePoint();
-	std::shared_ptr<LocationPoint> SelectOwnHousePoint();
 	std::shared_ptr<LocationPoint> SelectRandomPoint();
 
 	//============================================================
@@ -282,7 +241,6 @@ private:
 	void PickupSearchItem();
 
 	bool CanUseItemForPrank(const ItemData& itemData) const;
-	bool CanUseItemForRepair(const ItemData& itemData) const;
 
 	bool IsBareHanded() const { return m_inventory.GetCurrentItem() == nullptr; }
 
@@ -300,49 +258,13 @@ private:
 		const ItemData& itemData,
 		float pathDistance);
 
-	void SelectPrankCandidate(
+	bool SelectPrankCandidate(
 		const PrankCandidate& candidate);
 
-	//============================================================
-	// Repair
-	//============================================================
+	void ReleasePrankTarget();
 
-	void UpdateRepair();
-
-	bool FindBestRepairCandidate(
-		RepairCandidate& outCandidate);
-
-	float EvaluateRepairCandidate(
-		const std::shared_ptr<InteractiveObject>& target,
-		const ItemData& itemData,
-		float pathDistance);
-
-	void SelectRepairCandidate(
-		const RepairCandidate& candidate);
-
-	//============================================================
-	// Urgent Repair
-	//============================================================
-
-	bool FindRepairItemForTarget(
-		const std::shared_ptr<InteractiveObject>& target,
-		SearchItemCandidate& outCandidate);
-
-	float EvaluateUrgentRepair();
-
-	void CleanupUrgentRepairTargets();
-
-	std::shared_ptr<InteractiveObject> SelectBestUrgentRepairTarget();
-
-	//============================================================
-	// Inventory EX
-	//============================================================
-
-	bool IsInventoryAllRepair() const;
-
-	bool ShouldSwapForPrankItem();
-
-	int  FindSwapSlotForPrank() const;
+	void StartPrankCooldown();
+	void DropUselessItems();
 
 	//============================================================
 	// Movement
@@ -357,8 +279,6 @@ private:
 		const std::shared_ptr<LocationPoint>& destPoint);
 
 	MoveResult MoveToPrankTarget();
-
-	MoveResult MoveToRepairTarget();
 
 	//============================================================
 	// Animation
@@ -401,15 +321,7 @@ private:
 
 	float m_prankUtility = 0.0f;
 
-	float m_repairUtility = 0.0f;
-
 	Action m_currentAction = Action::Task;
-
-	//============================================================
-	// Owner
-	//============================================================
-
-	std::string m_owner;
 
 	//============================================================
 	// Inventory
@@ -446,8 +358,6 @@ private:
 	//============================================================
 
 	LocationPointManager* m_pLocationPointManager = nullptr;
-
-	LocationTag m_myHouseTag = LocationTag::NeighborHouse1;
 
 	//============================================================
 	// Use
@@ -509,35 +419,9 @@ private:
 
 	float m_prankCommitBonus = 15.0f;
 
-	//============================================================
-	// Repair
-	//============================================================
-
-	std::weak_ptr<InteractiveObject> m_wpRepairTarget;
-
-	RepairCandidate m_bestRepairCandidate;
-
-	int m_repairInventoryIndex = -1;
-
-	float m_repairSearchRadius = 25.0f;
-
-	float m_repairInteractDistance = 3.0f;
-
-	float m_repairCommitBonus = 15.0f;
-
-	//============================================================
-	// Urgent Repair
-	//============================================================
-		
-	std::vector<std::weak_ptr<InteractiveObject>> m_urgentRepairTargets;
-	
-	std::weak_ptr<InteractiveObject> m_wpSelectedUrgentRepairTarget;
-
-	float m_urgentRepairUtility = 70.0f;
-
-	float m_urgentRepairBaseUtility = 70.0f;
-
-	float m_urgentRepairSearchRadius = 30.0f;
+	float m_prankCooldownTimer = 0.0f;
+	float m_prankCooldownMax = 25.0f;	// 朝のクールダウン(秒)
+	float m_prankCooldownMin = 8.0f;	// 夜のクールダウン(秒)
 
 private:
 
@@ -548,8 +432,6 @@ private:
 		float taskUtility = 0.0f;
 		float searchItemUtility = 0.0f;
 		float prankUtility = 0.0f;
-		float repairUtility = 0.0f;
-		float urgentRepairUtility = 0.0f;
 
 		// 現在のState
 		std::string stateName = "None";
@@ -564,7 +446,7 @@ private:
 		struct PrankLog
 		{
 			std::string itemPath;
-			std::string targetOwner;
+			std::string targetName;
 			bool canNPCUse = false;
 			float distanceSq = 0.0f;
 			float utility = 0.0f;
@@ -572,23 +454,8 @@ private:
 		};
 		std::vector<PrankLog> prankCandidateLog;
 
-		struct RepairLog
-		{
-			std::string itemPath;
-			std::string targetOwner;
-			bool canNPCUse = false;
-			float utility = 0.0f;
-			bool selected = false;
-		};
-		std::vector<RepairLog> repairCandidateLog;
-
 		// 選ばれた結果
 		std::string bestPrankTarget = "None";
-		std::string bestRepairTarget = "None";
-
-		// Urgent Repair
-		std::string bestUrgentRepairTarget = "None";
-		int urgentRepairQueueSize = 0;
 	};
 
 	DebugInfo m_debugInfo;

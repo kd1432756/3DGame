@@ -1,10 +1,8 @@
 ﻿#pragma once
 
+#include "../../../System/Score/ScoreManager.h"
+
 class GameScene;
-class ScoreManager;
-
-class CharacterBase;
-
 class ResultFadeUI;
 class ConfettiUI;
 
@@ -25,21 +23,32 @@ public:
 
 private:
 
+	enum class Phase
+	{
+		ScoreCount,		// スコアのカウントアップ
+		RankWait,		// ランク登場前の間
+		RankReveal,		// ランク登場
+		Done			// 演出完了(ボタン操作可)
+	};
+
 	void ShowResult();
+	void StartCelebration();
+	void ChangePhase(Phase phase);
 
 	void GetMousePos(POINT* mousePos);
 
 	std::weak_ptr<GameScene> m_wpGameScene;
 	std::shared_ptr<ResultFadeUI> m_spFadeUI;
 
-	std::vector<std::shared_ptr<CharacterBase>> m_ranking;
-
 	bool m_visible = false;
 	bool m_resultInitialized = false;
 
-	float m_timer = 0.0f;
+	Phase m_phase = Phase::ScoreCount;
+	float m_phaseTimer = 0.0f;
 
-	int m_displayRankCount = 0;
+	int m_finalScore = 0;
+	int m_displayScore = 0;
+	ScoreManager::Rank m_rank = ScoreManager::Rank::C;
 
 	bool m_fadeOut = false;
 	float m_alpha = 0.0f;
@@ -58,12 +67,12 @@ private:
 
 	bool m_isTitleButtonHover = false;
 
-	float m_rowAnimTime[4] = {};
-	int   m_prevDisplayRankCount = 0;
-
 	std::weak_ptr<ConfettiUI> m_wpConfetti;
-	bool m_confettiStarted = false;
-	float m_confettiWaitTimer = 0.0f;
 
 	std::shared_ptr<KdSoundInstance> m_resultBgm;
+
+	// ---- 調整用パラメータ ----
+	static constexpr float kCountTime = 1.5f;		// スコアのカウントアップ時間
+	static constexpr float kRankWaitTime = 0.6f;	// ランクが出るまでの間
+	static constexpr float kRankRevealTime = 0.4f;	// ランクの登場アニメ時間
 };

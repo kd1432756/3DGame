@@ -24,7 +24,6 @@ private:
 	void DrawTransform(std::shared_ptr<KdGameObject>& obj) {}
 
 	void DrawStaticMesh(std::shared_ptr<StaticMeshObject> obj);
-	void DrawInteractive(std::shared_ptr<InteractiveObject> obj);
 	void DrawItem(std::shared_ptr<Item> obj);
 	void DrawNeighbor(std::shared_ptr<Neighbor> obj);
 	void DrawCharacter(std::shared_ptr<CharacterBase> obj);

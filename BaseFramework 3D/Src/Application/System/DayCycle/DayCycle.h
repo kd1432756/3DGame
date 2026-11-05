@@ -40,6 +40,11 @@ public:
 		return m_currentTime >= EndTime;
 	}
 
+	float GameHoursToRealSeconds(float hours) const
+	{
+		return hours * 60.0f / m_timeScale;
+	}
+
 private:
 	void UpdateTimeZone();
 	void UpdateLighting();

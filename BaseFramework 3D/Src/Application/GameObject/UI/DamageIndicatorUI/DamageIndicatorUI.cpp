@@ -1,5 +1,6 @@
 ﻿#include "DamageIndicatorUI.h"
 #include "../../Character/Player/Player.h"
+#include "../../../System/Damage/DamageDirector.h"
 
 void DamageIndicatorUI::Init()
 {
@@ -15,7 +16,8 @@ void DamageIndicatorUI::Update()
 	auto owner = m_owner.lock();
 	if (!owner) return;
 
-	m_count = owner->GetDamagedCount();
+	//m_count = owner->GetDamagedCount();
+	m_count = DamageDirector::CountDamaged();
 
 	// 被害が増えた瞬間だけバウンド開始
 	if (m_count > m_prevCount)

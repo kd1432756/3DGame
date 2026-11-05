@@ -163,7 +163,7 @@ void Police::UpdatePatrol()
 		return;
 	}
 
-	if (m_investigateCooldown <= 0.0f && DetectPrankSound())
+	if (m_investigateCooldown <= 0.0f && DetectDamageSound())
 	{
 		m_navPath.clear();
 		m_navPathIndex = 0;
@@ -201,7 +201,7 @@ void Police::UpdateChase()
 		m_navPath.clear();
 		m_navPathIndex = 0;
 
-		m_chasingForPrank = false;
+		m_chasingForCrime = false;
 
 		ChangeState(State::Return);
 		return;
@@ -223,7 +223,7 @@ void Police::UpdateChase()
 	// 逮捕対象でないなら追跡終了
 	//============================================================
 
-	if (!m_chasingForPrank && !IsWanted(target))
+	if (!m_chasingForCrime && !IsWanted(target))
 	{
 		m_wpTarget.reset();
 
@@ -530,7 +530,7 @@ void Police::UpdateSearch()
 
 		m_wpTarget.reset(); 
 		
-		m_chasingForPrank = false;
+		m_chasingForCrime = false;
 
 		ChangeState(State::Return);
 
@@ -582,7 +582,7 @@ void Police::UpdateReturn()
 		return;
 	}
 
-	if (m_investigateCooldown <= 0.0f && DetectPrankSound())
+	if (m_investigateCooldown <= 0.0f && DetectDamageSound())
 	{
 		m_navPath.clear();
 		m_navPathIndex = 0;
@@ -727,7 +727,7 @@ void Police::UpdateInvestigate()
 	ChangeState(State::Search);
 }
 
-bool Police::DetectPrankSound()
+bool Police::DetectDamageSound()
 {
 	const float range = m_hearRange * m_sceneScale;
 	const float rangeSq = range * range;
@@ -738,9 +738,9 @@ bool Police::DetectPrankSound()
 		if (!character || character.get() == this) continue;
 		if (std::dynamic_pointer_cast<Police>(character)) continue;
 		if (character->IsArrested()) continue;
-		if (!character->IsPranking()) continue;
+		if (!character->IsDamaging()) continue;
 
-		const Math::Vector3 p = character->GetPrankPos();
+		const Math::Vector3 p = character->GetDamagePos();
 		Math::Vector3 diff = p - m_pos;
 		diff.y = 0.0f;
 		if (diff.LengthSquared() > rangeSq) continue;
@@ -774,7 +774,7 @@ void Police::Dispatch(const Math::Vector3& pos)
 	m_navPath.clear();      // 既存の経路を破棄して新しい地点へ
 	m_navPathIndex = 0;
 	m_wpTarget.reset();
-	m_chasingForPrank = false;
+	m_chasingForCrime = false;
 
 	ChangeState(State::Investigate);
 }
@@ -1211,7 +1211,7 @@ bool Police::SearchTarget()
 
 		m_wpTarget = character;
 
-		m_chasingForPrank = character->IsPranking();
+		m_chasingForCrime = character->IsDamaging() || character->IsSuspicious();
 
 		m_lastTargetPos =
 			character->GetPos();

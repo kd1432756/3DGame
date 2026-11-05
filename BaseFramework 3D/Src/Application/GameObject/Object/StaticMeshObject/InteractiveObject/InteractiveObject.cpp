@@ -69,48 +69,19 @@ InteractiveObject::FindAction(
 
 	for (const auto& action : m_actions)
 	{
+		if (action.fromState != m_state) continue;
 
-		if (action.fromState != m_state)
-		{
-			continue;
-		}
+		// プレイヤーは修復アクションだけ
+		if (action.action != ItemAction::Repair) continue;
 
 		if (action.needItem)
 		{
-			// アイテム必須：従来どおり照合
-			if (!item)
-			{
-				continue;
-			}
-
-			const auto& data = item->GetItemData();
-
-			if (!data.FindUse(action.action, action.target))
-			{
-				continue;
-			}
+			if (!item) continue;
+			if (!item->GetItemData().FindUse(action.action, action.target)) continue;
 		}
 		else
 		{
-			// アイテム不要：手ぶらのときだけ
-			if (item)
-			{
-				continue;
-			}
-		}
-
-		const bool isRepair = (action.action == ItemAction::Repair);
-
-		// いたずらはOwner不可
-		if (!isRepair && IsOwner(player))
-		{
-			continue;
-		}
-
-		// 修復はOwnerのみ
-		if (isRepair && !IsOwner(player))
-		{
-			continue;
+			if (item) continue;
 		}
 
 		return &action;
@@ -124,8 +95,6 @@ InteractiveObject::FindNPCAction(
 	const ItemData& item,
 	const std::string& npcName) const
 {
-	const bool isOwner = (m_owner == npcName);
-
 	for (const auto& action : m_actions)
 	{
 		if (action.fromState != m_state) continue;
@@ -133,7 +102,7 @@ InteractiveObject::FindNPCAction(
 		if (!action.needItem) continue;
 		if (!item.FindUse(action.action, action.target)) continue;
 		const bool isRepair = (action.action == ItemAction::Repair);
-		if (isRepair != isOwner) continue;
+		if (action.action == ItemAction::Repair) continue;
 		return &action;
 	}
 
@@ -142,19 +111,13 @@ InteractiveObject::FindNPCAction(
 
 const InteractiveAction* InteractiveObject::FindNPCBareAction(const std::string& npcName) const
 {
-	const bool isOwner = (m_owner == npcName);
-
 	for (const auto& action : m_actions)
 	{
 		if (action.fromState != m_state) continue;
 		if (!action.npcCanUse) continue;
 		if (action.needItem) continue;
-
 		const bool isRepair = (action.action == ItemAction::Repair);
-
-		// 修復はオーナーのみ、いたずらはオーナー不可
-		if (isRepair != isOwner) continue;
-
+		if (action.action == ItemAction::Repair) continue;
 		return &action;
 	}
 	return nullptr;
@@ -164,19 +127,15 @@ void InteractiveObject::ExecuteNPCAction(const InteractiveAction& action, const 
 {
 	m_state = action.toState;
 
+	OnStateChanged(DamageSource::NPC);
+
 	if (!action.modelPath.empty())
 	{
 		SetModelPath(action.modelPath);
 	}
 
-	if (action.score > 0)
-	{
-		int score = ScoreManager::Instance().CalcScore(
-			action.score, DayCycle::Instance().GetTimeProgress());
-		npc->OnPrankSuccess(score, action.message);
-	}
+	NotifyPlayer(action);
 
-	NotifyOwner(action);
 	OnAction(action, nullptr);
 }
 
@@ -212,6 +171,8 @@ void InteractiveObject::Use(
 	// 状態変更
 	m_state = action->toState;
 
+	OnStateChanged(DamageSource::None);
+
 	// モデル変更
 	if (!action->modelPath.empty())
 	{
@@ -235,7 +196,7 @@ void InteractiveObject::Use(
 		se->SetVolume(0.1f);
 	}
 
-	NotifyOwner(*action);
+	NotifyPlayer(*action);
 
 	// 個別特殊処理
 	OnAction(*action, player);
@@ -334,58 +295,116 @@ bool InteractiveObject::IsRepairAction(
 	return action && action->action == ItemAction::Repair;
 }
 
-bool InteractiveObject::IsOwner(const std::shared_ptr<Player>& player) const
+void InteractiveObject::OnStateChanged(DamageSource source)
 {
-	if (!player)
+	m_reservedBy.reset();
+
+	const float now = DayCycle::Instance().GetCurrentTime();
+
+	if (m_state == InteractiveState::Damaged)
+	{
+		m_damageSource = source;
+		m_damagedTime = now;
+	}
+	else
+	{
+		m_damageSource = DamageSource::None;
+		m_repairedTime = now;	// 修復された時刻
+	}
+}
+
+void InteractiveObject::NotifyPlayer(const InteractiveAction& action)
+{
+	if (action.ownerMessage.empty()) return;
+
+	auto player = SceneManager::Instance().FindObject<Player>();
+	if (!player) return;
+
+	player->OnPranked(
+		std::dynamic_pointer_cast<InteractiveObject>(shared_from_this()),
+		action);
+}
+
+bool InteractiveObject::SetInitialDamaged()
+{
+	for (const auto& action : m_actions)
+	{
+		if (action.fromState != InteractiveState::Normal) continue;
+		if (action.action == ItemAction::Repair) continue;
+
+		m_state = action.toState;
+
+		if (!action.modelPath.empty())
+		{
+			SetModelPath(action.modelPath);
+		}
+
+		OnStateChanged(DamageSource::Initial);
+		OnInitialDamage();
+		return true;
+	}
+
+	return false;
+}
+
+bool InteractiveObject::CanBeTargetedBy(const CharacterBase* npc) const
+{
+	if (m_state != InteractiveState::Normal) return false;
+
+	auto reserved = m_reservedBy.lock();
+	if (reserved && reserved.get() != npc) return false;
+
+	const float elapsed = DayCycle::Instance().GetCurrentTime() - m_repairedTime;
+	return elapsed >= m_repairCooldownHours;
+}
+
+bool InteractiveObject::TryReserve(const std::shared_ptr<CharacterBase>& npc)
+{
+	if (!CanBeTargetedBy(npc.get())) return false;
+
+	m_reservedBy = npc;
+	return true;
+}
+
+void InteractiveObject::ReleaseReservation(const CharacterBase* npc)
+{
+	auto reserved = m_reservedBy.lock();
+	if (reserved.get() == npc)
+	{
+		m_reservedBy.reset();
+	}
+}
+
+float InteractiveObject::GetSecondsSinceDamaged() const
+{
+	if (m_state != InteractiveState::Damaged)
+	{
+		return FLT_MAX;
+	}
+
+	const float hours =
+		DayCycle::Instance().GetCurrentTime() - m_damagedTime;
+
+	return DayCycle::Instance().GameHoursToRealSeconds(hours);
+}
+
+bool InteractiveObject::CanEverBeBrokenBy(const ItemData& item) const
+{
+	if (m_state == InteractiveState::Repaired)
 	{
 		return false;
 	}
 
-	return m_owner == player->GetName();
-}
-
-std::shared_ptr<CharacterBase>
-InteractiveObject::FindOwner() const
-{
-	if (m_owner.empty())
+	for (const auto& action : m_actions)
 	{
-		return nullptr;
-	}
+		if (!action.npcCanUse || !action.needItem) continue;
+		if (action.action == ItemAction::Repair) continue;
 
-	const auto& characters =
-		SceneManager::Instance().FindObjects<CharacterBase>();
-
-	for (const auto& character : characters)
-	{
-		if (!character)
+		if (item.FindUse(action.action, action.target))
 		{
-			continue;
-		}
-
-		if (character->GetName() == m_owner)
-		{
-			return character;
+			return true;
 		}
 	}
 
-	return nullptr;
-}
-
-void InteractiveObject::NotifyOwner(const InteractiveAction& action)
-{
-	if (action.ownerMessage.empty())
-	{
-		return;
-	}
-
-	auto owner = FindOwner();
-
-	if (!owner)
-	{
-		return;
-	}
-
-	owner->OnPranked(
-		std::dynamic_pointer_cast<InteractiveObject>(shared_from_this()),
-		action);
+	return false;
 }

@@ -17,7 +17,7 @@ void PaintCan::Init()
 		1.5f,
 		100,
 		"PaintCan Spilled!",
-		"Your PaintCan has been Spilled!",
+		"PaintCan has been Spilled!",
 		"Asset/Models/Props/PaintCan/SpilledPaintCan.gltf",
 		false,
 		"Spill"

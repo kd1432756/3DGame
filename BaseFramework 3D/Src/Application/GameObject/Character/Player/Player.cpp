@@ -57,10 +57,6 @@ void Player::Init()
 		m_spModel,
 		KdCollider::TypeEditor);
 
-	ScoreManager::Instance().RegisterCharacter(
-		std::dynamic_pointer_cast<CharacterBase>(
-			shared_from_this()));
-
 	auto camera = CameraManager::Instance().GetCamera();
 	if (camera)
 	{
@@ -270,23 +266,179 @@ void Player::UpdateReport()
 	}
 }
 
+bool Player::IsVisibleFromCamera(
+	const Math::Vector3& targetPos,
+	const KdGameObject* ignore) const
+{
+	auto camera = m_camera.lock();
+
+	if (!camera)
+	{
+		return false;
+	}
+
+	//============================================================
+	// ① 画面内か
+	//============================================================
+
+	Math::Vector3 screen;
+
+	if (!camera->ConvertWorldToScreenDetail(targetPos, screen))
+	{
+		return false;	// カメラの後ろ
+	}
+
+	Math::Viewport vp;
+	KdDirect3D::Instance().CopyViewportInfo(vp);
+
+	// 画面の少し内側で判定
+	constexpr float kScreenMargin = 0.7f;
+
+	if (std::abs(screen.x) > vp.width * 0.5f * kScreenMargin ||
+		std::abs(screen.y) > vp.height * 0.5f * kScreenMargin)
+	{
+		return false;
+	}
+
+	//============================================================
+	// ② Rayで遮られていないか
+	//============================================================
+
+	const Math::Vector3 camPos = camera->GetMatrix().Translation();
+
+	Math::Vector3 dir = targetPos - camPos;
+
+	const float distance = dir.Length();
+
+	if (distance <= 0.0001f)
+	{
+		return true;
+	}
+
+	dir /= distance;
+
+	KdCollider::RayInfo ray;
+
+	ray.m_type = KdCollider::TypeGround | KdCollider::TypeBump;
+	ray.m_pos = camPos;
+	ray.m_dir = dir;
+
+	ray.m_range = std::max(distance - 0.05f * m_sceneScale, 0.001f);
+
+	for (auto& obj : SceneManager::Instance().GetObjList())
+	{
+		if (!obj) continue;
+
+		if (obj.get() == this) continue;
+		if (obj.get() == ignore) continue;
+
+		std::list<KdCollider::CollisionResult> hits;
+
+		if (obj->Intersects(ray, &hits))
+		{
+			return false;	// 遮蔽物あり
+		}
+	}
+
+	return true;
+}
+
+bool Player::FindReportPos(Math::Vector3& outPos) const
+{
+	auto camera = m_camera.lock();
+
+	if (!camera)
+	{
+		return false;
+	}
+
+	const Math::Vector3 camPos = camera->GetMatrix().Translation();
+
+	// ① 見えている「壊している最中のNPC」のうち、一番近いもの
+	float nearestSq = std::numeric_limits<float>::max();
+	bool found = false;
+
+	for (auto& ch : SceneManager::Instance().FindObjects<CharacterBase>())
+	{
+		if (!ch || ch.get() == this) continue;
+		if (ch->IsArrested() || !ch->IsDamaging()) continue;
+
+		// 見えているかは、NPC本人の体で判定する
+		if (!IsVisibleFromCamera(ch->GetPos(), ch.get())) continue;
+
+		const float sq = (ch->GetPos() - camPos).LengthSquared();
+
+		if (sq < nearestSq)
+		{
+			nearestSq = sq;
+			outPos = ch->GetDamagePos();	// 通報地点は壊している現場
+			found = true;
+		}
+	}
+
+	if (found)
+	{
+		return true;
+	}
+
+	// ② 見えている「最近NPCに壊された物」のうち、一番新しいもの
+	float best = m_reportWindowSeconds;
+
+	for (auto& obj : SceneManager::Instance().FindObjects<InteractiveObject>())
+	{
+		if (obj->GetDamageSource() != DamageSource::NPC) continue;
+
+		const float seconds = obj->GetSecondsSinceDamaged();
+
+		if (seconds > best) continue;
+
+		// 足元ではなく少し上を狙う(地面に隠れないように)
+		const Math::Vector3 target =
+			obj->GetPos() + Math::Vector3{ 0.0f, 0.3f * m_sceneScale, 0.0f };
+
+		if (!IsVisibleFromCamera(target, obj.get())) continue;
+
+		best = seconds;
+		outPos = obj->GetPos();
+		found = true;
+	}
+
+	return found;
+}
+
+void Player::ShowReportText(const std::string& text, const Math::Color& color)
+{
+	auto floatingText = std::make_shared<FloatingTextUI>();
+	floatingText->Init();
+	floatingText->SetText(text);
+	floatingText->SetColor(color);
+	floatingText->SetPosition({ 520, -210 });
+	floatingText->SetFont(FontID::Future24);
+	SceneManager::Instance().AddObject(floatingText);
+}
+
 bool Player::TryReport()
 {
-	// 通報地点 = プレイヤーの現在位置
-	const Math::Vector3 reportPos = m_pos;
+	// 通報地点 = 壊している現場(またはその直後の現場)
+	Math::Vector3 reportPos;
 
-	// 通報地点から最も近く、追跡中でない警察官を探す
+	if (!FindReportPos(reportPos))
+	{
+		ShowReportText("No target in sight", { 0.8f, 0.8f, 0.8f, 1.0f });
+		return false;
+	}
+
+	// 通報地点から最も近く、出動できる警察官を探す
 	std::shared_ptr<Police> nearest;
 	float nearestSq = std::numeric_limits<float>::max();
 
-	// FindObjectsを使ってPoliceのリストを取得し、範囲ベースforで走査
 	for (auto& police : SceneManager::Instance().FindObjects<Police>())
 	{
-		// 出動可能かチェック
 		if (!police->CanDispatch()) continue;
 
 		Math::Vector3 diff = police->GetPos() - reportPos;
 		diff.y = 0.0f;
+
 		const float dSq = diff.LengthSquared();
 
 		if (dSq < nearestSq)
@@ -296,16 +448,15 @@ bool Player::TryReport()
 		}
 	}
 
+	if (!nearest)
+	{
+		ShowReportText("No police available", { 0.8f, 0.8f, 0.8f, 1.0f });
+		return false;
+	}
+
 	nearest->Dispatch(reportPos);
 
-	// フィードバック
-	auto text = std::make_shared<FloatingTextUI>();
-	text->Init();
-	text->SetText("Reported!");
-	text->SetColor({ 0.9f, 0.35f, 0.0f, 1.0f });
-	text->SetPosition({ 520, -210 });
-	text->SetFont(FontID::Future24);
-	SceneManager::Instance().AddObject(text);
+	ShowReportText("Reported!", { 0.9f, 0.35f, 0.0f, 1.0f });
 
 	if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Call.wav"))
 	{
@@ -341,7 +492,7 @@ void Player::UpdateHinder()
 	auto target = m_wpHinderTarget.lock();
 
 	// 対象が消えた／逮捕された／いたずらをやめた → 終了
-	if (!target || target->IsArrested() || !target->IsPranking())
+	if (!target || target->IsArrested() || !target->IsDamaging())
 	{
 		EndHinder(true, false);
 		return;
@@ -404,7 +555,7 @@ std::shared_ptr<CharacterBase> Player::FindHinderTarget() const
 		auto ch = std::dynamic_pointer_cast<CharacterBase>(obj);
 		if (!ch || ch.get() == this) continue;
 		if (std::dynamic_pointer_cast<Police>(ch)) continue;
-		if (ch->IsArrested() || !ch->IsPranking()) continue;
+		if (ch->IsArrested() || !ch->IsDamaging()) continue;
 
 		Math::Vector3 diff = ch->GetPos() - m_pos;
 		diff.y = 0.0f;
@@ -827,8 +978,6 @@ void Player::StartUse()
 	m_isRepairUse = usable->IsRepairAction(
 		std::dynamic_pointer_cast<Player>(shared_from_this()));
 
-	m_prankPos = obj->GetPos();
-
 	// スキルチェック開始(種類は抽選)
 	m_skillResult = SkillResult::None;
 
@@ -1240,4 +1389,27 @@ void Player::OnArrested(const std::shared_ptr<Police>& police)
 void Player::OnReleased()
 {
 	m_isReleasing = true;
+}
+
+bool Player::IsSuspicious() const
+{
+	if (!m_isUsing || !m_isRepairUse)
+	{
+		return false;
+	}
+
+	auto obj = std::dynamic_pointer_cast<InteractiveObject>(m_useObject.lock());
+
+	if (!obj)
+	{
+		return false;
+	}
+
+	// 初期損壊は疑われない
+	if (obj->GetDamageSource() != DamageSource::NPC)
+	{
+		return false;
+	}
+
+	return obj->GetSecondsSinceDamaged() <= m_suspicionSeconds;
 }

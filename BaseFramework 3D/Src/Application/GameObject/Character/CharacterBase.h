@@ -83,8 +83,12 @@ public:
 
 	bool IsArrested() const { return m_isArrested; }
 
-	virtual bool IsPranking() const { return false; }
-	virtual Math::Vector3 GetPrankPos() const { return m_pos; }
+	// NPC: 破壊作業中(妨害・警察の聞き込みの対象)
+	virtual bool IsDamaging() const { return false; }
+	virtual Math::Vector3 GetDamagePos() const { return m_pos; }
+
+	// 警察に疑われる行動中(Player: 壊れて間もない物の修復中)
+	virtual bool IsSuspicious() const { return false; }
 
 	// 拘束（移動不可・操作可）
 	bool IsRestrained() const { return m_isRestrained; }

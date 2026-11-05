@@ -2,20 +2,28 @@
 
 #include "../SkillCheck/SkillCheckBase.h"
 
-class CharacterBase;
-
 class ScoreManager
 {
 public:
-	void Init();
+	enum class Rank
+	{
+		C,
+		B,
+		A,
+		S
+	};
 
-	void RegisterCharacter(const std::shared_ptr<CharacterBase>& chara);
-
-	std::vector<std::shared_ptr<CharacterBase>> GetRanking() const;
-	
 	int CalcScore(int baseScore, float progress, SkillResult result = SkillResult::Good) const;
+
+	Rank CalcRank(int score) const;
+
+	static const char* RankToString(Rank rank);
+
 private:
-	std::vector<std::weak_ptr<CharacterBase>> m_characters;
+	// ランクの境界スコア(要調整)
+	static constexpr int kRankS = 3000;
+	static constexpr int kRankA = 2000;
+	static constexpr int kRankB = 1000;
 
 public:
 

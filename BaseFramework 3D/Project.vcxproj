@@ -346,6 +346,7 @@
     <ClInclude Include="Src\Application\Scene\SceneManager.h" />
     <ClInclude Include="Src\Application\Scene\SceneSerializer\SceneSerializer.h" />
     <ClInclude Include="Src\Application\Scene\TitleScene\TitleScene.h" />
+    <ClInclude Include="Src\Application\System\Damage\DamageDirector.h" />
     <ClInclude Include="Src\Application\System\DayCycle\DayCycle.h" />
     <ClInclude Include="Src\Application\System\FootStep\FootStep.h" />
     <ClInclude Include="Src\Application\System\FootStep\FootStepPhaseTable.h" />
@@ -509,6 +510,7 @@
     <ClCompile Include="Src\Application\Scene\SceneManager.cpp" />
     <ClCompile Include="Src\Application\Scene\SceneSerializer\SceneSerializer.cpp" />
     <ClCompile Include="Src\Application\Scene\TitleScene\TitleScene.cpp" />
+    <ClCompile Include="Src\Application\System\Damage\DamageDirector.cpp" />
     <ClCompile Include="Src\Application\System\DayCycle\DayCycle.cpp" />
     <ClCompile Include="Src\Application\System\FootStep\FootStep.cpp" />
     <ClCompile Include="Src\Application\System\GrassField\GrassField.cpp" />

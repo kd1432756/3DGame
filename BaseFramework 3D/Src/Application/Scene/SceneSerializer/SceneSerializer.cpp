@@ -58,12 +58,6 @@ bool SceneSerializer::Save(const std::string& path)
 				static_cast<int>(ground->GetGroundType());
 		}
 
-		if (auto interactive =
-			std::dynamic_pointer_cast<InteractiveObject>(obj))
-		{
-			objData["Owner"] = interactive->GetOwner();
-		}
-
 		if (auto item = std::dynamic_pointer_cast<Item>(obj))
 		{
 			objData["ItemPath"] = item->GetItemPath();
@@ -71,7 +65,6 @@ bool SceneSerializer::Save(const std::string& path)
 
 		if (auto neighbor = std::dynamic_pointer_cast<Neighbor>(obj))
 		{
-			objData["HouseTag"] = static_cast<int>(neighbor->GetHouseTag());
 			objData["NeighborModelPath"] = neighbor->GetModelPath();
 		}
 
@@ -174,15 +167,6 @@ bool SceneSerializer::Load(const std::string& path)
 			}
 		}
 
-		if (auto interactive =
-			std::dynamic_pointer_cast<InteractiveObject>(obj))
-		{
-			if (objData.contains("Owner"))
-			{
-				interactive->SetOwner(objData["Owner"]);
-			}
-		}
-
 		if (auto item = std::dynamic_pointer_cast<Item>(obj))
 		{
 			if (objData.contains("ItemPath"))
@@ -202,12 +186,6 @@ bool SceneSerializer::Load(const std::string& path)
 
 		if (auto neighbor = std::dynamic_pointer_cast<Neighbor>(obj))
 		{
-			if (objData.contains("HouseTag"))
-			{
-				neighbor->SetHouseTag(
-					static_cast<LocationTag>(objData["HouseTag"].get<int>()));
-			}
-
 			if (objData.contains("NeighborModelPath"))
 			{
 				neighbor->SetModelPath(objData["NeighborModelPath"]);
@@ -310,15 +288,6 @@ bool SceneSerializer::LoadWithScale(const std::string& path, float multiplier)
 			}
 		}
 
-		if (auto interactive =
-			std::dynamic_pointer_cast<InteractiveObject>(obj))
-		{
-			if (objData.contains("Owner"))
-			{
-				interactive->SetOwner(objData["Owner"]);
-			}
-		}
-
 		if (auto item = std::dynamic_pointer_cast<Item>(obj))
 		{
 			if (objData.contains("ItemPath"))
@@ -341,12 +310,6 @@ bool SceneSerializer::LoadWithScale(const std::string& path, float multiplier)
 
 		if (auto neighbor = std::dynamic_pointer_cast<Neighbor>(obj))
 		{
-			if (objData.contains("HouseTag"))
-			{
-				neighbor->SetHouseTag(
-					static_cast<LocationTag>(objData["HouseTag"].get<int>()));
-			}
-
 			if (objData.contains("NeighborModelPath"))
 			{
 				neighbor->SetModelPath(objData["NeighborModelPath"]);

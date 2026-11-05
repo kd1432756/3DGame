@@ -41,6 +41,8 @@
 
 #include "../../GameObject/UI/Notification/NotificationManager.h"
 
+#include "../../System/Damage/DamageDirector.h"
+
 void GameScene::Update()
 {
 	if (!m_started)
@@ -205,6 +207,8 @@ void GameScene::Start()
 
 	FootstepSystem::Instance().Init();
 
+	DamageDirector::SpawnInitialDamage(3);
+
 	// 風有効化
 	KdShaderManager::Instance().SetWindEnable(true);
 
@@ -231,11 +235,11 @@ void GameScene::Start()
 	m_objList.push_back(skyBox);
 
 	{
-		auto homeDirection = std::make_shared<HomeDirectionUI>();
+/*		auto homeDirection = std::make_shared<HomeDirectionUI>();
 		homeDirection->Init();
 		homeDirection->SetName("HomeDirectionUI");
 		homeDirection->SetOwner(player);
-		m_objList.push_back(homeDirection);
+		m_objList.push_back(homeDirection);*/
 
 		auto score = std::make_shared<ScoreUI>();
 		score->Init();
@@ -313,8 +317,6 @@ void GameScene::Init()
 	Editor::Instance().SetGameCamera(m_spGameCamera);
 
 	CameraManager::Instance().SetCamera(m_spGameCamera);
-
-	ScoreManager::Instance().Init();
 
 	DayCycle::Instance().Init();
 

@@ -6,24 +6,48 @@
 
 #include "../../../Scene/SceneManager.h"
 
-#include "../../../System/Score/ScoreManager.h"
-
-#include "../../Character/CharacterBase.h"
 #include "../../Character/Player/Player.h"
 
 #include "../ConfettiUI/ConfettiUI.h"
+
+namespace
+{
+	Math::Color RankColor(ScoreManager::Rank rank)
+	{
+		switch (rank)
+		{
+		case ScoreManager::Rank::S: return { 1.0f, 0.84f, 0.0f, 1.0f };	// 金
+		case ScoreManager::Rank::A: return { 0.4f, 0.9f, 1.0f, 1.0f };	// 水色
+		case ScoreManager::Rank::B: return { 0.4f, 0.9f, 0.4f, 1.0f };	// 緑
+		default:                    return { 0.8f, 0.8f, 0.8f, 1.0f };	// 灰
+		}
+	}
+
+	const char* RankMessage(ScoreManager::Rank rank)
+	{
+		switch (rank)
+		{
+		case ScoreManager::Rank::S: return "Legendary Fixer!";
+		case ScoreManager::Rank::A: return "Great Job!";
+		case ScoreManager::Rank::B: return "Not Bad";
+		default:                    return "Keep Trying";
+		}
+	}
+}
 
 void ResultUI::Init()
 {
 	m_updateGroup = UpdateGroup::Always;
 
-	m_ranking.clear();
-
 	m_visible = false;
 	m_resultInitialized = false;
 
-	m_timer = 0.0f;
-	m_displayRankCount = 0;
+	m_phase = Phase::ScoreCount;
+	m_phaseTimer = 0.0f;
+
+	m_finalScore = 0;
+	m_displayScore = 0;
+	m_rank = ScoreManager::Rank::C;
 
 	m_isTitleButtonHover = false;
 
@@ -32,12 +56,6 @@ void ResultUI::Init()
 
 	m_animTime = 0.0f;
 	m_animOffsetY = 0.0f;
-
-	for (auto& t : m_rowAnimTime) t = 0.0f;
-	m_prevDisplayRankCount = 0;
-
-	m_confettiWaitTimer = 0.0f;
-	m_confettiStarted = false;
 
 	m_pointerTex = std::make_shared<KdTexture>();
 	m_pointerTex->Load("Asset/Textures/Cursor/Pointer.png");
@@ -58,7 +76,7 @@ void ResultUI::Update()
 		return;
 	}
 
-	// 一度だけランキングを取得
+	// 一度だけ結果を取得
 	if (!m_resultInitialized)
 	{
 		ShowResult();
@@ -77,7 +95,6 @@ void ResultUI::Update()
 
 		if (m_resultBgm)
 		{
-			// m_alphaが0.0から1.0に向かうの連動させて音量を下げる（初期音量が0.3fの場合）
 			float volume = 0.3f * (1.0f - m_alpha);
 			if (volume < 0.0f) volume = 0.0f;
 			m_resultBgm->SetVolume(volume);
@@ -100,15 +117,35 @@ void ResultUI::Update()
 		return;
 	}
 
-	// ランキング表示
-	if (m_displayRankCount < static_cast<int>(m_ranking.size()))
-	{
-		m_timer += 1.0f / 60.0f;
+	const float dt = 1.0f / 60.0f;
 
-		if (m_timer >= 0.5f)
+	m_phaseTimer += dt;
+
+	switch (m_phase)
+	{
+	case Phase::ScoreCount:
+	{
+		float t = std::clamp(m_phaseTimer / kCountTime, 0.0f, 1.0f);
+
+		// EaseOut: 最初は速く、最後にゆっくり止まる
+		const float ease = 1.0f - std::pow(1.0f - t, 3.0f);
+
+		m_displayScore = static_cast<int>(m_finalScore * ease);
+
+		if (t >= 1.0f)
 		{
-			m_timer = 0.0f;
-			m_displayRankCount++;
+			m_displayScore = m_finalScore;
+			ChangePhase(Phase::RankWait);
+		}
+
+		break;
+	}
+
+	case Phase::RankWait:
+
+		if (m_phaseTimer >= kRankWaitTime)
+		{
+			ChangePhase(Phase::RankReveal);
 
 			if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Count.wav"))
 			{
@@ -116,69 +153,25 @@ void ResultUI::Update()
 			}
 		}
 
-		for (int i = 0; i < m_displayRankCount && i < 4; ++i)
+		break;
+
+	case Phase::RankReveal:
+
+		if (m_phaseTimer >= kRankRevealTime)
 		{
-			m_rowAnimTime[i] += 1.0f / 60.0f;
+			ChangePhase(Phase::Done);
+			StartCelebration();
 		}
 
+		break;
+
+	case Phase::Done:
+		break;
+	}
+
+	if (m_phase != Phase::Done)
+	{
 		return;
-	}
-
-	for (int i = 0; i < static_cast<int>(m_ranking.size()) && i < 4; ++i)
-	{
-		m_rowAnimTime[i] += 1.0f / 60.0f;
-	}
-
-	if (!m_confettiStarted)
-	{
-		m_confettiWaitTimer += 1.0f / 60.0f;
-
-		if (m_confettiWaitTimer >= 0.7f)
-		{
-			m_confettiStarted = true;
-		}
-	}
-
-	// 全ての結果が表示された瞬間に一度だけ紙吹雪とBGMを再生
-	if (!m_confettiStarted)
-	{
-		m_confettiWaitTimer += 1.0f / 60.0f;
-
-		// 1位のスライド(0.4秒)＋余韻(0.3秒)
-		if (m_confettiWaitTimer >= 0.7f)
-		{
-			m_confettiStarted = true;
-
-			if (!m_ranking.empty() && m_ranking[0])
-			{
-				bool isPlayerFirst = std::dynamic_pointer_cast<Player>(m_ranking[0]) != nullptr;
-
-				if (isPlayerFirst)
-				{
-					// 1位（プレイヤー勝利）用のBGM ＆ 紙吹雪
-					m_resultBgm = KdAudioManager::Instance().Play("Asset/Sound/BGM/WinBGM.wav", true);
-
-					if (auto confetti = m_wpConfetti.lock())
-					{
-						confetti->Start();
-					}
-
-					if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/PartyPopper.wav"))
-					{
-						se->SetVolume(0.2f);
-					}
-				}
-				else
-				{
-					m_resultBgm = KdAudioManager::Instance().Play("Asset/Sound/BGM/ResultBGM.wav", true);
-				}
-
-				if (m_resultBgm)
-				{
-					m_resultBgm->SetVolume(0.3f);
-				}
-			}
-		}
 	}
 
 	m_animTime += 0.05f;
@@ -205,23 +198,22 @@ void ResultUI::Update()
 		m_titleButtonPos.y - m_titleButtonSize.y * 0.5f;
 
 	m_isTitleButtonHover =
-		static_cast<float>(mouse.x) >= left &&
-		static_cast<float>(mouse.x) <= right &&
-		static_cast<float>(mouse.y) <= top &&
-		static_cast<float>(mouse.y) >= bottom;
+		m_mousePosX >= left &&
+		m_mousePosX <= right &&
+		m_mousePosY <= top &&
+		m_mousePosY >= bottom;
 
 	// クリック
 	if (m_isTitleButtonHover &&
 		(GetAsyncKeyState(VK_LBUTTON) & 0x8000))
 	{
-		m_fadeOut = true;	
-		
+		m_fadeOut = true;
+
 		if (auto confetti = m_wpConfetti.lock())
 		{
 			confetti->Stop();
 		}
 	}
-
 }
 
 void ResultUI::DrawSprite()
@@ -231,25 +223,21 @@ void ResultUI::DrawSprite()
 		return;
 	}
 
+	auto& sprite = KdShaderManager::Instance().m_spriteShader;
+
 	// =============================
 	// 背景
 	// =============================
 
 	Math::Color bgColor = { 0.0f, 0.0f, 0.0f, 0.8f };
 
-	KdShaderManager::Instance().m_spriteShader.DrawBox(
-		0,
-		0,
-		640,
-		360,
-		&bgColor
-	);
+	sprite.DrawBox(0, 0, 640, 360, &bgColor);
 
 	// =============================
 	// RESULT
 	// =============================
 
-	KdShaderManager::Instance().m_spriteShader.DrawFont(
+	sprite.DrawFont(
 		Math::Vector2{ 0, 260 },
 		&kWhiteColor,
 		Math::Vector2{ 0.5f, 0.5f },
@@ -259,160 +247,98 @@ void ResultUI::DrawSprite()
 	);
 
 	// =============================
-	// ランキング
+	// スコア
 	// =============================
 
-	for (int i = 0; i < m_displayRankCount; ++i)
+	sprite.DrawFont(
+		Math::Vector2{ 0, 150 },
+		&kWhiteColor,
+		Math::Vector2{ 0.5f, 0.5f },
+		0.0f,
+		FontID::Future48,
+		"SCORE"
+	);
+
+	const std::string scoreText = std::to_string(m_displayScore);
+
+	sprite.DrawFont(
+		Math::Vector2{ 0, 80 },
+		&kWhiteColor,
+		Math::Vector2{ 0.5f, 0.5f },
+		0.0f,
+		FontID::Future128,
+		scoreText.c_str()
+	);
+
+	// =============================
+	// ランク
+	// =============================
+
+	if (m_phase == Phase::RankReveal || m_phase == Phase::Done)
 	{
-		int rankingIndex =
-			static_cast<int>(m_ranking.size()) - 1 - i;
+		float t = 1.0f;
 
-		auto& chara = m_ranking[rankingIndex];
-
-		if (!chara)
+		if (m_phase == Phase::RankReveal)
 		{
-			continue;
+			t = std::clamp(m_phaseTimer / kRankRevealTime, 0.0f, 1.0f);
 		}
 
-		// 順位
-		std::string rankText;
+		// EaseOut: 上から落ちて、フェードインする
+		const float ease = 1.0f - std::pow(1.0f - t, 3.0f);
 
-		switch (rankingIndex)
-		{
-		case 0:
-			rankText = "1st";
-			break;
+		Math::Color rankColor = RankColor(m_rank);
+		rankColor.w *= ease;
 
-		case 1:
-			rankText = "2nd";
-			break;
+		const float rankY = -80.0f + (1.0f - ease) * 60.0f;
 
-		case 2:
-			rankText = "3rd";
-			break;
-
-		default:
-			rankText = std::to_string(rankingIndex + 1) + "th";
-			break;
-		}
-
-		// 名前
-		std::string nameText = chara->GetDisplayNameOrName();
-
-		// 名前の色（Player と NPC で変える）
-		const bool isPlayer =
-			std::dynamic_pointer_cast<Player>(chara) != nullptr;
-
-		const Math::Color nameColor = isPlayer
-			? Math::Color{ 0.4f, 0.9f, 1.0f, 1.0f }   // Player：水色
-		: kWhiteColor;                            // NPC：白
-
-		// 順位の色（順位ごとに変える）
-		Math::Color rankColor = kWhiteColor;
-
-		switch (rankingIndex)
-		{
-		case 0: rankColor = { 1.0f, 0.84f, 0.0f, 1.0f };  break;  // 1位：金
-		case 1: rankColor = { 0.78f, 0.78f, 0.82f, 1.0f }; break;  // 2位：銀
-		case 2: rankColor = { 0.85f, 0.55f, 0.25f, 1.0f }; break;  // 3位：銅
-		default: break;                                            // 4位：白
-		}
-
-		// スコア
-		std::string scoreText =
-			std::to_string(chara->GetScore()) + " pt";
-
-		const float RankingBottomY = -160.0f;
-		const float RankingHeight = 100.0f;
-
-		const float y =
-			RankingBottomY +
-			(static_cast<int>(m_ranking.size()) - 1 - rankingIndex)
-			* RankingHeight;
-
-		const float kSlideDuration = 0.4f;    // スライドにかかる秒数
-		const float kSlideDistance = 700.0f;  // 画面外からの距離
-
-		float t = m_rowAnimTime[i] / kSlideDuration;
-		t = std::clamp(t, 0.0f, 1.0f);
-
-		// EaseOutCubic：最初は速く、最後にゆっくり止まる
-		const float ease = 1.0f - powf(1.0f - t, 3.0f);
-
-		const float offsetX = -kSlideDistance * (1.0f - ease);
-
-		// フェードイン（スライドと同時に濃くなる）
-		const float alpha = ease;
-
-		// ---- 行背景 ----
-		Math::Color rowColor = isPlayer
-			? Math::Color{ 0.4f, 0.9f, 1.0f, 0.25f }   // Player：水色の半透明
-		: Math::Color{ 1.0f, 1.0f, 1.0f, 0.08f };  // NPC：うっすら白
-
-		// 色にアルファを反映（元の色は変えず、コピーして使う）
-		Math::Color rowDrawColor = rowColor;   rowDrawColor.w *= alpha;
-		Math::Color rankDrawColor = rankColor;  rankDrawColor.w *= alpha;
-		Math::Color nameDrawColor = nameColor;  nameDrawColor.w *= alpha;
-
-		// ---- 行背景 ----
-		KdShaderManager::Instance().m_spriteShader.DrawBox(
-			static_cast<int>(0 + offsetX),
-			static_cast<int>(y),
-			400,
-			40,
-			&rowDrawColor,
-			true
-		);
-
-		// ---- 順位 ----
-		KdShaderManager::Instance().m_spriteShader.DrawFont(
-			Math::Vector2{ -360 + offsetX, y },
-			&rankDrawColor,
-			Math::Vector2{ 0.0f, 0.5f },
-			0.0f,
-			FontID::Future64,
-			rankText.c_str()
-		);
-
-		// ---- 名前 ----
-		KdShaderManager::Instance().m_spriteShader.DrawFont(
-			Math::Vector2{ -180 + offsetX, y },
-			&nameDrawColor,
-			Math::Vector2{ 0.0f, 0.5f },
+		sprite.DrawFont(
+			Math::Vector2{ 0, 0 },
+			&kWhiteColor,
+			Math::Vector2{ 0.5f, 0.5f },
 			0.0f,
 			FontID::Future48,
-			nameText.c_str()
+			"RANK"
 		);
 
-		// ---- スコア ----
-		KdShaderManager::Instance().m_spriteShader.DrawFont(
-			Math::Vector2{ 360 + offsetX, y },
-			&nameDrawColor,
-			Math::Vector2{ 1.0f, 0.5f },
+		sprite.DrawFont(
+			Math::Vector2{ 0, rankY },
+			&rankColor,
+			Math::Vector2{ 0.5f, 0.5f },
 			0.0f,
-			FontID::Future48,
-			scoreText.c_str()
+			FontID::Future128,
+			ScoreManager::RankToString(m_rank)
 		);
+
+		if (m_phase == Phase::Done)
+		{
+			sprite.DrawFont(
+				Math::Vector2{ 0, -170 },
+				&rankColor,
+				Math::Vector2{ 0.5f, 0.5f },
+				0.0f,
+				FontID::Future32,
+				RankMessage(m_rank)
+			);
+		}
 	}
 
 	// =============================
 	// Titleに戻るボタン
 	// =============================
 
-	if (m_displayRankCount >= static_cast<int>(m_ranking.size()))
+	if (m_phase == Phase::Done)
 	{
 		Math::Color buttonColor = kWhiteColor;
 
 		if (m_isTitleButtonHover)
 		{
-			buttonColor =
-				Math::Color{ 1.0f, 0.8f, 0.2f, 1.0f };
+			buttonColor = Math::Color{ 1.0f, 0.8f, 0.2f, 1.0f };
 		}
 
 		Math::Vector2 buttonDrawPos = m_titleButtonPos;
 		buttonDrawPos.y += m_animOffsetY;
 
-		KdShaderManager::Instance().m_spriteShader.DrawFont(
+		sprite.DrawFont(
 			buttonDrawPos,
 			&buttonColor,
 			Math::Vector2{ 0.5f, 0.5f },
@@ -426,10 +352,9 @@ void ResultUI::DrawSprite()
 	// Pointer
 	// =============================
 
-	if (!m_fadeOut &&
-		m_displayRankCount >= static_cast<int>(m_ranking.size()))
+	if (!m_fadeOut && m_phase == Phase::Done)
 	{
-		KdShaderManager::Instance().m_spriteShader.DrawTex(
+		sprite.DrawTex(
 			m_pointerTex,
 			m_mousePosX,
 			m_mousePosY,
@@ -442,19 +367,54 @@ void ResultUI::DrawSprite()
 
 void ResultUI::ShowResult()
 {
-	m_ranking = ScoreManager::Instance().GetRanking();
+	auto player = SceneManager::Instance().FindObject<Player>();
+
+	m_finalScore = player ? player->GetScore() : 0;
+	m_displayScore = 0;
+
+	m_rank = ScoreManager::Instance().CalcRank(m_finalScore);
 
 	m_visible = true;
 	m_resultInitialized = true;
 
-	m_timer = 0.0f;
-	m_displayRankCount = 0;
+	ChangePhase(Phase::ScoreCount);
+}
 
-	for (auto& t : m_rowAnimTime) t = 0.0f;
-	m_prevDisplayRankCount = 0;
+void ResultUI::StartCelebration()
+{
+	const bool celebrate =
+		m_rank == ScoreManager::Rank::S ||
+		m_rank == ScoreManager::Rank::A;
 
-	m_confettiWaitTimer = 0.0f;
-	m_confettiStarted = false;
+	if (celebrate)
+	{
+		m_resultBgm = KdAudioManager::Instance().Play("Asset/Sound/BGM/WinBGM.wav", true);
+
+		if (auto confetti = m_wpConfetti.lock())
+		{
+			confetti->Start();
+		}
+
+		if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/PartyPopper.wav"))
+		{
+			se->SetVolume(0.2f);
+		}
+	}
+	else
+	{
+		m_resultBgm = KdAudioManager::Instance().Play("Asset/Sound/BGM/ResultBGM.wav", true);
+	}
+
+	if (m_resultBgm)
+	{
+		m_resultBgm->SetVolume(0.3f);
+	}
+}
+
+void ResultUI::ChangePhase(Phase phase)
+{
+	m_phase = phase;
+	m_phaseTimer = 0.0f;
 }
 
 void ResultUI::GetMousePos(POINT* mousePos)

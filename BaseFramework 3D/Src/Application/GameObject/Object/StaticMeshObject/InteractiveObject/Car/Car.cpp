@@ -16,8 +16,8 @@ void Car::Init()
 		"Car",
 		1.5f,
 		200,
-		"Car Panctured!",
-		"Your Car was Panctured!",
+		"Car Punctured!",
+		"Car was Punctured!",
 		"Asset/Models/Props/Car/CarPanctured.gltf"
 		});
 
@@ -30,9 +30,7 @@ void Car::Init()
 		80,
 		"Tire Inflated!",
 		"",
-		"Asset/Models/Props/Car/Car.gltf",
-		false,
-		"Inflate"
+		"Asset/Models/Props/Car/Car.gltf"
 		});
 
 	StaticMeshObject::Init();

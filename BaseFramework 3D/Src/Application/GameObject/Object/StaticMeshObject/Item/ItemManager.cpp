@@ -1,7 +1,7 @@
 ﻿#include "ItemManager.h"
 
 #include "../../../../Scene/SceneManager.h"
-#include "../../../Character/CharacterBase.h"   // ※パスは環境に合わせて調整
+#include "../../../Character/CharacterBase.h"
 #include "Item.h"
 #include "ItemSpawner.h"
 

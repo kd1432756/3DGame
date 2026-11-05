@@ -151,10 +151,12 @@ private:
 
 	bool IsWanted(const std::shared_ptr<CharacterBase>& c) const
 	{
-		// 妨害中は追跡対象にしない（アイテム所持・いたずら条件より優先）
+		// 妨害中は追跡対象にしない
 		if (c->IsHindering()) return false;
 
-		return c->HasDangerousItem() || c->IsPranking();
+		return c->HasDangerousItem() ||
+			c->IsDamaging() ||
+			c->IsSuspicious();
 	}
 
 	//============================================================
@@ -177,7 +179,7 @@ private:
 	// Investigate
 	//============================================================
 
-	bool DetectPrankSound();
+	bool DetectDamageSound();
 
 	//============================================================
 	// State
@@ -244,7 +246,7 @@ private:
 	Math::Vector3 m_lastTargetPos =
 		Math::Vector3::Zero;
 
-	bool m_chasingForPrank = false;
+	bool m_chasingForCrime = false;
 
 	//============================================================
 	// Investigate

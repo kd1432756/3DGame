@@ -72,26 +72,7 @@ public:
 		return m_isUsing;
 	}
 
-	bool IsPranking() const
-	{
-		if (!m_isUsing)
-		{
-			return false;
-		}
-
-		auto usable = m_useObject.lock();
-		if (!usable)
-		{
-			return false;
-		}
-
-		return !m_isRepairUse;
-	}
-
-	Math::Vector3 GetPrankPos() const
-	{
-		return m_prankPos;
-	}
+	bool IsSuspicious() const override;
 
 	bool IsCounting() const { return m_usePhase == UsePhase::Counting; }
 
@@ -189,10 +170,15 @@ private:
 
 	void UpdateReport();
 	bool TryReport();
+	bool FindReportPos(Math::Vector3& outPos) const;
+	void ShowReportText(const std::string& text, const Math::Color& color);
+	bool IsVisibleFromCamera(
+		const Math::Vector3& targetPos,
+		const KdGameObject* ignore) const;
 
 	void UpdateHinder();
 	bool TryBeginHinder();
-	void EndHinder(bool restoreCamera, bool applyCooldown);   // 既存の宣言を差し替え
+	void EndHinder(bool restoreCamera, bool applyCooldown);
 	void BeginHinderCamera();
 	void UpdateHinderCamera();
 
@@ -217,7 +203,7 @@ private:
 	bool m_isUsing = false;
 	bool m_isRepairUse = false;
 
-	Math::Vector3 m_prankPos = Math::Vector3::Zero;
+	float m_suspicionSeconds = 30.0f;	// 壊れてからこの秒数以内の物を直すと疑われる
 
 	float m_useTimer = 0.0f;
 	float m_useTime = 0.0f;
@@ -253,6 +239,7 @@ private:
 	// 通報
 	float m_reportCooldown = 30.0f;   // 初期値30秒
 	float m_reportTimer = 0.0f;    // 残りクールダウン
+	float m_reportWindowSeconds = 60.0f;	// 通報の対象にする「最近壊された」の範囲(秒)
 
 	// 妨害
 	std::weak_ptr<CharacterBase> m_wpHinderTarget;
