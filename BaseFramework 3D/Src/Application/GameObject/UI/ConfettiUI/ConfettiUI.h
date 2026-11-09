@@ -1,9 +1,12 @@
 ﻿#pragma once
 
-class ConfettiUI : public KdGameObject
+#include "../UIBase/UIBase.h"
+
+class ConfettiUI : public UIBase
 {
 public:
-	ConfettiUI() {}
+	// ポーズ中も動くので常時更新
+	ConfettiUI() : UIBase(true) {}
 	~ConfettiUI() override {}
 
 	void Init() override;

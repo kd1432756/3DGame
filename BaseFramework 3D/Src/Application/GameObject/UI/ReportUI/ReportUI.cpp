@@ -10,7 +10,7 @@ void ReportUI::Init()
 
 void ReportUI::Update()
 {
-	auto player = m_wpPlayer.lock();
+	auto player = LockPlayer();
 	if (!player) return;
 
 	m_remaining = player->GetReportRemaining();
@@ -27,7 +27,7 @@ void ReportUI::Update()
 
 	if (m_flashTimer > 0.0f)
 	{
-		m_flashTimer = std::max(0.0f, m_flashTimer - 1 / 60.0f);
+		m_flashTimer = (std::max)(0.0f, m_flashTimer - DeltaTime());
 	}
 }
 
@@ -53,7 +53,7 @@ void ReportUI::DrawSprite()
 	}
 
 	sprite.DrawTex(&m_texKeyR, kPosX, keyPosY, kKeySize, kKeySize,
-		nullptr, &keyColor, Math::Vector2{ 0.5f, 0.5f });
+		nullptr, &keyColor, centerPivot);
 
 	//============================================================
 	// アイコン（画像そのものが円）
@@ -95,9 +95,9 @@ void ReportUI::DrawSprite()
 	//============================================================
 	// 外枠（半径をずらして重ね描きして太くする）
 	//============================================================
-	Math::Color ring = cooling
+	const Math::Color ring = cooling
 		? Math::Color{ 0.6f, 0.6f, 0.6f, 1.0f }
-	: Math::Color{ 0.8f, 0.2f, 0.0f, 1.0f };;
+	: Math::Color{ 0.8f, 0.2f, 0.0f, 1.0f };
 
 	for (int i = 0; i < kRingWidth; ++i)
 	{

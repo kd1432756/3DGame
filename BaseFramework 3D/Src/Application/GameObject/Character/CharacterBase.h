@@ -2,11 +2,13 @@
 
 class Police;
 
-#include "../Object/StaticMeshObject/InteractiveObject/InteractiveObject.h"
-#include "../../System/Inventory/Inventory.h"
-#include "../Object/StaticMeshObject/Item/ItemData.h"
+class InteractiveObject;
+class InteractiveAction;
 
 #include "../Object/StaticMeshObject/Ground/Ground.h"
+
+#include "../../System/Inventory/Inventory.h"
+#include "../Object/StaticMeshObject/Item/ItemData.h"
 
 #include "../../System/FootStep/FootStepPhaseTable.h"
 
@@ -26,6 +28,12 @@ public:
 	virtual void DrawLit() override;
 	virtual void GenerateDepthMapFromLight() override;
 
+	void Destroy() override
+	{
+		m_isExpired = true;
+		m_spEmoteIcon->Destroy();
+	}
+
 	// 表示用の名前（リザルト・通知UIなど）
 	const std::string& GetDisplayName() const { return m_displayName; }
 	void SetDisplayName(const std::string& name) { m_displayName = name; }
@@ -36,25 +44,8 @@ public:
 		return m_displayName.empty() ? GetName() : m_displayName;
 	}
 
-	virtual void OnPrankSuccess(
-		int score,
-		const std::string& message)
-	{
-		AddScore(score);
-	}
-
-	void AddScore(int score)
-	{
-		m_score += score;
-	}
-
-	int GetScore() const
-	{
-		return m_score;
-	}
-
 	// いたずらされた
-	virtual void OnPranked(
+	virtual void OnObjectDamaged(
 		const std::shared_ptr<InteractiveObject>& object, 
 		const InteractiveAction& action)
 	{}
@@ -73,8 +64,6 @@ public:
 
 	bool AddInventoryItem(const std::string& itemPath);
 	bool HasInventoryItem(const std::string& itemPath) const;
-	bool HasRepairItem() const;
-	bool HasPrankItem() const;
 	bool HasDangerousItem() const;
 	void ConfiscateDangerousItems();
 
@@ -123,10 +112,9 @@ protected:
 			Math::Matrix::CreateTranslation(m_pos);
 	}
 
-	void CheckStep(
-		const Math::Vector3& moveDir);
-
 	void CheckGround();
+
+	void SlideAlongWalls(Math::Vector3& move, float radius);
 
 	void CollectWallHits(float radius, std::vector<WallHit>& out);
 	void ResolveCollision();
@@ -134,6 +122,16 @@ protected:
 	void ApplyGravity();
 
 	void RotateToMoveDirection(const Math::Vector3& dir);
+
+	Math::Vector3 GetFacingDir() const
+	{
+		const Math::Matrix rot = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_rot.y));
+
+		Math::Vector3 dir = Math::Vector3::TransformNormal(Math::Vector3(0, 0, -1), rot);
+		dir.y = 0.0f;
+		dir.Normalize();
+		return dir;
+	}
 
 	virtual void UpdateAnimation();
 
@@ -148,11 +146,9 @@ protected:
 
 	bool m_isGround = false;
 
-	float m_jumpPower = 0.30f;
-
-	float m_angle = 0.0f;
-
-	int m_score = 0;
+	Math::Vector3 m_lastGroundPos = Math::Vector3::Zero;
+	bool m_hasLastGround = false;
+	static constexpr float m_fallLimit = 20.0f;
 
 	std::string m_displayName;
 
@@ -190,16 +186,10 @@ protected:
 	// m_posから足元までの距離
 	float m_footOffset = 0.8f;
 
-	// 足元からRayを少し上に出す
-	float m_rayStart = 0.05f;
-
-	// 足元から下方向に探す距離
-	float m_rayRange = 1.0f;
-
 	// ===== sphere =====
 
 	// 壁判定Sphereの半径
 	float m_collisionRadius = 0.5f;
 
-	Math::Vector3 m_wallNormal = Math::Vector3::Zero;
+	float WallRadius() const { return m_collisionRadius * m_sceneScale; }
 };

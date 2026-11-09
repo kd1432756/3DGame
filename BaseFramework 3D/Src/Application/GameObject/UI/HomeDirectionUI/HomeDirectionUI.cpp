@@ -7,18 +7,17 @@
 
 void HomeDirectionUI::Init()
 {
-	m_texHouse = std::make_shared<KdTexture>();
-	m_texHouse->Load("Asset/Textures/UI/House.png");
+	m_texHouse = LoadTexture("Asset/Textures/UI/House.png");
 
 	m_sceneScale = SceneManager::Instance().GetSceneScale();
 }
 
 void HomeDirectionUI::Update()
 {
-	auto owner = m_owner.lock();
+	auto owner = LockPlayer();
 	if (!owner) return;
 
-	const float dt = 1 / 60.0f;
+	const float dt = DeltaTime();
 
 	// --- 自宅位置の取得（未取得の間だけ試みる） ---
 	if (!m_hasHomePos)
@@ -53,12 +52,7 @@ void HomeDirectionUI::Update()
 
 	// --- 被害表示 ---
 	m_count = owner->GetDamagedCount();
-
-	bool damaged = false;
-	if (m_count > 0)
-	{
-		damaged = true;
-	}
+	const bool damaged = (m_count > 0);
 
 	// --- フェード（強調中は距離に関係なく表示） ---
 	const bool show = m_isVisible || alert;
@@ -157,16 +151,6 @@ void HomeDirectionUI::DrawSprite()
 			(int)kHouseSize, (int)kHouseSize,
 			nullptr, &m_color);
 	}
-
-	// 距離表示
-/*	const std::string text = std::to_string((int)m_distance) + "m";
-	sprite.DrawFont(
-		Math::Vector2{ m_uiPos.x, m_uiPos.y - kArrowSize * 0.9f },
-		&kWhiteColor,
-		Math::Vector2{ 0.5f, 0.5f },
-		0.0f,
-		FontID::Future16,
-		text.c_str());*/
 }
 
 bool HomeDirectionUI::WorldToScreen(const Math::Vector3& worldPos, Math::Vector2& outScreen) const

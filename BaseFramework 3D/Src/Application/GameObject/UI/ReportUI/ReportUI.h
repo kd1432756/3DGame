@@ -1,19 +1,15 @@
 ﻿#pragma once
 
-class Player;
+#include "../PlayerUIBase/PlayerUIBase.h"
 
-class ReportUI : public KdGameObject
+class ReportUI : public PlayerUIBase
 {
 public:
 	void Init() override;
 	void Update() override;
 	void DrawSprite() override;
 
-	void SetPlayer(const std::shared_ptr<Player>& p) { m_wpPlayer = p; }
-
 private:
-	std::weak_ptr<Player> m_wpPlayer;
-
 	KdTexture m_tex;
 	KdTexture m_texKeyR;
 

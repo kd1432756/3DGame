@@ -16,17 +16,6 @@ class Item;
 class InteractiveObject;
 
 //============================================================
-// Move Result
-//============================================================
-
-enum class MoveResult
-{
-	Moving,
-	Arrived,
-	Failed
-};
-
-//============================================================
 // Neighbor
 //============================================================
 
@@ -147,8 +136,6 @@ public:
 		return m_currentItemData;
 	}
 
-	bool HasInventoryItem(const std::string& itemPath) const;
-
 	//============================================================
 	// Damage
 	//============================================================
@@ -158,11 +145,7 @@ public:
 		return m_state == State::Prank && m_isInteracting;
 	}
 
-	Math::Vector3 GetDamagePos() const override
-	{
-		auto t = m_wpPrankTarget.lock();
-		return t ? t->GetPos() : m_pos;
-	}
+	Math::Vector3 GetDamagePos() const override;
 
 	//============================================================
 	// Arrested
@@ -309,7 +292,7 @@ private:
 
 	float m_utilityUpdateTimer = 0.0f;
 
-	float m_utilityUpdateInterval = 1.0f;
+	static constexpr float m_utilityUpdateInterval = 1.0f;
 
 	//============================================================
 	// Utility Debug
@@ -339,13 +322,13 @@ private:
 	// State Settings
 	//============================================================
 
-	float m_taskSpeed = 0.016f;
+	static constexpr float m_taskSpeed = 0.016f;
 
-	float m_searchItemSpeed = 0.02f;
+	static constexpr float m_searchItemSpeed = 0.02f;
 
-	float m_prankSpeed = 0.02f;
+	static constexpr float m_prankSpeed = 0.02f;
 
-	float m_repairSpeed = 0.02f;
+	static constexpr float m_repairSpeed = 0.02f;
 
 	//============================================================
 	// Animation
@@ -375,11 +358,11 @@ private:
 
 	std::weak_ptr<Item> m_wpSearchItem;
 
-	float m_searchItemRadius = 15.0f;
+	static constexpr float m_searchItemRadius = 15.0f;
 
-	float m_searchItemInteractDistance = 1.2f;
+	static constexpr float m_searchItemInteractDistance = 1.2f;
 
-	float m_searchCommitBonus = 15.0f;
+	static constexpr float m_searchCommitBonus = 15.0f;
 
 	//============================================================
 	// Task
@@ -387,17 +370,17 @@ private:
 
 	std::weak_ptr<LocationPoint> m_wpTaskDestination;
 
-	float m_taskArriveDistance = 2.0f;
+	static constexpr float m_taskArriveDistance = 2.0f;
 
-	float m_taskBaseUtility = 10.0f;
+	static constexpr float m_taskBaseUtility = 10.0f;
 
 	float m_taskIdleTimer = 0.0f;      // 残り待機時間
 
 	bool  m_isTaskIdling = false;     // 待機中か
 
-	float m_taskIdleMin = 0.2f;      // 最小待機秒
+	static constexpr float m_taskIdleMin = 0.2f;      // 最小待機秒
 
-	float m_taskIdleMax = 1.0f;      // 最大待機秒
+	static constexpr float m_taskIdleMax = 1.0f;      // 最大待機秒
 
 	//============================================================
 	// Prank
@@ -411,17 +394,17 @@ private:
 	// 実際にPrankで使用するInventoryスロット
 	int m_prankInventoryIndex = -1;
 
-	float m_prankDesire = 0.3f;
+	static constexpr float m_prankDesire = 0.3f;
 
-	float m_prankSearchRadius = 25.0f;
+	static constexpr float m_prankSearchRadius = 25.0f;
 
-	float m_prankInteractDistance = 3.0f;
+	static constexpr float m_prankInteractDistance = 3.0f;
 
-	float m_prankCommitBonus = 15.0f;
+	static constexpr float m_prankCommitBonus = 15.0f;
 
 	float m_prankCooldownTimer = 0.0f;
-	float m_prankCooldownMax = 25.0f;	// 朝のクールダウン(秒)
-	float m_prankCooldownMin = 8.0f;	// 夜のクールダウン(秒)
+	static constexpr float m_prankCooldownMax = 25.0f;	// 朝のクールダウン(秒)
+	static constexpr float m_prankCooldownMin = 8.0f;	// 夜のクールダウン(秒)
 
 private:
 

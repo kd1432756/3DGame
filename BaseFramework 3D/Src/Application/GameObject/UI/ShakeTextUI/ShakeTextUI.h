@@ -1,31 +1,13 @@
 ﻿#pragma once
 
-class ShakeTextUI : public KdGameObject
+#include "../TextPopupUI/TextPopupUI.h"
+
+// 回転しながら揺れて消える文字(揺れは徐々に弱くなる)
+class ShakeTextUI : public TextPopupUI
 {
 public:
-	void Init() override;
-	void Update() override;
-	void DrawSprite() override;
+	ShakeTextUI();
 
-	void SetText(const std::string& text)
-	{
-		m_text = text;
-	}
-
-	void SetPosition(const Math::Vector2& pos)
-	{
-		m_pos = pos;
-	}
-
-private:
-	std::string m_text;
-
-	Math::Vector2 m_pos = {};
-
-	float m_angle = 0.0f;
-
-	float m_alpha = 1.0f;
-
-	float m_lifeTime = 1.5f;
-	float m_elapsedTime = 0.0f;
+protected:
+	void OnUpdate(float dt, float t) override;
 };

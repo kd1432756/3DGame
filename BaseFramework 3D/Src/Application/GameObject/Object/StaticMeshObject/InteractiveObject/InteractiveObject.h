@@ -87,9 +87,6 @@ public:
 	float GetNPCUseTimeBare(const std::string& npcName) const;
 	void  NPCUseBare(const std::shared_ptr<Neighbor>& npc);
 
-	bool IsRepairAction(
-		const std::shared_ptr<Player>& player) const override;
-
 	bool IsDamaged() const { return m_state == InteractiveState::Damaged; }
 
 	bool SetInitialDamaged();

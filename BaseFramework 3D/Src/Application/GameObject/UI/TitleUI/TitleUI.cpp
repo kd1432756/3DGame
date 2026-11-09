@@ -5,11 +5,10 @@
 
 void TitleUI::Init()
 {
-	m_pointerTex = std::make_shared<KdTexture>();
-	m_pointerTex->Load("Asset/Textures/Cursor/Pointer.png");
+	// ポインタ画像の読み込みなど(基底クラス)
+	MenuUI::Init();
 
-	m_titleLogoTex = std::make_shared<KdTexture>();
-	m_titleLogoTex->Load("Asset/Textures/Title_Logo.png");
+	m_titleLogoTex = LoadTexture("Asset/Textures/Title_Logo.png");
 
 	m_buttons[BtnStart] = { Math::Vector2{ 0.0f,  -80.0f }, Math::Vector2{ 420.0f, 80.0f }, "Play Game",  FontID::FutureNormal64 };
 	m_buttons[BtnHowTo] = { Math::Vector2{ 0.0f, -180.0f }, Math::Vector2{ 480.0f, 60.0f }, "How To Play", FontID::FutureNormal64 };
@@ -17,9 +16,7 @@ void TitleUI::Init()
 
 	auto load = [](const char* name)
 		{
-			auto tex = std::make_shared<KdTexture>();
-			tex->Load(std::string("Asset/Textures/UI/Key/") + name);
-			return tex;
+			return LoadTexture(std::string("Asset/Textures/UI/Key/") + name);
 		};
 
 	m_controls =
@@ -36,53 +33,40 @@ void TitleUI::Init()
 		{ { load("keyboard_w.png"), load("keyboard_a.png"), load("keyboard_s.png"), load("keyboard_d.png") },	"スキルチェック（方向入力）" },
 	};
 
-	if (m_bgm = KdAudioManager::Instance().Play("Asset/Sound/BGM/TitleBGM.wav", true))
+	m_bgm = KdAudioManager::Instance().Play("Asset/Sound/BGM/TitleBGM.wav", true);
+	if (m_bgm)
 	{
 		m_bgm->SetVolume(0.3f);
+
+		// フェードアウト時はこのBGMを小さくしていく
+		SetFadeBgm(m_bgm, 0.3f);
 	}
+}
+
+void TitleUI::OnFadeOutFinished()
+{
+	SceneManager::Instance().SetNextScene(SceneManager::SceneType::Loading);
 }
 
 void TitleUI::Update()
 {
-	if (m_start)
+	// フェード中は入力を受け付けない
+	if (IsFadingOut())
 	{
-		m_alpha += 0.02f;
-
-		// フェードに合わせたBGMの音量調整
-		if (m_bgm)
-		{
-			// m_alphaが1.0に向かうにつれて音量を0に近づける（初期音量が0.2fの場合）
-			float volume = 0.2f * (1.0f - m_alpha);
-			if (volume < 0.0f) volume = 0.0f;
-			m_bgm->SetVolume(volume);
-		}
-
-		if (m_alpha > 1.0f)
-		{
-			SceneManager::Instance().SetNextScene(SceneManager::SceneType::Loading);
-		}
-
+		UpdateFade();
 		return;
 	}
 
 	m_animTime += 0.05f;
 	m_scaleOffset = sinf(m_animTime * 0.5f) * 5.0f;
 
-	POINT mouse;
-	GetMousePos(&mouse);
-
-	m_mousePosX = static_cast<float>(mouse.x);
-	m_mousePosY = static_cast<float>(mouse.y);
-
-	// クリックした瞬間だけtrueにする
-	bool click = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
-	bool trigger = click && !m_prevClick;
-	m_prevClick = click;
+	// マウス座標とクリック（押した瞬間）を更新
+	UpdateMouse();
 
 	// 遊び方パネル表示中：クリックかESCで閉じる
 	if (m_showHowTo)
 	{
-		if (trigger)
+		if (IsClickTriggered())
 		{
 			m_howToPage++;
 			if (m_howToPage >= 2)   // 2ページ目の次で閉じる
@@ -99,26 +83,16 @@ void TitleUI::Update()
 		return;
 	}
 
-	// 矩形ヒット判定
-	auto hitTest = [&](const Math::Vector2& pos, const Math::Vector2& size)
-		{
-			return  m_mousePosX >= pos.x - size.x * 0.5f &&
-				m_mousePosX <= pos.x + size.x * 0.5f &&
-				m_mousePosY >= pos.y - size.y * 0.5f &&
-				m_mousePosY <= pos.y + size.y * 0.5f;
-		};
+	UpdateHover(m_buttons);
 
-	for (auto& btn : m_buttons)
-	{
-		btn.hover = hitTest(btn.pos, btn.size);
-	}
+	const bool trigger = IsClickTriggered();
 
 	if (trigger && m_buttons[BtnStart].hover)
 	{
-		m_start = true;
 		SceneManager::Instance().SetStage(SceneManager::StageType::Stage1);
+		StartFadeOut();
 		return;
-	}	
+	}
 
 	if (trigger && m_buttons[BtnHowTo].hover)
 	{
@@ -135,103 +109,36 @@ void TitleUI::Update()
 
 void TitleUI::DrawSprite()
 {
-	/*{
-		Math::Vector2 titlePos = { -150, 200 };
-		Math::Vector2 pivot = { 0.5f, 0.5f };
+	auto& sprite = KdShaderManager::Instance().m_spriteShader;
 
-		const float outlineSize = 3.0f;
+	// ロゴ（ゆっくり拡大縮小）
+	const Math::Vector2 titlePos = { 0, 160 };
+	const Math::Vector2 logoTexSize = { 1534, 1024 };
+	const float logoScale = 0.35f * (1 + m_scaleOffset * 0.005f);
+	const Math::Vector2 logoSize = logoTexSize * logoScale;
 
-		Math::Color titleColor = { 1.0f, 0.8f, 0.2f, 1.0f };
-
-		const Math::Vector2 offsets[] =
-		{
-			{-outlineSize, -outlineSize},
-			{ 0.0f,       -outlineSize},
-			{ outlineSize, -outlineSize},
-
-			{-outlineSize,  0.0f},
-			{ outlineSize,  0.0f},
-
-			{-outlineSize,  outlineSize},
-			{ 0.0f,         outlineSize},
-			{ outlineSize,  outlineSize}
-		};
-
-		// 黒縁を描画
-		for (const auto& offset : offsets)
-		{
-			KdShaderManager::Instance().m_spriteShader.DrawFont(
-				titlePos + offset,
-				&kBlackColor,
-				pivot,
-				0.0f,
-				FontID::Gothic96,
-				"ご近所いたずら大戦"
-			);
-		}
-
-		KdShaderManager::Instance().m_spriteShader.DrawFont(
-			titlePos,
-			&titleColor,
-			pivot,
-			0.0f,
-			FontID::Gothic96,
-			"ご近所いたずら大戦"
-		);
-	}*/
-
-	Math::Vector2 titlePos = { 0, 160 };
-	Math::Vector2 LogoTexSize = { 1534, 1024 };
-	float LogoScale = 0.35f;
-	LogoScale *= 1 + m_scaleOffset * 0.005f;
-	Math::Vector2 LogoSize = LogoTexSize * LogoScale;
-
-
-	KdShaderManager::Instance().m_spriteShader.DrawTex(
+	sprite.DrawTex(
 		m_titleLogoTex,
 		titlePos.x, titlePos.y,
-		LogoSize.x, LogoSize.y,
+		logoSize.x, logoSize.y,
 		nullptr, &kWhiteColor, Math::Vector2{ 0.5f, 0.5f });
 
-	Math::Color color = kWhiteColor;
-
-	Math::Vector2 drawPos = m_startPos;
-	drawPos.y += m_scaleOffset;
-
 	// ボタン描画（ホバー時は黄色）
-	for (int i = 0; i < BtnMax; i++)
-	{
-		const Button& btn = m_buttons[i];
-
-		Math::Color color = btn.hover
-			? Math::Color{ 1.0f, 0.8f, 0.2f, 1.0f }
-		: kWhiteColor;
-
-		Math::Vector2 drawPos = btn.pos;
-
-		// 上下に揺らす
-		//drawPos.y += m_animOffsetY;		
-
-		KdShaderManager::Instance().m_spriteShader.DrawFont(
-			drawPos, &color, Math::Vector2{ 0.5f, 0.5f },
-			0.0f, btn.font, btn.text);
-	}
+	DrawButtons(m_buttons);
 
 	// 遊び方パネル
 	if (m_showHowTo)
 	{
 		// 背景を暗くする
-		Math::Color dimColor = { 0.0f, 0.0f, 0.0f, 0.75f };
-		KdShaderManager::Instance().m_spriteShader.DrawBox(0, 0, 640, 360, &dimColor);
+		DrawFullScreenBox(Math::Color{ 0.0f, 0.0f, 0.0f, 0.75f });
 
 		// パネル本体
 		Math::Color panelColor = { 0.15f, 0.15f, 0.2f, 0.95f };
-		KdShaderManager::Instance().m_spriteShader.DrawBox(0, 0, 520, 300, &panelColor);
+		sprite.DrawBox(0, 0, 520, 300, &panelColor);
 
-		Math::Color headColor = { 1.0f, 0.8f, 0.2f, 1.0f };
-		KdShaderManager::Instance().m_spriteShader.DrawFont(
-			Math::Vector2{ 0.0f, 250.0f }, &headColor,
-			Math::Vector2{ 0.5f, 0.5f }, 0.0f, FontID::Gothic64,
+		DrawLabel(Math::Vector2{ 0.0f, 250.0f },
+			Math::Color{ 1.0f, 0.8f, 0.2f, 1.0f },
+			FontID::Gothic64,
 			(m_howToPage == 0) ? "遊び方" : "操作方法");
 
 		if (m_howToPage == 0)
@@ -253,9 +160,8 @@ void TitleUI::DrawSprite()
 			float y = 160.0f;
 			for (const char* line : rules)
 			{
-				KdShaderManager::Instance().m_spriteShader.DrawFont(
-					Math::Vector2{ -480.0f, y }, &kWhiteColor,
-					Math::Vector2{ 0.0f, 0.5f }, 0.0f, FontID::Gothic32, line);
+				DrawLabel(Math::Vector2{ -480.0f, y }, kWhiteColor,
+					FontID::Gothic32, line, Math::Vector2{ 0.0f, 0.5f });
 				y -= 42.0f;
 			}
 		}
@@ -271,7 +177,7 @@ void TitleUI::DrawSprite()
 				float x = -440.0f;
 				for (const auto& icon : info.icons)
 				{
-					KdShaderManager::Instance().m_spriteShader.DrawTex(
+					sprite.DrawTex(
 						icon,
 						static_cast<int>(x), static_cast<int>(y),
 						static_cast<int>(iconSize), static_cast<int>(iconSize),
@@ -279,61 +185,20 @@ void TitleUI::DrawSprite()
 					x += iconStep;
 				}
 
-				KdShaderManager::Instance().m_spriteShader.DrawFont(
-					Math::Vector2{ -210.0f, y }, &kWhiteColor,
-					Math::Vector2{ 0.0f, 0.5f }, 0.0f, FontID::Gothic32,
-					info.text.c_str());
+				DrawLabel(Math::Vector2{ -210.0f, y }, kWhiteColor,
+					FontID::Gothic32, info.text.c_str(), Math::Vector2{ 0.0f, 0.5f });
 
 				y -= 42.0f;
 			}
 		}
 
-		KdShaderManager::Instance().m_spriteShader.DrawFont(
-			Math::Vector2{ 0.0f, -270.0f }, &kWhiteColor,
-			Math::Vector2{ 0.5f, 0.5f }, 0.0f, FontID::Gothic32,
+		DrawLabel(Math::Vector2{ 0.0f, -270.0f }, kWhiteColor,
+			FontID::Gothic32,
 			(m_howToPage == 0) ? "クリックで次へ" : "クリックで閉じる");
 	}
 
-	KdShaderManager::Instance().m_spriteShader.DrawTex(
-		m_pointerTex,
-		m_mousePosX,
-		m_mousePosY,
-		nullptr,
-		&kWhiteColor,
-		Math::Vector2{ 0.3f,0.8f }
-	);
+	DrawPointer();
 
-	if (!m_start)
-	{
-		return;
-	}
-
-	Math::Color fadeColor =
-	{ 0.0f, 0.0f, 0.0f, m_alpha };
-
-	KdShaderManager::Instance().m_spriteShader.DrawBox(
-		0,
-		0,
-		640,
-		360,
-		&fadeColor
-	);
-
-}
-
-void TitleUI::GetMousePos(POINT* mousePos)
-{	
-	//ディスプレイ上のマウス座標を取得(PC画面の左上が(0,0))
-	GetCursorPos(mousePos);
-
-	//指定のウィンドウ基準のマウス座標に変換(実行画面の左上が(0,0))
-	//							↓実行ウィンドウを識別するための番号
-	ScreenToClient(Application::Instance().GetWindowHandle(), mousePos);
-
-	static const int ScrWidth = 1280;
-	static const int ScrHeight = 720;
-
-	mousePos->x -= ScrWidth / 2;
-	mousePos->y -= ScrHeight / 2;
-	mousePos->y *= -1;
+	// フェードアウト用の暗転（フェード開始前は何も描かない）
+	DrawFadeOverlay();
 }

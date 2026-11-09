@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-class LoadingUI : public KdGameObject
+#include "../UIBase/UIBase.h"
+
+class LoadingUI : public UIBase
 {
 public:
-	void Init() override;
-	void Update() override;
 	void DrawSprite() override;
 
 	void SetProgress(float progress)
@@ -12,6 +12,7 @@ public:
 		m_progress = progress;
 	}
 
+	// ※ 現在は "Loading" 固定表示のため描画には使っていない(呼び出し側の互換用)
 	void SetCurrentPath(const std::string& path)
 	{
 		m_currentPath = path;

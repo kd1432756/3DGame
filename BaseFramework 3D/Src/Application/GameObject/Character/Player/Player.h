@@ -2,15 +2,16 @@
 
 #include "../CharacterBase.h"
 
-class CameraBase;
+#include "../../Camera/CameraBase.h"
+#include "../../Camera/ArrestCamera/ArrestCamera.h"
+#include "../../Camera/FPSCamera/FPSCamera.h"
 class Item;
 class Interactable;
 class Usable;
 class FPSCamera;
+class ArrestCamera;
 
-#include "../../../System/Skillcheck/SkillCheckBase.h"
-
-class SkillCheckFactory;
+#include "../../../System/SkillCheck/SkillCheckBase.h"
 
 class Player : public CharacterBase
 {
@@ -42,21 +43,36 @@ public:
 		return ObjectCategory::Character;
 	}
 
-	void OnPrankSuccess(
-		int score,
-		const std::string& message) override;
+	void OnRepairSuccess(int score, const std::string& message);
 
-	void OnPranked(
+	void AddScore(int score)
+	{
+		m_score += score;
+	}
+
+	int GetScore() const
+	{
+		return m_score;
+	}
+
+	void OnObjectDamaged(
 		const std::shared_ptr<InteractiveObject>& object,
 		const InteractiveAction& action) override;
 
-	void SetCamera(std::shared_ptr<CameraBase> _camera) { m_camera = _camera; }
+	void SetCamera(std::shared_ptr<CameraBase> camera)
+	{
+		camera->SetTarget(std::dynamic_pointer_cast<Player>(shared_from_this()));
+		m_camera = camera;
+		m_fpsCamera = std::dynamic_pointer_cast<FPSCamera>(camera);
+	}
 
 	void EquipItem(const std::string& itemPath);
 
 	void SwapItem(
 		const std::shared_ptr<Item>& newItem,
 		int index);
+
+	void ClearHandItem();
 
 	void ConsumeItem(int index);
 
@@ -88,17 +104,6 @@ public:
 
 	void CancelUse();
 
-	float TimeRate(SkillResult result)
-	{
-		switch (result)
-		{
-		case SkillResult::Perfect: return 0.5f;	// 半分に短縮
-		case SkillResult::Good:    return 1.0f;	// 通常
-		case SkillResult::Miss:    return 1.5f;	// 延長(無防備な時間が増える)
-		default:                   return 1.0f;
-		}
-	}
-	
 	SkillResult GetSkillResult() const
 	{
 		return m_skillResult;
@@ -112,7 +117,10 @@ public:
 	void OnArrested(const std::shared_ptr<Police>& police) override;
 	void OnReleased() override;
 
-	int GetDamagedCount() const { return m_neglected.size(); }
+	int GetDamagedCount()
+	{
+		return m_neglected.size();
+	}
 
 	// 妨害UI用
 	std::shared_ptr<CharacterBase> FindHinderTarget() const;
@@ -140,8 +148,7 @@ public:
 
 	bool IsGhost() const override 
 	{ 
-		if (m_isHindering)return true;		
-		return false; 
+		return m_isHindering;
 	}
 
 protected:
@@ -150,12 +157,15 @@ protected:
 
 private:
 
+	void UpdateLocked();
+
 	void Move();
-	void Jump();
 
 	void UpdateRotationByCamera();
 
 	void UpdateFocusObject();
+
+	void ClearFocus();
 
 	void TryInteract();
 
@@ -166,12 +176,14 @@ private:
 
 	void UpdateArrested();
 
+	void SwitchToArrestCamera();
+	void RestoreFpsCamera(const std::shared_ptr<ArrestCamera>& arrestCam);
+
 	void UpdateNeglect();
 
 	void UpdateReport();
 	bool TryReport();
 	bool FindReportPos(Math::Vector3& outPos) const;
-	void ShowReportText(const std::string& text, const Math::Color& color);
 	bool IsVisibleFromCamera(
 		const Math::Vector3& targetPos,
 		const KdGameObject* ignore) const;
@@ -190,6 +202,25 @@ private:
 
 	void PlayAnimation(const std::string& animName);
 
+	void SpawnFloatingText(
+		const std::string& text,
+		const Math::Vector2& pos,
+		const Math::Color& color,
+		FontID font = FontID::Future48);
+
+	static constexpr float TimeRate(SkillResult result)
+	{
+		switch (result)
+		{
+		case SkillResult::Perfect: return 0.5f;	// 半分に短縮
+		case SkillResult::Good:    return 1.0f;	// 通常
+		case SkillResult::Miss:    return 1.5f;	// 延長(無防備な時間が増える)
+		default:                   return 1.0f;
+		}
+	}
+
+	int m_score = 0;
+
 	std::string m_currentAnimName;
 
 	std::weak_ptr<CameraBase> m_camera;
@@ -201,9 +232,8 @@ private:
 	std::shared_ptr<Item> m_handItem;
 
 	bool m_isUsing = false;
-	bool m_isRepairUse = false;
 
-	float m_suspicionSeconds = 30.0f;	// 壊れてからこの秒数以内の物を直すと疑われる
+	static constexpr float m_suspicionSeconds = 30.0f;	// 壊れてからこの秒数以内の物を直すと疑われる
 
 	float m_useTimer = 0.0f;
 	float m_useTime = 0.0f;
@@ -232,25 +262,25 @@ private:
 
 	std::vector<NeglectedEntry> m_neglected;
 
-	float m_neglectGrace = 10.0f;  // 猶予(秒)
-	float m_neglectInterval = 1.0f;   // 減点間隔(秒)
-	int   m_neglectPenalty = 1;      // 1回あたりの減点
+	static constexpr float m_neglectGrace = 10.0f;  // 猶予(秒)
+	static constexpr float m_neglectInterval = 1.0f;   // 減点間隔(秒)
+	static constexpr int   m_neglectPenalty = 1;      // 1回あたりの減点
 
 	// 通報
-	float m_reportCooldown = 30.0f;   // 初期値30秒
+	static constexpr float m_reportCooldown = 30.0f;   // 初期値30秒
 	float m_reportTimer = 0.0f;    // 残りクールダウン
-	float m_reportWindowSeconds = 60.0f;	// 通報の対象にする「最近壊された」の範囲(秒)
+	static constexpr float m_reportWindowSeconds = 60.0f;	// 通報の対象にする「最近壊された」の範囲(秒)
 
 	// 妨害
 	std::weak_ptr<CharacterBase> m_wpHinderTarget;
 	float m_hinderRemaining = 0.0f;
 
-	float m_hinderBaseTime = 3.0f;    // 基本拘束時間
-	float m_hinderMashExtend = 0.25f;   // 1回目の連打で延びる秒数
-	float m_hinderMashDecay = 0.96f;   // 1回押すごとの減衰率（小さいほど早く伸びなくなる）
+	static constexpr float m_hinderBaseTime = 3.0f;    // 基本拘束時間
+	static constexpr float m_hinderMashExtend = 0.25f;   // 1回目の連打で延びる秒数
+	static constexpr float m_hinderMashDecay = 0.96f;   // 1回押すごとの減衰率（小さいほど早く伸びなくなる）
 	int   m_hinderMashCount = 0;       // 今回の妨害での連打回数
-	float m_hinderRange = 2.0f;    // 妨害可能距離（×sceneScale）
+	static constexpr float m_hinderRange = 2.0f;    // 妨害可能距離（×sceneScale）
 
-	float m_hinderCooldown = 5.0f;    // 妨害後のクールダウン（調整用）
+	static constexpr float m_hinderCooldown = 5.0f;    // 妨害後のクールダウン（調整用）
 	float m_hinderCooldownTimer = 0.0f;
 };

@@ -7,7 +7,7 @@ void ScoreUI::Init()
 
 void ScoreUI::Update()
 {
-	auto player = m_wpPlayer.lock();
+	auto player = LockPlayer();
 
 	if (!player)
 	{
@@ -31,32 +31,28 @@ void ScoreUI::Update()
 		std::abs(targetScore - m_displayScore);
 
 	const int speed =
-		std::max(1, difference / 10);
+		(std::max)(1, difference / 10);
 
 	if (m_displayScore < targetScore)
 	{
 		m_displayScore =
-			std::min(m_displayScore + speed, targetScore);
+			(std::min)(m_displayScore + speed, targetScore);
 	}
 	else
 	{
 		m_displayScore =
-			std::max(m_displayScore - speed, targetScore);
+			(std::max)(m_displayScore - speed, targetScore);
 	}
 }
 
 void ScoreUI::DrawSprite()
 {
-	auto player = m_wpPlayer.lock();
-
-	if (!player)
+	if (!LockPlayer())
 	{
 		return;
 	}
 
-	const int score = m_displayScore;
-
-	const std::string scoreText = std::to_string(score);
+	const std::string scoreText = std::to_string(m_displayScore);
 
 	const float DigitWidth = 48.0f;
 
@@ -68,16 +64,15 @@ void ScoreUI::DrawSprite()
 	// Score : の表示
 	// -----------------------------
 
-	KdShaderManager::Instance().m_spriteShader.DrawFont(
+	DrawLabel(
 		Math::Vector2{ ScoreX - ScoreTextX, ScoreY },
-		&kWhiteColor,
-		Math::Vector2{ 1.0f, 0.5f },
-		0.0f,
+		kWhiteColor,
 		FontID::FutureNormal64,
-		"Score : ");
+		"Score : ",
+		Math::Vector2{ 1.0f, 0.5f });
 
 	// -----------------------------
-	// 数字の表示
+	// 数字の表示（1桁ずつ固定幅で描いて桁ズレを防ぐ）
 	// -----------------------------
 
 	for (size_t i = 0; i < digitCount; ++i)
@@ -92,15 +87,11 @@ void ScoreUI::DrawSprite()
 			'\0'
 		};
 
-		KdShaderManager::Instance().m_spriteShader.DrawFont(
-			Math::Vector2{
-				x + DigitWidth,
-				ScoreY
-			},
-			&kWhiteColor,
-			Math::Vector2{ 1.0f, 0.5f },
-			0.0f,
+		DrawLabel(
+			Math::Vector2{ x + DigitWidth, ScoreY },
+			kWhiteColor,
 			FontID::FutureNormal64,
-			digit);
+			digit,
+			Math::Vector2{ 1.0f, 0.5f });
 	}
 }

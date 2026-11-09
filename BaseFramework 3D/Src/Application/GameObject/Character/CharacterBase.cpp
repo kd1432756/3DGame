@@ -6,10 +6,14 @@
 
 #include "../../System/FootStep/FootStep.h"
 
+#include "../Object/StaticMeshObject/InteractiveObject/InteractiveObject.h"
+
 #include "../UI/EmoteIcon/EmoteIcon.h"
 
 void CharacterBase::Init()
 {
+	m_updateGroup = UpdateGroup::World;
+
 	m_sceneScale = SceneManager::Instance().GetSceneScale();
 
 	m_spModel = std::make_shared<KdModelWork>();
@@ -30,121 +34,6 @@ void CharacterBase::GenerateDepthMapFromLight()
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
 }
 
-void CharacterBase::CheckStep(const Math::Vector3& moveDir)
-{
-	Math::Vector3 dir = moveDir;
-	dir.y = 0.0f;
-
-	if (dir.LengthSquared() <= 0.000001f)
-	{
-		return;
-	}
-
-	dir.Normalize();
-
-	const float scale = m_sceneScale;
-
-	const float footOffset =
-		m_footOffset * scale;
-
-	const float stepHeight =
-		m_stepHeight * scale;
-
-	const float checkDistance =
-		m_collisionRadius * scale;
-
-
-	// 移動先
-	Math::Vector3 checkPos =
-		m_pos + dir * checkDistance;
-
-
-	// 段差の上からRay
-	KdCollider::RayInfo rayInfo;
-
-	rayInfo.m_pos = checkPos;
-
-	rayInfo.m_pos.y =
-		m_pos.y - footOffset + stepHeight;
-
-	rayInfo.m_dir = { 0.0f, -1.0f, 0.0f };
-
-	rayInfo.m_range =
-		stepHeight + 0.1f * scale;
-
-	rayInfo.m_type =
-		KdCollider::TypeGround;
-
-
-	std::list<KdCollider::CollisionResult> retRayList;
-
-	for (auto& obj : SceneManager::Instance().GetObjList())
-	{
-		if (!obj)
-		{
-			continue;
-		}
-
-		if (obj.get() == this)
-		{
-			continue;
-		}
-
-		obj->Intersects(
-			rayInfo,
-			&retRayList
-		);
-	}
-
-
-	bool hit = false;
-
-	float maxOverlap = 0.0f;
-
-	Math::Vector3 groundPos = {};
-
-	for (auto& ret : retRayList)
-	{
-		if (maxOverlap < ret.m_overlapDistance)
-		{
-			maxOverlap = ret.m_overlapDistance;
-			groundPos = ret.m_hitPos;
-			hit = true;
-		}
-	}
-
-	if (!hit)
-	{
-		return;
-	}
-
-
-	// 現在の足元
-	const float currentFootY =
-		m_pos.y - footOffset;
-
-	// 段差の高さ
-	const float heightDiff =
-		groundPos.y - currentFootY;
-
-
-	// 上り坂・段差ではない
-	if (heightDiff <= 0.0f)
-	{
-		return;
-	}
-
-	// 登れる高さを超えている
-	if (heightDiff > stepHeight)
-	{
-		return;
-	}
-
-
-	// 段差を上る
-	m_pos.y += heightDiff;
-}
-
 void CharacterBase::CheckGround()
 {
 	const float scale = m_sceneScale;
@@ -161,11 +50,9 @@ void CharacterBase::CheckGround()
 	ray.m_dir = { 0.0f, -1.0f, 0.0f };
 	ray.m_type = KdCollider::TypeGround;
 
-	// 接地中は下り段差にも吸着、空中なら重力ぶんだけ
 	const float snapDown = wasGround ? stepHeight : std::abs(m_gravity);
 	ray.m_range = stepHeight + snapDown;
 
-	// 一番高い面を採用 + そのオブジェクトも記録 
 	bool hit = false;
 	float best = 0.0f;
 	Math::Vector3 groundPos;
@@ -201,20 +88,31 @@ void CharacterBase::CheckGround()
 		m_groundType = ground->GetGroundType();
 	}
 
-	// 上昇中（ジャンプ中）は下り吸着しない
-	const bool rising = m_gravity > 0.0f;   // ※重力の符号はプロジェクトに合わせる
-	if (rising && groundPos.y < footY) return;
-
 	const float newY = groundPos.y + footOffset;
-	const float diff = newY - m_pos.y;      // + なら段差を上った
 
 	m_pos.y = newY;
 	m_isGround = true;
+	m_lastGroundPos = m_pos;
+	m_hasLastGround = true;
 	m_gravity = 0.0f;
+}
 
-	// 上り下りの瞬間移動を見た目だけ滑らかにする
-	/*/if (wasGround && std::abs(diff) > 0.001f)
-	 		m_stepVisualOffset -= diff;*/
+void CharacterBase::SlideAlongWalls(Math::Vector3& move, float radius)
+{
+	std::vector<WallHit> walls;
+	CollectWallHits(radius, walls);
+
+	for (int pass = 0; pass < 2; ++pass)
+	{
+		for (auto& w : walls)
+		{
+			const float into = move.Dot(w.normal);
+			if (into < 0.0f)
+			{
+				move -= w.normal * into;
+			}
+		}
+	}
 }
 
 void CharacterBase::CollectWallHits(float radius, std::vector<WallHit>& out)
@@ -270,31 +168,7 @@ void CharacterBase::CollectWallHits(float radius, std::vector<WallHit>& out)
 
 void CharacterBase::ResolveCollision()
 {
-/*	const float radius = m_collisionRadius * m_sceneScale;
-	const float skin = 0.001f;
-
-	std::vector<WallHit> walls;
-
-	for (int i = 0; i < 5; ++i)
-	{
-		CollectWallHits(radius, walls);
-		if (walls.empty()) { break; }
-
-		Math::Vector3 push = Math::Vector3::Zero;
-		for (auto& w : walls)
-		{
-			push += w.normal * (w.overlap + skin);
-		}
-
-		const float len = push.Length();
-		if (len < 0.00001f) { break; }
-		if (len > radius) { push *= radius / len; }
-
-		m_pos += push;
-	}*/
-
-	/*const float radius = m_collisionRadius * m_sceneScale;*/
-	const float radius = (m_collisionRadius * m_sceneScale) - 0.002f * m_sceneScale;
+	const float radius = (WallRadius()) - 0.002f * m_sceneScale;
 	const float skin = 0.001f * m_sceneScale;
 	const float maxPush = radius * 0.5f;   // 1回の最大押し出し
 
@@ -329,37 +203,33 @@ void CharacterBase::ApplyGravity()
 
 	// 地面を確認
 	CheckGround();
+
+	if (m_hasLastGround &&
+		m_pos.y < m_lastGroundPos.y - m_fallLimit * m_sceneScale)
+	{
+		m_pos = m_lastGroundPos;
+		m_gravity = 0.0f;
+	}
 }
 
 void CharacterBase::RotateToMoveDirection(
 	const Math::Vector3& dir)
 {
-	if (dir.LengthSquared() <= 0.000001f)
+	Math::Vector3 toDir = dir;
+	toDir.y = 0.0f;
+
+	if (toDir.LengthSquared() <= 0.000001f)
 	{
 		return;
 	}
 
-	Math::Vector3 toDir = dir;
-	toDir.y = 0.0f;
 	toDir.Normalize();
-
 
 	// =========================================
 	// 現在の向き
 	// =========================================
 
-	Math::Matrix nowRotMat =
-		Math::Matrix::CreateRotationY(
-			DirectX::XMConvertToRadians(m_rot.y));
-
-	Math::Vector3 nowDir =
-		Math::Vector3::TransformNormal(
-			Math::Vector3(0, 0, -1),
-			nowRotMat);
-
-	nowDir.y = 0.0f;
-	nowDir.Normalize();
-
+	Math::Vector3 nowDir = GetFacingDir();
 
 	// =========================================
 	// 内積から角度を求める
@@ -369,10 +239,7 @@ void CharacterBase::RotateToMoveDirection(
 
 	dot = std::clamp(dot, -1.0f, 1.0f);
 
-	float angle =
-		DirectX::XMConvertToDegrees(
-			acosf(dot));
-
+	float angle = DirectX::XMConvertToDegrees(acosf(dot));
 
 	// =========================================
 	// ほぼ向いている
@@ -383,20 +250,17 @@ void CharacterBase::RotateToMoveDirection(
 		return;
 	}
 
-
 	// =========================================
 	// 1フレーム5.0f度まで
 	// =========================================
 
 	angle = std::min(angle, 5.0f);
 
-
 	// =========================================
 	// 左右判定
 	// =========================================
 
-	Math::Vector3 cross =
-		nowDir.Cross(toDir);
+	Math::Vector3 cross = nowDir.Cross(toDir);
 
 	if (cross.y >= 0.0f)
 	{
@@ -406,7 +270,6 @@ void CharacterBase::RotateToMoveDirection(
 	{
 		m_rot.y -= angle;
 	}
-
 
 	// =========================================
 	// 角度を0～360度に整理
@@ -506,30 +369,6 @@ bool CharacterBase::HasInventoryItem(const std::string& itemPath) const
 	return false;
 }
 
-// NPC用：修復用途を持つアイテムがある
-bool CharacterBase::HasRepairItem() const
-{
-	for (const auto& item : m_inventory.GetItems())
-	{
-		if (item.IsEmpty()) continue;
-		const ItemData* d = ItemData::Get(item.itemPath);
-		if (d && d->HasRepairUse()) return true;
-	}
-	return false;
-}
-
-// NPC用：いたずら用途を持つアイテムがある（危険物かは問わない）
-bool CharacterBase::HasPrankItem() const
-{
-	for (const auto& item : m_inventory.GetItems())
-	{
-		if (item.IsEmpty()) continue;
-		const ItemData* d = ItemData::Get(item.itemPath);
-		if (d && d->HasPrankUse()) return true;
-	}
-	return false;
-}
-
 // 警察用：追跡・没収の対象（危険物）を持っている
 bool CharacterBase::HasDangerousItem() const
 {
@@ -583,6 +422,9 @@ void CharacterBase::InitEmoteIcon()
 
 void CharacterBase::ShowEmote(EmoteIcon::IconType type, float duration, bool force)
 {
+	if (!m_spEmoteIcon) return;
+	if (!m_spEmoteIcon->SetIcon(type, duration, force)) return;
+
 	if (m_spEmoteIcon) m_spEmoteIcon->SetIcon(type, duration, force);
 
 	if (auto se = KdAudioManager::Instance().Play3D("Asset/Sound/SE/Icon_Pop.wav", m_pos))

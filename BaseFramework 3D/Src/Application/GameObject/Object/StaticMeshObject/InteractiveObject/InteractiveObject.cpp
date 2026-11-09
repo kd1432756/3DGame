@@ -188,7 +188,7 @@ void InteractiveObject::Use(
 			player->GetSkillResult()
 			);
 
-		player->OnPrankSuccess(score, action->message);
+		player->OnRepairSuccess(score, action->message);
 	}
 
 	if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Blip_Up.wav"))
@@ -288,13 +288,6 @@ void InteractiveObject::NPCUseBare(const std::shared_ptr<Neighbor>& npc)
 	ExecuteNPCAction(*action, npc);
 }
 
-bool InteractiveObject::IsRepairAction(
-	const std::shared_ptr<Player>& player) const
-{
-	const auto* action = FindAction(player);
-	return action && action->action == ItemAction::Repair;
-}
-
 void InteractiveObject::OnStateChanged(DamageSource source)
 {
 	m_reservedBy.reset();
@@ -320,7 +313,7 @@ void InteractiveObject::NotifyPlayer(const InteractiveAction& action)
 	auto player = SceneManager::Instance().FindObject<Player>();
 	if (!player) return;
 
-	player->OnPranked(
+	player->OnObjectDamaged(
 		std::dynamic_pointer_cast<InteractiveObject>(shared_from_this()),
 		action);
 }

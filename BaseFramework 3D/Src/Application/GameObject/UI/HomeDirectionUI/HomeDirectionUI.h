@@ -1,16 +1,14 @@
 ﻿#pragma once
 
-class Player;
+#include "../PlayerUIBase/PlayerUIBase.h"
 
 // 自宅の方向を画面端の三角形で示すUI
-class HomeDirectionUI : public KdGameObject
+class HomeDirectionUI : public PlayerUIBase
 {
 public:
-	void Init();
-	void Update();
-	void DrawSprite();
-
-	void SetOwner(const std::shared_ptr<Player>& owner) { m_owner = owner; }
+	void Init() override;
+	void Update() override;
+	void DrawSprite() override;
 
 	// 自宅がいたずらされた時の強調表示を開始（上部テキスト表示と同じタイミングで呼ぶ）
 	void StartAlert() { m_alertTimer = kAlertTime; }
@@ -21,8 +19,6 @@ private:
 
 	// 三角形（先端が dir 方向）を描画
 	void DrawArrow(const Math::Vector2& center, const Math::Vector2& dir, const Math::Color& color);
-
-	std::weak_ptr<Player>   m_owner;
 
 	std::shared_ptr<KdTexture> m_texHouse;   // 家アイコン
 

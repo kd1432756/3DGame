@@ -1,6 +1,6 @@
 ﻿#include "ResultUI.h"
 
-#include "ResultFadeUI.h"
+#include "../ResultFadeUI/ResultFadeUI.h"
 
 #include "../../../Scene/GameScene/GameScene.h"
 
@@ -37,7 +37,8 @@ namespace
 
 void ResultUI::Init()
 {
-	m_updateGroup = UpdateGroup::Always;
+	// ポインタ画像の読み込みなど(基底クラス)
+	MenuUI::Init();
 
 	m_visible = false;
 	m_resultInitialized = false;
@@ -49,16 +50,17 @@ void ResultUI::Init()
 	m_displayScore = 0;
 	m_rank = ScoreManager::Rank::C;
 
-	m_isTitleButtonHover = false;
-
-	m_fadeOut = false;
-	m_alpha = 0.0f;
+	m_titleButton = { Math::Vector2{ 0.0f, -270.0f }, Math::Vector2{ 470.0f, 60.0f }, "Return To Title", FontID::Future48 };
 
 	m_animTime = 0.0f;
 	m_animOffsetY = 0.0f;
+}
 
-	m_pointerTex = std::make_shared<KdTexture>();
-	m_pointerTex->Load("Asset/Textures/Cursor/Pointer.png");
+void ResultUI::OnFadeOutFinished()
+{
+	SceneManager::Instance().SetNextScene(
+		SceneManager::SceneType::Title
+	);
 }
 
 void ResultUI::Update()
@@ -88,49 +90,33 @@ void ResultUI::Update()
 		return;
 	}
 
-	// Fade中
-	if (m_fadeOut)
+	// Fade中（暗転は別オブジェクトの ResultFadeUI が描く）
+	if (IsFadingOut())
 	{
-		m_alpha += 0.02f;
-
-		if (m_resultBgm)
-		{
-			float volume = 0.3f * (1.0f - m_alpha);
-			if (volume < 0.0f) volume = 0.0f;
-			m_resultBgm->SetVolume(volume);
-		}
-
-		if (m_alpha >= 1.0f)
-		{
-			m_alpha = 1.0f;
-
-			SceneManager::Instance().SetNextScene(
-				SceneManager::SceneType::Title
-			);
-		}
+		UpdateFade();
 
 		if (m_spFadeUI)
 		{
-			m_spFadeUI->SetAlpha(m_alpha);
+			m_spFadeUI->SetAlpha(GetFadeAlpha());
 		}
 
 		return;
 	}
 
-	const float dt = 1.0f / 60.0f;
+	// 演出中もマウス状態を追っておく
+	// (押しっぱなしのままボタンが出たとき、誤クリック扱いにしないため)
+	UpdateMouse();
 
-	m_phaseTimer += dt;
+	m_phaseTimer += DeltaTime();
 
 	switch (m_phase)
 	{
 	case Phase::ScoreCount:
 	{
-		float t = std::clamp(m_phaseTimer / kCountTime, 0.0f, 1.0f);
+		const float t = std::clamp(m_phaseTimer / kCountTime, 0.0f, 1.0f);
 
 		// EaseOut: 最初は速く、最後にゆっくり止まる
-		const float ease = 1.0f - std::pow(1.0f - t, 3.0f);
-
-		m_displayScore = static_cast<int>(m_finalScore * ease);
+		m_displayScore = static_cast<int>(m_finalScore * EaseOutCubic(t));
 
 		if (t >= 1.0f)
 		{
@@ -179,35 +165,12 @@ void ResultUI::Update()
 	m_animOffsetY = sinf(m_animTime) * 5.0f;
 
 	// Titleボタン
-	POINT mouse;
-	GetMousePos(&mouse);
-
-	m_mousePosX = static_cast<float>(mouse.x);
-	m_mousePosY = static_cast<float>(mouse.y);
-
-	const float left =
-		m_titleButtonPos.x - m_titleButtonSize.x * 0.5f;
-
-	const float right =
-		m_titleButtonPos.x + m_titleButtonSize.x * 0.5f;
-
-	const float top =
-		m_titleButtonPos.y + m_titleButtonSize.y * 0.5f;
-
-	const float bottom =
-		m_titleButtonPos.y - m_titleButtonSize.y * 0.5f;
-
-	m_isTitleButtonHover =
-		m_mousePosX >= left &&
-		m_mousePosX <= right &&
-		m_mousePosY <= top &&
-		m_mousePosY >= bottom;
+	UpdateHover(&m_titleButton, 1);
 
 	// クリック
-	if (m_isTitleButtonHover &&
-		(GetAsyncKeyState(VK_LBUTTON) & 0x8000))
+	if (m_titleButton.hover && IsClickTriggered())
 	{
-		m_fadeOut = true;
+		StartFadeOut();
 
 		if (auto confetti = m_wpConfetti.lock())
 		{
@@ -223,52 +186,27 @@ void ResultUI::DrawSprite()
 		return;
 	}
 
-	auto& sprite = KdShaderManager::Instance().m_spriteShader;
-
 	// =============================
 	// 背景
 	// =============================
 
-	Math::Color bgColor = { 0.0f, 0.0f, 0.0f, 0.8f };
-
-	sprite.DrawBox(0, 0, 640, 360, &bgColor);
+	DrawFullScreenBox(Math::Color{ 0.0f, 0.0f, 0.0f, 0.8f });
 
 	// =============================
 	// RESULT
 	// =============================
 
-	sprite.DrawFont(
-		Math::Vector2{ 0, 260 },
-		&kWhiteColor,
-		Math::Vector2{ 0.5f, 0.5f },
-		0.0f,
-		FontID::Future128,
-		"RESULT"
-	);
+	DrawLabel(Math::Vector2{ 0, 260 }, kWhiteColor, FontID::Future128, "RESULT");
 
 	// =============================
 	// スコア
 	// =============================
 
-	sprite.DrawFont(
-		Math::Vector2{ 0, 150 },
-		&kWhiteColor,
-		Math::Vector2{ 0.5f, 0.5f },
-		0.0f,
-		FontID::Future48,
-		"SCORE"
-	);
+	DrawLabel(Math::Vector2{ 0, 150 }, kWhiteColor, FontID::Future48, "SCORE");
 
 	const std::string scoreText = std::to_string(m_displayScore);
 
-	sprite.DrawFont(
-		Math::Vector2{ 0, 80 },
-		&kWhiteColor,
-		Math::Vector2{ 0.5f, 0.5f },
-		0.0f,
-		FontID::Future128,
-		scoreText.c_str()
-	);
+	DrawLabel(Math::Vector2{ 0, 80 }, kWhiteColor, FontID::Future128, scoreText.c_str());
 
 	// =============================
 	// ランク
@@ -284,41 +222,22 @@ void ResultUI::DrawSprite()
 		}
 
 		// EaseOut: 上から落ちて、フェードインする
-		const float ease = 1.0f - std::pow(1.0f - t, 3.0f);
+		const float ease = EaseOutCubic(t);
 
 		Math::Color rankColor = RankColor(m_rank);
 		rankColor.w *= ease;
 
 		const float rankY = -80.0f + (1.0f - ease) * 60.0f;
 
-		sprite.DrawFont(
-			Math::Vector2{ 0, 0 },
-			&kWhiteColor,
-			Math::Vector2{ 0.5f, 0.5f },
-			0.0f,
-			FontID::Future48,
-			"RANK"
-		);
+		DrawLabel(Math::Vector2{ 0, 0 }, kWhiteColor, FontID::Future48, "RANK");
 
-		sprite.DrawFont(
-			Math::Vector2{ 0, rankY },
-			&rankColor,
-			Math::Vector2{ 0.5f, 0.5f },
-			0.0f,
-			FontID::Future128,
-			ScoreManager::RankToString(m_rank)
-		);
+		DrawLabel(Math::Vector2{ 0, rankY }, rankColor, FontID::Future128,
+			ScoreManager::RankToString(m_rank));
 
 		if (m_phase == Phase::Done)
 		{
-			sprite.DrawFont(
-				Math::Vector2{ 0, -170 },
-				&rankColor,
-				Math::Vector2{ 0.5f, 0.5f },
-				0.0f,
-				FontID::Future32,
-				RankMessage(m_rank)
-			);
+			DrawLabel(Math::Vector2{ 0, -170 }, rankColor, FontID::Future32,
+				RankMessage(m_rank));
 		}
 	}
 
@@ -328,40 +247,20 @@ void ResultUI::DrawSprite()
 
 	if (m_phase == Phase::Done)
 	{
-		Math::Color buttonColor = kWhiteColor;
-
-		if (m_isTitleButtonHover)
-		{
-			buttonColor = Math::Color{ 1.0f, 0.8f, 0.2f, 1.0f };
-		}
-
-		Math::Vector2 buttonDrawPos = m_titleButtonPos;
-		buttonDrawPos.y += m_animOffsetY;
-
-		sprite.DrawFont(
-			buttonDrawPos,
-			&buttonColor,
-			Math::Vector2{ 0.5f, 0.5f },
-			0.0f,
-			FontID::Future48,
-			"Return To Title"
-		);
+		// ホバーで黄色、上下にフワフワ揺らす
+		DrawButtons(&m_titleButton, 1,
+			kWhiteColor,
+			Math::Color{ 1.0f, 0.8f, 0.2f, 1.0f },
+			m_animOffsetY);
 	}
 
 	// =============================
 	// Pointer
 	// =============================
 
-	if (!m_fadeOut && m_phase == Phase::Done)
+	if (!IsFadingOut() && m_phase == Phase::Done)
 	{
-		sprite.DrawTex(
-			m_pointerTex,
-			m_mousePosX,
-			m_mousePosY,
-			nullptr,
-			&kWhiteColor,
-			Math::Vector2{ 0.3f, 0.8f }
-		);
+		DrawPointer();
 	}
 }
 
@@ -408,6 +307,9 @@ void ResultUI::StartCelebration()
 	if (m_resultBgm)
 	{
 		m_resultBgm->SetVolume(0.3f);
+
+		// フェードアウト時はこのBGMを小さくしていく
+		SetFadeBgm(m_resultBgm, 0.3f);
 	}
 }
 
@@ -415,22 +317,4 @@ void ResultUI::ChangePhase(Phase phase)
 {
 	m_phase = phase;
 	m_phaseTimer = 0.0f;
-}
-
-void ResultUI::GetMousePos(POINT* mousePos)
-{
-	GetCursorPos(mousePos);
-
-	ScreenToClient(
-		Application::Instance().GetWindowHandle(),
-		mousePos
-	);
-
-	static const int ScrWidth = 1280;
-	static const int ScrHeight = 720;
-
-	mousePos->x -= ScrWidth / 2;
-	mousePos->y -= ScrHeight / 2;
-
-	mousePos->y *= -1;
 }

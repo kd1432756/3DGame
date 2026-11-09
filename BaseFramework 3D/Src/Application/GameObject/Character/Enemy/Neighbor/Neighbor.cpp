@@ -1,6 +1,7 @@
 ﻿#include "Neighbor.h"
 
 #include "../../../../System/Navigation/NavMesh/NavMeshManager.h"
+#include "../../../../System/Navigation/NavMesh/NavMeshPathfinder.h"
 
 #include "../../../../System/Location/LocationPointManager.h"
 
@@ -111,35 +112,6 @@ void Neighbor::OnItemsConfiscated()
 	{
 		SelectInventory(-1);
 	}
-}
-
-bool Neighbor::HasInventoryItem(
-	const std::string& itemPath) const
-{
-	if (itemPath.empty())
-	{
-		return false;
-	}
-
-	const auto& items =
-		m_inventory.GetItems();
-
-	for (int i = 0;
-		i < Inventory::MaxItem;
-		++i)
-	{
-		if (items[i].IsEmpty())
-		{
-			continue;
-		}
-
-		if (items[i].itemPath == itemPath)
-		{
-			return true;
-		}
-	}
-
-	return false;
 }
 
 //============================================================
@@ -413,11 +385,6 @@ bool Neighbor::CalculatePathDistance(
 {
 	outDistance = 0.0f;
 
-	if (!m_pNavMeshManager)
-	{
-		return false;
-	}
-
 	//============================================================
 	// Utility計算専用のPathを取得
 	// 始点・終点を補正
@@ -430,8 +397,8 @@ bool Neighbor::CalculatePathDistance(
 		SnapToNavMesh(goal);
 
 	const auto path =
-		m_navMeshPathfinder.FindPathPoints(
-			*m_pNavMeshManager,
+		m_navMeshPathfinder->FindPathPoints(
+			NavMeshManager::Instance(),
 			fixedStart,
 			fixedGoal
 		);
@@ -1669,11 +1636,6 @@ void Neighbor::DropUselessItems()
 void Neighbor::FindPathTo(
 	const Math::Vector3& goal)
 {
-	if (!m_pNavMeshManager)
-	{
-		return;
-	}
-
 	//============================================================
 	// 始点・終点をNavMesh内に補正
 	//============================================================
@@ -1685,8 +1647,8 @@ void Neighbor::FindPathTo(
 		SnapToNavMesh(goal);
 
 	m_navPath =
-		m_navMeshPathfinder.FindPathPoints(
-			*m_pNavMeshManager,
+		m_navMeshPathfinder->FindPathPoints(
+			NavMeshManager::Instance(),
 			fixedStart,
 			fixedGoal
 		);
@@ -1768,6 +1730,16 @@ MoveResult Neighbor::MoveToNextNavPathPoint()
 	SetMoveDirection(dir);
 
 	return MoveResult::Moving;
+}
+
+//============================================================
+// Arrested
+//============================================================
+
+Math::Vector3 Neighbor::GetDamagePos() const
+{
+	auto t = m_wpPrankTarget.lock();
+	return t ? t->GetPos() : m_pos;
 }
 
 //============================================================

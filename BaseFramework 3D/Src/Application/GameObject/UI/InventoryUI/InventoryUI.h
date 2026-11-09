@@ -1,26 +1,14 @@
 ﻿#pragma once
 
+#include "../PlayerUIBase/PlayerUIBase.h"
+
 #include "../../../System/Inventory/Inventory.h"
 
-class Player;
-
-class InventoryUI : public KdGameObject
+class InventoryUI : public PlayerUIBase
 {
 public:
-
 	void Init() override;
-	void Update() override;
 	void DrawSprite() override;
-
-	ObjectCategory GetCategory() const override
-	{
-		return ObjectCategory::UI;
-	}
-
-	void SetPlayer(const std::weak_ptr<Player>& player)
-	{
-		m_wpPlayer = player;
-	}
 
 private:
 
@@ -34,15 +22,14 @@ private:
 		const InventoryItem& item,
 		bool selected);
 
-private:
+	void DrawKeyIcon(int index, bool selected);
 
-	std::weak_ptr<Player> m_wpPlayer;
+private:
 
 	// ItemDataのパス → アイコンテクスチャ
 	std::unordered_map<std::string, std::shared_ptr<KdTexture>> m_iconTextures;
 
-/*	std::shared_ptr<KdTexture> m_slotTex = nullptr;
-	std::shared_ptr<KdTexture> m_slotSelectedTex = nullptr;*/
+	std::vector<std::shared_ptr<KdTexture>> m_keyTex;   // 数字キー画像（スロット数ぶん）
 
 	// 表示位置
 	static constexpr int StartX = -148;
@@ -72,13 +59,8 @@ private:
 	// 枠線ぶんの内側余白
 	static constexpr int BadgeMargin = 4;
 
-	std::vector<std::shared_ptr<KdTexture>> m_keyTex;   // 数字キー画像（スロット数ぶん）
-
-	// 定数
-	static constexpr int   KeyIconH = 28;     // キーアイコンの高さ
-	static constexpr int   KeyGap = 12;      // スロットとキーの間隔
+	// キーアイコン
+	static constexpr int   KeyIconH = 28;       // キーアイコンの高さ
+	static constexpr int   KeyGap = 12;         // スロットとキーの間隔
 	static constexpr float KeyDimAlpha = 0.55f; // 非選択時の透明度
-
-	// 関数
-	void DrawKeyIcon(int index, bool selected);
 };

@@ -201,19 +201,17 @@ private:
 	// State Settings
 	//============================================================
 
-	float m_patrolSpeed = 0.01f;
-	float m_chaseSpeed = 0.030f;
-	float m_returnSpeed = 0.01f;
-	float m_escortSpeed = 0.016f;
-	float m_investigateSpeed = 0.018f;
+	static constexpr float m_patrolSpeed = 0.01f;
+	static constexpr float m_chaseSpeed = 0.030f;
+	static constexpr float m_returnSpeed = 0.01f;
+	static constexpr float m_escortSpeed = 0.016f;
+	static constexpr float m_investigateSpeed = 0.018f;
 
 	//============================================================
 	// A*
 	//============================================================
 
 	AStarPathfinder m_pathfinder;
-
-	AStarNodeManager* m_pNodeManager = nullptr;
 
 	//============================================================
 	// Patrol
@@ -228,12 +226,6 @@ private:
 	int m_previousPatrolNode = -1;
 
 	//============================================================
-	// Location Point
-	//============================================================
-
-	LocationPointManager* m_pLocationPointManager = nullptr;
-
-	//============================================================
 	// Chase
 	//============================================================
 
@@ -241,7 +233,7 @@ private:
 
 	float m_pathUpdateTimer = 0.0f;
 
-	float m_pathUpdateInterval = 0.2f;
+	static constexpr float m_pathUpdateInterval = 0.2f;
 
 	Math::Vector3 m_lastTargetPos =
 		Math::Vector3::Zero;
@@ -254,7 +246,7 @@ private:
 
 	Math::Vector3 m_investigatePos = Math::Vector3::Zero;
 
-	float m_hearRange = 25.0f;
+	static constexpr float m_hearRange = 25.0f;
 
 	float m_investigateCooldown = 0.0f;
 
@@ -266,7 +258,7 @@ private:
 
 	float m_arrestTimer = 0.0f;
 
-	float m_arrestTime = 0.0f;
+	static constexpr float m_arrestTime = 0.0f;
 
 	float m_arrestDistance = 1.6f;
 
@@ -276,7 +268,7 @@ private:
 
 	float m_loseSightTimer = 0.0f;
 
-	const float m_loseSightTime = 2.0f;
+	static constexpr float m_loseSightTime = 2.0f;
 
 	//============================================================
 	// Search
@@ -285,7 +277,7 @@ private:
 	float m_searchTimer = 0.0f;
 
 	// Search全体の時間
-	float m_searchTime = 3.0f;
+	static constexpr float m_searchTime = 3.0f;
 
 	// 見回す速度
 	float m_searchRotateSpeed = 90.0f;

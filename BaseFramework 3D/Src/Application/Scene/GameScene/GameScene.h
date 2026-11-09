@@ -18,10 +18,7 @@ public :
 	void Update() override;
 	void PostUpdate() override;
 
-	void SetGameUpdate(bool flg)
-	{
-		m_gameUpdate = flg;
-	}
+	void SetGameUpdate(bool flg);
 
 	enum class GameState
 	{
@@ -31,10 +28,7 @@ public :
 		Result
 	};
 
-	void SetGameState(GameState state)
-	{
-		m_state = state;
-	}
+	void SetGameState(GameState state);
 
 	GameState GetGameState() const
 	{

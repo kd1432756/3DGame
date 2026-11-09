@@ -2,6 +2,7 @@
 
 #include "../../../../System/Node/AStarNode/AStarNodeManager.h"
 #include "../../../../System/Navigation/NavMesh/NavMeshManager.h"
+#include "../../../../System/Navigation/NavMesh/NavMeshPathfinder.h"
 #include "../../../../System/Location/LocationPointManager.h"
 
 #include "../../../../Scene/SceneManager.h"
@@ -30,20 +31,6 @@ void Police::Init()
 		m_spModel,
 		KdCollider::TypeEditor
 	);
-
-	//============================================================
-	// A* Node Manager
-	//============================================================
-
-	m_pNodeManager =
-		&AStarNodeManager::Instance();
-
-	//============================================================
-	// Location Point Manager
-	//============================================================
-
-	m_pLocationPointManager =
-		&LocationPointManager::Instance();
 
 	//============================================================
 	// Path
@@ -132,16 +119,14 @@ void Police::UpdateExtra()
 		enable = true;
 	}
 
-	Math::Vector3 backward = m_mWorld.Backward();
-	backward.y = 0.0f;
-	backward.Normalize();
+	Math::Vector3 forward = GetFacingDir();
 
 	KdShaderManager::Instance().WorkAmbientController().AddConeLight(
 		Math::Vector3{ 3,0,0 },
 		8.0f * m_sceneScale,
 		m_pos,
 		DirectX::XMConvertToRadians(45),
-		backward,
+		forward,
 		enable
 	);
 }
@@ -376,13 +361,11 @@ void Police::UpdateEscort()
 	//============================================================
 
 	{
-		Math::Vector3 back = m_mWorld.Forward(); // Forwardが背後
-		back.y = 0.0f;
-		back.Normalize();
+		Math::Vector3 backward = -GetFacingDir();
 
 		const float followDist = 1.2f * m_sceneScale;
 
-		Math::Vector3 pos = m_pos + back * followDist;
+		Math::Vector3 pos = m_pos + backward * followDist;
 		pos.y = arrested->GetPos().y;
 
 		arrested->SetPos(pos);
@@ -449,12 +432,6 @@ void Police::UpdateLastSeen()
 
 	if (m_navPath.empty())
 	{
-		if (!m_pNavMeshManager)
-		{
-			ChangeState(State::Return);
-			return;
-		}
-
 		m_navPath = FindNavPath(m_pos, m_lastTargetPos);
 
 		m_navPathIndex = 0;
@@ -576,9 +553,7 @@ void Police::UpdateReturn()
 	if (SearchTarget())
 	{
 		m_searchTimer = 0.0f;
-
 		ChangeState(State::Chase);
-
 		return;
 	}
 
@@ -596,18 +571,11 @@ void Police::UpdateReturn()
 
 	if (m_navPath.empty())
 	{
-		if (!m_pNavMeshManager)
-		{
-			ChangeState(State::Patrol);
-			return;
-		}
-
 		//========================================================
 		// 現在位置に一番近いPatrol Node
 		//========================================================
 
-		int nearestNode =
-			FindNearestPatrolNode(m_pos);
+		int nearestNode = FindNearestPatrolNode(m_pos);
 
 		if (nearestNode < 0)
 		{
@@ -615,8 +583,7 @@ void Police::UpdateReturn()
 			return;
 		}
 
-		auto node =
-			m_pNodeManager->FindNode(nearestNode);
+		auto node = AStarNodeManager::Instance().FindNode(nearestNode);
 
 		if (!node)
 		{
@@ -635,8 +602,7 @@ void Police::UpdateReturn()
 		// Path作成失敗
 		if (m_navPath.empty())
 		{
-			m_currentStartNode =
-				nearestNode;
+			m_currentStartNode = nearestNode;
 
 			ChangeState(State::Patrol);
 
@@ -700,11 +666,6 @@ void Police::UpdateInvestigate()
 
 	if (m_navPath.empty())
 	{
-		if (!m_pNavMeshManager) 
-		{
-			ChangeState(State::Return); return; 
-		}
-
 		m_navPath = FindNavPath(m_pos, m_investigatePos);
 
 		m_navPathIndex = 0;
@@ -734,6 +695,7 @@ bool Police::DetectDamageSound()
 
 	for (auto& obj : SceneManager::Instance().GetObjList())
 	{
+		if (obj->GetCategory() != KdGameObject::ObjectCategory::Character) continue;
 		auto character = std::dynamic_pointer_cast<CharacterBase>(obj);
 		if (!character || character.get() == this) continue;
 		if (std::dynamic_pointer_cast<Police>(character)) continue;
@@ -781,13 +743,9 @@ void Police::Dispatch(const Math::Vector3& pos)
 
 void Police::FindPatrolPath()
 {
-	if (!m_pNodeManager)
-	{
-		return;
-	}
+	AStarNodeManager nodeManager = AStarNodeManager::Instance();
 
-	const auto& nodes =
-		m_pNodeManager->GetNodes();
+	const auto& nodes = nodeManager.GetNodes();
 
 	if (nodes.empty())
 	{
@@ -866,7 +824,7 @@ void Police::FindPatrolPath()
 
 	m_currentPath =
 		m_pathfinder.FindPath(
-			*m_pNodeManager,
+			nodeManager,
 			startID,
 			goalID
 		);
@@ -877,19 +835,12 @@ void Police::FindPatrolPath()
 int Police::FindNearestPatrolNode(
 	const Math::Vector3& pos)
 {
-	if (!m_pNodeManager)
-	{
-		return -1;
-	}
-
-	const auto& nodes =
-		m_pNodeManager->GetNodes();
+	const auto& nodes = AStarNodeManager::Instance().GetNodes();
 
 	if (nodes.empty())
 	{
 		return -1;
 	}
-
 
 	//============================================================
 	// 最近傍Node
@@ -897,9 +848,7 @@ int Police::FindNearestPatrolNode(
 
 	int nearestNodeID = -1;
 
-	float nearestDistanceSq =
-		std::numeric_limits<float>::max();
-
+	float nearestDistanceSq = std::numeric_limits<float>::max();
 
 	for (const auto& node : nodes)
 	{
@@ -908,19 +857,15 @@ int Police::FindNearestPatrolNode(
 			continue;
 		}
 
-
 		//========================================================
 		// Nodeとの距離
 		//========================================================
 
-		Math::Vector3 diff =
-			node->GetPos() - pos;
+		Math::Vector3 diff = node->GetPos() - pos;
 
 		diff.y = 0.0f;
 
-		float distanceSq =
-			diff.LengthSquared();
-
+		float distanceSq = diff.LengthSquared();
 
 		//========================================================
 		// 最短
@@ -930,8 +875,7 @@ int Police::FindNearestPatrolNode(
 		{
 			nearestDistanceSq = distanceSq;
 
-			nearestNodeID =
-				node->GetID();
+			nearestNodeID = node->GetID();
 		}
 	}
 
@@ -940,48 +884,36 @@ int Police::FindNearestPatrolNode(
 
 bool Police::MoveToNextPathNode()
 {
-	if (!m_pNodeManager)
-	{
-		return false;
-	}
-
 	if (m_currentPath.empty())
 	{
 		return false;
 	}
 
-	if (m_currentPathIndex >=
-		static_cast<int>(m_currentPath.size()))
+	if (m_currentPathIndex >= static_cast<int>(m_currentPath.size()))
 	{
 		return false;
 	}
-
 
 	//============================================================
 	// 現在のTarget Node
 	//============================================================
 
-	const int nodeID =
-		m_currentPath[m_currentPathIndex];
+	const int nodeID = m_currentPath[m_currentPathIndex];
 
-	auto node =
-		m_pNodeManager->FindNode(nodeID);
+	auto node = AStarNodeManager::Instance().FindNode(nodeID);
 
 	if (!node)
 	{
 		return false;
 	}
 
-
 	//============================================================
 	// Nodeへの方向
 	//============================================================
 
-	Math::Vector3 dir =
-		node->GetPos() - m_pos;
+	Math::Vector3 dir = node->GetPos() - m_pos;
 
 	dir.y = 0.0f;
-
 
 	//============================================================
 	// 到着
@@ -989,8 +921,7 @@ bool Police::MoveToNextPathNode()
 
 	const float arriveDistance = 0.2f * m_sceneScale;
 
-	if (dir.LengthSquared() <=
-		arriveDistance * arriveDistance)
+	if (dir.LengthSquared() <= arriveDistance * arriveDistance)
 	{
 		m_currentPathIndex++;
 
@@ -998,20 +929,16 @@ bool Police::MoveToNextPathNode()
 		// Pathの途中
 		//========================================================
 
-		if (m_currentPathIndex <
-			static_cast<int>(m_currentPath.size()))
+		if (m_currentPathIndex < static_cast<int>(m_currentPath.size()))
 		{
 			return true;
 		}
-
 
 		//========================================================
 		// Patrol Point到着
 		//========================================================
 
-		m_currentStartNode =
-			m_currentPath.back();
-
+		m_currentStartNode = m_currentPath.back();
 
 		//========================================================
 		// 次のPathを探索
@@ -1021,7 +948,6 @@ bool Police::MoveToNextPathNode()
 
 		return true;
 	}
-
 
 	//============================================================
 	// 移動
@@ -1034,11 +960,6 @@ bool Police::MoveToNextPathNode()
 
 void Police::FindChasePath()
 {
-	if (!m_pNavMeshManager)
-	{
-		return;
-	}
-
 	auto target = m_wpTarget.lock();
 
 	if (!target)
@@ -1047,7 +968,7 @@ void Police::FindChasePath()
 	}
 
 	//============================================================
-	// 見えているか？
+	// 視界判定
 	//============================================================
 
 	const bool visible = CanSeeTarget(target);
@@ -1078,8 +999,7 @@ bool Police::MoveToNextNavPathPoint()
 		return false;
 	}
 
-	if (m_navPathIndex >=
-		static_cast<int>(m_navPath.size()))
+	if (m_navPathIndex >= static_cast<int>(m_navPath.size()))
 	{
 		return false;
 	}
@@ -1088,19 +1008,15 @@ bool Police::MoveToNextNavPathPoint()
 	// 現在のTarget Point
 	//============================================================
 
-	const Math::Vector3 targetPoint =
-		m_navPath[m_navPathIndex];
-
+	const Math::Vector3 targetPoint = m_navPath[m_navPathIndex];
 
 	//============================================================
 	// 移動方向
 	//============================================================
 
-	Math::Vector3 dir =
-		targetPoint - m_pos;
+	Math::Vector3 dir = targetPoint - m_pos;
 
 	dir.y = 0.0f;
-
 
 	//============================================================
 	// 到着判定
@@ -1108,8 +1024,7 @@ bool Police::MoveToNextNavPathPoint()
 
 	const float arriveDistance = 0.2f * m_sceneScale;
 
-	if (dir.LengthSquared() <=
-		arriveDistance * arriveDistance)
+	if (dir.LengthSquared() <= arriveDistance * arriveDistance)
 	{
 		m_navPathIndex++;
 
@@ -1117,8 +1032,7 @@ bool Police::MoveToNextNavPathPoint()
 		// 最後まで到着
 		//========================================================
 
-		if (m_navPathIndex >=
-			static_cast<int>(m_navPath.size()))
+		if (m_navPathIndex >= static_cast<int>(m_navPath.size()))
 		{
 			SetMoveDirection(Math::Vector3::Zero);
 			return false;
@@ -1154,18 +1068,13 @@ void Police::OnRepathRequested()
 
 bool Police::SearchTarget()
 {
-	auto& objList =
-		SceneManager::Instance().GetObjList();
+	auto& objList = SceneManager::Instance().GetObjList();
 
 	for (auto& obj : objList)
 	{
-		if (!obj)
-		{
-			continue;
-		}
+		if (obj->GetCategory() != KdGameObject::ObjectCategory::Character) continue;
 
-		auto character =
-			std::dynamic_pointer_cast<CharacterBase>(obj);
+		auto character = std::dynamic_pointer_cast<CharacterBase>(obj);
 
 		if (!character)
 		{
@@ -1213,8 +1122,7 @@ bool Police::SearchTarget()
 
 		m_chasingForCrime = character->IsDamaging() || character->IsSuspicious();
 
-		m_lastTargetPos =
-			character->GetPos();
+		m_lastTargetPos = character->GetPos();
 
 		return true;
 	}
@@ -1422,13 +1330,7 @@ void Police::EndEscort(bool confiscate)
 
 void Police::FindPolicePostPath()
 {
-	if (!m_pNavMeshManager || !m_pLocationPointManager)
-	{
-		return;
-	}
-
-	auto policeStation =
-		m_pLocationPointManager->FindByTag(LocationTag::PoliceStation);
+	auto policeStation = LocationPointManager::Instance().FindByTag(LocationTag::PoliceStation);
 
 	if (!policeStation)
 	{
@@ -1461,11 +1363,6 @@ void Police::ChangeState(State newState)
 		m_searchTimer = 0.0f;
 
 		m_searchStartRotY = m_rot.y;
-	}
-
-	if (m_state == State::Arrest)
-	{
-		//KdShaderManager::Instance().WorkAmbientController().
 	}
 
 	ApplyStateSettings();

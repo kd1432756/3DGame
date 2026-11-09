@@ -30,7 +30,7 @@ public:
 		Laugh,			// 笑ってる顔
 	};
 
-	void SetIcon(IconType iconType, float duration = 0.0f, bool force = false);
+	bool SetIcon(IconType iconType, float duration = 0.0f, bool force = false);
 
 	void SetOwner(const std::shared_ptr<CharacterBase>& character)
 	{
@@ -57,7 +57,7 @@ private:
 	// アニメーション
 	//========================================
 
-	void StartIconAnimation(); 
+	void StartIconAnimation();
 	void StartIconDisappearAnimation();
 
 	//========================================

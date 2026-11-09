@@ -43,9 +43,12 @@ namespace
 		static const Pool pool =
 		{
 			{ SkillCheckType::GaugeStop,   1.0f, 0.0f },
+			{ SkillCheckType::Mash,      1.0f, 0.0f },
 			{ SkillCheckType::HoldRelease, 1.0f, 0.0f },
 			{ SkillCheckType::Arrow,       0.7f, 0.3f },
-			{ SkillCheckType::ShrinkRing, 1.0f, 0.0f },
+			{ SkillCheckType::Reaction,  0.7f, 0.4f },
+			{ SkillCheckType::ShrinkRing, 1.0f, 0.2f },
+			{ SkillCheckType::AltMash,   1.0f, 0.0f },
 		};
 		return pool;
 	}

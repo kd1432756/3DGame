@@ -4,17 +4,13 @@
 
 void DamageIndicatorUI::Init()
 {
-	m_texHouse = std::make_shared<KdTexture>();
-	m_texHouse->Load("Asset/Textures/UI/House.png");
-
-	m_texBadge = std::make_shared<KdTexture>();
-	m_texBadge->Load("Asset/Textures/UI/Badge.png");
+	m_texHouse = LoadTexture("Asset/Textures/UI/House.png");
+	m_texBadge = LoadTexture("Asset/Textures/UI/Badge.png");
 }
 
 void DamageIndicatorUI::Update()
 {
-	auto owner = m_owner.lock();
-	if (!owner) return;
+	if (!LockPlayer()) return;
 
 	//m_count = owner->GetDamagedCount();
 	m_count = DamageDirector::CountDamaged();
@@ -29,7 +25,7 @@ void DamageIndicatorUI::Update()
 	// バウンド演出(1.0 → 1.5 → 1.0)
 	if (m_bounceTimer > 0.0f)
 	{
-		m_bounceTimer -= 1 / 60.0f;
+		m_bounceTimer -= DeltaTime();
 		if (m_bounceTimer < 0.0f) m_bounceTimer = 0.0f;
 
 		const float t = 1.0f - (m_bounceTimer / m_bounceTime);   // 0→1
@@ -50,9 +46,6 @@ void DamageIndicatorUI::DrawSprite()
 {
 	auto& sprite = KdShaderManager::Instance().m_spriteShader;
 
-	Math::Color ring = Math::Color{ 0.3f, 0.3f, 0.3f, 1.0f };
-	Math::Color circle = Math::Color{ 0.6f, 0.6f, 0.6f, 1.0f };
-		
 	// 家アイコン(常時表示)
 	sprite.DrawTex(m_texHouse,
 		(int)m_uiPos.x, (int)m_uiPos.y,
@@ -71,11 +64,9 @@ void DamageIndicatorUI::DrawSprite()
 		(int)bx, (int)by,
 		(int)size, (int)size);
 
-	sprite.DrawFont(
+	DrawLabel(
 		Math::Vector2{ bx + 3, by - 0.5f },
-		&kWhiteColor,
-		Math::Vector2{ 0.5f, 0.5f },	//pivot
-		0.0f,
+		kWhiteColor,
 		FontID::Future24,
 		std::to_string(m_count).c_str());
 }

@@ -1,14 +1,18 @@
 ﻿#pragma once
 
+#include "../MenuUI/MenuUI.h"
+
 #include "../../../System/Score/ScoreManager.h"
 
 class GameScene;
 class ResultFadeUI;
 class ConfettiUI;
 
-class ResultUI : public KdGameObject
+class ResultUI : public MenuUI
 {
 public:
+	// リザルトはポーズ中も動くので常時更新
+	ResultUI() : MenuUI(true) {}
 
 	void Init() override;
 	void Update() override;
@@ -20,6 +24,10 @@ public:
 	}
 
 	void SetConfetti(const std::shared_ptr<ConfettiUI>& confetti) { m_wpConfetti = confetti; }
+
+protected:
+	// フェードが終わったらタイトルへ
+	void OnFadeOutFinished() override;
 
 private:
 
@@ -35,8 +43,6 @@ private:
 	void StartCelebration();
 	void ChangePhase(Phase phase);
 
-	void GetMousePos(POINT* mousePos);
-
 	std::weak_ptr<GameScene> m_wpGameScene;
 	std::shared_ptr<ResultFadeUI> m_spFadeUI;
 
@@ -50,22 +56,11 @@ private:
 	int m_displayScore = 0;
 	ScoreManager::Rank m_rank = ScoreManager::Rank::C;
 
-	bool m_fadeOut = false;
-	float m_alpha = 0.0f;
-
-	float m_mousePosX = 0.0f;
-	float m_mousePosY = 0.0f;
-
-	std::shared_ptr<KdTexture> m_pointerTex;
-
 	// Titleボタン
-	Math::Vector2 m_titleButtonPos = { 0.0f, -270.0f };
-	Math::Vector2 m_titleButtonSize = { 470.0f, 60.0f };
+	MenuButton m_titleButton;
 
 	float m_animTime = 0.0f;
 	float m_animOffsetY = 0.0f;
-
-	bool m_isTitleButtonHover = false;
 
 	std::weak_ptr<ConfettiUI> m_wpConfetti;
 

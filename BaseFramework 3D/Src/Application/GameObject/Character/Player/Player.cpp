@@ -2,7 +2,6 @@
 
 #include "../../../Scene/CameraManager/CameraManager.h"
 #include "../../Camera/FPSCamera/FPSCamera.h"
-#include "../../Camera/ArrestCamera/ArrestCamera.h"
 
 #include "../../../Scene/SceneManager.h"
 
@@ -23,13 +22,11 @@
 #include "../../UI/SlideTextUI/SlideTextUI.h"
 #include "../../UI/ShakeTextUI/ShakeTextUI.h"
 
-#include "../../UI/DamageIndicatorUI/DamageIndicatorUI.h"
-
 #include "../../../System/FootStep/FootStep.h"
 
 #include "../Enemy/Police/Police.h"
 
-#include "../../UI/Notification/NotificationManager.h"
+#include "../../UI/NotificationUI/NotificationManager.h"
 
 void Player::Init()
 {
@@ -57,22 +54,7 @@ void Player::Init()
 		m_spModel,
 		KdCollider::TypeEditor);
 
-	auto camera = CameraManager::Instance().GetCamera();
-	if (camera)
-	{
-		camera->SetTarget(std::dynamic_pointer_cast<Player>(shared_from_this()));
-		SetCamera(camera);
-		m_fpsCamera = std::dynamic_pointer_cast<FPSCamera>(camera);
-	}
-
 	InitEmoteIcon();
-
-	auto indicator = std::make_shared<DamageIndicatorUI>();
-	indicator->Init();
-	indicator->SetOwner(std::dynamic_pointer_cast<Player>(shared_from_this()));
-	SceneManager::Instance().AddObject(indicator);
-
-	m_collisionRadius = 0.5f;
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 }
@@ -80,26 +62,22 @@ void Player::Init()
 void Player::Update()
 {
 	FootstepSystem::Instance().SetListenerPos(m_pos);
-
 	UpdateNeglect();
 
 	if (m_isArrested)
 	{
-		UpdateArrested();
+		UpdateArrested();		// 内側の ApplyGravity / UpdateWorldMatrix は削除
+		UpdateLocked();
 		return;
 	}
 
-	// 妨害終了後のカメラ復帰中は操作不可
 	if (m_isHinderCamReturning)
 	{
 		UpdateHinderCamera();
-		m_isMoving = false;
-		ApplyGravity();
-		UpdateWorldMatrix();
+		UpdateLocked();
 		return;
 	}
 
-	// TPS中はカメラ向きでプレイヤーを回さない
 	if (!m_isHindering)
 	{
 		UpdateRotationByCamera();
@@ -107,17 +85,13 @@ void Player::Update()
 
 	UpdateHinder();
 
-	// UpdateHinder内で妨害が終わった場合
 	if (m_isHinderCamReturning)
 	{
-		m_isMoving = false;
-		ApplyGravity();
-		UpdateWorldMatrix();
+		UpdateLocked();
 		return;
 	}
 
 	Move();
-
 	ApplyGravity();
 
 	if (!m_isRestrained)
@@ -173,6 +147,13 @@ void Player::UpdateAnimation()
 	CharacterBase::UpdateAnimation();
 }
 
+void Player::UpdateLocked()
+{
+	m_isMoving = false;
+	ApplyGravity();
+	UpdateWorldMatrix();
+}
+
 void Player::UpdateArrested()
 {
 	m_isMoving = false;
@@ -189,23 +170,51 @@ void Player::UpdateArrested()
 
 		if (arrestCam->IsTransitionFinished())
 		{
-			m_fpsCamera->SetDegAng(arrestCam->GetDegAng());
-			CameraManager::Instance().SetCamera(m_fpsCamera);
-			SetCamera(m_fpsCamera);
+			RestoreFpsCamera(arrestCam);
 
 			m_isArrested = false;
-			m_isDrawEnabled = false;
 		}
+	}
+	else
+	{
+		RestoreFpsCamera(arrestCam);
+
+		m_isArrested = false;
 	}
 
 	ApplyGravity();
 	UpdateWorldMatrix();
 }
 
+void Player::SwitchToArrestCamera()
+{
+	if (!m_fpsCamera) return;
+
+	auto cam = std::make_shared<ArrestCamera>();
+	cam->Init();
+	cam->SetTarget(std::dynamic_pointer_cast<Player>(shared_from_this()));
+	cam->SetEyeHeight(0.8f * m_sceneScale);
+	cam->SetDegAng(m_fpsCamera->GetDegAng());
+
+	CameraManager::Instance().SetCamera(cam);
+	SetCamera(cam);
+
+	m_isDrawEnabled = true;
+}
+
+void Player::RestoreFpsCamera(const std::shared_ptr<ArrestCamera>& arrestCam)
+{
+	if (!m_fpsCamera) return;
+
+	m_fpsCamera->SetDegAng(arrestCam->GetDegAng());
+	CameraManager::Instance().SetCamera(m_fpsCamera);
+	SetCamera(m_fpsCamera);
+
+	m_isDrawEnabled = false;
+}
+
 void Player::UpdateNeglect()
 {
-	const float dt = 1 / 60.0f;
-
 	for (auto it = m_neglected.begin(); it != m_neglected.end();)
 	{
 		auto obj = it->obj.lock();
@@ -217,11 +226,11 @@ void Player::UpdateNeglect()
 			continue;
 		}
 
-		it->elapsed += dt;
+		it->elapsed += 1 / 60.0f;
 
 		if (it->elapsed >= m_neglectGrace)
 		{
-			it->tickTimer += dt;
+			it->tickTimer += 1 / 60.0f;
 
 			if (it->tickTimer >= m_neglectInterval)
 			{
@@ -233,12 +242,11 @@ void Player::UpdateNeglect()
 				{
 					AddScore(-penalty);
 
-					auto text = std::make_shared<FloatingTextUI>();
-					text->Init();
-					text->SetText("-" + std::to_string(penalty));
-					text->SetColor({ 0.9f, 0.3f, 0.3f, 1.0f });
-					text->SetPosition({ 500, 270 });
-					SceneManager::Instance().AddObject(text);
+					SpawnFloatingText(
+						"-" + std::to_string(penalty),
+						{ 500, 270 },
+						{ 0.9f, 0.3f, 0.3f, 1.0f }
+					);
 				}
 			}
 		}
@@ -406,17 +414,6 @@ bool Player::FindReportPos(Math::Vector3& outPos) const
 	return found;
 }
 
-void Player::ShowReportText(const std::string& text, const Math::Color& color)
-{
-	auto floatingText = std::make_shared<FloatingTextUI>();
-	floatingText->Init();
-	floatingText->SetText(text);
-	floatingText->SetColor(color);
-	floatingText->SetPosition({ 520, -210 });
-	floatingText->SetFont(FontID::Future24);
-	SceneManager::Instance().AddObject(floatingText);
-}
-
 bool Player::TryReport()
 {
 	// 通報地点 = 壊している現場(またはその直後の現場)
@@ -424,7 +421,12 @@ bool Player::TryReport()
 
 	if (!FindReportPos(reportPos))
 	{
-		ShowReportText("No target in sight", { 0.8f, 0.8f, 0.8f, 1.0f });
+		SpawnFloatingText(
+			"No target in sight",
+			{ 530, -210 },
+			{ 0.8f, 0.8f, 0.8f, 1.0f },
+			FontID::Future24
+		);
 		return false;
 	}
 
@@ -450,13 +452,23 @@ bool Player::TryReport()
 
 	if (!nearest)
 	{
-		ShowReportText("No police available", { 0.8f, 0.8f, 0.8f, 1.0f });
+		SpawnFloatingText(
+			"No police available",
+			{ 530, -210 },
+			{ 0.8f, 0.8f, 0.8f, 1.0f },
+			FontID::Future24
+		);
 		return false;
 	}
 
 	nearest->Dispatch(reportPos);
 
-	ShowReportText("Reported!", { 0.9f, 0.35f, 0.0f, 1.0f });
+	SpawnFloatingText(
+		"Reported!",
+		{ 530, -210 },
+		{ 0.9f, 0.35f, 0.0f, 1.0f },
+		FontID::Future24
+	);
 
 	if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Call.wav"))
 	{
@@ -599,29 +611,11 @@ void Player::EndHinder(bool restoreCamera, bool applyCooldown)
 
 void Player::BeginHinderCamera()
 {
-	// 手持ちアイテムはTPSだと宙に浮くので外す
 	SelectInventory(-1);
 
-	// フォーカス解除（ハイライトが残らないように）
-	if (auto oldObj = m_focusObject.lock())
-	{
-		if (auto usable = std::dynamic_pointer_cast<Usable>(oldObj))
-		{
-			usable->SetFocused(false);
-		}
-	}
-	m_focusObject.reset();
+	ClearFocus();
 
-	m_isDrawEnabled = true;   // 自分のモデルを表示
-
-	auto cam = std::make_shared<ArrestCamera>();
-	cam->Init();
-	cam->SetTarget(std::dynamic_pointer_cast<Player>(shared_from_this()));
-	cam->SetEyeHeight(0.8f * m_sceneScale);
-	cam->SetDegAng(m_fpsCamera->GetDegAng());
-
-	CameraManager::Instance().SetCamera(cam);
-	SetCamera(cam);
+	SwitchToArrestCamera();
 }
 
 void Player::UpdateHinderCamera()
@@ -636,39 +630,24 @@ void Player::UpdateHinderCamera()
 
 	if (!arrestCam->IsTransitionFinished()) return;
 
-	m_fpsCamera->SetDegAng(arrestCam->GetDegAng());
-	CameraManager::Instance().SetCamera(m_fpsCamera);
-	SetCamera(m_fpsCamera);
+	RestoreFpsCamera(arrestCam);
 
-	m_isDrawEnabled = false;
 	m_isHinderCamReturning = false;
 }
 
-void Player::OnPrankSuccess(int score, const std::string& message)
+void Player::OnRepairSuccess(int score, const std::string& message)
 {
 	AddScore(score);
 
-	auto floatingText = std::make_shared<FloatingTextUI>();
-
-	floatingText->Init();
-
-	floatingText->SetText(
-		message + "  + " + std::to_string(score)
+	SpawnFloatingText(
+		message + "  + " + std::to_string(score),
+		{ 0, 100 },
+		{ 1.0f, 0.78f, 0.10f, 1.0f }
 	);
-
-	floatingText->SetPosition({ 0, 100 });
-
-	SceneManager::Instance().AddObject(floatingText);
 }
 
-void Player::OnPranked(const std::shared_ptr<InteractiveObject>& object, const InteractiveAction& action)
+void Player::OnObjectDamaged(const std::shared_ptr<InteractiveObject>& object, const InteractiveAction& action)
 {
-	/*auto slideText = std::make_shared<SlideTextUI>();
-	slideText->Init();
-	slideText->SetText(action.ownerMessage);
-	slideText->SetPosition({ -500, 130 });
-	SceneManager::Instance().AddObject(slideText);*/
-
 	NotificationManager::Instance().Push(action.ownerMessage);
 
 	if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Blip_Down.wav"))
@@ -721,8 +700,7 @@ void Player::SelectInventory(int index)
 	// 同じ番号を押したら解除
 	if (m_inventory.GetSelectIndex() == index && m_handItem)
 	{
-		m_inventory.SelectIndex(-1);
-		EquipItem("");
+		ClearHandItem();
 		return;
 	}
 
@@ -765,25 +743,14 @@ void Player::Move()
 
 	Math::Vector3 move = _moveDir * _moveSpeed;
 
-	const float radius = m_collisionRadius * m_sceneScale;
-	const float margin = 0.02f * m_sceneScale;   // 先読み距離。移動量より小さめに
+	const float radius = WallRadius();
+	const float margin = 0.02f * m_sceneScale;   // 先読み距離
 
 	std::vector<WallHit> walls;
-	/*CollectWallHits(radius + margin, walls);*/
 	CollectWallHits(radius, walls);
 
 	// 壁に向かう成分を除去(角に備えて2周)
-	for (int pass = 0; pass < 2; ++pass)
-	{
-		for (auto& w : walls)
-		{
-			float into = move.Dot(w.normal);
-			if (into < 0.0f)
-			{
-				move -= w.normal * into;
-			}
-		}
-	}
+	SlideAlongWalls(move, radius);
 
 	const Math::Vector3 before = m_pos;
 	m_pos += move;
@@ -802,38 +769,10 @@ void Player::UpdateRotationByCamera()
 
 	m_rot.y = camera->GetDegAng().y + DirectX::XMConvertToDegrees(DirectX::XM_PI);
 }
-/*
-void Player::Jump()
-{
-	if (m_isGround &&
-		(GetAsyncKeyState(VK_SPACE) & 0x0001))
-	{
-		m_gravity = m_jumpPower;
-		m_isGround = false;
-	}
-
-	m_gravity -= m_gravityPower;
-
-	m_pos.y += m_gravity;
-
-	CheckGround();
-}*/
 
 void Player::UpdateFocusObject()
 {  
-	auto oldObj = m_focusObject.lock();
-
-	if (oldObj)
-	{
-		auto usable = std::dynamic_pointer_cast<Usable>(oldObj);
-
-		if (usable)
-		{
-			usable->SetFocused(false);
-		}
-	}
-
-	m_focusObject.reset();
+	ClearFocus();
 
 	auto camera = m_camera.lock();
 
@@ -887,6 +826,18 @@ void Player::UpdateFocusObject()
 			usable->SetFocused(true);
 		}
 	}
+}
+
+void Player::ClearFocus()
+{
+	if (auto old = m_focusObject.lock())
+	{
+		if (auto usable = std::dynamic_pointer_cast<Usable>(old))
+		{
+			usable->SetFocused(false);
+		}
+	}
+	m_focusObject.reset();
 }
 
 void Player::TryInteract()
@@ -975,21 +926,18 @@ void Player::StartUse()
 	m_useTimer = 0.0f;
 	m_useTotal = 0.0f;
 
-	m_isRepairUse = usable->IsRepairAction(
-		std::dynamic_pointer_cast<Player>(shared_from_this()));
-
 	// スキルチェック開始(種類は抽選)
 	m_skillResult = SkillResult::None;
 
 	m_skillCheck = SkillCheckFactory::Create(
-		m_isRepairUse,
+		true,	// 一時的に
 		m_lastSkillType,
 		DayCycle::Instance().GetTimeProgress());
 
 	m_lastSkillType = static_cast<int>(m_skillCheck->GetType());
 
-	// 難易度: 修復は易しめ、いたずらは標準
-	m_skillCheck->Start(m_isRepairUse ? 0.8f : 1.0f);
+	// 難易度は1.0で標準
+	m_skillCheck->Start(1.0f);
 
 	m_usePhase = UsePhase::SkillCheck;
 }
@@ -1001,12 +949,10 @@ void Player::UpdateUse()
 		return;
 	}
 
-	auto self = std::dynamic_pointer_cast<Player>(shared_from_this());
-
 	// 対象が消えた / 他キャラに先に修復された等で使用不能になったら中断
 	auto obj = m_useObject.lock();
 
-	if (!obj || !obj->CanUse(self))
+	if (!obj || !obj->CanUse(std::dynamic_pointer_cast<Player>(shared_from_this())))
 	{
 		CancelUse();
 		return;
@@ -1053,13 +999,12 @@ void Player::UpdateUse()
 				return;
 			}
 
-			auto floatingText = std::make_shared<FloatingTextUI>();
-			floatingText->Init();
-			floatingText->SetText(text);
-			floatingText->SetColor(color);
-			floatingText->SetFont(FontID::Future16);
-			floatingText->SetPosition({ 0, -25 });
-			SceneManager::Instance().AddObject(floatingText);
+			SpawnFloatingText(
+				text,
+				{ 0, -25 },
+				color,
+				FontID::Future16
+			);
 
 			// 結果でカウント時間を補正(Perfect短縮 / Miss延長)
 			m_useTotal = m_useTime * TimeRate(m_skillResult);
@@ -1077,8 +1022,7 @@ void Player::UpdateUse()
 		{
 			const int usedIndex = m_inventory.GetSelectIndex();
 
-			// Use() の中で GetSkillResult() を見てスコア倍率などを変える
-			obj->Use(self);	
+			obj->Use(std::dynamic_pointer_cast<Player>(shared_from_this()));
 			
 			if (usedIndex >= 0)
 			{
@@ -1128,47 +1072,31 @@ void Player::SwapItem(
 		return;
 	}	
 	
-	//============================================================
-	// 交換対象（今そのスロットにあるアイテム）をワールドへ落とす
-	//============================================================
-
 	const std::string oldPath = m_inventory.GetItems()[index].itemPath;
 
+	// 拾う
+	if (!newItem->Pickup(m_inventory, index)) return;
+
+	// 古い物を落とす
 	if (!oldPath.empty())
 	{
-		Math::Vector3 pos = camera->GetMatrix().Translation();
-		Math::Vector3 dir = camera->GetMatrix().Backward();
-
-		ItemManager::Instance().SpawnDropped(oldPath, pos, dir);
+		ItemManager::Instance().SpawnDropped(
+			oldPath,
+			camera->GetMatrix().Translation(),
+			camera->GetMatrix().Backward());
 	}
 
-	//============================================================
-	// 手持ちモデルだった場合は先に破棄
-	//============================================================
-
-	if (m_handItem && m_inventory.GetSelectIndex() == index)
-	{
-		m_handItem->Destroy();
-		m_handItem.reset();
-	}
-
-	//============================================================
-	// 新アイテムをそのスロットに上書きして拾う
-	//============================================================
-
-	if (!newItem->Pickup(m_inventory, index))
-	{
-		return;
-	}
-
-	//============================================================
-	// 選択中スロットなら手持ちを更新
-	//============================================================
-
+	// 選択中スロットなら手持ちを作る
 	if (m_inventory.GetSelectIndex() == index)
 	{
 		EquipItem(m_inventory.GetItems()[index].itemPath);
 	}
+}
+
+void Player::ClearHandItem()
+{
+	m_inventory.SelectIndex(-1);
+	EquipItem("");
 }
 
 void Player::ConsumeItem(int index)
@@ -1181,8 +1109,7 @@ void Player::ConsumeItem(int index)
 		m_handItem.reset();
 	}
 
-	m_inventory.SelectIndex(-1);
-	EquipItem("");
+	ClearHandItem();
 }
 
 void Player::TryDropItem()
@@ -1223,8 +1150,7 @@ void Player::TryDropItem()
 		EquipItem(next->itemPath);
 	}*/
 
-	m_inventory.SelectIndex(-1);
-	EquipItem("");
+	ClearHandItem();
 }
 
 void Player::UpdateHandItem()
@@ -1328,12 +1254,11 @@ void Player::OnArrested(const std::shared_ptr<Police>& police)
 		{
 			AddScore(-penalty);
 
-			auto text = std::make_shared<FloatingTextUI>();
-			text->Init();
-			text->SetText("Arrest Penalty  -" + std::to_string(penalty));
-			text->SetColor({ 0.9f, 0.3f, 0.3f, 1.0f });
-			text->SetPosition({ 0, 160 });
-			SceneManager::Instance().AddObject(text);
+			SpawnFloatingText(
+				"Arrest Penalty  -" + std::to_string(penalty),
+				{ 0, 160 },
+				{ 0.9f, 0.3f, 0.3f, 1.0f }
+			);
 		}
 	}
 
@@ -1342,19 +1267,7 @@ void Player::OnArrested(const std::shared_ptr<Police>& police)
 		se->SetVolume(0.2f);
 	}
 
-	// フォーカス解除(ハイライトが残らないように)
-	auto oldObj = m_focusObject.lock();
-	if (oldObj)
-	{
-		auto usable = std::dynamic_pointer_cast<Usable>(oldObj);
-
-		if (usable)
-		{
-			usable->SetFocused(false);
-		}
-	}
-
-	m_focusObject.reset();
+	ClearFocus();
 
 	{
 		auto shakeText = std::make_shared<ShakeTextUI>();
@@ -1370,20 +1283,9 @@ void Player::OnArrested(const std::shared_ptr<Police>& police)
 		SceneManager::Instance().AddObject(shakeText);
 	}
 
-	m_isDrawEnabled = true;
-
 	SelectInventory(-1);
 
-	auto arrestCamera = std::make_shared<ArrestCamera>(); // 先ほど作った専用カメラ
-	arrestCamera->Init();
-	arrestCamera->SetTarget(std::dynamic_pointer_cast<Player>(shared_from_this()));
-	float height = 0.8f * m_sceneScale;
-	arrestCamera->SetEyeHeight(height);
-	arrestCamera->SetDegAng(m_fpsCamera->GetDegAng());
-
-	// カメラマネージャーやPlayerのカメラを差し替え
-	CameraManager::Instance().SetCamera(arrestCamera); // マネージャーの仕様に合わせる
-	SetCamera(arrestCamera);
+	SwitchToArrestCamera();
 }
 
 void Player::OnReleased()
@@ -1393,7 +1295,7 @@ void Player::OnReleased()
 
 bool Player::IsSuspicious() const
 {
-	if (!m_isUsing || !m_isRepairUse)
+	if (!m_isUsing)
 	{
 		return false;
 	}
@@ -1412,4 +1314,15 @@ bool Player::IsSuspicious() const
 	}
 
 	return obj->GetSecondsSinceDamaged() <= m_suspicionSeconds;
+}
+
+void Player::SpawnFloatingText(const std::string& text, const Math::Vector2& pos, const Math::Color& color, FontID font)
+{
+	auto floatingText = std::make_shared<FloatingTextUI>();
+	floatingText->Init();
+	floatingText->SetText(text);
+	floatingText->SetPosition(pos);
+	floatingText->SetColor(color);
+	floatingText->SetFont(font);
+	SceneManager::Instance().AddObject(floatingText);
 }

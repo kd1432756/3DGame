@@ -22,8 +22,6 @@ namespace
 
 void ConfettiUI::Init()
 {
-	m_updateGroup = UpdateGroup::Always;
-
 	m_particles.clear();
 	m_particles.reserve(kMaxParticles);
 	m_active = false;

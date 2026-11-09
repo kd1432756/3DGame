@@ -27,7 +27,7 @@
 
 #include "../GameObject/Object/StaticMeshObject/Item/ItemManager.h"
 
-#include "../GameObject/UI/Notification/NotificationManager.h"
+#include "../GameObject/UI/NotificationUI/NotificationManager.h"
 
 void SceneManager::PreUpdate()
 {

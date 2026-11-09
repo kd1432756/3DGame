@@ -127,12 +127,6 @@
     <Filter Include="Src\Application\System\Interact">
       <UniqueIdentifier>{71ce9667-e643-4503-9f95-f5c557e9c337}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\UI">
-      <UniqueIdentifier>{fd381f4a-9e82-4a93-ae6a-559a60c91e8b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\UI\Reticle">
-      <UniqueIdentifier>{1753dc67-88cc-46d0-9684-e317aca297b2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\System\Usable">
       <UniqueIdentifier>{6368ac98-5d6d-4ffd-b6cc-f2c688812035}</UniqueIdentifier>
     </Filter>
@@ -160,9 +154,6 @@
     <Filter Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\WoodenFence">
       <UniqueIdentifier>{f5ec0c25-ce28-4ad3-aa78-c2cd706b3468}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Character\Police">
-      <UniqueIdentifier>{3e955b42-14f5-4665-8705-2a6c940793e7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\System\Node">
       <UniqueIdentifier>{236a548a-679d-4cc8-8d73-3490f5a2c136}</UniqueIdentifier>
     </Filter>
@@ -175,26 +166,11 @@
     <Filter Include="Src\Application\GameObject\Effect\AlertIcon">
       <UniqueIdentifier>{be4e407f-1fb7-47f5-b636-902e87973e3e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\UI\InteractionProgress">
-      <UniqueIdentifier>{d9094f7d-6361-4478-9622-5390e375262f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\UI\InteractionPrompt">
-      <UniqueIdentifier>{f8593629-b95d-4c01-9533-23cdbdeb2e2d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\UI\InventoryUI">
-      <UniqueIdentifier>{34f8b8ec-9f8e-42a4-a66c-28e31e3b90d6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\System\DayCycle">
       <UniqueIdentifier>{baeb59ee-1105-4d52-a55e-85b8822024d1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\UI\TimeUI">
-      <UniqueIdentifier>{1ead3e40-3f90-4529-80f4-d345d5f5b96f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\System\Score">
       <UniqueIdentifier>{86de49bc-fd49-49c0-97fe-1bcf0ca75c63}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\UI\ScoreUI">
-      <UniqueIdentifier>{85561a4c-41f9-4ae0-90bb-f259775e93ff}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\System\Node\AStarNode">
       <UniqueIdentifier>{2724603a-bb04-4166-9485-30c937543cd8}</UniqueIdentifier>
@@ -220,23 +196,8 @@
     <Filter Include="Src\Application\GameObject\SkyBox">
       <UniqueIdentifier>{fa3aa00c-39d4-43f8-addd-5f67a0f336f1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\UI\FloatingTextUI">
-      <UniqueIdentifier>{a79adc36-5f55-4128-924b-6a0620c450e0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\UI\TitleUI">
-      <UniqueIdentifier>{db2c892e-f8ff-44e6-8a95-06714d941083}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\Scene\LoadingScene">
       <UniqueIdentifier>{ff135c06-a08e-479d-9f07-56f3e869a58f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\UI\LoadingUI">
-      <UniqueIdentifier>{702a9900-c7d1-4270-a049-c9e345c0a5f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\UI\GameStateUI">
-      <UniqueIdentifier>{19dd4629-2345-47f3-b565-3294003c174c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\UI\ResultUI">
-      <UniqueIdentifier>{d24bd054-84e3-4c6d-abcc-53e21705f8c9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\GameObject\Camera\EventCamera">
       <UniqueIdentifier>{fe386973-202f-4d1c-a59d-0d1fd6ce46ae}</UniqueIdentifier>
@@ -249,9 +210,6 @@
     </Filter>
     <Filter Include="Src\Application\System\Location">
       <UniqueIdentifier>{c05fe1a5-9745-4512-8405-4176034abd63}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\UI\SlideTextUI">
-      <UniqueIdentifier>{32bb2234-12ac-4f78-b318-ff139dc52ab9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\System\SkillCheck">
       <UniqueIdentifier>{cd9919fd-9c9b-41ca-adf0-72f1f8b57fe8}</UniqueIdentifier>
@@ -274,20 +232,11 @@
     <Filter Include="Src\Application\GameObject\Camera\ArrestCamera">
       <UniqueIdentifier>{83893b01-3eae-4a29-ac2a-b5b4257ff832}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\UI\EmoteIcon">
-      <UniqueIdentifier>{df833812-2c79-4dea-b6aa-0eaeb04e27e7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\UI\ShakeTextUI">
-      <UniqueIdentifier>{78d66571-1485-4ffe-874e-e998e0f5d777}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\System\SkillCheck\ShrinkRing">
       <UniqueIdentifier>{91d253d2-b39b-4eb9-9c6f-3b440c458338}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\System\SkillCheck\AltMash">
       <UniqueIdentifier>{97ebe88b-c4a9-41b1-84f9-e411a19a1896}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\UI\SkillKeyUI">
-      <UniqueIdentifier>{7aa3d7bd-207a-4679-a975-8440ce7d219a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\System\GrassField">
       <UniqueIdentifier>{ab5f8f54-3ad1-4130-b78b-7a057e5b730e}</UniqueIdentifier>
@@ -310,26 +259,89 @@
     <Filter Include="Src\Application\GameObject\Object\TitleProp">
       <UniqueIdentifier>{7eb75c9b-679c-4e34-b5bb-6e47a1004c67}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\UI\ConfettiUI">
-      <UniqueIdentifier>{41e99fc6-fc16-49d6-b5c6-2153c36353a2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\UI\DamageIndicatorUI">
-      <UniqueIdentifier>{37295df1-e534-433a-a705-680adaeb0f27}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\UI\HomeDirectionUI">
-      <UniqueIdentifier>{f1fa7d74-1d8e-4836-af57-fd873bb00210}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\UI\HinderUI">
-      <UniqueIdentifier>{e19ef9e6-35c4-409e-9f99-1f7d916d8667}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\UI\ReportUI">
-      <UniqueIdentifier>{4c549e87-fc2b-4a6c-8365-7a8062b5e907}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\UI\NotificationUI">
-      <UniqueIdentifier>{a0317e59-41f8-4f4d-939e-1e45c1522e70}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\System\DamageDirector">
       <UniqueIdentifier>{39137420-202e-44fe-8536-0092def1ac8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI">
+      <UniqueIdentifier>{ab05ee48-c249-4fd9-8922-bbe3e2b1fc3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\ConfettiUI">
+      <UniqueIdentifier>{737c578d-39c9-4f11-815b-0c03a1439d07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\DamageIndicatorUI">
+      <UniqueIdentifier>{80761f8e-7274-40ea-8be0-3f0d08563141}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\FloatingTextUI">
+      <UniqueIdentifier>{6ece9f01-d258-404e-8a99-d2deca02dba1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\GameStateUI">
+      <UniqueIdentifier>{6d5bebb2-489b-4ac3-86d9-c3d224114e18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\HomeDirectionUI">
+      <UniqueIdentifier>{415c8457-72ac-4209-853e-7869ee96f6b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\IntaractionPrompt">
+      <UniqueIdentifier>{92731e51-22f7-4eb0-967b-bbc9d2c52af0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\InventoryUI">
+      <UniqueIdentifier>{791aafac-44c7-44fb-ae8c-0f1bc01073b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\LoadingUI">
+      <UniqueIdentifier>{c3cdc97c-d934-40b0-b238-92b7f8e6dad1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\MenuUI">
+      <UniqueIdentifier>{398b58cb-5970-472d-b3ee-9952a027cb5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\NotificationUI">
+      <UniqueIdentifier>{84e377b6-d3b5-4fe3-a8d1-d0cc9e825a34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\PlayerUIBase">
+      <UniqueIdentifier>{2c12b094-ba73-4980-bd05-2602c08283a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\ReportUI">
+      <UniqueIdentifier>{8a66f785-c67e-43f3-9a8e-bd68fb52baba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\ResultFadeUI">
+      <UniqueIdentifier>{d0f269b8-e954-49fc-a034-254141dfd011}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\ResultUI">
+      <UniqueIdentifier>{f6c61be4-aa7b-4938-8e8d-bea7e26069e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\ReticleUI">
+      <UniqueIdentifier>{5a6e1624-9f0c-4d09-b46e-9efe50d86274}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\ScoreUI">
+      <UniqueIdentifier>{2923da8f-26f8-4986-9069-de03ae3bd3bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\ShakeTextUI">
+      <UniqueIdentifier>{59a56163-aa1b-490a-903e-c40e83656426}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\SlideTextUI">
+      <UniqueIdentifier>{8548659c-2aa9-4d4a-a657-e3909d3631c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\TextPopupUI">
+      <UniqueIdentifier>{ace8177c-1d27-4335-8376-2ef14f30b1b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\TimeUI">
+      <UniqueIdentifier>{485b6e8d-d8f4-438e-8f96-a933f0871f04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\TitleUI">
+      <UniqueIdentifier>{128c5de0-cb5e-4dfa-9027-c2a43f651852}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\UIBase">
+      <UniqueIdentifier>{fa739d33-b732-4713-bc83-da032ce5f92b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\HinderUI">
+      <UniqueIdentifier>{0605a7f5-8db9-437d-8e0d-b9f9b7d6de70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\IntaractionProgress">
+      <UniqueIdentifier>{26487f72-0028-4701-832a-c8a68c4f9ef5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\SkillKeyUI">
+      <UniqueIdentifier>{8a2ea0dd-f9ab-42ed-8809-4321531ad0d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\EmoteIcon">
+      <UniqueIdentifier>{5faf4bac-845c-4f4f-8c8f-0604db797e24}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -555,9 +567,6 @@
     <ClInclude Include="Src\Application\System\Interact\Interact.h">
       <Filter>Src\Application\System\Interact</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\Reticle\Reticle.h">
-      <Filter>Src\Application\GameObject\UI\Reticle</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\System\Usable\Usable.h">
       <Filter>Src\Application\System\Usable</Filter>
     </ClInclude>
@@ -594,9 +603,6 @@
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\InteractiveObject.h">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Character\Police\Police.h">
-      <Filter>Src\Application\GameObject\Character\Police</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\System\Node\RoadNode\RoadNode.h">
       <Filter>Src\Application\System\Node\RoadNode</Filter>
     </ClInclude>
@@ -606,26 +612,11 @@
     <ClInclude Include="Src\Application\GameObject\Effect\AlertIcon\AlertIcon.h">
       <Filter>Src\Application\GameObject\Effect\AlertIcon</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\InteractionProgress\InteractionProgress.h">
-      <Filter>Src\Application\GameObject\UI\InteractionProgress</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\InteractionPrompt\InteractionPrompt.h">
-      <Filter>Src\Application\GameObject\UI\InteractionPrompt</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\InventoryUI\InventoryUI.h">
-      <Filter>Src\Application\GameObject\UI\InventoryUI</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\System\DayCycle\DayCycle.h">
       <Filter>Src\Application\System\DayCycle</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\TimeUI\TimeUI.h">
-      <Filter>Src\Application\GameObject\UI\TimeUI</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\System\Score\ScoreManager.h">
       <Filter>Src\Application\System\Score</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\ScoreUI\ScoreUI.h">
-      <Filter>Src\Application\GameObject\UI\ScoreUI</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\System\Node\AStarNode\AStarNode.h">
       <Filter>Src\Application\System\Node\AStarNode</Filter>
@@ -678,23 +669,8 @@
     <ClInclude Include="Src\Application\GameObject\SkyBox\SkyBox.h">
       <Filter>Src\Application\GameObject\SkyBox</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\FloatingTextUI\FloatingTextUI.h">
-      <Filter>Src\Application\GameObject\UI\FloatingTextUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\TitleUI\TitleUI.h">
-      <Filter>Src\Application\GameObject\UI\TitleUI</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\Scene\LoadingScene\LoadingScene.h">
       <Filter>Src\Application\Scene\LoadingScene</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\LoadingUI\LoadingUI.h">
-      <Filter>Src\Application\GameObject\UI\LoadingUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\GameStateUI\GameStateUI.h">
-      <Filter>Src\Application\GameObject\UI\GameStateUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\ResultUI\ResultUI.h">
-      <Filter>Src\Application\GameObject\UI\ResultUI</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Camera\EventCamera\EventCamera.h">
       <Filter>Src\Application\GameObject\Camera\EventCamera</Filter>
@@ -732,9 +708,6 @@
     <ClInclude Include="Src\Application\Editor\Windows\LocationEditorWindow.h">
       <Filter>Src\Application\Editor\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\SlideTextUI\SlideTextUI.h">
-      <Filter>Src\Application\GameObject\UI\SlideTextUI</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\System\SkillCheck\SkillCheckBase.h">
       <Filter>Src\Application\System\SkillCheck</Filter>
     </ClInclude>
@@ -762,20 +735,11 @@
     <ClInclude Include="Src\Application\GameObject\Camera\ArrestCamera\ArrestCamera.h">
       <Filter>Src\Application\GameObject\Camera\ArrestCamera</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\EmoteIcon\EmoteIcon.h">
-      <Filter>Src\Application\GameObject\UI\EmoteIcon</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\ShakeTextUI\ShakeTextUI.h">
-      <Filter>Src\Application\GameObject\UI\ShakeTextUI</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\System\SkillCheck\ShrinkRing\SkillCheckShrinkRing.h">
       <Filter>Src\Application\System\SkillCheck\ShrinkRing</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\System\SkillCheck\AltMash\SkillCheckAltMash.h">
       <Filter>Src\Application\System\SkillCheck\AltMash</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\SkillKeyUI\SkillKeyUI.h">
-      <Filter>Src\Application\GameObject\UI\SkillKeyUI</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\System\GrassField\GrassField.h">
       <Filter>Src\Application\System\GrassField</Filter>
@@ -801,32 +765,89 @@
     <ClInclude Include="Src\Application\GameObject\Object\TitleProp\TitleProp.h">
       <Filter>Src\Application\GameObject\Object\TitleProp</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\System\Damage\DamageDirector.h">
+      <Filter>Src\Application\System\DamageDirector</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\UI\ConfettiUI\ConfettiUI.h">
       <Filter>Src\Application\GameObject\UI\ConfettiUI</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\ResultUI\ResultFadeUI.h">
-      <Filter>Src\Application\GameObject\UI\ResultUI</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\UI\DamageIndicatorUI\DamageIndicatorUI.h">
       <Filter>Src\Application\GameObject\UI\DamageIndicatorUI</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\HomeDirectionUI\HomeDirectionUI.h">
-      <Filter>Src\Application\GameObject\UI\HomeDirectionUI</Filter>
+    <ClInclude Include="Src\Application\GameObject\UI\FloatingTextUI\FloatingTextUI.h">
+      <Filter>Src\Application\GameObject\UI\FloatingTextUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\GameStateUI\GameStateUI.h">
+      <Filter>Src\Application\GameObject\UI\GameStateUI</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\UI\HinderUI\HinderUI.h">
       <Filter>Src\Application\GameObject\UI\HinderUI</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\HomeDirectionUI\HomeDirectionUI.h">
+      <Filter>Src\Application\GameObject\UI\HomeDirectionUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\InteractionProgress\InteractionProgress.h">
+      <Filter>Src\Application\GameObject\UI\IntaractionProgress</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\InteractionPrompt\InteractionPrompt.h">
+      <Filter>Src\Application\GameObject\UI\IntaractionPrompt</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\InventoryUI\InventoryUI.h">
+      <Filter>Src\Application\GameObject\UI\InventoryUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\LoadingUI\LoadingUI.h">
+      <Filter>Src\Application\GameObject\UI\LoadingUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\MenuUI\MenuUI.h">
+      <Filter>Src\Application\GameObject\UI\MenuUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\NotificationUI\NotificationUI.h">
+      <Filter>Src\Application\GameObject\UI\NotificationUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\PlayerUIBase\PlayerUIBase.h">
+      <Filter>Src\Application\GameObject\UI\PlayerUIBase</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\UI\ReportUI\ReportUI.h">
       <Filter>Src\Application\GameObject\UI\ReportUI</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\Notification\NotificationManager.h">
-      <Filter>Src\Application\GameObject\UI\NotificationUI</Filter>
+    <ClInclude Include="Src\Application\GameObject\UI\ResultFadeUI\ResultFadeUI.h">
+      <Filter>Src\Application\GameObject\UI\ResultFadeUI</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\Notification\NotificationUI.h">
-      <Filter>Src\Application\GameObject\UI\NotificationUI</Filter>
+    <ClInclude Include="Src\Application\GameObject\UI\ResultUI\ResultUI.h">
+      <Filter>Src\Application\GameObject\UI\ResultUI</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\System\Damage\DamageDirector.h">
-      <Filter>Src\Application\System\DamageDirector</Filter>
+    <ClInclude Include="Src\Application\GameObject\UI\ReticleUI\ReticleUI.h">
+      <Filter>Src\Application\GameObject\UI\ReticleUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\ScoreUI\ScoreUI.h">
+      <Filter>Src\Application\GameObject\UI\ScoreUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\ShakeTextUI\ShakeTextUI.h">
+      <Filter>Src\Application\GameObject\UI\ShakeTextUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\SlideTextUI\SlideTextUI.h">
+      <Filter>Src\Application\GameObject\UI\SlideTextUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\TextPopupUI\TextPopupUI.h">
+      <Filter>Src\Application\GameObject\UI\TextPopupUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\TimeUI\TimeUI.h">
+      <Filter>Src\Application\GameObject\UI\TimeUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\TitleUI\TitleUI.h">
+      <Filter>Src\Application\GameObject\UI\TitleUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\UIBase\UIBase.h">
+      <Filter>Src\Application\GameObject\UI\UIBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\EmoteIcon\EmoteIcon.h">
+      <Filter>Src\Application\GameObject\UI\EmoteIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\SkillKeyUI\SkillKeyUI.h">
+      <Filter>Src\Application\GameObject\UI\SkillKeyUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\NotificationUI\NotificationManager.h">
+      <Filter>Src\Application\GameObject\UI\NotificationUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1022,9 +1043,6 @@
     <ClCompile Include="Src\Application\System\Interact\Interact.cpp">
       <Filter>Src\Application\System\Interact</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\Reticle\Reticle.cpp">
-      <Filter>Src\Application\GameObject\UI\Reticle</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\Item\Item.cpp">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\Item</Filter>
     </ClCompile>
@@ -1055,36 +1073,17 @@
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\WoodenFence\WoodenFence.cpp">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\WoodenFence</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\InteractiveObject.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Character\Police\Police.cpp">
-      <Filter>Src\Application\GameObject\Character\Police</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\System\Node\RoadNode\RoadNodeManager.cpp">
       <Filter>Src\Application\System\Node\RoadNode</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Effect\AlertIcon\AlertIcon.cpp">
       <Filter>Src\Application\GameObject\Effect\AlertIcon</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\InteractionProgress\InteractionProgress.cpp">
-      <Filter>Src\Application\GameObject\UI\InteractionProgress</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\InteractionPrompt\InteractionPrompt.cpp">
-      <Filter>Src\Application\GameObject\UI\InteractionPrompt</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\InventoryUI\InventoryUI.cpp">
-      <Filter>Src\Application\GameObject\UI\InventoryUI</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\System\DayCycle\DayCycle.cpp">
       <Filter>Src\Application\System\DayCycle</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\TimeUI\TimeUI.cpp">
-      <Filter>Src\Application\GameObject\UI\TimeUI</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\System\Score\ScoreManager.cpp">
       <Filter>Src\Application\System\Score</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\ScoreUI\ScoreUI.cpp">
-      <Filter>Src\Application\GameObject\UI\ScoreUI</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\System\Node\AStarNode\AStarNodeManager.cpp">
       <Filter>Src\Application\System\Node\AStarNode</Filter>
@@ -1134,23 +1133,8 @@
     <ClCompile Include="Src\Application\GameObject\SkyBox\SkyBox.cpp">
       <Filter>Src\Application\GameObject\SkyBox</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\FloatingTextUI\FloatingTextUI.cpp">
-      <Filter>Src\Application\GameObject\UI\FloatingTextUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\TitleUI\TitleUI.cpp">
-      <Filter>Src\Application\GameObject\UI\TitleUI</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\Scene\LoadingScene\LoadingScene.cpp">
       <Filter>Src\Application\Scene\LoadingScene</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\LoadingUI\LoadingUI.cpp">
-      <Filter>Src\Application\GameObject\UI\LoadingUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\GameStateUI\GameStateUI.cpp">
-      <Filter>Src\Application\GameObject\UI\GameStateUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\ResultUI\ResultUI.cpp">
-      <Filter>Src\Application\GameObject\UI\ResultUI</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Camera\EventCamera\EventCamera.cpp">
       <Filter>Src\Application\GameObject\Camera\EventCamera</Filter>
@@ -1188,9 +1172,6 @@
     <ClCompile Include="Src\Application\Editor\Windows\LocationEditorWindow.cpp">
       <Filter>Src\Application\Editor\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\SlideTextUI\SlideTextUI.cpp">
-      <Filter>Src\Application\GameObject\UI\SlideTextUI</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\System\SkillCheck\SkillCheckBase.cpp">
       <Filter>Src\Application\System\SkillCheck</Filter>
     </ClCompile>
@@ -1218,20 +1199,11 @@
     <ClCompile Include="Src\Application\GameObject\Camera\ArrestCamera\ArrestCamera.cpp">
       <Filter>Src\Application\GameObject\Camera\ArrestCamera</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\EmoteIcon\EmoteIcon.cpp">
-      <Filter>Src\Application\GameObject\UI\EmoteIcon</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\ShakeTextUI\ShakeTextUI.cpp">
-      <Filter>Src\Application\GameObject\UI\ShakeTextUI</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\System\SkillCheck\ShrinkRing\SkillCheckShrinkRing.cpp">
       <Filter>Src\Application\System\SkillCheck\ShrinkRing</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\System\SkillCheck\AltMash\SkillCheckAltMash.cpp">
       <Filter>Src\Application\System\SkillCheck\AltMash</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\SkillKeyUI\SkillKeyUI.cpp">
-      <Filter>Src\Application\GameObject\UI\SkillKeyUI</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\System\GrassField\GrassField.cpp">
       <Filter>Src\Application\System\GrassField</Filter>
@@ -1254,32 +1226,89 @@
     <ClCompile Include="Src\Application\GameObject\Object\TitleProp\TitleProp.cpp">
       <Filter>Src\Application\GameObject\Object\TitleProp</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Application\System\Damage\DamageDirector.cpp">
+      <Filter>Src\Application\System\DamageDirector</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\ConfettiUI\ConfettiUI.cpp">
       <Filter>Src\Application\GameObject\UI\ConfettiUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\ResultUI\ResultFadeUI.cpp">
-      <Filter>Src\Application\GameObject\UI\ResultUI</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\DamageIndicatorUI\DamageIndicatorUI.cpp">
       <Filter>Src\Application\GameObject\UI\DamageIndicatorUI</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\HomeDirectionUI\HomeDirectionUI.cpp">
-      <Filter>Src\Application\GameObject\UI\HomeDirectionUI</Filter>
+    <ClCompile Include="Src\Application\GameObject\UI\FloatingTextUI\FloatingTextUI.cpp">
+      <Filter>Src\Application\GameObject\UI\FloatingTextUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\GameStateUI\GameStateUI.cpp">
+      <Filter>Src\Application\GameObject\UI\GameStateUI</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\HinderUI\HinderUI.cpp">
       <Filter>Src\Application\GameObject\UI\HinderUI</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\HomeDirectionUI\HomeDirectionUI.cpp">
+      <Filter>Src\Application\GameObject\UI\HomeDirectionUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\InteractionProgress\InteractionProgress.cpp">
+      <Filter>Src\Application\GameObject\UI\IntaractionProgress</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\InteractionPrompt\InteractionPrompt.cpp">
+      <Filter>Src\Application\GameObject\UI\IntaractionPrompt</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\InventoryUI\InventoryUI.cpp">
+      <Filter>Src\Application\GameObject\UI\InventoryUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\LoadingUI\LoadingUI.cpp">
+      <Filter>Src\Application\GameObject\UI\LoadingUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\MenuUI\MenuUI.cpp">
+      <Filter>Src\Application\GameObject\UI\MenuUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\NotificationUI\NotificationUI.cpp">
+      <Filter>Src\Application\GameObject\UI\NotificationUI</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\ReportUI\ReportUI.cpp">
       <Filter>Src\Application\GameObject\UI\ReportUI</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\Notification\NotificationManager.cpp">
+    <ClCompile Include="Src\Application\GameObject\UI\ResultFadeUI\ResultFadeUI.cpp">
+      <Filter>Src\Application\GameObject\UI\ResultFadeUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\ResultUI\ResultUI.cpp">
+      <Filter>Src\Application\GameObject\UI\ResultUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\ReticleUI\ReticleUI.cpp">
+      <Filter>Src\Application\GameObject\UI\ReticleUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\ScoreUI\ScoreUI.cpp">
+      <Filter>Src\Application\GameObject\UI\ScoreUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\ShakeTextUI\ShakeTextUI.cpp">
+      <Filter>Src\Application\GameObject\UI\ShakeTextUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\SlideTextUI\SlideTextUI.cpp">
+      <Filter>Src\Application\GameObject\UI\SlideTextUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\TextPopupUI\TextPopupUI.cpp">
+      <Filter>Src\Application\GameObject\UI\TextPopupUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\TimeUI\TimeUI.cpp">
+      <Filter>Src\Application\GameObject\UI\TimeUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\TitleUI\TitleUI.cpp">
+      <Filter>Src\Application\GameObject\UI\TitleUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\UIBase\UIBase.cpp">
+      <Filter>Src\Application\GameObject\UI\UIBase</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\EmoteIcon\EmoteIcon.cpp">
+      <Filter>Src\Application\GameObject\UI\EmoteIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\SkillKeyUI\SkillKeyUI.cpp">
+      <Filter>Src\Application\GameObject\UI\SkillKeyUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\NotificationUI\NotificationManager.cpp">
       <Filter>Src\Application\GameObject\UI\NotificationUI</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\Notification\NotificationUI.cpp">
-      <Filter>Src\Application\GameObject\UI\NotificationUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\System\Damage\DamageDirector.cpp">
-      <Filter>Src\Application\System\DamageDirector</Filter>
+    <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\InteractiveObject.cpp">
+      <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

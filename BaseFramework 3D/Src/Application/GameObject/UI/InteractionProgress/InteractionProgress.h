@@ -1,30 +1,14 @@
 ﻿#pragma once
 
-class Player;
+#include "../PlayerUIBase/PlayerUIBase.h"
 
-class InteractionProgress : public KdGameObject
+class InteractionProgress : public PlayerUIBase
 {
 public:
-
-	void Init() override;
-	void DrawSprite() override;
 	void Update() override;
-
-	ObjectCategory GetCategory() const override
-	{
-		return ObjectCategory::UI;
-	}
-
-	void SetPlayer(const std::shared_ptr<Player>& player)
-	{
-		m_wpPlayer = player;
-	}
+	void DrawSprite() override;
 
 private:
-	std::weak_ptr<Player> m_wpPlayer;
-
-	bool m_visible = false;
-
+	bool  m_visible = false;
 	float m_progress = 0.0f;
-
 };

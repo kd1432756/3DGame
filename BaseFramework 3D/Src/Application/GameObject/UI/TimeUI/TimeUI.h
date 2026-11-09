@@ -1,21 +1,15 @@
 ﻿#pragma once
 
-class DayCycle;
+#include "../UIBase/UIBase.h"
 
-class TimeUI : public KdGameObject
+class TimeUI : public UIBase
 {
 public:
 	void Init() override;
-	void Update() override;
 	void DrawSprite() override;
 
-	ObjectCategory GetCategory() const override
-	{
-		return ObjectCategory::UI;
-	}
-
 private:
-	void DrawGauge();
+	void DrawTimeGauge();
 	void DrawTimeIcons();
 	void DrawIndicator();
 

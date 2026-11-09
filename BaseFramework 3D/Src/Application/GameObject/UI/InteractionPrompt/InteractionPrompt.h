@@ -1,29 +1,15 @@
 ﻿#pragma once
 
-class Player;
+#include "../PlayerUIBase/PlayerUIBase.h"
 
-class InteractionPrompt : public KdGameObject
+class InteractionPrompt : public PlayerUIBase
 {
 public:
-
 	void Init() override;
-	void DrawSprite() override;
 	void Update() override;
-
-	ObjectCategory GetCategory() const override
-	{
-		return ObjectCategory::UI;
-	}
-
-	void SetPlayer(const std::shared_ptr<Player>& player)
-	{
-		m_wpPlayer = player;
-	}
+	void DrawSprite() override;
 
 private:
-
-	std::weak_ptr<Player> m_wpPlayer;
-
 	std::string m_prompt = "";
 
 	bool m_visible = false;

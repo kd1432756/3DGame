@@ -81,19 +81,19 @@ void EmoteIcon::DrawUnLit()
 		.DrawPolygon(*m_iconPolygon, m_mWorld);
 }
 
-void EmoteIcon::SetIcon(IconType iconType, float duration, bool force)
+bool EmoteIcon::SetIcon(IconType iconType, float duration, bool force)
 {
 	const bool same = (m_currentIcon == iconType);
 
 	m_hasLife = (duration > 0.0f);
 	m_lifeTime = duration;
 
-	if (same && !force) return;
+	if (same && !force) return false;
 
 	if (iconType == IconType::None)
 	{
 		StartIconDisappearAnimation();
-		return;
+		return false;
 	}
 
 	m_currentIcon = iconType;
@@ -182,8 +182,10 @@ void EmoteIcon::SetIcon(IconType iconType, float duration, bool force)
 
 	default:
 
-		break;
+		return false;
 	}
+
+	return true;
 }
 
 void EmoteIcon::UpdateIconAnimation()

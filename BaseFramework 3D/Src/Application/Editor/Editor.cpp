@@ -4,6 +4,7 @@
 #include "../Scene/CameraManager/CameraManager.h"
 #include "../GameObject/Character/Player/Player.h"
 #include "../GameObject/Object/StaticMeshObject/StaticMeshObject.h"
+#include "../GameObject/Object/StaticMeshObject/InteractiveObject/InteractiveObject.h"
 
 #include "../Scene/SceneSerializer/SceneSerializer.h"
 

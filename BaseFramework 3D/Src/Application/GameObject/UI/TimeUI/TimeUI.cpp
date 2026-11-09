@@ -4,41 +4,28 @@
 
 void TimeUI::Init()
 {
-	m_gaugeTex = std::make_shared<KdTexture>();
-	m_gaugeTex->Load("Asset/Textures/UI/TimeGauge.png");
-	m_indicatorTex = std::make_shared<KdTexture>();
-	m_indicatorTex->Load("Asset/Textures/UI/TimeIndicator.png");
-	m_sunTex = std::make_shared<KdTexture>();
-	m_sunTex->Load("Asset/Textures/UI/Sun.png");
-	m_moonTex = std::make_shared<KdTexture>();
-	m_moonTex->Load("Asset/Textures/UI/Moon.png");
-}
-
-void TimeUI::Update()
-{
-
+	m_gaugeTex = LoadTexture("Asset/Textures/UI/TimeGauge.png");
+	m_indicatorTex = LoadTexture("Asset/Textures/UI/TimeIndicator.png");
+	m_sunTex = LoadTexture("Asset/Textures/UI/Sun.png");
+	m_moonTex = LoadTexture("Asset/Textures/UI/Moon.png");
 }
 
 void TimeUI::DrawSprite()
 {
-	auto dayCycle = DayCycle::Instance();
-
-	DrawGauge();
+	DrawTimeGauge();
 	DrawTimeIcons();
 	DrawIndicator();
 }
 
-void TimeUI::DrawGauge()
+// ※ UIBase::DrawGauge(進捗バー用)と区別するため DrawTimeGauge という名前にしている
+void TimeUI::DrawTimeGauge()
 {
 	if (!m_gaugeTex)
 	{
 		return;
 	}
 
-	auto& spriteShader =
-		KdShaderManager::Instance().m_spriteShader;
-
-	spriteShader.DrawTex(
+	KdShaderManager::Instance().m_spriteShader.DrawTex(
 		m_gaugeTex,
 		StartX,
 		StartY,
@@ -92,9 +79,6 @@ void TimeUI::DrawIndicator()
 		return;
 	}
 
-	auto& spriteShader =
-		KdShaderManager::Instance().m_spriteShader;
-
 	const float progress =
 		DayCycle::Instance().GetTimeProgress();
 
@@ -109,7 +93,7 @@ void TimeUI::DrawIndicator()
 	const float indicatorY =
 		StartY;
 
-	spriteShader.DrawTex(
+	KdShaderManager::Instance().m_spriteShader.DrawTex(
 		m_indicatorTex,
 		static_cast<int>(indicatorX),
 		static_cast<int>(indicatorY),

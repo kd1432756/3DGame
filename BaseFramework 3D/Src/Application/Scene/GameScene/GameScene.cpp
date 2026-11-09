@@ -29,7 +29,7 @@
 
 #include "../../GameObject/SkyBox/SkyBox.h"
 
-#include "../../GameObject/UI/Reticle/Reticle.h"
+#include "../../GameObject/UI/ReticleUI/ReticleUI.h"
 #include "../../GameObject/UI/InteractionProgress/InteractionProgress.h"
 #include "../../GameObject/UI/InteractionPrompt/InteractionPrompt.h"
 #include "../../GameObject/UI/InventoryUI/InventoryUI.h"
@@ -38,8 +38,9 @@
 #include "../../GameObject/UI/HomeDirectionUI/HomeDirectionUI.h"
 #include "../../GameObject/UI/HinderUI/HinderUI.h"
 #include "../../GameObject/UI/ReportUI/ReportUI.h"
+#include "../../GameObject/UI/DamageIndicatorUI/DamageIndicatorUI.h"
 
-#include "../../GameObject/UI/Notification/NotificationManager.h"
+#include "../../GameObject/UI/NotificationUI/NotificationManager.h"
 
 #include "../../System/Damage/DamageDirector.h"
 
@@ -54,18 +55,14 @@ void GameScene::Update()
 	// UIはゲーム停止中でも更新する
 	for (auto& obj : m_objList)
 	{
-		if (obj->GetUpdateGroup() == KdGameObject::UpdateGroup::World)
-			continue;
+		if (obj->GetUpdateGroup() == KdGameObject::UpdateGroup::World) continue;
 		obj->Update();
 	}
 
 	// シーン毎のイベント処理
 	Event();
 
-	if (!m_gameUpdate)
-	{
-		return;
-	}
+	if (!m_gameUpdate) return;
 
 	DayCycle::Instance().Update();
 
@@ -98,8 +95,7 @@ void GameScene::Update()
 	// KdGameObjectを継承した全てのオブジェクトの更新 (ポリモーフィズム)
 	for (auto& obj : m_objList)
 	{
-		if (obj->GetUpdateGroup() == KdGameObject::UpdateGroup::Always)
-			continue;
+		if (obj->GetUpdateGroup() == KdGameObject::UpdateGroup::Always)		continue;
 		obj->Update();
 	}
 }
@@ -216,6 +212,8 @@ void GameScene::Start()
 
 	auto player = SceneManager::Instance().FindObject<Player>();
 
+	player->SetCamera(m_spGameCamera);
+
 	auto time = std::make_shared<TimeUI>();
 	time->Init();
 	time->SetName("TimeUI");
@@ -280,6 +278,11 @@ void GameScene::Start()
 		reportUI->Init();
 		reportUI->SetPlayer(player);
 		m_objList.push_back(reportUI);
+
+		auto indicator = std::make_shared<DamageIndicatorUI>();
+		indicator->Init();
+		indicator->SetPlayer(std::dynamic_pointer_cast<Player>(shared_from_this()));
+		SceneManager::Instance().AddObject(indicator);
 	}
 
 	{
@@ -321,4 +324,14 @@ void GameScene::Init()
 	DayCycle::Instance().Init();
 
 	//RoadNodeManager::Instance().Init();
+}
+
+void GameScene::SetGameUpdate(bool flg)
+{
+	m_gameUpdate = flg;
+}
+
+void GameScene::SetGameState(GameState state)
+{
+	m_state = state;
 }

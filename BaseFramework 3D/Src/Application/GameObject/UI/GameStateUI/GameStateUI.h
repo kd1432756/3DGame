@@ -1,10 +1,15 @@
 ﻿#pragma once
 
+#include "../UIBase/UIBase.h"
+
 class GameScene;
 
-class GameStateUI : public KdGameObject
+class GameStateUI : public UIBase
 {
 public:
+	// カウントダウン中はゲームが止まっているので常時更新
+	GameStateUI() : UIBase(true) {}
+
 	void Init() override;
 	void Update() override;
 	void DrawSprite() override;

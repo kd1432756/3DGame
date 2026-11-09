@@ -1,44 +1,26 @@
 ﻿#pragma once
 
-class SlideTextUI : public KdGameObject
+#include "../TextPopupUI/TextPopupUI.h"
+
+// 左から滑り込んで、止まって、右へ抜けていく文字
+class SlideTextUI : public TextPopupUI
 {
 public:
+	SlideTextUI();
+
 	void Init() override;
-	void Update() override;
-	void DrawSprite() override;
 
-	void SetText(const std::string& text)
-	{
-		m_text = text;
-	}
-
-	void SetPosition(const Math::Vector2& pos)
-	{
-		m_pos = pos;
-	}
-
-	enum class State
-	{
-		SlideIn,
-		Stay,
-		SlideOut
-	};
+protected:
+	void OnUpdate(float dt, float t) override;
 
 private:
-	std::string m_text;
+	// ---- 調整用パラメータ ----
+	static constexpr float kSlideInTime = 0.4f;
+	static constexpr float kStayTime = 1.0f;
+	static constexpr float kSlideOutTime = 0.4f;
 
-	Math::Vector2 m_pos = {};
-	float m_lifeTime = 1.0f;
-
-	State m_state = State::SlideIn;
-
-	float m_elapsedTime = 0.0f;
-
-	float m_slideInTime = 0.4f;
-	float m_stayTime = 1.0f;
-	float m_slideOutTime = 0.4f;
-
-	float m_startX = -700.0f;
-	float m_centerX = 0.0f;
-	float m_endX = 700.0f;
+	static constexpr float kStartX = -700.0f;
+	static constexpr float kCenterX = 0.0f;
+	static constexpr float kEndX = 700.0f;
+	static constexpr float kPosY = 150.0f;
 };

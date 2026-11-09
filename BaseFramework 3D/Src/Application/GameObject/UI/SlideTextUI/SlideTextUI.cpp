@@ -1,87 +1,40 @@
 ﻿#include "SlideTextUI.h"
 
+SlideTextUI::SlideTextUI()
+{
+	// 寿命 = 滑り込み + 停止 + 滑り出し
+	m_lifeTime = kSlideInTime + kStayTime + kSlideOutTime;
+	m_fontId = FontID::Future64;
+	m_color = { 1.0f, 0.45f, 0.10f, 1.0f };
+}
+
 void SlideTextUI::Init()
 {
-	m_updateGroup = UpdateGroup::Always;
-	m_pos.x = m_startX;	// 画面左端から開始
-	m_pos.y = 150.0f;
+	// 画面左端から開始
+	m_pos.x = kStartX;
+	m_pos.y = kPosY;
 }
 
-void SlideTextUI::Update()
+void SlideTextUI::OnUpdate(float dt, float t)
 {
-	const float deltaTime = 1.0f / 60.0f;
+	const float e = m_elapsedTime;
 
-	switch (m_state)
+	if (e < kSlideInTime)
 	{
-	case State::SlideIn:
+		// 滑り込み (Ease Out)
+		const float s = EaseOutCubic(e / kSlideInTime);
+		m_pos.x = kStartX + (kCenterX - kStartX) * s;
+	}
+	else if (e < kSlideInTime + kStayTime)
 	{
-		m_elapsedTime += deltaTime;
-
-		float t = m_elapsedTime / m_slideInTime;
-		t = std::clamp(t, 0.0f, 1.0f);
-
-		// Ease Out
-		t = 1.0f - std::pow(1.0f - t, 3.0f);
-
-		m_pos.x = m_startX
-			+ (m_centerX - m_startX) * t;
-
-		if (t >= 1.0f)
-		{
-			m_pos.x = m_centerX;
-			m_elapsedTime = 0.0f;
-			m_state = State::Stay;
-		}
-
-		break;
+		// 停止
+		m_pos.x = kCenterX;
 	}
-
-	case State::Stay:
+	else
 	{
-		m_elapsedTime += deltaTime;
-
-		if (m_elapsedTime >= m_stayTime)
-		{
-			m_elapsedTime = 0.0f;
-			m_state = State::SlideOut;
-		}
-
-		break;
+		// 滑り出し (Ease In)
+		const float s = std::clamp(
+			(e - kSlideInTime - kStayTime) / kSlideOutTime, 0.0f, 1.0f);
+		m_pos.x = kCenterX + (kEndX - kCenterX) * EaseInCubic(s);
 	}
-
-	case State::SlideOut:
-	{
-		m_elapsedTime += deltaTime;
-
-		float t = m_elapsedTime / m_slideOutTime;
-		t = std::clamp(t, 0.0f, 1.0f);
-
-		// Ease In
-		t = t * t * t;
-
-		m_pos.x = m_centerX
-			+ (m_endX - m_centerX) * t;
-
-		if (t >= 1.0f)
-		{
-			m_isExpired = true;
-		}
-
-		break;
-	}
-	}
-}
-
-void SlideTextUI::DrawSprite()
-{
-	Math::Color color = { 1.0f, 0.45f, 0.10f, 1.0f };
-
-	KdShaderManager::Instance().m_spriteShader.DrawFont(
-		m_pos,
-		&color,
-		Math::Vector2{ 0.5f, 0.5f },
-		0.0f,
-		FontID::Future64,
-		m_text.c_str()
-	);
 }

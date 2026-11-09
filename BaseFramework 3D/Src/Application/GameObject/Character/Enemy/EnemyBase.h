@@ -2,8 +2,16 @@
 
 #include "../CharacterBase.h"
 
-#include "../../../System/Navigation/NavMesh/NavMeshPathfinder.h"
 class NavMeshManager;
+class NavMeshPathfinder;
+#include "../../../System/Navigation/NavMesh/NavMeshPathfinder.h"
+
+enum class MoveResult
+{
+	Moving,
+	Arrived,
+	Failed
+};
 
 class EnemyBase : public CharacterBase
 {
@@ -11,6 +19,10 @@ class EnemyBase : public CharacterBase
 public:
 	virtual void Init() override;
 	virtual void Update() override;
+
+public:
+
+	bool IsGhost() const override { return m_isGhost; }
 
 protected:
 
@@ -57,15 +69,13 @@ protected:
 	Math::Vector3 m_moveDir =
 		Math::Vector3::Zero;
 
-	float m_collisionRadius = 0.3f;
+	static constexpr float m_enemyCollisionRadius = 0.3f;
 
 	// =========================================
 	// NavMesh
 	// =========================================
 
-	NavMeshPathfinder m_navMeshPathfinder;
-
-	NavMeshManager* m_pNavMeshManager = nullptr;
+	std::unique_ptr<NavMeshPathfinder> m_navMeshPathfinder;
 
 	std::vector<Math::Vector3> m_navPath;
 
@@ -85,6 +95,16 @@ protected:
 	virtual bool CanBecomeGhost() const { return true; }   // Policeはfalse
 
 	// =========================================
+	// 経路探索
+	// =========================================
+
+	bool SetNavPathTo(const Math::Vector3& goal);
+	void ClearNavPath();
+	MoveResult FollowNavPath();
+
+	static constexpr float m_waypointArriveDist = 0.2f;
+
+	// =========================================
 	// 再探索要求
 	// =========================================
 
@@ -100,11 +120,6 @@ protected:
 		m_navPath.clear();
 		m_navPathIndex = 0;
 	}
-
-
-public:
-
-	bool IsGhost() const override { return m_isGhost; }
 
 private:
 
@@ -122,16 +137,16 @@ private:
 	float m_ghostCooldown = 0.0f;
 
 	// パラメータ
-	const float m_stuckToGhostTime = 2.0f;    // 詰まりがこの秒数続いたらゴースト化
-	const float m_stuckMoveRatio = 0.3f;      // 期待移動量のこの割合未満なら「進めていない」
-	const float m_ghostMinTime = 1.5f;        // ゴースト最低継続時間
-	const float m_ghostCooldownTime = 3.0f;   // 復帰後、再ゴースト化までの時間
-	const float m_maxCharaPush = 0.15f;       // 1フレームのキャラ押し出し上限（×スケール）
+	static constexpr float m_stuckToGhostTime = 2.0f;    // 詰まりがこの秒数続いたらゴースト化
+	static constexpr float m_stuckMoveRatio = 0.3f;      // 期待移動量のこの割合未満なら「進めていない」
+	static constexpr float m_ghostMinTime = 1.5f;        // ゴースト最低継続時間
+	static constexpr float m_ghostCooldownTime = 3.0f;   // 復帰後、再ゴースト化までの時間
+	static constexpr float m_maxCharaPush = 0.15f;       // 1フレームのキャラ押し出し上限（×スケール）
 
 	float m_blockedTimer = 0.0f;
 	float m_repathCooldown = 0.0f;
 	bool  m_needRepath = false;
 
-	float m_stuckToRepathTime = 0.5f;   // この時間進めなければ再探索
-	float m_repathCooldownTime = 1.0f;  // 再探索の連発防止
+	static constexpr float m_stuckToRepathTime = 0.5f;   // この時間進めなければ再探索
+	static constexpr float m_repathCooldownTime = 1.0f;  // 再探索の連発防止
 };

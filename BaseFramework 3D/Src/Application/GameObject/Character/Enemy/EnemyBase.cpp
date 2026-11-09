@@ -8,11 +8,9 @@ void EnemyBase::Init()
 {
 	CharacterBase::Init();
 
-	//============================================================
-	// NavMesh Manager
-	//============================================================
+	m_navMeshPathfinder = std::make_unique<NavMeshPathfinder>();
 
-	m_pNavMeshManager = &NavMeshManager::Instance();
+	m_collisionRadius = m_enemyCollisionRadius;
 }
 
 void EnemyBase::Update()
@@ -99,24 +97,14 @@ void EnemyBase::ApplyMove()
 		Math::Vector3 moveVec = m_moveDir * m_moveSpeed;
 
 		// 壁の先読み
-		const float radius = m_collisionRadius * m_sceneScale;
+		const float radius = WallRadius();
 		const float margin = 0.02f * m_sceneScale;
 
 		std::vector<WallHit> walls;
 		CollectWallHits(radius + margin, walls);
 
 		// 壁に向かう移動成分を除去（角に備えて2回）
-		for (int pass = 0; pass < 2; ++pass)
-		{
-			for (auto& w : walls)
-			{
-				float into = moveVec.Dot(w.normal);
-				if (into < 0.0f)
-				{
-					moveVec -= w.normal * into;
-				}
-			}
-		}
+		SlideAlongWalls(moveVec, radius);
 
 		m_pos += moveVec;
 	}
@@ -151,6 +139,7 @@ void EnemyBase::ResolveCharacterCollision()
 
 	for (auto& obj : SceneManager::Instance().GetObjList())
 	{
+		if (obj->GetCategory() != KdGameObject::ObjectCategory::Character) continue;
 		auto other = std::dynamic_pointer_cast<CharacterBase>(obj);
 		if (!other || other.get() == this) continue;
 		if (other->IsArrested() || other->IsGhost()) continue;   // 連行中の相手はここで除外
@@ -181,6 +170,7 @@ bool EnemyBase::IsOverlappingCharacter() const
 {
 	for (auto& obj : SceneManager::Instance().GetObjList())
 	{
+		if (obj->GetCategory() != KdGameObject::ObjectCategory::Character) continue;
 		auto other = std::dynamic_pointer_cast<CharacterBase>(obj);
 		if (!other || other.get() == this) continue;
 		if (other->IsArrested()) continue;
@@ -271,23 +261,75 @@ void EnemyBase::UpdateStuck(bool wantMove, float movedDist)
 }
 
 //============================================================
+// NavMeshPath
+//============================================================
+
+bool EnemyBase::SetNavPathTo(const Math::Vector3& goal)
+{
+	m_navPath = FindNavPath(m_pos, goal);
+	m_navPathIndex = 0;
+	return !m_navPath.empty();
+}
+
+void EnemyBase::ClearNavPath()
+{
+	m_navPath.clear();
+	m_navPathIndex = 0;
+}
+
+MoveResult EnemyBase::FollowNavPath()
+{
+	if (m_navPath.empty())
+	{
+		return MoveResult::Failed;
+	}
+
+	if (m_navPathIndex >= static_cast<int>(m_navPath.size()))
+	{
+		ClearNavPath();
+		return MoveResult::Arrived;
+	}
+
+	Math::Vector3 dir = m_navPath[m_navPathIndex] - m_pos;
+	dir.y = 0.0f;
+
+	// 1フレームの移動量より小さい到着半径だと、ウェイポイントの周りを回ってしまう
+	const float arrive =
+		std::max(m_waypointArriveDist * m_sceneScale, m_moveSpeed);
+
+	if (dir.LengthSquared() <= arrive * arrive)
+	{
+		++m_navPathIndex;
+
+		if (m_navPathIndex >= static_cast<int>(m_navPath.size()))
+		{
+			ClearNavPath();
+			SetMoveDirection(Math::Vector3::Zero);
+			return MoveResult::Arrived;
+		}
+
+		return MoveResult::Moving;
+	}
+
+	SetMoveDirection(dir);
+	return MoveResult::Moving;
+}
+
+//============================================================
 // Snap To NavMesh
 //============================================================
 
 Math::Vector3 EnemyBase::SnapToNavMesh(
 	const Math::Vector3& point) const
 {
-	if (!m_pNavMeshManager)
-	{
-		return point;
-	}
+	NavMeshManager navMeshManager = NavMeshManager::Instance();
 
 	//============================================================
 	// すでにNavMesh内ならそのまま
 	//============================================================
 
 	auto polygon =
-		m_pNavMeshManager->FindPolygonFromPoint(point);
+		navMeshManager.FindPolygonFromPoint(point);
 
 	if (polygon)
 	{
@@ -298,7 +340,7 @@ Math::Vector3 EnemyBase::SnapToNavMesh(
 	// 範囲外 → 最近傍点へ補正
 	//============================================================
 
-	return m_pNavMeshManager->FindNearestPoint(
+	return navMeshManager.FindNearestPoint(
 		point,
 		m_navSnapRadius * m_sceneScale
 	);
@@ -307,7 +349,8 @@ Math::Vector3 EnemyBase::SnapToNavMesh(
 std::vector<Math::Vector3> EnemyBase::FindNavPath(
 	const Math::Vector3& start, const Math::Vector3& goal) const
 {
-	if (!m_pNavMeshManager) return {};
-	return m_navMeshPathfinder.FindPathPoints(
-		*m_pNavMeshManager, SnapToNavMesh(start), SnapToNavMesh(goal));
+	NavMeshManager navMeshManager = NavMeshManager::Instance();
+
+	return m_navMeshPathfinder->FindPathPoints(
+		navMeshManager, SnapToNavMesh(start), SnapToNavMesh(goal));
 }

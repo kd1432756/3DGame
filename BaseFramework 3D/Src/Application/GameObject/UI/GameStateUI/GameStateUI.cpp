@@ -4,16 +4,9 @@
 
 void GameStateUI::Init()
 {
-	m_updateGroup = UpdateGroup::Always;
-
 	m_timer = 0.0f;
 	m_count = 3;
 	m_displayState = DisplayState::CountDown;
-
-/*	if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Count.wav"))
-	{
-		se->SetVolume(0.2f);
-	}*/
 }
 
 void GameStateUI::Update()
@@ -25,7 +18,7 @@ void GameStateUI::Update()
 		return;
 	}
 
-	m_timer += 1.0f / 60.0f /*Application::Instance().GetDeltaTime()*/;
+	m_timer += DeltaTime();
 
 	switch (m_displayState)
 	{
@@ -110,7 +103,6 @@ void GameStateUI::Update()
 
 void GameStateUI::DrawSprite()
 {
-
 	std::string text;
 
 	switch (m_displayState)
@@ -138,15 +130,8 @@ void GameStateUI::DrawSprite()
 		return;
 	}
 
-	Math::Color color = { 0.0f,0.0f,0.0f,0.5f };
-	KdShaderManager::Instance().m_spriteShader.DrawBox(
-		0, 0, 640, 360, &color);
+	// 画面を少し暗くして、中央に大きく表示
+	DrawFullScreenBox(Math::Color{ 0.0f, 0.0f, 0.0f, 0.5f });
 
-	KdShaderManager::Instance().m_spriteShader.DrawFont(
-		Math::Vector2{ 0, 0 },
-		&kWhiteColor,
-		Math::Vector2{ 0.5f, 0.5f },
-		0.0f,
-		FontID::Future128,
-		text.c_str());
+	DrawLabel(Math::Vector2{ 0, 0 }, kWhiteColor, FontID::Future128, text.c_str());
 }

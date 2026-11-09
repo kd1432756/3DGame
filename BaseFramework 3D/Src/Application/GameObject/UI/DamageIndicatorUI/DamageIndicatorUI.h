@@ -1,22 +1,18 @@
 ﻿#pragma once
 
-class Player;
+#include "../PlayerUIBase/PlayerUIBase.h"
 
-class DamageIndicatorUI : public KdGameObject
+class DamageIndicatorUI : public PlayerUIBase
 {
 public:
 	void Init() override;
 	void Update() override;
 	void DrawSprite() override;
 
-	void SetOwner(const std::shared_ptr<Player>& owner) { m_owner = owner; }
-
 	// 表示位置(画面中心が原点)
 	void SetPosition(const Math::Vector2& pos) { m_uiPos = pos; }
 
 private:
-	std::weak_ptr<Player> m_owner;
-
 	std::shared_ptr<KdTexture> m_texHouse = nullptr;   // 家アイコン
 	std::shared_ptr<KdTexture> m_texBadge = nullptr;   // 赤い丸
 
@@ -35,7 +31,4 @@ private:
 
 	static constexpr float kHouseSize = 64.0f;
 	static constexpr float kBadgeSize = 28.0f;
-
-	static constexpr float kCicleRadius = 48.0f;
-	static constexpr int kRingWidth = 8;
 };
