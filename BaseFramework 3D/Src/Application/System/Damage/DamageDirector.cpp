@@ -9,8 +9,7 @@ void DamageDirector::SpawnInitialDamage(int count)
 {
 	auto objects = SceneManager::Instance().FindObjects<InteractiveObject>();
 
-	std::mt19937 rng{ std::random_device{}() };
-	std::shuffle(objects.begin(), objects.end(), rng);
+	KdRandom::Shuffle(objects);
 
 	int done = 0;
 

@@ -185,7 +185,8 @@ void InteractiveObject::Use(
 		int score = ScoreManager::Instance().CalcScore(
 			action->score, 
 			DayCycle::Instance().GetTimeProgress(),
-			player->GetSkillResult()
+			player->GetSkillResult(),
+			player->GetRepairBonusRate()
 			);
 
 		player->OnRepairSuccess(score, action->message);

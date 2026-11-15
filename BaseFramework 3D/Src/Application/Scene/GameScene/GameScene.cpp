@@ -35,10 +35,13 @@
 #include "../../GameObject/UI/InventoryUI/InventoryUI.h"
 #include "../../GameObject/UI/TimeUI/TimeUI.h"
 #include "../../GameObject/UI/ScoreUI/ScoreUI.h"
+#include "../../GameObject/UI/BonusUI/BonusUI.h"
 #include "../../GameObject/UI/HomeDirectionUI/HomeDirectionUI.h"
 #include "../../GameObject/UI/HinderUI/HinderUI.h"
 #include "../../GameObject/UI/ReportUI/ReportUI.h"
 #include "../../GameObject/UI/DamageIndicatorUI/DamageIndicatorUI.h"
+
+#include "../../GameObject/Effect/DeliveryPointEffect/DeliveryPointEffect.h"
 
 #include "../../GameObject/UI/NotificationUI/NotificationManager.h"
 
@@ -245,6 +248,12 @@ void GameScene::Start()
 		score->SetPlayer(player);
 		m_objList.push_back(score);
 
+		auto bonus = std::make_shared<BonusUI>();
+		bonus->Init();
+		bonus->SetName("BonusUI");
+		bonus->SetPlayer(player);
+		m_objList.push_back(bonus);
+
 		auto reticle = std::make_shared<Reticle>();
 		reticle->Init();
 		reticle->SetName("Reticle");
@@ -307,6 +316,14 @@ void GameScene::Start()
 
 		m_objList.push_back(resultUI);
 		m_objList.push_back(confettiUI);
+	}
+
+	{
+		auto deliveryEffect = std::make_shared<DeliveryPointEffect>();
+		deliveryEffect->Init();
+		deliveryEffect->SetName("DeliveryPointEffect");
+		deliveryEffect->SetPlayer(player);
+		SceneManager::Instance().AddObject(deliveryEffect);
 	}
 }
 

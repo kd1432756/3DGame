@@ -7,7 +7,7 @@ enum class ItemAction
 	Cut,
 	Break,
 	Wrench,
-	Pirece
+	Pierce
 };
 
 struct ItemUse
@@ -93,7 +93,7 @@ public:
 private:
 
 	static ItemAction ParseAction(const std::string& str);
-
+	
 	std::string m_itemPath;
 	std::string m_name;
 	std::string m_modelPath;

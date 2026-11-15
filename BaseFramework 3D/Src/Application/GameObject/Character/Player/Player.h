@@ -76,7 +76,7 @@ public:
 
 	void ConsumeItem(int index);
 
-	bool CanHighlight();
+	bool CanHighlight() ;
 
 	std::shared_ptr<Item> GetHandItem() const
 	{
@@ -117,7 +117,7 @@ public:
 	void OnArrested(const std::shared_ptr<Police>& police) override;
 	void OnReleased() override;
 
-	int GetDamagedCount()
+	int GetDamagedCount() const
 	{
 		return m_neglected.size();
 	}
@@ -136,15 +136,22 @@ public:
 	float GetHinderRatio() const
 	{
 		if (!m_isHindering) return 0.0f;
-		return std::clamp(m_hinderRemaining / m_hinderBaseTime, 0.0f, 1.0f);
+		return std::clamp(m_hinderRemaining / kHinderBaseTime, 0.0f, 1.0f);
 	}
 
 	float GetReportRemaining() const { return m_reportTimer; }
 	float GetReportCooldownRatio() const
 	{
-		if (m_reportCooldown <= 0.0f) return 0.0f;
-		return std::clamp(m_reportTimer / m_reportCooldown, 0.0f, 1.0f);
+		if (kReportCooldown <= 0.0f) return 0.0f;
+		return std::clamp(m_reportTimer / kReportCooldown, 0.0f, 1.0f);
 	}
+
+	bool CanDeliver() const;
+	float GetRepairBonusRate() const { return 1.0f + 0.1f * m_bonusCount; }
+	int   GetRepairBonusCount() const { return m_bonusCount; }
+	float GetRepairBonusTime() const { return m_bonusTime; }
+	float GetRepairBonusTimeRatio() const { return m_bonusTime / kBonusMaxTime; }
+	int   DeliverDangerousItems(); 
 
 	bool IsGhost() const override 
 	{ 
@@ -194,6 +201,9 @@ private:
 	void BeginHinderCamera();
 	void UpdateHinderCamera();
 
+	bool TryDeliver();
+	void UpdateRepairBonus();
+	
 	void OnItemsConfiscated() override;
 	void SelectInventory(int index) override;
 	void TryDropItem();
@@ -233,7 +243,7 @@ private:
 
 	bool m_isUsing = false;
 
-	static constexpr float m_suspicionSeconds = 30.0f;	// 壊れてからこの秒数以内の物を直すと疑われる
+	static constexpr float kSuspicionSeconds = 30.0f;	// 壊れてからこの秒数以内の物を直すと疑われる
 
 	float m_useTimer = 0.0f;
 	float m_useTime = 0.0f;
@@ -262,25 +272,34 @@ private:
 
 	std::vector<NeglectedEntry> m_neglected;
 
-	static constexpr float m_neglectGrace = 10.0f;  // 猶予(秒)
-	static constexpr float m_neglectInterval = 1.0f;   // 減点間隔(秒)
-	static constexpr int   m_neglectPenalty = 1;      // 1回あたりの減点
+	static constexpr float kNeglectGrace = 10.0f;  // 猶予(秒)
+	static constexpr float kNeglectInterval = 1.0f;   // 減点間隔(秒)
+	static constexpr int   kNeglectPenalty = 1;      // 1回あたりの減点
 
 	// 通報
-	static constexpr float m_reportCooldown = 30.0f;   // 初期値30秒
+	static constexpr float kReportCooldown = 30.0f;   // 初期値30秒
 	float m_reportTimer = 0.0f;    // 残りクールダウン
-	static constexpr float m_reportWindowSeconds = 60.0f;	// 通報の対象にする「最近壊された」の範囲(秒)
+	static constexpr float kReportWindowSeconds = 60.0f;	// 通報の対象にする「最近壊された」の範囲(秒)
+	static constexpr float kReportPrankRange = 5.0f;	// 歩いている途中の Neighbor を通報できるプレイヤーからの距離(m)
 
 	// 妨害
 	std::weak_ptr<CharacterBase> m_wpHinderTarget;
 	float m_hinderRemaining = 0.0f;
 
-	static constexpr float m_hinderBaseTime = 3.0f;    // 基本拘束時間
-	static constexpr float m_hinderMashExtend = 0.25f;   // 1回目の連打で延びる秒数
-	static constexpr float m_hinderMashDecay = 0.96f;   // 1回押すごとの減衰率（小さいほど早く伸びなくなる）
+	static constexpr float kHinderBaseTime = 3.0f;    // 基本拘束時間
+	static constexpr float kHhinderMashExtend = 0.25f;   // 1回目の連打で延びる秒数
+	static constexpr float kHinderMashDecay = 0.96f;   // 1回押すごとの減衰率（小さいほど早く伸びなくなる）
 	int   m_hinderMashCount = 0;       // 今回の妨害での連打回数
-	static constexpr float m_hinderRange = 2.0f;    // 妨害可能距離（×sceneScale）
+	static constexpr float kHinderRange = 2.0f;    // 妨害可能距離
 
-	static constexpr float m_hinderCooldown = 5.0f;    // 妨害後のクールダウン（調整用）
+	static constexpr float kHinderCooldown = 5.0f;    // 妨害後のクールダウン（調整用）
 	float m_hinderCooldownTimer = 0.0f;
+
+	// 届
+	static constexpr float kDeliverRadius = 2.0f;
+	int   m_bonusCount = 0;
+	float m_bonusTime = 0.0f;
+	static constexpr int   kBonusMaxCount = 5;       // ×(1.0 + 0.1 * 5)
+	static constexpr float kBonusExtend = 10.0f;
+	static constexpr float kBonusMaxTime = 60.0f;
 };

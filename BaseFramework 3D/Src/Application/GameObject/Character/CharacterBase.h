@@ -65,16 +65,21 @@ public:
 	bool AddInventoryItem(const std::string& itemPath);
 	bool HasInventoryItem(const std::string& itemPath) const;
 	bool HasDangerousItem() const;
-	void ConfiscateDangerousItems();
+
+	int CountDangerousItems() const;
+	int ConfiscateDangerousItems();
 
 	// 選択スロット変更（Player=手持ちモデル更新 / Neighbor=ItemData更新）
 	virtual void SelectInventory(int index) { m_inventory.SelectIndex(index); }
 
 	bool IsArrested() const { return m_isArrested; }
 
-	// NPC: 破壊作業中(妨害・警察の聞き込みの対象)
+	// NPC: 破壊作業中(妨害の対象)
 	virtual bool IsDamaging() const { return false; }
+	// NPC: いたずら中（歩いている途中・壊している最中の両方を含む）
+	virtual bool IsPranking() const { return false; }
 	virtual Math::Vector3 GetDamagePos() const { return m_pos; }
+
 
 	// 警察に疑われる行動中(Player: 壊れて間もない物の修復中)
 	virtual bool IsSuspicious() const { return false; }

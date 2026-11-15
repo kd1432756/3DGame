@@ -61,6 +61,12 @@ void Neighbor::Init()
 	m_currentItemData = ItemData();
 
 	m_prankCooldownTimer = KdRandom::GetFloat(5.0f, 12.0f);
+
+	//============================================================
+	// Utility
+	//============================================================
+	
+	m_utilityUpdateTimer = KdRandom::GetFloat(0.0f, kUtilityUpdateInterval);
 }
 
 //============================================================
@@ -204,7 +210,7 @@ void Neighbor::UpdateUtility()
 
 	m_utilityUpdateTimer += deltaTime;
 
-	if (m_utilityUpdateTimer < m_utilityUpdateInterval)
+	if (m_utilityUpdateTimer < kUtilityUpdateInterval)
 	{
 		return;
 	}
@@ -313,7 +319,7 @@ Neighbor::Action Neighbor::DecideAction()
 float Neighbor::EvaluateTask()
 {
 	// 常に最低限の行動としてTaskを残す
-	return m_taskBaseUtility;
+	return kTaskBaseUtility;
 }
 
 //============================================================
@@ -389,12 +395,10 @@ bool Neighbor::CalculatePathDistance(
 	// Utility計算専用のPathを取得
 	// 始点・終点を補正
 	//============================================================
-	
-	Math::Vector3 fixedStart =
-		SnapToNavMesh(m_pos);
 
-	Math::Vector3 fixedGoal =
-		SnapToNavMesh(goal);
+	Math::Vector3 fixedStart = SnapToNavMesh(m_pos);
+
+	Math::Vector3 fixedGoal = SnapToNavMesh(goal);
 
 	const auto path =
 		m_navMeshPathfinder->FindPathPoints(
@@ -420,8 +424,7 @@ bool Neighbor::CalculatePathDistance(
 
 	for (size_t i = 1; i < path.size(); ++i)
 	{
-		Math::Vector3 diff =
-			path[i] - path[i - 1];
+		Math::Vector3 diff = path[i] - path[i - 1];
 
 		diff.y = 0.0f;
 
@@ -477,11 +480,9 @@ void Neighbor::UpdateTask()
 
 		m_wpTaskDestination = destPoint;
 
-		m_navPath.clear();
-		m_navPathIndex = 0;
+		ClearNavPath();
 
-		m_debugInfo.taskDestinationName =
-			LocationTagToString(destPoint->GetTag());
+		m_debugInfo.taskDestinationName = LocationTagToString(destPoint->GetTag());
 	}
 
 	//============================================================
@@ -517,17 +518,13 @@ void Neighbor::UpdateTask()
 	{
 		m_debugInfo.taskMoveStatus = "Arrived";
 
-		// 到着時のみ待機を開始（Failedの場合は待たない）
 		m_isTaskIdling = true;
-
-		m_taskIdleTimer = m_taskIdleMin +
-			KdRandom::GetFloat(0.0f, 1.0f) * (m_taskIdleMax - m_taskIdleMin);
+		m_taskIdleTimer = kTaskIdleMin + KdRandom::GetFloat(0.0f, 1.0f) * (kTaskIdleMax - kTaskIdleMin);
 	}
 
 	m_wpTaskDestination.reset();
 
-	m_navPath.clear();
-	m_navPathIndex = 0;
+	ClearNavPath();
 
 	SetMoveDirection(Math::Vector3::Zero);
 
@@ -545,19 +542,18 @@ MoveResult Neighbor::MoveToTaskDestination(const std::shared_ptr<LocationPoint>&
 
 	toDest.y = 0.0f;
 
-	const float arriveDistance = m_taskArriveDistance * m_sceneScale;
+	const float arriveDistance = kTaskArriveDistance * m_sceneScale;
 
 	if (toDest.LengthSquared() <= arriveDistance * arriveDistance)
 	{
-		m_navPath.clear();
-		m_navPathIndex = 0;
+		ClearNavPath();
 
 		return MoveResult::Arrived;
 	}
 
 	if (m_navPath.empty())
 	{
-		FindPathTo(destPoint->GetPos());
+		SetNavPathTo(destPoint->GetPos());
 
 		if (m_navPath.empty())
 		{
@@ -565,7 +561,7 @@ MoveResult Neighbor::MoveToTaskDestination(const std::shared_ptr<LocationPoint>&
 		}
 	}
 
-	return MoveToNextNavPathPoint();
+	return FollowNavPath();
 }
 
 //============================================================
@@ -615,7 +611,7 @@ std::shared_ptr<LocationPoint> Neighbor::SelectItemAreaPoint()
 		return nullptr;
 	}
 
-	int index = rand() % static_cast<int>(candidates.size());
+	int index = KdRandom::GetInt(0, static_cast<int>(candidates.size()) - 1);
 
 	return candidates[index];
 }
@@ -626,16 +622,17 @@ std::shared_ptr<LocationPoint> Neighbor::SelectItemAreaPoint()
 
 std::shared_ptr<LocationPoint> Neighbor::SelectRandomPoint()
 {
-	const auto& points = m_pLocationPointManager->GetPoints();
+	std::vector<std::shared_ptr<LocationPoint>> candidates;
 
-	if (points.empty())
+	for (const auto& p : m_pLocationPointManager->GetPoints())
 	{
-		return nullptr;
+		if (!p || p->GetTag() == LocationTag::DeliveryPoint) continue;
+		candidates.push_back(p);
 	}
 
-	int index = KdRandom::GetInt(0, points.size() - 1);
+	if (candidates.empty()) return nullptr;
 
-	return points[index];
+	return candidates[KdRandom::GetInt(0, static_cast<int>(candidates.size()) - 1)];
 }
 
 //============================================================
@@ -649,8 +646,8 @@ void Neighbor::UpdateSearchItem()
 	//============================================================
 	// アイテムが消えた
 	//============================================================
-
-	if (!item)
+	
+	if (!item || item->IsExpired())
 	{
 		m_wpSearchItem.reset();
 
@@ -715,7 +712,7 @@ void Neighbor::UpdateSearchItem()
 // Find Best Serach Item Candidate
 //============================================================
 
-bool Neighbor::FindBestSearchItem(SearchItemCandidate & outCandidate)
+bool Neighbor::FindBestSearchItem(SearchItemCandidate& outCandidate)
 {
 	outCandidate = SearchItemCandidate();
 
@@ -726,7 +723,7 @@ bool Neighbor::FindBestSearchItem(SearchItemCandidate & outCandidate)
 
 	auto& objList = SceneManager::Instance().GetObjList();
 
-	const float searchRadius = m_searchItemRadius * m_sceneScale;
+	const float searchRadius = kSearchItemRadius * m_sceneScale;
 
 	const float searchDistanceSq = searchRadius * searchRadius;
 
@@ -741,14 +738,7 @@ bool Neighbor::FindBestSearchItem(SearchItemCandidate & outCandidate)
 
 		auto item = std::dynamic_pointer_cast<Item>(obj);
 
-		if (!item)
-		{
-			continue;
-		}
-
-		//========================================================
-		// インベントリ内のItemは拾えない
-		//========================================================
+		if (!item || item->IsExpired()) continue;
 
 		if (item->GetMode() == ItemMode::InInventory)
 		{
@@ -763,10 +753,13 @@ bool Neighbor::FindBestSearchItem(SearchItemCandidate & outCandidate)
 
 		diff.y = 0.0f;
 
-		if (diff.LengthSquared() > searchDistanceSq)
+		const bool isCurrentTarget = (m_state == State::SearchItem && m_wpSearchItem.lock() == item);
+
+		if (!isCurrentTarget && diff.LengthSquared() > searchDistanceSq)
 		{
 			continue;
 		}
+
 
 		const ItemData& itemData = item->GetItemData();
 
@@ -843,12 +836,9 @@ float Neighbor::EvaluateSearchItemCandidate(const std::shared_ptr<Item>& item, f
 
 	itemDiff.y = 0.0f;
 
-	float itemDistance = itemDiff.Length();
+	float searchRadius = kSearchItemRadius * m_sceneScale;
 
-	float searchRadius = m_searchItemRadius * m_sceneScale;
-
-	const float pathScore =
-		1.0f - std::clamp(pathDistance / (searchRadius * 2.0f), 0.0f, 1.0f);
+	const float pathScore = 1.0f - std::clamp(pathDistance / (searchRadius * 2.0f), 0.0f, 1.0f);
 
 	//============================================================
 	// 基本Utility
@@ -864,18 +854,15 @@ float Neighbor::EvaluateSearchItemCandidate(const std::shared_ptr<Item>& item, f
 
 	if (m_state == State::SearchItem && m_wpSearchItem.lock() == item)
 	{
-		utility += m_searchCommitBonus;
+		utility += kSearchCommitBonus;
 	}
 
 	//============================================================
 	// Prankに使える
 	//============================================================
 
-	if (CanUseItemForPrank(itemData))
-	{
-		utility += 50.0f;
-	}
-
+	utility += 50.0f;
+	
 	return utility;
 }
 
@@ -909,9 +896,7 @@ void Neighbor::SelectSearchItemCandidate(const SearchItemCandidate& candidate)
 	// 古いPathを破棄
 	//============================================================
 
-	m_navPath.clear();
-
-	m_navPathIndex = 0;
+	ClearNavPath();
 }
 
 //============================================================
@@ -925,8 +910,8 @@ MoveResult Neighbor::MoveToSearchItem()
 	//============================================================
 	// アイテムが存在しない
 	//============================================================
-
-	if (!item)
+	
+	if (!item || item->IsExpired())
 	{
 		return MoveResult::Failed;
 	}
@@ -935,7 +920,7 @@ MoveResult Neighbor::MoveToSearchItem()
 
 	toItem.y = 0.0f;
 
-	const float interactDistance = m_searchItemInteractDistance * m_sceneScale;
+	const float interactDistance = kSearchItemInteractDistance * m_sceneScale;
 
 	//============================================================
 	// 到着判定
@@ -943,9 +928,7 @@ MoveResult Neighbor::MoveToSearchItem()
 
 	if (toItem.LengthSquared() <= interactDistance * interactDistance)
 	{
-		m_navPath.clear();
-
-		m_navPathIndex = 0;
+		ClearNavPath();
 
 		SetMoveDirection(Math::Vector3::Zero);
 
@@ -958,7 +941,7 @@ MoveResult Neighbor::MoveToSearchItem()
 
 	if (m_navPath.empty())
 	{
-		FindPathTo(item->GetPos());
+		SetNavPathTo(item->GetPos());
 
 		//========================================================
 		// Path生成失敗
@@ -974,7 +957,7 @@ MoveResult Neighbor::MoveToSearchItem()
 	// NavMesh上を移動
 	//============================================================
 
-	return MoveToNextNavPathPoint();
+	return FollowNavPath();
 }
 
 void Neighbor::PickupSearchItem()
@@ -985,7 +968,7 @@ void Neighbor::PickupSearchItem()
 	// アイテムが存在しない
 	//============================================================
 
-	if (!item)
+	if (!item || item->IsExpired())
 	{
 		m_wpSearchItem.reset();
 
@@ -1048,15 +1031,13 @@ void Neighbor::PickupSearchItem()
 	ChangeState(State::Task);
 }
 
-bool Neighbor::CanUseItemForPrank(const ItemData & itemData) const
+bool Neighbor::CanUseItemForPrank(const ItemData& itemData) const
 {
-
 	auto& objList = SceneManager::Instance().GetObjList();
 
 	for (auto& obj : objList)
 	{
-		auto target =
-			std::dynamic_pointer_cast<InteractiveObject>(obj);
+		auto target = std::dynamic_pointer_cast<InteractiveObject>(obj);
 
 		if (!target)
 		{
@@ -1070,7 +1051,6 @@ bool Neighbor::CanUseItemForPrank(const ItemData & itemData) const
 	}
 
 	return false;
-
 }
 
 //============================================================
@@ -1238,7 +1218,7 @@ MoveResult Neighbor::MoveToPrankTarget()
 
 	toTarget.y = 0.0f;
 
-	const float interactDistance = m_prankInteractDistance * m_sceneScale;
+	const float interactDistance = kPrankInteractDistance * m_sceneScale;
 
 	//============================================================
 	// 到着判定
@@ -1246,9 +1226,7 @@ MoveResult Neighbor::MoveToPrankTarget()
 
 	if (toTarget.LengthSquared() <= interactDistance * interactDistance)
 	{
-		m_navPath.clear();
-
-		m_navPathIndex = 0;
+		ClearNavPath();
 
 		return MoveResult::Arrived;
 	}
@@ -1259,7 +1237,7 @@ MoveResult Neighbor::MoveToPrankTarget()
 
 	if (m_navPath.empty())
 	{
-		FindPathTo(target->GetPos());
+		SetNavPathTo(target->GetPos());
 
 		//========================================================
 		// Path生成失敗
@@ -1275,7 +1253,7 @@ MoveResult Neighbor::MoveToPrankTarget()
 	// NavMesh上を移動
 	//============================================================
 
-	return MoveToNextNavPathPoint();
+	return FollowNavPath();
 }
 
 //============================================================
@@ -1298,7 +1276,7 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 	// Search Range
 	//============================================================
 
-	const float searchRadius = m_prankSearchRadius * m_sceneScale;
+	const float searchRadius = kPrankSearchRadius * m_sceneScale;
 
 	const float searchDistanceSq = searchRadius * searchRadius;
 
@@ -1396,7 +1374,14 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 
 			diff.y = 0.0f;
 
-			if (diff.LengthSquared() > searchDistanceSq)
+			// 進行中の対象は半径フィルタから除外しない
+			// 迂回で一時的に直線距離が伸びても、Prankを継続させるため
+			const bool isCurrentTarget =
+				(m_state == State::Prank &&
+					m_wpPrankTarget.lock() == target);
+
+			if (!isCurrentTarget &&
+				diff.LengthSquared() > searchDistanceSq)
 			{
 				m_debugInfo.prankCandidateLog.push_back(log);
 				continue;
@@ -1434,6 +1419,8 @@ bool Neighbor::FindBestPrankCandidate(PrankCandidate& outCandidate)
 					*itemData,
 					pathDistance
 				);
+
+			utility += KdRandom::GetFloat(0.0f, 5.0f);
 
 			log.utility = utility;
 
@@ -1507,7 +1494,7 @@ float Neighbor::EvaluatePrankCandidate(
 	// いたずら欲求
 	//============================================================
 
-	utility += m_prankDesire * 40.0f;
+	utility += kPrankDesire * 40.0f;
 
 	//============================================================
 	// ヒステリシス
@@ -1515,14 +1502,14 @@ float Neighbor::EvaluatePrankCandidate(
 
 	if (m_state == State::Prank && m_wpPrankTarget.lock() == target)
 	{
-		utility += m_prankCommitBonus;
+		utility += kPrankCommitBonus;
 	}
 
 	//============================================================
 	// 距離
 	//============================================================
 
-	float searchRadius = m_prankSearchRadius * m_sceneScale;
+	float searchRadius = kPrankSearchRadius * m_sceneScale;
 
 	float pathScore =
 		1.0f - std::clamp(pathDistance / searchRadius, 0.0f, 1.0f);
@@ -1543,7 +1530,6 @@ bool Neighbor::SelectPrankCandidate(const PrankCandidate& candidate)
 	if (candidate.inventoryIndex < -1 ||
 		candidate.inventoryIndex >= Inventory::MaxItem) return false;
 
-	auto self = std::dynamic_pointer_cast<Neighbor>(shared_from_this());
 	auto old = m_wpPrankTarget.lock();
 
 	if (old != candidate.target)
@@ -1554,13 +1540,12 @@ bool Neighbor::SelectPrankCandidate(const PrankCandidate& candidate)
 		}
 
 		// 評価から最大1秒ずれるので、予約に失敗することがある
-		if (!candidate.target->TryReserve(self))
+		if (!candidate.target->TryReserve(std::dynamic_pointer_cast<Neighbor>(shared_from_this())))
 		{
 			return false;
 		}
 
-		m_navPath.clear();
-		m_navPathIndex = 0;
+		ClearNavPath();
 	}
 
 	SelectInventory(candidate.inventoryIndex);
@@ -1587,7 +1572,7 @@ void Neighbor::StartPrankCooldown()
 	const float progress = DayCycle::Instance().GetTimeProgress();
 
 	const float base =
-		std::lerp(m_prankCooldownMax, m_prankCooldownMin, progress);
+		std::lerp(kPrankCooldownMax, kPrankCooldownMin, progress);
 
 	m_prankCooldownTimer = base * KdRandom::GetFloat(0.7f, 1.3f);
 }
@@ -1630,109 +1615,6 @@ void Neighbor::DropUselessItems()
 }
 
 //============================================================
-// NavMesh
-//============================================================
-
-void Neighbor::FindPathTo(
-	const Math::Vector3& goal)
-{
-	//============================================================
-	// 始点・終点をNavMesh内に補正
-	//============================================================
-
-	Math::Vector3 fixedStart =
-		SnapToNavMesh(m_pos);
-
-	Math::Vector3 fixedGoal =
-		SnapToNavMesh(goal);
-
-	m_navPath =
-		m_navMeshPathfinder->FindPathPoints(
-			NavMeshManager::Instance(),
-			fixedStart,
-			fixedGoal
-		);
-
-	m_navPathIndex = 0;
-}
-
-//============================================================
-// Move Next Nav Path Point
-//============================================================
-
-MoveResult Neighbor::MoveToNextNavPathPoint()
-{
-	//============================================================
-	// Pathがない
-	//============================================================
-
-	if (m_navPath.empty())
-	{
-		return MoveResult::Failed;
-	}
-
-	//============================================================
-	// Path終了
-	//============================================================
-
-	if (m_navPathIndex >= static_cast<int>(m_navPath.size()))
-	{
-		m_navPath.clear();
-
-		m_navPathIndex = 0;
-
-		return MoveResult::Arrived;
-	}
-
-	const Math::Vector3 targetPoint =
-		m_navPath[m_navPathIndex];
-
-	Math::Vector3 dir = targetPoint - m_pos;
-
-	dir.y = 0.0f;
-
-	const float arriveDistance = 0.2f * m_sceneScale;
-
-	//============================================================
-	// Waypoint到着
-	//============================================================
-
-	if (dir.LengthSquared() <= arriveDistance * arriveDistance)
-	{
-		m_navPathIndex++;
-
-		//========================================================
-		// まだ次のWaypointがある
-		//========================================================
-
-		if (m_navPathIndex <
-			static_cast<int>(
-				m_navPath.size()))
-		{
-			return MoveResult::Moving;
-		}
-
-		//========================================================
-		// Path終了
-		//========================================================
-
-		m_navPath.clear();
-
-		m_navPathIndex = 0;
-
-		return MoveResult::Arrived;
-	}
-
-	//============================================================
-	// 移動
-	//============================================================
-
-	SetMoveDirection(dir);
-
-	return MoveResult::Moving;
-}
-
-//============================================================
 // Arrested
 //============================================================
 
@@ -1763,8 +1645,7 @@ void Neighbor::OnArrested(const std::shared_ptr<Police>& police)
 
 	m_isRestrained = false;
 
-	m_navPath.clear();
-	m_navPathIndex = 0;
+	ClearNavPath();
 
 	SetMoveDirection(Math::Vector3::Zero);
 	SetMoveSpeed(0.0f);
@@ -1783,7 +1664,7 @@ void Neighbor::OnReleased()
 	m_state = State::Task;
 
 	// 次のUpdateUtilityですぐ評価し直すようタイマーをリセット
-	m_utilityUpdateTimer = m_utilityUpdateInterval;
+	m_utilityUpdateTimer = kUtilityUpdateInterval;
 
 	ApplyStateSettings();
 }
@@ -1810,9 +1691,7 @@ void Neighbor::ChangeState(State newState)
 	// State変更時に移動・インタラクトをリセット
 	//============================================================
 
-	m_navPath.clear();
-
-	m_navPathIndex = 0;
+	ClearNavPath();
 
 	m_isTaskIdling = false;
 
@@ -1851,7 +1730,7 @@ void Neighbor::ApplyStateSettings()
 	{
 	case State::Task:
 
-		SetMoveSpeed(m_taskSpeed);
+		SetMoveSpeed(kTaskSpeed);
 
 		PlayAnimation("Armature|Idle");
 
@@ -1859,7 +1738,7 @@ void Neighbor::ApplyStateSettings()
 
 	case State::SearchItem:
 
-		SetMoveSpeed(m_searchItemSpeed);
+		SetMoveSpeed(kSearchItemSpeed);
 
 		PlayAnimation("Armature|Sprint");
 
@@ -1867,7 +1746,7 @@ void Neighbor::ApplyStateSettings()
 
 	case State::Prank:
 
-		SetMoveSpeed(m_prankSpeed);
+		SetMoveSpeed(kPrankSpeed);
 
 		PlayAnimation("Armature|Sprint");
 

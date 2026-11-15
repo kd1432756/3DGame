@@ -5,7 +5,7 @@
 
 	"IconPath": "Asset/Textures/Icon/Wrench.png",
 
-	"Dangerous": true,
+	"Dangerous": false,
 
 	"Uses": [
 		{

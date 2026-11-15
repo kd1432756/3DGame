@@ -381,21 +381,34 @@ bool CharacterBase::HasDangerousItem() const
 	return false;
 }
 
-void CharacterBase::ConfiscateDangerousItems()
+int CharacterBase::CountDangerousItems() const
 {
-	const auto& items = m_inventory.GetItems();
+	int n = 0;
+	for (const auto& item : m_inventory.GetItems())
+	{
+		if (item.IsEmpty()) continue;
+		const ItemData* data = ItemData::Get(item.itemPath);
+		if (data && data->IsDangerous()) ++n;
+	}
+	return n;
+}
 
+int CharacterBase::ConfiscateDangerousItems()
+{
+	int removed = 0;
+	const auto& items = m_inventory.GetItems();
 	for (int i = 0; i < Inventory::MaxItem; ++i)
 	{
 		if (items[i].IsEmpty()) continue;
-		const ItemData* d = ItemData::Get(items[i].itemPath);
-		if (d && d->IsDangerous())
+		const ItemData* data = ItemData::Get(items[i].itemPath);
+		if (data && data->IsDangerous())
 		{
 			m_inventory.RemoveItem(i);
+			++removed;
 		}
 	}
-
 	OnItemsConfiscated();
+	return removed;
 }
 
 void CharacterBase::OnArrested(const std::shared_ptr<Police>& police)

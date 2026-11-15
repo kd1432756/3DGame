@@ -14,6 +14,8 @@
 #include "../../../System/Interact/Interact.h"
 #include "../../../System/Usable/Usable.h"
 
+#include "../../../System/Location/LocationPointManager.h"
+
 #include "../../../System/Skillcheck/SkillCheckFactory.h"
 
 #include "../../../System/DayCycle/DayCycle.h"
@@ -62,11 +64,13 @@ void Player::Init()
 void Player::Update()
 {
 	FootstepSystem::Instance().SetListenerPos(m_pos);
+
+	UpdateRepairBonus();
 	UpdateNeglect();
 
 	if (m_isArrested)
 	{
-		UpdateArrested();		// 内側の ApplyGravity / UpdateWorldMatrix は削除
+		UpdateArrested();
 		UpdateLocked();
 		return;
 	}
@@ -228,16 +232,16 @@ void Player::UpdateNeglect()
 
 		it->elapsed += 1 / 60.0f;
 
-		if (it->elapsed >= m_neglectGrace)
+		if (it->elapsed >= kNeglectGrace)
 		{
 			it->tickTimer += 1 / 60.0f;
 
-			if (it->tickTimer >= m_neglectInterval)
+			if (it->tickTimer >= kNeglectInterval)
 			{
 				it->tickTimer = 0.0f;
 
 				// 0未満にはしない
-				const int penalty = std::min(m_neglectPenalty, GetScore());
+				const int penalty = std::min(kNeglectPenalty, GetScore());
 				if (penalty > 0)
 				{
 					AddScore(-penalty);
@@ -270,7 +274,7 @@ void Player::UpdateReport()
 
 	if (TryReport())
 	{
-		m_reportTimer = m_reportCooldown;
+		m_reportTimer = kReportCooldown;
 	}
 }
 
@@ -362,17 +366,28 @@ bool Player::FindReportPos(Math::Vector3& outPos) const
 
 	const Math::Vector3 camPos = camera->GetMatrix().Translation();
 
-	// ① 見えている「壊している最中のNPC」のうち、一番近いもの
+	// ① 見えている「いたずら中のNPC」のうち、一番近いもの
 	float nearestSq = std::numeric_limits<float>::max();
 	bool found = false;
 
 	for (auto& ch : SceneManager::Instance().FindObjects<CharacterBase>())
 	{
 		if (!ch || ch.get() == this) continue;
-		if (ch->IsArrested() || !ch->IsDamaging()) continue;
+		if (ch->IsArrested() || !ch->IsPranking()) continue;
 
 		// 見えているかは、NPC本人の体で判定する
 		if (!IsVisibleFromCamera(ch->GetPos(), ch.get())) continue;
+
+		// 歩いている途中だけ、プレイヤーから 5m 以内であること
+		// 壊している最中は今まで通り、距離制限なし
+		if (!ch->IsDamaging())
+		{
+			Math::Vector3 diff = ch->GetPos() - m_pos;
+			diff.y = 0.0f;
+
+			const float range = kReportPrankRange * m_sceneScale;
+			if (diff.LengthSquared() > range * range) continue;
+		}
 
 		const float sq = (ch->GetPos() - camPos).LengthSquared();
 
@@ -390,7 +405,7 @@ bool Player::FindReportPos(Math::Vector3& outPos) const
 	}
 
 	// ② 見えている「最近NPCに壊された物」のうち、一番新しいもの
-	float best = m_reportWindowSeconds;
+	float best = kReportWindowSeconds;
 
 	for (auto& obj : SceneManager::Instance().FindObjects<InteractiveObject>())
 	{
@@ -514,12 +529,12 @@ void Player::UpdateHinder()
 	if (GetAsyncKeyState(VK_SPACE) & 0x0001)
 	{
 		// 満タンのときは回復も減衰カウントも進めない（無駄押しで弱くならないように）
-		if (m_hinderRemaining < m_hinderBaseTime)
+		if (m_hinderRemaining < kHinderBaseTime)
 		{
 			const float extend =
-				m_hinderMashExtend * std::pow(m_hinderMashDecay, static_cast<float>(m_hinderMashCount));
+				kHhinderMashExtend * std::pow(kHinderMashDecay, static_cast<float>(m_hinderMashCount));
 
-			m_hinderRemaining = std::min(m_hinderRemaining + extend, m_hinderBaseTime);
+			m_hinderRemaining = std::min(m_hinderRemaining + extend, kHinderBaseTime);
 			m_hinderMashCount++;
 		}
 	}
@@ -543,7 +558,7 @@ bool Player::TryBeginHinder()
 	CancelUse();
 
 	m_wpHinderTarget = nearest;
-	m_hinderRemaining = m_hinderBaseTime;
+	m_hinderRemaining = kHinderBaseTime;
 	m_hinderMashCount = 0;
 
 	m_isHindering = true;
@@ -557,7 +572,7 @@ bool Player::TryBeginHinder()
 
 std::shared_ptr<CharacterBase> Player::FindHinderTarget() const
 {
-	const float range = m_hinderRange * m_sceneScale;
+	const float range = kHinderRange * m_sceneScale;
 
 	std::shared_ptr<CharacterBase> nearest;
 	float nearestSq = range * range;
@@ -594,7 +609,7 @@ void Player::EndHinder(bool restoreCamera, bool applyCooldown)
 	m_hinderMashCount = 0;
 	if (applyCooldown)
 	{
-		m_hinderCooldownTimer = m_hinderCooldown;
+		m_hinderCooldownTimer = kHinderCooldown;
 	}
 	m_isHindering = false;
 	m_isRestrained = false;
@@ -719,8 +734,8 @@ void Player::Move()
 		return;
 	}
 
-	Math::Vector3 _moveDir = {};
-	float _moveSpeed = 0.15f * m_sceneScale;
+	Math::Vector3 moveDir = {};
+	float moveSpeed = 0.15f * m_sceneScale;
 
 	Math::Matrix camRotYMat = Math::Matrix::Identity;
 	if (m_camera.expired() == false)
@@ -728,20 +743,20 @@ void Player::Move()
 		camRotYMat = m_camera.lock()->GetRotationYMatrix();
 	}
 
-	if (GetAsyncKeyState('W') & 0x8000) { _moveDir.z += 1.0f; }
-	if (GetAsyncKeyState('S') & 0x8000) { _moveDir.z += -1.0f; }
-	if (GetAsyncKeyState('A') & 0x8000) { _moveDir.x += -1.0f; }
-	if (GetAsyncKeyState('D') & 0x8000) { _moveDir.x += 1.0f; }
+	if (GetAsyncKeyState('W') & 0x8000) { moveDir.z += 1.0f; }
+	if (GetAsyncKeyState('S') & 0x8000) { moveDir.z += -1.0f; }
+	if (GetAsyncKeyState('A') & 0x8000) { moveDir.x += -1.0f; }
+	if (GetAsyncKeyState('D') & 0x8000) { moveDir.x += 1.0f; }
 
-	if (_moveDir.LengthSquared() <= 0.0f)
+	if (moveDir.LengthSquared() <= 0.0f)
 	{
 		return;
 	}
 
-	_moveDir = _moveDir.TransformNormal(_moveDir, camRotYMat);
-	_moveDir.Normalize();
+	moveDir = moveDir.TransformNormal(moveDir, camRotYMat);
+	moveDir.Normalize();
 
-	Math::Vector3 move = _moveDir * _moveSpeed;
+	Math::Vector3 move = moveDir * moveSpeed;
 
 	const float radius = WallRadius();
 	const float margin = 0.02f * m_sceneScale;   // 先読み距離
@@ -851,6 +866,8 @@ void Player::TryInteract()
 	{
 		return;
 	}
+
+	if (TryDeliver()) return;
 
 	auto obj = m_focusObject.lock();
 
@@ -1204,7 +1221,7 @@ void Player::PlayAnimation(const std::string& animName)
 	);
 }
 
-bool Player::CanHighlight()
+bool Player::CanHighlight() 
 {
 	auto obj = m_focusObject.lock();
 
@@ -1313,7 +1330,47 @@ bool Player::IsSuspicious() const
 		return false;
 	}
 
-	return obj->GetSecondsSinceDamaged() <= m_suspicionSeconds;
+	return obj->GetSecondsSinceDamaged() <= kSuspicionSeconds;
+}
+
+bool Player::CanDeliver() const
+{
+	if (CountDangerousItems() <= 0) return false;
+
+	auto point = LocationPointManager::Instance().FindByTag(LocationTag::DeliveryPoint);
+	if (!point) return false;
+
+	Math::Vector3 diff = point->GetPos() - m_pos;
+	diff.y = 0.0f;
+
+	const float r = kDeliverRadius * m_sceneScale;
+	return diff.LengthSquared() <= r * r;
+}
+
+int Player::DeliverDangerousItems()
+{
+	const int n = ConfiscateDangerousItems();
+	if (n <= 0) return 0;
+
+	m_bonusCount = std::min(m_bonusCount + n, kBonusMaxCount);
+	m_bonusTime = std::min(m_bonusTime + kBonusExtend * n, kBonusMaxTime);
+	// FloatingText "Delivered x2  ×1.2" / SE / Effekseer
+	return n;
+}
+
+bool Player::TryDeliver()
+{
+	if (!CanDeliver()) return false;
+
+	DeliverDangerousItems();
+	return true;
+}
+
+void Player::UpdateRepairBonus()
+{
+	if (m_bonusTime <= 0.0f) return;
+	m_bonusTime -= 1 / 60.0f;
+	if (m_bonusTime <= 0.0f) { m_bonusTime = 0.0f; m_bonusCount = 0; }  // 一括リセット
 }
 
 void Player::SpawnFloatingText(const std::string& text, const Math::Vector2& pos, const Math::Color& color, FontID font)

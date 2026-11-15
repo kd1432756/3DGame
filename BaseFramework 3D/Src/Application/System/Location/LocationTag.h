@@ -10,6 +10,7 @@ enum class LocationTag
 	Park,
 	ConstructionSite,
 	TrashDump,
+	DeliveryPoint,
 
 	Max
 };
@@ -26,6 +27,7 @@ inline const char* LocationTagToString(LocationTag tag)
 		"Park",
 		"ConstructionSite",
 		"TrashDump",
+		"DeliveryPoint",
 	};
 
 	int index = static_cast<int>(tag);
@@ -48,6 +50,7 @@ inline bool IsUniqueLocationTag(LocationTag tag)
 	case LocationTag::NeighborHouse2:
 	case LocationTag::NeighborHouse3:
 	case LocationTag::PoliceStation:
+	case LocationTag::DeliveryPoint:
 		return true;
 
 	default:

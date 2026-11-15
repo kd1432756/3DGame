@@ -117,6 +117,8 @@ void Item::Interact(std::shared_ptr<Player> player)
 
 bool Item::Pickup(Inventory& inventory, int replaceIndex)
 {
+	if (IsExpired()) return false;
+
 	if (m_mode == ItemMode::InInventory) return false;
 
 	const std::string& path = GetItemPath();

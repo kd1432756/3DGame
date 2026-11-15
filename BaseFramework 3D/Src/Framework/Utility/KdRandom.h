@@ -22,6 +22,18 @@ public:
 		std::uniform_real_distribution range(_min, _max);
 		return range(GetMT());
 	}
+
+	// 追加
+	template<typename T>
+	static void Shuffle(T& container)
+	{
+		std::shuffle(
+			container.begin(),
+			container.end(),
+			GetMT()
+		);
+	}
+
 private:
 	std::mt19937_64 rnd;
 

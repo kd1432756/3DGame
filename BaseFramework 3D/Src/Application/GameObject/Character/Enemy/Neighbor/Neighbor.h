@@ -47,7 +47,7 @@ public:
 		Prank,
 	};
 
-	inline const char* StateToString(Neighbor::State state)
+	inline const char* StateToString(Neighbor::State state) const
 	{
 		switch (state)
 		{
@@ -67,17 +67,15 @@ public:
 		Task,
 		SearchItem,
 		Prank,
-		UrgentRepair
 	};
 
-	inline const char* ActionToString(Neighbor::Action action)
+	inline const char* ActionToString(Neighbor::Action action) const
 	{
 		switch (action)
 		{
 		case Neighbor::Action::Task:       return "Task";
 		case Neighbor::Action::SearchItem: return "SearchItem";
 		case Neighbor::Action::Prank:      return "Prank";
-		case Neighbor::Action::UrgentRepair: return "UrgentRepair";
 		default:                           return "Unknown";
 		}
 	}
@@ -143,6 +141,11 @@ public:
 	bool IsDamaging() const override
 	{
 		return m_state == State::Prank && m_isInteracting;
+	}
+
+	bool IsPranking() const override
+	{
+		return m_state == State::Prank;
 	}
 
 	Math::Vector3 GetDamagePos() const override;
@@ -253,11 +256,6 @@ private:
 	// Movement
 	//============================================================
 
-	void FindPathTo(
-		const Math::Vector3& goal);
-
-	MoveResult MoveToNextNavPathPoint();
-
 	MoveResult MoveToTaskDestination(
 		const std::shared_ptr<LocationPoint>& destPoint);
 
@@ -292,7 +290,7 @@ private:
 
 	float m_utilityUpdateTimer = 0.0f;
 
-	static constexpr float m_utilityUpdateInterval = 1.0f;
+	static constexpr float kUtilityUpdateInterval = 1.0f;
 
 	//============================================================
 	// Utility Debug
@@ -322,13 +320,11 @@ private:
 	// State Settings
 	//============================================================
 
-	static constexpr float m_taskSpeed = 0.016f;
+	static constexpr float kTaskSpeed = 0.016f;
 
-	static constexpr float m_searchItemSpeed = 0.02f;
+	static constexpr float kSearchItemSpeed = 0.02f;
 
-	static constexpr float m_prankSpeed = 0.02f;
-
-	static constexpr float m_repairSpeed = 0.02f;
+	static constexpr float kPrankSpeed = 0.02f;
 
 	//============================================================
 	// Animation
@@ -358,11 +354,11 @@ private:
 
 	std::weak_ptr<Item> m_wpSearchItem;
 
-	static constexpr float m_searchItemRadius = 15.0f;
+	static constexpr float kSearchItemRadius = 15.0f;
 
-	static constexpr float m_searchItemInteractDistance = 1.2f;
+	static constexpr float kSearchItemInteractDistance = 1.2f;
 
-	static constexpr float m_searchCommitBonus = 15.0f;
+	static constexpr float kSearchCommitBonus = 15.0f;
 
 	//============================================================
 	// Task
@@ -370,17 +366,17 @@ private:
 
 	std::weak_ptr<LocationPoint> m_wpTaskDestination;
 
-	static constexpr float m_taskArriveDistance = 2.0f;
+	static constexpr float kTaskArriveDistance = 2.0f;
 
-	static constexpr float m_taskBaseUtility = 10.0f;
+	static constexpr float kTaskBaseUtility = 10.0f;
 
 	float m_taskIdleTimer = 0.0f;      // 残り待機時間
 
 	bool  m_isTaskIdling = false;     // 待機中か
 
-	static constexpr float m_taskIdleMin = 0.2f;      // 最小待機秒
+	static constexpr float kTaskIdleMin = 0.2f;      // 最小待機秒
 
-	static constexpr float m_taskIdleMax = 1.0f;      // 最大待機秒
+	static constexpr float kTaskIdleMax = 1.0f;      // 最大待機秒
 
 	//============================================================
 	// Prank
@@ -394,17 +390,17 @@ private:
 	// 実際にPrankで使用するInventoryスロット
 	int m_prankInventoryIndex = -1;
 
-	static constexpr float m_prankDesire = 0.3f;
+	static constexpr float kPrankDesire = 0.3f;
 
-	static constexpr float m_prankSearchRadius = 25.0f;
+	static constexpr float kPrankSearchRadius = 25.0f;
 
-	static constexpr float m_prankInteractDistance = 3.0f;
+	static constexpr float kPrankInteractDistance = 3.0f;
 
-	static constexpr float m_prankCommitBonus = 15.0f;
+	static constexpr float kPrankCommitBonus = 15.0f;
 
 	float m_prankCooldownTimer = 0.0f;
-	static constexpr float m_prankCooldownMax = 25.0f;	// 朝のクールダウン(秒)
-	static constexpr float m_prankCooldownMin = 8.0f;	// 夜のクールダウン(秒)
+	static constexpr float kPrankCooldownMax = 25.0f;	// 朝のクールダウン(秒)
+	static constexpr float kPrankCooldownMin = 8.0f;	// 夜のクールダウン(秒)
 
 private:
 

@@ -135,9 +135,7 @@ private:
 
 	bool MoveToNextPathNode();
 
-	void FindChasePath();
-
-	bool MoveToNextNavPathPoint();
+	void FindChasePath(bool visible);
 
 	void OnRepathRequested() override;
 
@@ -201,17 +199,24 @@ private:
 	// State Settings
 	//============================================================
 
-	static constexpr float m_patrolSpeed = 0.01f;
-	static constexpr float m_chaseSpeed = 0.030f;
-	static constexpr float m_returnSpeed = 0.01f;
-	static constexpr float m_escortSpeed = 0.016f;
-	static constexpr float m_investigateSpeed = 0.018f;
+	static constexpr float kPatrolSpeed = 0.01f;
+	static constexpr float kChaseSpeed = 0.030f;
+	static constexpr float kReturnSpeed = 0.01f;
+	static constexpr float kEscortSpeed = 0.016f;
+	static constexpr float kInvestigateSpeed = 0.018f;
 
 	//============================================================
 	// A*
 	//============================================================
 
 	AStarPathfinder m_pathfinder;
+
+	//============================================================
+	// Sight
+	//============================================================
+	
+	static constexpr float kSightDistance = 8.0f;
+	static constexpr float kSightAngleDeg = 90.0f;	// 全角
 
 	//============================================================
 	// Patrol
@@ -233,7 +238,7 @@ private:
 
 	float m_pathUpdateTimer = 0.0f;
 
-	static constexpr float m_pathUpdateInterval = 0.2f;
+	static constexpr float kPathUpdateInterval = 0.2f;
 
 	Math::Vector3 m_lastTargetPos =
 		Math::Vector3::Zero;
@@ -246,7 +251,7 @@ private:
 
 	Math::Vector3 m_investigatePos = Math::Vector3::Zero;
 
-	static constexpr float m_hearRange = 25.0f;
+	static constexpr float kHearRange = 25.0f;
 
 	float m_investigateCooldown = 0.0f;
 
@@ -258,7 +263,7 @@ private:
 
 	float m_arrestTimer = 0.0f;
 
-	static constexpr float m_arrestTime = 0.0f;
+	static constexpr float kArrestTime = 0.2f;
 
 	float m_arrestDistance = 1.6f;
 
@@ -268,7 +273,7 @@ private:
 
 	float m_loseSightTimer = 0.0f;
 
-	static constexpr float m_loseSightTime = 2.0f;
+	static constexpr float kLoseSightTime = 2.0f;
 
 	//============================================================
 	// Search
@@ -277,7 +282,7 @@ private:
 	float m_searchTimer = 0.0f;
 
 	// Search全体の時間
-	static constexpr float m_searchTime = 3.0f;
+	static constexpr float kSearchTime = 3.0f;
 
 	// 見回す速度
 	float m_searchRotateSpeed = 90.0f;

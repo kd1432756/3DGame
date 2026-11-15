@@ -10,7 +10,7 @@ void EnemyBase::Init()
 
 	m_navMeshPathfinder = std::make_unique<NavMeshPathfinder>();
 
-	m_collisionRadius = m_enemyCollisionRadius;
+	m_collisionRadius = kEnemyCollisionRadius;
 }
 
 void EnemyBase::Update()
@@ -135,7 +135,7 @@ void EnemyBase::ResolveCharacterCollision()
 {
 	if (m_isGhost || m_isArrested) return;
 
-	const float maxPush = m_maxCharaPush * m_sceneScale;
+	const float maxPush = kMaxCharaPush * m_sceneScale;
 
 	for (auto& obj : SceneManager::Instance().GetObjList())
 	{
@@ -202,7 +202,7 @@ void EnemyBase::UpdateGhost()
 	if (m_ghostTimer <= 0.0f && !IsOverlappingCharacter())
 	{
 		m_isGhost = false;
-		m_ghostCooldown = m_ghostCooldownTime;
+		m_ghostCooldown = kGhostCooldownTime;
 		m_needRepath = true;
 		ResetStuck();
 	}
@@ -216,7 +216,7 @@ void EnemyBase::UpdateStuck(bool wantMove, float movedDist)
 	const float dt = 1.0f / 60.0f;
 
 	const bool notProgressing =
-		wantMove && movedDist < m_moveSpeed * m_stuckMoveRatio;
+		wantMove && movedDist < m_moveSpeed * kStuckMoveRatio;
 
 	// ---- ① 原因を問わない詰まり → 経路再探索 ----
 	if (m_repathCooldown > 0.0f) m_repathCooldown -= dt;
@@ -225,10 +225,10 @@ void EnemyBase::UpdateStuck(bool wantMove, float movedDist)
 	{
 		m_blockedTimer += dt;
 
-		if (m_blockedTimer >= m_stuckToRepathTime && m_repathCooldown <= 0.0f)
+		if (m_blockedTimer >= kStuckToRepathTime && m_repathCooldown <= 0.0f)
 		{
 			m_needRepath = true;
-			m_repathCooldown = m_repathCooldownTime;
+			m_repathCooldown = kRepathCooldownTime;
 			m_blockedTimer = 0.0f;
 		}
 	}
@@ -249,13 +249,13 @@ void EnemyBase::UpdateStuck(bool wantMove, float movedDist)
 
 	m_stuckTimer += dt;
 
-	if (m_stuckTimer >= m_stuckToGhostTime &&
+	if (m_stuckTimer >= kStuckToGhostTime &&
 		!m_isGhost &&
 		m_ghostCooldown <= 0.0f &&
 		CanBecomeGhost())
 	{
 		m_isGhost = true;
-		m_ghostTimer = m_ghostMinTime;
+		m_ghostTimer = kGhostMinTime;
 		ResetStuck();
 	}
 }
@@ -295,7 +295,7 @@ MoveResult EnemyBase::FollowNavPath()
 
 	// 1フレームの移動量より小さい到着半径だと、ウェイポイントの周りを回ってしまう
 	const float arrive =
-		std::max(m_waypointArriveDist * m_sceneScale, m_moveSpeed);
+		std::max(kWaypointArriveDist * m_sceneScale, m_moveSpeed);
 
 	if (dir.LengthSquared() <= arrive * arrive)
 	{
@@ -322,7 +322,7 @@ MoveResult EnemyBase::FollowNavPath()
 Math::Vector3 EnemyBase::SnapToNavMesh(
 	const Math::Vector3& point) const
 {
-	NavMeshManager navMeshManager = NavMeshManager::Instance();
+	const NavMeshManager navMeshManager = NavMeshManager::Instance();
 
 	//============================================================
 	// すでにNavMesh内ならそのまま
@@ -342,14 +342,14 @@ Math::Vector3 EnemyBase::SnapToNavMesh(
 
 	return navMeshManager.FindNearestPoint(
 		point,
-		m_navSnapRadius * m_sceneScale
+		kNavSnapRadius * m_sceneScale
 	);
 }
 
 std::vector<Math::Vector3> EnemyBase::FindNavPath(
 	const Math::Vector3& start, const Math::Vector3& goal) const
 {
-	NavMeshManager navMeshManager = NavMeshManager::Instance();
+	const NavMeshManager navMeshManager = NavMeshManager::Instance();
 
 	return m_navMeshPathfinder->FindPathPoints(
 		navMeshManager, SnapToNavMesh(start), SnapToNavMesh(goal));

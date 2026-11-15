@@ -12,7 +12,7 @@ void Car::Init()
 	RegisterAction({
 		InteractiveState::Normal,
 		InteractiveState::Damaged,
-		ItemAction::Pirece,
+		ItemAction::Pierce,
 		"Car",
 		1.5f,
 		200,

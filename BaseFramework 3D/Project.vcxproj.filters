@@ -163,9 +163,6 @@
     <Filter Include="Src\Application\GameObject\Effect">
       <UniqueIdentifier>{a00fe116-9ec5-403a-90d8-27f069f5e649}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Effect\AlertIcon">
-      <UniqueIdentifier>{be4e407f-1fb7-47f5-b636-902e87973e3e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\System\DayCycle">
       <UniqueIdentifier>{baeb59ee-1105-4d52-a55e-85b8822024d1}</UniqueIdentifier>
     </Filter>
@@ -342,6 +339,12 @@
     </Filter>
     <Filter Include="Src\Application\GameObject\UI\EmoteIcon">
       <UniqueIdentifier>{5faf4bac-845c-4f4f-8c8f-0604db797e24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Effect\DeliveryPointEffect">
+      <UniqueIdentifier>{8ed05617-def7-4a0b-b3ed-a7928db85f75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\BonusUI">
+      <UniqueIdentifier>{9fa2b85a-9d3d-47bc-80b9-d41f7cccf37e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -609,9 +612,6 @@
     <ClInclude Include="Src\Application\System\Node\RoadNode\RoadNodeManager.h">
       <Filter>Src\Application\System\Node\RoadNode</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Effect\AlertIcon\AlertIcon.h">
-      <Filter>Src\Application\GameObject\Effect\AlertIcon</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\System\DayCycle\DayCycle.h">
       <Filter>Src\Application\System\DayCycle</Filter>
     </ClInclude>
@@ -849,6 +849,12 @@
     <ClInclude Include="Src\Application\GameObject\UI\NotificationUI\NotificationManager.h">
       <Filter>Src\Application\GameObject\UI\NotificationUI</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Effect\DeliveryPointEffect\DeliveryPointEffect.h">
+      <Filter>Src\Application\GameObject\Effect\DeliveryPointEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\BonusUI\BonusUI.h">
+      <Filter>Src\Application\GameObject\UI\BonusUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -1075,9 +1081,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\System\Node\RoadNode\RoadNodeManager.cpp">
       <Filter>Src\Application\System\Node\RoadNode</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Effect\AlertIcon\AlertIcon.cpp">
-      <Filter>Src\Application\GameObject\Effect\AlertIcon</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\System\DayCycle\DayCycle.cpp">
       <Filter>Src\Application\System\DayCycle</Filter>
@@ -1309,6 +1312,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\InteractiveObject.cpp">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Effect\DeliveryPointEffect\DeliveryPointEffect.cpp">
+      <Filter>Src\Application\GameObject\Effect\DeliveryPointEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\BonusUI\BonusUI.cpp">
+      <Filter>Src\Application\GameObject\UI\BonusUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

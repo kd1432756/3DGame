@@ -7,8 +7,6 @@
 
 #include "../../../../Scene/SceneManager.h"
 
-#include "../../../Effect/AlertIcon/AlertIcon.h"
-
 #include "../Neighbor/Neighbor.h"
 
 void Police::Init()
@@ -31,12 +29,6 @@ void Police::Init()
 		m_spModel,
 		KdCollider::TypeEditor
 	);
-
-	//============================================================
-	// Path
-	//============================================================
-
-	FindPatrolPath();
 
 	//============================================================
 	// Emote Icon
@@ -107,25 +99,15 @@ void Police::UpdateBehavior()
 
 void Police::UpdateExtra()
 {
-	bool enable = false;
-
-	// 視界（コーンライト）の更新
-	if (m_state == State::Arrest || m_state == State::Escort)
-	{
-
-	}
-	else
-	{
-		enable = true;
-	}
+	const bool enable = (m_state != State::Arrest && m_state != State::Escort);
 
 	Math::Vector3 forward = GetFacingDir();
 
 	KdShaderManager::Instance().WorkAmbientController().AddConeLight(
 		Math::Vector3{ 3,0,0 },
-		8.0f * m_sceneScale,
+		kSightDistance* m_sceneScale,
 		m_pos,
-		DirectX::XMConvertToRadians(45),
+		DirectX::XMConvertToRadians(kSightAngleDeg / 2.0f),
 		forward,
 		enable
 	);
@@ -150,8 +132,6 @@ void Police::UpdatePatrol()
 
 	if (m_investigateCooldown <= 0.0f && DetectDamageSound())
 	{
-		m_navPath.clear();
-		m_navPathIndex = 0;
 		ChangeState(State::Investigate);
 		return;
 	}
@@ -167,9 +147,6 @@ void Police::UpdateChase()
 	{
 		ChangeState(State::LastSeen);
 
-		m_navPath.clear();
-		m_navPathIndex = 0;
-
 		m_loseSightTimer = 0.0f;
 
 		return;
@@ -183,26 +160,11 @@ void Police::UpdateChase()
 	{
 		m_wpTarget.reset();
 
-		m_navPath.clear();
-		m_navPathIndex = 0;
-
 		m_chasingForCrime = false;
 
 		ChangeState(State::Return);
 		return;
 	}
-
-	//============================================================
-	// ターゲットとの距離
-	//============================================================
-
-	Math::Vector3 toTarget =
-		target->GetPos() - m_pos;
-
-	toTarget.y = 0.0f;
-
-	float distance =
-		toTarget.Length();
 
 	//============================================================
 	// 逮捕対象でないなら追跡終了
@@ -211,9 +173,6 @@ void Police::UpdateChase()
 	if (!m_chasingForCrime && !IsWanted(target))
 	{
 		m_wpTarget.reset();
-
-		m_navPath.clear();
-		m_navPathIndex = 0;
 
 		ChangeState(State::Return);
 		return;
@@ -227,9 +186,6 @@ void Police::UpdateChase()
 	{
 		m_wpArrested = target;
 
-		m_navPath.clear();
-		m_navPathIndex = 0;
-
 		ChangeState(State::Arrest);
 		return;
 	}
@@ -238,23 +194,21 @@ void Police::UpdateChase()
 	// 追跡判定
 	//============================================================
 
-	if (CanSeeTarget(target))
+	const bool visible = CanSeeTarget(target);
+
+	if (visible)
 	{
 		m_loseSightTimer = 0.0f;
 
-		m_lastTargetPos =
-			target->GetPos();
+		m_lastTargetPos = target->GetPos();
 	}
 	else
 	{
 		m_loseSightTimer += 1.0f / 60.0f;
 
-		if (m_loseSightTimer >= m_loseSightTime)
+		if (m_loseSightTimer >= kLoseSightTime)
 		{
 			ChangeState(State::LastSeen);
-
-			m_navPath.clear();
-			m_navPathIndex = 0;
 
 			m_loseSightTimer = 0.0f;
 
@@ -268,31 +222,25 @@ void Police::UpdateChase()
 
 	m_pathUpdateTimer += 1.0f / 60.0f;
 
-	if (m_navPath.empty() ||
-		m_pathUpdateTimer >= m_pathUpdateInterval)
+	if (m_navPath.empty() || m_pathUpdateTimer >= kPathUpdateInterval)
 	{
 		m_pathUpdateTimer = 0.0f;
 
-		FindChasePath();
+		FindChasePath(visible);
 	}
 
 	//============================================================
 	// NavMesh Pathを進む
 	//============================================================
-	
-	if (!MoveToNextNavPathPoint())
+
+	if (FollowNavPath() != MoveResult::Arrived)
 	{
-		if (CanSeeTarget(target))
+		if (visible)
 		{
 			// 経路は無いが見えている → 直進で近づく
 			Math::Vector3 dir = target->GetPos() - m_pos;
 			dir.y = 0.0f;
 			SetMoveDirection(dir);
-		}
-		else
-		{
-			// 経路も無く見えもしない → 見失いカウントを進める
-			m_loseSightTimer += 1.0f / 60.0f;
 		}
 	}
 }
@@ -327,7 +275,7 @@ void Police::UpdateArrest()
 
 	m_arrestTimer += 1.0f / 60.0f;
 
-	if (m_arrestTimer < m_arrestTime)
+	if (m_arrestTimer < kArrestTime)
 	{
 		return;
 	}
@@ -392,7 +340,7 @@ void Police::UpdateEscort()
 	// 交番へ移動
 	//============================================================
 
-	if (MoveToNextNavPathPoint())
+	if (FollowNavPath() == MoveResult::Arrived)
 	{
 		return;
 	}
@@ -400,9 +348,6 @@ void Police::UpdateEscort()
 	//============================================================
 	// 交番に到着 → 没収して解放
 	//============================================================
-
-	m_navPath.clear();
-	m_navPathIndex = 0;
 
 	EndEscort(true);
 
@@ -418,9 +363,6 @@ void Police::UpdateLastSeen()
 	if (SearchTarget())
 	{
 		ChangeState(State::Chase);
-
-		m_navPath.clear();
-		m_navPathIndex = 0;
 
 		m_searchTimer = 0.0f;
 
@@ -454,17 +396,10 @@ void Police::UpdateLastSeen()
 	// 最後に見た場所へ移動
 	//============================================================
 
-	if (MoveToNextNavPathPoint())
+	if (FollowNavPath() == MoveResult::Arrived)
 	{
 		return;
 	}
-
-	//============================================================
-	// LastSeen到着
-	//============================================================
-
-	m_navPath.clear();
-	m_navPathIndex = 0;
 
 	//============================================================
 	// 到着したのでSearchへ
@@ -501,7 +436,7 @@ void Police::UpdateSearch()
 	// Search終了
 	//============================================================
 
-	if (m_searchTimer >= m_searchTime)
+	if (m_searchTimer >= kSearchTime)
 	{
 		m_searchTimer = 0.0f;
 
@@ -520,14 +455,12 @@ void Police::UpdateSearch()
 	// 見回す
 	//============================================================
 
-	const float swingPeriod = 5.0f;   // 左→右→左 1往復の秒数
+	const float swingPeriod = 5.0f;   // 1往復の秒数
 	const float swingAngle = 90.0f;
 
-	float offsetDeg =
-		sinf(m_searchTimer * DirectX::XM_2PI / swingPeriod) * swingAngle;
+	float offsetDeg = sinf(m_searchTimer * DirectX::XM_2PI / swingPeriod) * swingAngle;
 
-	const float rad =
-		DirectX::XMConvertToRadians(m_searchStartRotY + offsetDeg);
+	const float rad = DirectX::XMConvertToRadians(m_searchStartRotY + offsetDeg);
 
 	Math::Vector3 lookDir(-sinf(rad), 0.0f, -cosf(rad));
 
@@ -539,13 +472,10 @@ void Police::UpdateSearch()
 	//============================================================
 
 	RotateToMoveDirection(lookDir);
-
-	// Search中の視界方向も現在の向きに合わせる
-	m_moveDir = lookDir;
 }
 
 void Police::UpdateReturn()
-{	
+{
 	//============================================================
 	// Playerを再発見したらChase
 	//============================================================
@@ -559,8 +489,6 @@ void Police::UpdateReturn()
 
 	if (m_investigateCooldown <= 0.0f && DetectDamageSound())
 	{
-		m_navPath.clear();
-		m_navPathIndex = 0;
 		ChangeState(State::Investigate);
 		return;
 	}
@@ -596,7 +524,7 @@ void Police::UpdateReturn()
 		//========================================================
 
 		m_navPath = FindNavPath(m_pos, node->GetPos());
-		
+
 		m_navPathIndex = 0;
 
 		// Path作成失敗
@@ -616,29 +544,20 @@ void Police::UpdateReturn()
 	// Patrol Nodeへ移動
 	//============================================================
 
-	if (MoveToNextNavPathPoint())
+	if (FollowNavPath() == MoveResult::Arrived)
 	{
 		return;
 	}
 
 	//============================================================
-	// Return完了
-	//============================================================
-
-	m_navPath.clear();
-	m_navPathIndex = 0;
-
-	//============================================================
 	// 現在位置に一番近いPatrol Node
 	//============================================================
 
-	int nearestNode =
-		FindNearestPatrolNode(m_pos);
+	int nearestNode = FindNearestPatrolNode(m_pos);
 
 	if (nearestNode >= 0)
 	{
-		m_currentStartNode =
-			nearestNode;
+		m_currentStartNode = nearestNode;
 	}
 
 	//============================================================
@@ -659,8 +578,6 @@ void Police::UpdateInvestigate()
 	if (SearchTarget())
 	{
 		ChangeState(State::Chase);
-		m_navPath.clear();
-		m_navPathIndex = 0;
 		return;
 	}
 
@@ -676,21 +593,22 @@ void Police::UpdateInvestigate()
 		}
 	}
 
-	if (MoveToNextNavPathPoint()) return;
+	if (FollowNavPath() == MoveResult::Moving)
+	{
+		return;
+	}
 
 	//============================================================
 	// 到着 → 見回す
 	//============================================================
 
-	m_navPath.clear(); 
-	m_navPathIndex = 0;
 	m_investigateCooldown = 5.0f;
 	ChangeState(State::Search);
 }
 
 bool Police::DetectDamageSound()
 {
-	const float range = m_hearRange * m_sceneScale;
+	const float range = kHearRange * m_sceneScale;
 	const float rangeSq = range * range;
 
 	for (auto& obj : SceneManager::Instance().GetObjList())
@@ -733,8 +651,6 @@ void Police::Dispatch(const Math::Vector3& pos)
 	if (!CanDispatch()) return;
 
 	m_investigatePos = pos;
-	m_navPath.clear();      // 既存の経路を破棄して新しい地点へ
-	m_navPathIndex = 0;
 	m_wpTarget.reset();
 	m_chasingForCrime = false;
 
@@ -743,7 +659,7 @@ void Police::Dispatch(const Math::Vector3& pos)
 
 void Police::FindPatrolPath()
 {
-	AStarNodeManager nodeManager = AStarNodeManager::Instance();
+	const AStarNodeManager nodeManager = AStarNodeManager::Instance();
 
 	const auto& nodes = nodeManager.GetNodes();
 
@@ -756,14 +672,12 @@ void Police::FindPatrolPath()
 	// Start Node
 	//============================================================
 
-	int startID =
-		m_currentStartNode;
+	int startID = m_currentStartNode;
 
 	// 初回は現在位置に一番近いNode
 	if (startID < 0)
 	{
-		startID =
-			FindNearestPatrolNode(m_pos);
+		startID = FindNearestPatrolNode(m_pos);
 	}
 
 	if (startID < 0)
@@ -784,10 +698,8 @@ void Police::FindPatrolPath()
 			continue;
 		}
 
-		const int nodeID =
-			node->GetID();
+		const int nodeID = node->GetID();
 
-		// 現在のNodeは除外
 		if (nodeID == startID)
 		{
 			continue;
@@ -795,7 +707,6 @@ void Police::FindPatrolPath()
 
 		candidates.push_back(nodeID);
 	}
-
 
 	if (candidates.empty())
 	{
@@ -806,17 +717,8 @@ void Police::FindPatrolPath()
 	// ランダムにGoalを選択
 	//============================================================
 
-	static std::random_device rd;
-	static std::mt19937 gen(rd());
-
-	std::uniform_int_distribution<int> dist(
-		0,
-		static_cast<int>(candidates.size()) - 1
-	);
-
 	const int goalID =
-		candidates[dist(gen)];
-
+		candidates[KdRandom::GetInt(0, static_cast<int>(candidates.size()) - 1)];
 
 	//============================================================
 	// A*
@@ -958,7 +860,7 @@ bool Police::MoveToNextPathNode()
 	return true;
 }
 
-void Police::FindChasePath()
+void Police::FindChasePath(bool visible)
 {
 	auto target = m_wpTarget.lock();
 
@@ -966,12 +868,6 @@ void Police::FindChasePath()
 	{
 		return;
 	}
-
-	//============================================================
-	// 視界判定
-	//============================================================
-
-	const bool visible = CanSeeTarget(target);
 
 	//============================================================
 	// target位置
@@ -990,64 +886,6 @@ void Police::FindChasePath()
 	//============================================================
 
 	m_navPathIndex = 0;
-}
-
-bool Police::MoveToNextNavPathPoint()
-{
-	if (m_navPath.empty())
-	{
-		return false;
-	}
-
-	if (m_navPathIndex >= static_cast<int>(m_navPath.size()))
-	{
-		return false;
-	}
-
-	//============================================================
-	// 現在のTarget Point
-	//============================================================
-
-	const Math::Vector3 targetPoint = m_navPath[m_navPathIndex];
-
-	//============================================================
-	// 移動方向
-	//============================================================
-
-	Math::Vector3 dir = targetPoint - m_pos;
-
-	dir.y = 0.0f;
-
-	//============================================================
-	// 到着判定
-	//============================================================
-
-	const float arriveDistance = 0.2f * m_sceneScale;
-
-	if (dir.LengthSquared() <= arriveDistance * arriveDistance)
-	{
-		m_navPathIndex++;
-
-		//========================================================
-		// 最後まで到着
-		//========================================================
-
-		if (m_navPathIndex >= static_cast<int>(m_navPath.size()))
-		{
-			SetMoveDirection(Math::Vector3::Zero);
-			return false;
-		}
-
-		return true;
-	}
-
-	//============================================================
-	// 移動
-	//============================================================
-
-	SetMoveDirection(dir);
-
-	return true;
 }
 
 void Police::OnRepathRequested()
@@ -1142,19 +980,15 @@ bool Police::CanSeeTarget(
 	// 距離
 	//============================================================
 
-	const float searchDistance =
-		8.0f * m_sceneScale;
+	const float searchDistance = kSightDistance * m_sceneScale;
 
-	Math::Vector3 toTarget =
-		target->GetPos() - m_pos;
+	Math::Vector3 toTarget = target->GetPos() - m_pos;
 
 	toTarget.y = 0.0f;
 
-	const float distanceSq =
-		toTarget.LengthSquared();
+	const float distanceSq = toTarget.LengthSquared();
 
-	if (distanceSq >
-		searchDistance * searchDistance)
+	if (distanceSq > searchDistance * searchDistance)
 	{
 		return false;
 	}
@@ -1168,8 +1002,7 @@ bool Police::CanSeeTarget(
 	// Policeの正面方向
 	//============================================================
 
-	Math::Vector3 backward =
-		m_mWorld.Backward();
+	Math::Vector3 backward = GetFacingDir();
 
 	backward.y = 0.0f;
 	backward.Normalize();
@@ -1180,20 +1013,11 @@ bool Police::CanSeeTarget(
 
 	toTarget.Normalize();
 
-	const float viewAngle = 90.0f;
+	const float cosViewAngle = std::cos(DirectX::XMConvertToRadians(kSightAngleDeg / 2.0f));
 
-	const float cosViewAngle =
-		std::cos(
-			DirectX::XMConvertToRadians(
-				viewAngle * 0.5f
-			)
-		);
+	float dot = backward.Dot(toTarget);
 
-	float dot =
-		backward.Dot(toTarget);
-
-	dot =
-		std::clamp(dot, -1.0f, 1.0f);
+	dot = std::clamp(dot, -1.0f, 1.0f);
 
 	if (dot < cosViewAngle)
 	{
@@ -1206,21 +1030,16 @@ bool Police::CanSeeTarget(
 
 	KdCollider::RayInfo ray;
 
-	ray.m_type =
-		KdCollider::TypeGround |
-		KdCollider::TypeBump;
+	ray.m_type = KdCollider::TypeGround | KdCollider::TypeBump;
 
-	ray.m_pos =
-		m_pos + GetScale() * 0.7f;	// 目の高さに合わせる
+	const Math::Vector3 eye{ 0.0f, 0.7f * GetScale().y, 0.0f };
+	ray.m_pos = m_pos + eye;
 
-	Math::Vector3 targetPos =
-		target->GetPos() + target->GetScale() * 0.7f;	// 目の高さに合わせる
+	const Math::Vector3 targetPos = target->GetPos() + Math::Vector3{ 0.0f, 0.7f * target->GetScale().y, 0.0f };
 
-	ray.m_dir =
-		targetPos - ray.m_pos;
+	ray.m_dir = targetPos - ray.m_pos;
 
-	float rayDistance =
-		ray.m_dir.Length();
+	float rayDistance = ray.m_dir.Length();
 
 	if (rayDistance <= 0.000001f)
 	{
@@ -1229,8 +1048,7 @@ bool Police::CanSeeTarget(
 
 	ray.m_dir.Normalize();
 
-	ray.m_range =
-		rayDistance;
+	ray.m_range = rayDistance;
 
 	//============================================================
 	// Ray判定
@@ -1238,8 +1056,7 @@ bool Police::CanSeeTarget(
 
 	std::list<KdCollider::CollisionResult> retRayList;
 
-	for (auto& obj :
-		SceneManager::Instance().GetObjList())
+	for (auto& obj : SceneManager::Instance().GetObjList())
 	{
 		if (!obj)
 		{
@@ -1258,10 +1075,7 @@ bool Police::CanSeeTarget(
 			continue;
 		}
 
-		obj->Intersects(
-			ray,
-			&retRayList
-		);
+		obj->Intersects(ray, &retRayList);
 	}
 
 	// 遮蔽物あり
@@ -1301,9 +1115,6 @@ void Police::BeginEscort(const std::shared_ptr<CharacterBase>& target)
 	);
 
 	m_wpTarget.reset();
-
-	m_navPath.clear();
-	m_navPathIndex = 0;
 
 	ChangeState(State::Escort);
 
@@ -1346,6 +1157,8 @@ void Police::FindPolicePostPath()
 	
 void Police::ChangeState(State newState)
 {
+	ClearNavPath();
+
 	if (m_state == newState)
 	{
 		return;
@@ -1401,11 +1214,11 @@ void Police::ApplyStateSettings()
 	switch (m_state)
 	{
 	case State::Patrol:
-		SetMoveSpeed(m_patrolSpeed);
+		SetMoveSpeed(kPatrolSpeed);
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Walk"));
 		break;
 	case State::Chase:
-		SetMoveSpeed(m_chaseSpeed);
+		SetMoveSpeed(kChaseSpeed);
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Sprint"));
 		break;
 	case State::Arrest:
@@ -1413,11 +1226,11 @@ void Police::ApplyStateSettings()
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Idle"));
 		break;
 	case State::Escort:
-		SetMoveSpeed(m_escortSpeed);
+		SetMoveSpeed(kEscortSpeed);
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Sprint"));
 		break;
 	case State::LastSeen:
-		SetMoveSpeed(m_returnSpeed);
+		SetMoveSpeed(kReturnSpeed);
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Walk"));
 		break;
 	case State::Search:
@@ -1425,11 +1238,11 @@ void Police::ApplyStateSettings()
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Idle"));
 		break;
 	case State::Return:
-		SetMoveSpeed(m_returnSpeed);
+		SetMoveSpeed(kReturnSpeed);
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Walk"));
 		break;
 	case State::Investigate:
-		SetMoveSpeed(m_investigateSpeed);
+		SetMoveSpeed(kInvestigateSpeed);
 		m_spAnimator->SetAnimation(m_spModel->GetAnimation("Armature|Sprint"));
 		break;
 	}

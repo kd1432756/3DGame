@@ -1,6 +1,6 @@
 ﻿#include "ScoreManager.h"
 
-int ScoreManager::CalcScore(int baseScore, float progress, SkillResult result) const
+int ScoreManager::CalcScore(int baseScore, float progress, SkillResult result, float bonusRate) const
 {
 	float skillRate = 1.0f;
 	switch (result)
@@ -14,7 +14,7 @@ int ScoreManager::CalcScore(int baseScore, float progress, SkillResult result) c
 	// 朝×1.0 → 夜×1.5 に緩やかに上昇
 	float timeRate = 1.0f + 0.5f * progress;
 
-	return std::max(1, static_cast<int>(std::round(baseScore * skillRate * timeRate)));
+	return std::max(1, static_cast<int>(std::round(baseScore * skillRate * timeRate * bonusRate)));
 }
 
 ScoreManager::Rank ScoreManager::CalcRank(int score) const

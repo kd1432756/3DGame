@@ -13,7 +13,9 @@ public:
 		S
 	};
 
-	int CalcScore(int baseScore, float progress, SkillResult result = SkillResult::Good) const;
+	int CalcScore(int baseScore, float progress,
+		SkillResult result = SkillResult::Good,
+		float bonusRate = 1.0f) const;
 
 	Rank CalcRank(int score) const;
 
