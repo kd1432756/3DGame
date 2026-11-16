@@ -4,12 +4,12 @@ void FootstepSystem::Init()
 {
 	using GT = Ground::GroundType;
 
-	// ---- 既定（None など）----
+	// ---- デフォルト ----
 	m_default.sePaths = { "Asset/Sound/Footstep/default_01.wav",
 							"Asset/Sound/Footstep/default_02.wav" };
 	m_default.seVolume = 0.4f;
 
-	// ---- 道路（アスファルト）----
+	// ---- 道路 ----
 	{
 		FootstepData d;
 		d.sePaths = { "Asset/Sound/Footstep/concrete_01.wav",
@@ -29,7 +29,7 @@ void FootstepSystem::Init()
 		m_table[GT::Grass] = d;
 	}
 
-	// ---- 土（砂埃）----
+	// ---- 土 ----
 	{
 		FootstepData d;
 		d.sePaths = { "Asset/Sound/Footstep/dirt_01.wav",
@@ -55,7 +55,7 @@ void FootstepSystem::Init()
 		d.sePaths = { "Asset/Sound/Footstep/concrete_01.wav",
 						 "Asset/Sound/Footstep/concrete_02.wav" };
 		d.seVolume = 0.4f;
-		d.smokeScale = 0.6f;               // 小さめの砂埃
+		d.smokeScale = 0.6f;
 		m_table[GT::Concrete] = d;
 	}
 }
@@ -92,14 +92,14 @@ void FootstepSystem::PlaySE(const FootstepData& data, const Math::Vector3& pos, 
 	if (data.sePaths.empty()) return;
 
 	// 同じ音の連続を避けるためランダム選択
-	const size_t idx = static_cast<size_t>(rand()) % data.sePaths.size();
+	const size_t idx = KdRandom::GetInt(0, data.sePaths.size() - 1);
 	const std::string& path = data.sePaths[idx];
 
    auto inst = KdAudioManager::Instance().Play3D(path, pos, false);
    if (inst)
    {
 	   inst->SetVolume(data.seVolume);
-	   // 距離減衰を調整したい場合
+	   // 距離減衰
 	   inst->SetCurveDistanceScaler(scale);
    }
 }

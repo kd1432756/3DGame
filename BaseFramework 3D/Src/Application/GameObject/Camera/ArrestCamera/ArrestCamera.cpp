@@ -64,61 +64,75 @@ void ArrestCamera::PostUpdate()
 	m_mRotation = GetRotationMatrix();
 	m_mWorld = m_mLocalPos * m_mRotation * _targetMat;
 
-	// ↓めり込み防止の為の座標補正計算↓
-	// ①当たり判定(レイ判定)用の情報作成
-	KdCollider::RayInfo rayInfo;
-	// レイの発射位置を設定
-	rayInfo.m_pos = GetPos();
+	Math::Vector3 idealPos = m_mWorld.Translation();
 
-	// レイの発射方向を設定
-	rayInfo.m_dir = Math::Vector3::Down;
-	// レイの長さを設定
-	rayInfo.m_range = 1000.f;
-	if (_spTarget)
+	//========================================
+	// めり込み防止処理
+	//========================================
+
+	KdCollider::RayInfo rayInfo;
+
+	// Rayの開始位置：ターゲット
+	rayInfo.m_pos = _spTarget->GetPos();
+
+	// 少し高さを加える
+	rayInfo.m_pos.y += m_height;
+
+	// ターゲットからカメラへの方向
+	rayInfo.m_dir = idealPos - rayInfo.m_pos;
+
+	// Rayの長さ
+	rayInfo.m_range = rayInfo.m_dir.Length();
+
+	if (rayInfo.m_range > 0.001f)
 	{
-		Math::Vector3 _targetPos = _spTarget->GetPos();
-		_targetPos.y += 0.1f;
-		rayInfo.m_dir = _targetPos - GetPos();
-		rayInfo.m_range = rayInfo.m_dir.Length();
 		rayInfo.m_dir.Normalize();
 	}
 
-	// 当たり判定をしたいタイプを設定
-	rayInfo.m_type = KdCollider::TypeGround;
+	// 判定対象
+	rayInfo.m_type = KdCollider::TypeGround || KdCollider::TypeBump;
 
-	// ②HIT判定対象オブジェクトに総当たり
+	// 最も近い衝突位置を探す
+	float minDistance = rayInfo.m_range;
+	bool hit = false;
+
+	Math::Vector3 hitPos = {};
+
 	for (std::weak_ptr<KdGameObject> wpGameObj : m_wpHitObjectList)
 	{
 		std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
-		if (spGameObj)
-		{
-			std::list<KdCollider::CollisionResult> retRayList;
-			spGameObj->Intersects(rayInfo, &retRayList);
 
-			// ③ 結果を使って座標を補完する
-			// レイに当たったリストから一番近いオブジェクトを検出
-			float maxOverLap = 0;
-			Math::Vector3 hitPos = {};
-			bool hit = false;
-			for (auto& ret : retRayList)
+		if (!spGameObj) continue;
+
+		std::list<KdCollider::CollisionResult> retRayList;
+
+		spGameObj->Intersects(rayInfo, &retRayList);
+
+		for (auto& ret : retRayList)
+		{
+			float distance = (ret.m_hitPos - rayInfo.m_pos).Length();
+
+			if (distance < minDistance)
 			{
-				// レイを遮断しオーバーした長さが
-				// 一番長いものを探す
-				if (maxOverLap < ret.m_overlapDistance)
-				{
-					maxOverLap = ret.m_overlapDistance;
-					hitPos = ret.m_hitPos;
-					hit = true;
-				}
-			}
-			if (hit)
-			{
-				// 何かしらの障害物に当たっている
-				Math::Vector3 _hitPos = hitPos;
-				_hitPos += rayInfo.m_dir * 0.4f;
-				SetPos(_hitPos);
+				minDistance = distance;
+				hitPos = ret.m_hitPos;
+				hit = true;
 			}
 		}
+	}
+
+	//========================================
+	// カメラ位置の補正
+	//========================================
+
+	if (hit)
+	{
+		// 衝突位置から少し手前に移動
+		const float offset = 0.4f;
+
+		Math::Vector3 cameraPos = hitPos - rayInfo.m_dir * offset;
+
+		m_mWorld.Translation(cameraPos);
 	}
 }
 

@@ -63,7 +63,8 @@ public:
 	{
 		camera->SetTarget(std::dynamic_pointer_cast<Player>(shared_from_this()));
 		m_camera = camera;
-		m_fpsCamera = std::dynamic_pointer_cast<FPSCamera>(camera);
+		auto fpsCamera = std::dynamic_pointer_cast<FPSCamera>(camera);
+		if (fpsCamera) m_fpsCamera = fpsCamera;
 	}
 
 	void EquipItem(const std::string& itemPath);

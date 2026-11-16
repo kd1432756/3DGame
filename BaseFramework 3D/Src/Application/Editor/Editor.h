@@ -22,11 +22,6 @@
 class Editor
 {
 public:
-	static Editor& Instance()
-	{
-		static Editor instance;
-		return instance;
-	}
 
 	void Init();
 	void Update();
@@ -75,10 +70,6 @@ public:
 
 	void ApplyStageBrush(const Math::Vector3& pos);
 
-	AStarNodeManager& GetAStarNodeManager()
-	{
-		return m_astarNodeManager;
-	}
 
 	void CreateAStarNode(const Math::Vector3& pos);
 
@@ -109,8 +100,6 @@ public:
 	void ClearNavMeshPath();
 
 	void CalculateNavMeshPointPath();
-
-	LocationPointManager& GetLocationPointManager() { return m_locationPointManager; }
 
 	void OnLocationClick(const Math::Vector3& pos);
 
@@ -224,7 +213,6 @@ private:
 
 	// ===== astar node editor =====
 
-	AStarNodeManager m_astarNodeManager;
 	NodeEditorWindow m_nodeEditorWindow;
 
 	std::shared_ptr<AStarNode> m_selectNode;
@@ -308,11 +296,18 @@ private:
 	// ===== location editor =====
 
 	LocationEditorWindow m_locationEditorWindow;
-	LocationPointManager m_locationPointManager;
 
 	void ApplyLocationLayout();
 	void DrawLocationPoints();
 
 	void SaveLocation();
 	void LoadLocation();
+
+public:
+	static Editor& Instance()
+	{
+		static Editor instance;
+		return instance;
+	}
+
 };

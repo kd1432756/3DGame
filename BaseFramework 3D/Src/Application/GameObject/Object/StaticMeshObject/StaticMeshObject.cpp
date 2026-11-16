@@ -1,5 +1,7 @@
 ﻿#include "StaticMeshObject.h"
 
+#include "../../../Scene/SceneManager.h"
+
 namespace fs = std::filesystem;
 
 void StaticMeshObject::Init()
@@ -34,8 +36,7 @@ void StaticMeshObject::GenerateDepthMapFromLight()
 
 void StaticMeshObject::SetModelPath(const std::string& path)
 {
-	if (m_modelPath == path)
-		return;
+	if (m_modelPath == path)  return;
 
 	m_modelPath = path;
 
@@ -62,10 +63,7 @@ void StaticMeshObject::ReloadModel()
 		m_spModel = std::make_shared<KdModelData>();
 	}
 
-//	m_spModel->Load(m_modelPath);
-
-	m_spModel =
-		KdAssets::Instance().m_modeldatas.GetData(m_modelPath);
+	m_spModel = KdAssets::Instance().m_modeldatas.GetData(m_modelPath);
 
 	CalcLocalBounds();
 	RegisterCollider();
@@ -75,10 +73,7 @@ void StaticMeshObject::RegisterCollider()
 {
 	m_pCollider.reset();
 
-	if (!m_pCollider)
-	{
-		m_pCollider = std::make_unique<KdCollider>();
-	}
+	m_pCollider = std::make_unique<KdCollider>();
 
 	UINT type = KdCollider::TypeEditor | KdCollider::TypeBump;
 
@@ -153,6 +148,14 @@ bool StaticMeshObject::IsInView() const
 
 	DirectX::BoundingBox worldBox;
 	m_localBox.Transform(worldBox, m_mWorld);
+
+	// BoundingBoxを大きくする
+	float margin = 3.0f * SceneManager::Instance().GetSceneScale();
+
+	worldBox.Extents.x += margin;
+	worldBox.Extents.y += margin;
+	worldBox.Extents.z += margin;
+
 	return s_frustum.Intersects(worldBox);
 }
 bool StaticMeshObject::IsInShadowRange() const

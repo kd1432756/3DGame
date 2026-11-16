@@ -39,11 +39,8 @@ public:
 
 	std::shared_ptr<KdModelData> GetModelData() const
 	{
-		if (!m_spModel)
-		{
-			return nullptr;
-		}
-
+		if (!m_spModel)	 return nullptr;
+		
 		return m_spModel;
 	}
 
@@ -94,12 +91,12 @@ protected:
 
 	void SetCollisionEnabled(bool enabled);
 
-	// ===== 描画関連 =====
+	// ===== 描画処理負荷軽減 =====
 	static inline DirectX::BoundingFrustum s_frustum;
-	static inline Math::Vector3            s_camPos;
+	static inline Math::Vector3 s_camPos;
 
 	DirectX::BoundingBox m_localBox;     // モデルローカルのAABB
-	bool                 m_hasBounds = false;
+	bool m_hasBounds = false;
 
 	void CalcLocalBounds();
 	bool IsInView() const;

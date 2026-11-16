@@ -3,8 +3,6 @@
 
 //==================================================
 // 連打
-// スペースを連打してゲージを満タンにする(ゲージは常に少しずつ減る)
-//  素早く満タン = Perfect / 制限時間内に満タン = Good / 間に合わない = Miss
 //==================================================
 class SkillCheckMash : public SkillCheckBase
 {
@@ -20,8 +18,8 @@ protected:
 
 private:
 	int   m_required = 12;
-	float m_gauge = 0.0f;		// 0.0〜1.0
-	float m_inputTime = 0.0f;		// 入力受付開始からの経過時間
+	float m_gauge = 0.0f;
+	float m_inputTime = 0.0f;	// 経過時間
 	float m_perfectTime = 1.5f;
 	float m_pushFlash = 0.0f;
 

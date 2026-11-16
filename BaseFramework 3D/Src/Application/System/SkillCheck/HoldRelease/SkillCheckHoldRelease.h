@@ -2,9 +2,7 @@
 #include "../SkillCheckBase.h"
 
 //==================================================
-// 長押し離し
-// スペースを押し続けてゲージを溜め、右端の緑ゾーンで離す
-//  黄色 = Perfect / 緑 = Good / 手前で離す・溜めすぎ(満タン) = Miss
+// 長押し＆離し
 //==================================================
 class SkillCheckHoldRelease : public SkillCheckBase
 {
@@ -25,8 +23,8 @@ private:
 	}
 
 	bool  m_holding = false;
-	float m_value = 0.0f;	// 0.0〜1.0
-	float m_fillTime = 0.7f;	// 満タンまでの秒数
+	float m_value = 0.0f;
+	float m_fillTime = 0.7f;	// Maxまでの秒数
 	float m_perfW = 0.08f;
 	float m_goodW = 0.25f;
 

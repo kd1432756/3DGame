@@ -37,8 +37,7 @@ void Inventory::SelectNext()
 {
 	if (m_items.empty()) return;
 
-	m_selectIndex =
-		(m_selectIndex + 1) % (int)m_items.size();
+	m_selectIndex = (m_selectIndex + 1) % (int)m_items.size();
 }
 
 void Inventory::SelectPrev()

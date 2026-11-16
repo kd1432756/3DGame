@@ -340,7 +340,7 @@ void Police::UpdateEscort()
 	// 交番へ移動
 	//============================================================
 
-	if (FollowNavPath() == MoveResult::Arrived)
+	if (FollowNavPath() != MoveResult::Arrived)
 	{
 		return;
 	}
@@ -544,7 +544,7 @@ void Police::UpdateReturn()
 	// Patrol Nodeへ移動
 	//============================================================
 
-	if (FollowNavPath() == MoveResult::Arrived)
+	if (FollowNavPath() != MoveResult::Arrived)
 	{
 		return;
 	}
@@ -648,8 +648,6 @@ bool Police::CanDispatch() const
 
 void Police::Dispatch(const Math::Vector3& pos)
 {
-	if (!CanDispatch()) return;
-
 	m_investigatePos = pos;
 	m_wpTarget.reset();
 	m_chasingForCrime = false;
@@ -717,8 +715,7 @@ void Police::FindPatrolPath()
 	// ランダムにGoalを選択
 	//============================================================
 
-	const int goalID =
-		candidates[KdRandom::GetInt(0, static_cast<int>(candidates.size()) - 1)];
+	const int goalID = candidates[KdRandom::GetInt(0, static_cast<int>(candidates.size()) - 1)];
 
 	//============================================================
 	// A*
@@ -1087,8 +1084,7 @@ bool Police::CanSeeTarget(
 	return true;
 }
 
-bool Police::CanArrestTarget(
-	const std::shared_ptr<CharacterBase>& target) const
+bool Police::CanArrestTarget(const std::shared_ptr<CharacterBase>& target) const
 {
 	if (!target)
 	{

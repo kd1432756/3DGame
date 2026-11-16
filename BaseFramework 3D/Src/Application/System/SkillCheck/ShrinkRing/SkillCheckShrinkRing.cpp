@@ -17,7 +17,6 @@ void SkillCheckShrinkRing::OnUpdate(float dt)
 
 	if (IsActionPressed())
 	{
-		// 「重なる瞬間」とのズレ(秒)で判定
 		float diff = m_shrinkTime - m_timer;
 		if (diff < 0.0f) diff = -diff;
 
@@ -27,7 +26,6 @@ void SkillCheckShrinkRing::OnUpdate(float dt)
 		return;
 	}
 
-	// 重なってから猶予を過ぎても押さない → Miss
 	if (m_timer > m_shrinkTime + m_goodWin)
 	{
 		Finish(SkillResult::Miss);
@@ -38,7 +36,6 @@ void SkillCheckShrinkRing::OnDraw()
 {
 	const float a = GetAlpha();
 
-	// 判定の帯の幅(px) = 縮む速さ(px/秒) × 判定の猶予(秒)
 	const float speed = (kStartHalf - kTargetHalf) / m_shrinkTime;
 	const float goodBand = speed * m_goodWin;
 	const float perfBand = speed * m_perfWin;
@@ -47,16 +44,16 @@ void SkillCheckShrinkRing::OnDraw()
 	const Math::Color yellow = { 1.0f, 0.9f, 0.2f, 1.0f };
 	const Math::Color dark = { 0.06f, 0.07f, 0.10f, 1.0f };
 
-	// 下地
+	// 背景
 	DrawCircle(0, kY, kStartHalf + 12.0f, { 0.06f, 0.07f, 0.10f, 0.92f * a });
 
-	// 判定の帯(外側から内側へ重ねる: 緑 → 黄 → 緑 → 暗い穴)
+	// 判定の帯
 	DrawCircle(0, kY, kTargetHalf + goodBand, green);
 	DrawCircle(0, kY, kTargetHalf + perfBand, yellow);
 	DrawCircle(0, kY, kTargetHalf - perfBand, green);
 	DrawCircle(0, kY, kTargetHalf - goodBand, dark);
 
-	// 縮む輪(重なる瞬間に kTargetHalf、その後も縮み続ける)
+	// 縮む輪
 	float t = m_timer / m_shrinkTime;
 	float r = kTargetHalf + (kStartHalf - kTargetHalf) * (1.0f - t);
 	if (r < 2.0f) r = 2.0f;

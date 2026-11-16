@@ -51,11 +51,9 @@ bool SceneSerializer::Save(const std::string& path)
 			objData["IsGround"] = mesh->IsGround();
 		}
 
-		if (auto ground =
-			std::dynamic_pointer_cast<Ground>(obj))
+		if (auto ground = std::dynamic_pointer_cast<Ground>(obj))
 		{
-			objData["GroundType"] =
-				static_cast<int>(ground->GetGroundType());
+			objData["GroundType"] = static_cast<int>(ground->GetGroundType());
 		}
 
 		if (auto item = std::dynamic_pointer_cast<Item>(obj))
@@ -120,11 +118,9 @@ bool SceneSerializer::Load(const std::string& path)
 
 		if (underPos != std::string::npos)
 		{
-			std::string baseName =
-				name.substr(0, underPos);
+			std::string baseName = name.substr(0, underPos);
 
-			int number =
-				std::stoi(name.substr(underPos + 1));
+			int number = std::stoi(name.substr(underPos + 1));
 
 			SceneManager::Instance().UpdateObjectCount(
 				baseName,
@@ -143,8 +139,7 @@ bool SceneSerializer::Load(const std::string& path)
 		auto color = objData["Color"];
 		obj->SetColor({ color[0], color[1], color[2] });
 
-		if (auto ground =
-			std::dynamic_pointer_cast<Ground>(obj))
+		if (auto ground = std::dynamic_pointer_cast<Ground>(obj))
 		{
 			if (objData.contains("GroundType"))
 			{
@@ -196,8 +191,7 @@ bool SceneSerializer::Load(const std::string& path)
 		{
 			if (objData.contains("DisplayName"))
 			{
-				character->SetDisplayName(
-					objData["DisplayName"].get<std::string>());
+				character->SetDisplayName(objData["DisplayName"].get<std::string>());
 			}
 		}
 
@@ -239,11 +233,9 @@ bool SceneSerializer::LoadWithScale(const std::string& path, float multiplier)
 
 		if (underPos != std::string::npos)
 		{
-			std::string baseName =
-				name.substr(0, underPos);
+			std::string baseName = name.substr(0, underPos);
 
-			int number =
-				std::stoi(name.substr(underPos + 1));
+			int number = std::stoi(name.substr(underPos + 1));
 
 			SceneManager::Instance().UpdateObjectCount(
 				baseName,
@@ -277,8 +269,7 @@ bool SceneSerializer::LoadWithScale(const std::string& path, float multiplier)
 			}
 		}
 
-		if (auto ground =
-			std::dynamic_pointer_cast<Ground>(obj))
+		if (auto ground = std::dynamic_pointer_cast<Ground>(obj))
 		{
 			if (objData.contains("GroundType"))
 			{
@@ -320,8 +311,7 @@ bool SceneSerializer::LoadWithScale(const std::string& path, float multiplier)
 		{
 			if (objData.contains("DisplayName"))
 			{
-				character->SetDisplayName(
-					objData["DisplayName"].get<std::string>());
+				character->SetDisplayName(objData["DisplayName"].get<std::string>());
 			}
 		}
 
@@ -354,8 +344,7 @@ bool SceneSerializer::GetModelPaths(
 			continue;
 		}
 
-		std::string modelPath =
-			objData["ModelPath"].get<std::string>();
+		std::string modelPath = objData["ModelPath"].get<std::string>();
 
 		uniquePaths.insert(modelPath);
 	}

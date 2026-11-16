@@ -2,22 +2,13 @@
 
 namespace
 {
-	// 見た目の2段階(画像は 通常 / 押された の2枚)
+	// 見た目の段階
 	enum Frame
 	{
 		kNormal = 0,	// 通常
 		kPressed = 1,	// 押された
 	};
 
-	//---------------------------------------------------
-	// 各段階の見せ方 ここで「押した時の反応」を調整する
-	//  image     : 使う画像 (0=通常 / 1=押された)
-	//  scale     : 大きさの倍率
-	//  offsetY   : 下へ沈める量(キーの高さに対する割合。マイナスが下)
-	//  brightness: 明るさ(1.0で元の色)
-	//  ※ 「押された」を画像の差し替えだけにしたいなら、
-	//    scale=1.0 / offsetY=0 / brightness=1.0 にする
-	//---------------------------------------------------
 	struct FrameStyle
 	{
 		int   image;
@@ -62,7 +53,7 @@ namespace
 		{ kNormal,  0.30f },
 	};
 
-	// パターンを time 秒目で評価(ループ再生)
+	// 経過時間から、再生すべきフレームを返す
 	Frame Evaluate(const Step* steps, int count, float time)
 	{
 		float total = 0.0f;
@@ -81,12 +72,6 @@ namespace
 	}
 }
 
-SkillKeyUI& SkillKeyUI::Instance()
-{
-	static SkillKeyUI instance;
-	return instance;
-}
-
 void SkillKeyUI::LoadIfNeeded()
 {
 	if (m_loaded) return;
@@ -97,7 +82,7 @@ void SkillKeyUI::LoadIfNeeded()
 	struct Def
 	{
 		SkillKey    key;
-		const char* normal;		// 通常
+		const char* normal;	// 通常
 		const char* pressed;	// 押された
 	};
 
@@ -122,14 +107,13 @@ void SkillKeyUI::LoadIfNeeded()
 
 			if (!tex->Load(dir + names[i])) continue;
 
-			// 画像サイズから縦横比を取得(サイズが違う画像でもそのまま使える)
+			// 画像サイズから縦横比を取得
 			const auto& info = tex->GetInfo();
 
 			k.tex[i] = tex;
 			k.aspect[i] = static_cast<float>(info.Width) / static_cast<float>(info.Height);
 		}
 
-		// 「押された」画像が読めなければ、通常画像で代用
 		if (!k.tex[1])
 		{
 			k.tex[1] = k.tex[0];
@@ -145,7 +129,6 @@ void SkillKeyUI::Draw(SkillKey key, float x, float y,
 
 	const KeyData& k = m_keys[static_cast<int>(key)];
 
-	// 実際に押している間は、アニメより優先して「押された」表現
 	Frame frame = kNormal;
 
 	if (isDown)
@@ -176,11 +159,10 @@ void SkillKeyUI::Draw(SkillKey key, float x, float y,
 	const auto& tex = k.tex[style.image];
 	if (!tex) return;
 
-	// 縦を基準にして、横は画像の縦横比から決める
 	const float h = kKeyHeight * style.scale;
 	const float w = h * k.aspect[style.image];
 
-	const float drawY = y + kKeyHeight * style.offsetY;	// マイナス = 下に沈む
+	const float drawY = y + kKeyHeight * style.offsetY;
 
 	Math::Color color = { style.brightness, style.brightness, style.brightness, alpha };
 

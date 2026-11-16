@@ -77,6 +77,7 @@ public:
 	}
 
 private:
+	AStarNodeManager() = default;
 
 	std::vector<std::shared_ptr<AStarNode>> m_nodes;
 

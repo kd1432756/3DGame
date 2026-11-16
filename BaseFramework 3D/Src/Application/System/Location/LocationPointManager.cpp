@@ -28,7 +28,6 @@ std::shared_ptr<LocationPoint> LocationPointManager::CreatePointWithID(
 
 	m_points.push_back(point);
 
-	// 読み込んだIDより次の発行IDが必ず大きくなるようにする
 	if (id >= m_nextID)
 	{
 		m_nextID = id + 1;

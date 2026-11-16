@@ -2,14 +2,6 @@
 
 #include "NavMeshPolygon.h"
 
-//============================================================
-// NavMesh Manager
-//============================================================
-//
-// NavMeshPolygonを管理するManager
-//
-//============================================================
-
 class NavMeshManager
 {
 public:
@@ -125,6 +117,7 @@ public:
 
 
 private:
+	NavMeshManager() = default;
 
 	std::vector<
 		std::shared_ptr<NavMeshPolygon>

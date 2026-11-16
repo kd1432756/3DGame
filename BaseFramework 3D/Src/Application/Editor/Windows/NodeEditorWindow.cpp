@@ -86,8 +86,7 @@ void NodeEditorWindow::DrawToolbar()
 
 void NodeEditorWindow::DrawNodeList()
 {
-	auto& manager =
-		Editor::Instance().GetAStarNodeManager();
+	auto& manager =	AStarNodeManager::Instance();
 
 	ImGui::SeparatorText("Nodes");
 
@@ -126,8 +125,7 @@ void NodeEditorWindow::DrawNodeList()
 
 void NodeEditorWindow::DrawNodeInspector()
 {
-	auto& manager =
-		Editor::Instance().GetAStarNodeManager();
+	auto& manager = AStarNodeManager::Instance();
 
 	auto node =
 		manager.FindNode(m_selectedNodeID);

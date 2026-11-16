@@ -73,9 +73,7 @@ bool LocationPointSerializer::Load(
 	{
 		int id = p.value("id", -1);
 
-		LocationTag tag =
-			static_cast<LocationTag>(
-				p.value("tag", 0));
+		LocationTag tag = static_cast<LocationTag>(p.value("tag", 0));
 
 		Math::Vector3 pos = Math::Vector3::Zero;
 
@@ -116,9 +114,7 @@ bool LocationPointSerializer::LoadWithScale(const std::string& path, LocationPoi
 	{
 		int id = p.value("id", -1);
 
-		LocationTag tag =
-			static_cast<LocationTag>(
-				p.value("tag", 0));
+		LocationTag tag = static_cast<LocationTag>(p.value("tag", 0));
 
 		Math::Vector3 pos = Math::Vector3::Zero;
 

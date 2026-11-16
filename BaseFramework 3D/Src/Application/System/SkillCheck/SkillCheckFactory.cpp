@@ -10,33 +10,14 @@
 
 namespace
 {
-	// プールの1エントリ
 	struct Entry
 	{
 		SkillCheckType type;
-		float          weight;		// 出やすさ(大きいほど出やすい / 0以下なら無効)
-		float          minProgress;	// この進行度(朝0〜夜1)以降に解禁
+		float          weight;				// 出やすさ
+		float          minProgress;		// 進行度以降に解禁
 	};
 
 	using Pool = std::vector<Entry>;
-
-	//----------------------------------------------
-	// プール定義 ここを編集して調整する
-	// いたずら: スリル重視(焦らせる系)
-	// 修復    : 落ち着いた系
-	//----------------------------------------------
-	const Pool& PrankPool()
-	{
-		static const Pool pool =
-		{
-			{ SkillCheckType::GaugeStop, 1.0f, 0.0f },
-			{ SkillCheckType::Mash,      1.0f, 0.0f },
-			{ SkillCheckType::Reaction,  0.7f, 0.4f },
-			{ SkillCheckType::AltMash,   1.0f, 0.0f },
-			{ SkillCheckType::ShrinkRing, 0.8f, 0.0f },
-		};
-		return pool;
-	}
 
 	const Pool& RepairPool()
 	{
@@ -54,24 +35,21 @@ namespace
 	}
 
 	// 抽選候補を集める
-	//  ・重みが0以下のものは無効として除外
-	//  ・解禁前(progress < minProgress)のものは除外
-	//  ・excludeType と同じ種類は除外(負の値なら除外なし)
 	void Collect(const Pool& pool, float progress, int excludeType, Pool& out)
 	{
 		out.clear();
 
 		for (const auto& e : pool)
 		{
-			if (e.weight <= 0.0f)                       continue;
-			if (progress < e.minProgress)               continue;
+			if (e.weight <= 0.0f) continue;
+			if (progress < e.minProgress) continue;
 			if (static_cast<int>(e.type) == excludeType) continue;
 
 			out.push_back(e);
 		}
 	}
 
-	// 重み付き抽選(candidates は空でなく、全て weight > 0 が前提)
+	// 重み付き抽選
 	SkillCheckType Pick(const Pool& candidates)
 	{
 		float total = 0.0f;
@@ -85,16 +63,14 @@ namespace
 			r -= e.weight;
 		}
 
-		return candidates.back().type;	// 浮動小数の誤差対策
+		return candidates.back().type;
 	}
 }
 
-std::unique_ptr<SkillCheckBase> SkillCheckFactory::Create(
-	bool isRepair, int prevType, float progress)
+std::unique_ptr<SkillCheckBase> SkillCheckFactory::Create(int prevType, float progress)
 {
-	const Pool& pool = isRepair ? RepairPool() : PrankPool();
+	const Pool& pool = RepairPool();
 
-	// プールが空の場合の保険
 	if (pool.empty())
 	{
 		return Make(SkillCheckType::GaugeStop);
@@ -105,16 +81,16 @@ std::unique_ptr<SkillCheckBase> SkillCheckFactory::Create(
 	Pool candidates;
 	candidates.reserve(pool.size());
 
-	// 1. 解禁済み かつ 直前と別の種類
+	// 前と別の種類
 	Collect(pool, progress, prevType, candidates);
 
-	// 2. 空なら(種類が1つしかない等)、直前除外を諦める
+	// 前も含む
 	if (candidates.empty())
 	{
 		Collect(pool, progress, -1, candidates);
 	}
 
-	// 3. それでも空なら(全て未解禁 or 無効)、解禁が最も早いものを使う
+	// 一番解禁がはやいやつ
 	if (candidates.empty())
 	{
 		auto it = std::min_element(pool.begin(), pool.end(),

@@ -23,7 +23,6 @@ void SkillCheckArrow::OnUpdate(float dt)
 {
 	m_inputTime += dt;
 
-	// 押されたキーを方向に変換(同フレームに複数なら最初の1つ)
 	int pressed = -1;
 	if (IsKeyPressed('W')) pressed = Up;
 	else if (IsKeyPressed('S')) pressed = Down;
@@ -32,14 +31,12 @@ void SkillCheckArrow::OnUpdate(float dt)
 
 	if (pressed < 0) return;
 
-	// 間違い → Miss
 	if (pressed != m_seq[m_index])
 	{
 		Finish(SkillResult::Miss);
 		return;
 	}
 
-	// 正解 → 次へ
 	++m_index;
 
 	if (m_index >= static_cast<int>(m_seq.size()))
@@ -55,7 +52,7 @@ void SkillCheckArrow::OnDraw()
 
 	const float panelHalfW = n * kSpacing * 0.5f + 30.0f;
 
-	// 下地(スロット + 下のキー表示まで囲む) + 残り時間
+	// 背景
 	DrawPanel(0, kY - 27.0f, panelHalfW, 73.0f, a);
 	DrawTimeBar(0, kY + 40.0f, panelHalfW - 12.0f, m_perfectTime);
 
@@ -68,18 +65,17 @@ void SkillCheckArrow::OnDraw()
 		const bool done = (i < m_index);
 		const bool current = (i == m_index);
 
-		// 枠と矢印の色(入力済み=緑 / 今の入力=白 / これから=灰色)
 		Math::Color frame, arrowColor;
 		if (done) { frame = { 0.2f, 0.8f, 0.3f, a };  arrowColor = { 0.2f, 0.8f, 0.3f, 0.5f * a }; }
 		else if (current) { frame = { 1.0f, 1.0f, 1.0f, a };  arrowColor = { 1.0f, 1.0f, 1.0f, a }; }
 		else { frame = { 0.5f, 0.5f, 0.5f, a };  arrowColor = { 0.55f, 0.55f, 0.55f, a }; }
 
-		// 枠(今のスロットだけ脈打つ)
+		// 枠
 		const float outer = kSlotHalf + 3.0f + (current ? pulse * 3.0f : 0.0f);
 		DrawRect(x, kY, outer, outer, frame);
 		DrawRect(x, kY, kSlotHalf, kSlotHalf, { 0.08f, 0.08f, 0.10f, 0.95f * a });
 
-		// 矢印(画面は上がプラス)
+		// 矢印
 		int fx = 0, fy = 0;
 		switch (m_seq[i])
 		{
@@ -90,7 +86,7 @@ void SkillCheckArrow::OnDraw()
 		}
 		DrawArrowShape(x, kY, fx, fy, 18.0f, arrowColor);
 
-		// 使用キー(今押すキーだけ動かす)
+		// キー
 		DrawKey(KeyOf(m_seq[i]), x, kY - 75.0f,
 			current ? SkillKeyAnim::Timing : SkillKeyAnim::Static,
 			done ? 0.4f : 1.0f);

@@ -128,7 +128,7 @@ void Editor::UpdateNavigationMode()
 			int id =
 				m_selectNode->GetID();
 
-			m_astarNodeManager.DeleteNode(id);
+			AStarNodeManager::Instance().DeleteNode(id);
 
 			m_selectNode = nullptr;
 
@@ -154,12 +154,12 @@ void Editor::UpdateLocationMode()
 		LocationEditorWindow::Mode::Select)
 	{
 		auto point =
-			m_locationPointManager.FindPoint(
+			LocationPointManager::Instance().FindPoint(
 				m_locationEditorWindow.GetSelectedPointID());
 
 		if (point && ImGui::IsKeyPressed(ImGuiKey_Delete))
 		{
-			m_locationPointManager.DeletePoint(point->GetID());
+			LocationPointManager::Instance().DeletePoint(point->GetID());
 
 			m_locationEditorWindow.SetSelectedPoint(-1);
 		}
@@ -550,7 +550,7 @@ void Editor::SaveNode()
 
 	if (!AStarNodeSerializer::Save(
 		"Asset/Data/astarnode.json",
-		m_astarNodeManager))
+		AStarNodeManager::Instance()))
 	{
 		assert(false && "Navigation Save Failed");
 	}
@@ -579,7 +579,7 @@ void Editor::SaveLocation()
 {
 	if (!LocationPointSerializer::Save(
 		"Asset/Data/location.json",
-		m_locationPointManager))
+		LocationPointManager::Instance()))
 	{
 		assert(false && "Location Save Failed");
 	}
@@ -603,7 +603,7 @@ void Editor::LoadNode()
 {
 	if (!AStarNodeSerializer::Load(
 		"Asset/Data/astarnode.json",
-		m_astarNodeManager))
+		AStarNodeManager::Instance()))
 	{
 		assert(false && "Navigation Load Failed");
 	}
@@ -631,7 +631,7 @@ void Editor::LoadLocation()
 {
 	if (!LocationPointSerializer::Load(
 		"Asset/Data/location.json",
-		m_locationPointManager))
+		LocationPointManager::Instance()))
 	{
 		assert(false && "Location Load Failed");
 	}
@@ -761,7 +761,7 @@ void Editor::DrawAStarNodes()
 	//------------------------------------------------
 
 	for (auto& node :
-		m_astarNodeManager.GetNodes())
+		AStarNodeManager::Instance().GetNodes())
 	{
 		if (!node)
 		{
@@ -775,7 +775,7 @@ void Editor::DrawAStarNodes()
 		node->GetConnections())
 		{
 			auto to =
-				m_astarNodeManager.FindNode(connectionID);
+				AStarNodeManager::Instance().FindNode(connectionID);
 
 			if (!to)
 			{
@@ -794,7 +794,7 @@ void Editor::DrawAStarNodes()
 	//------------------------------------------------
 
 	for (auto& node :
-		m_astarNodeManager.GetNodes())
+		AStarNodeManager::Instance().GetNodes())
 	{
 		if (!node)
 		{
@@ -832,7 +832,7 @@ void Editor::DrawAStarNodes()
 	//------------------------------------------------
 
 	for (auto& node :
-		m_astarNodeManager.GetNodes())
+		AStarNodeManager::Instance().GetNodes())
 	{
 		if (!node)
 		{
@@ -964,7 +964,7 @@ void Editor::DrawLocationPoints()
 		return;
 	}
 
-	for (auto& point : m_locationPointManager.GetPoints())
+	for (auto& point : LocationPointManager::Instance().GetPoints())
 	{
 		if (!point)
 		{
@@ -987,7 +987,7 @@ void Editor::DrawLocationPoints()
 	m_pDebugWire->Draw();
 
 	// Node IDと同じ要領でタグ名テキストも描画する場合はここに追加
-	for (auto& point : m_locationPointManager.GetPoints())
+	for (auto& point : LocationPointManager::Instance().GetPoints())
 	{
 		if (!point)
 		{
@@ -1066,7 +1066,7 @@ void Editor::OnNodeClick(
 		NODE_SELECT_RADIUS * NODE_SELECT_RADIUS;
 
 	for (auto& node :
-		m_astarNodeManager.GetNodes())
+		AStarNodeManager::Instance().GetNodes())
 	{
 		if (!node)
 		{
@@ -1127,7 +1127,7 @@ void Editor::OnNodeClick(
 			int id =
 				nearestNode->GetID();
 
-			m_astarNodeManager.DeleteNode(id);
+			AStarNodeManager::Instance().DeleteNode(id);
 
 			if (m_selectNode == nearestNode)
 			{
@@ -1188,7 +1188,7 @@ void Editor::OnNodeClick(
 		// 2個目
 		//------------------------------------------------
 
-		m_astarNodeManager.ConnectNodes(
+		AStarNodeManager::Instance().ConnectNodes(
 			m_connectionStartNode->GetID(),
 			nearestNode->GetID());
 
@@ -1243,7 +1243,7 @@ void Editor::OnNodeClick(
 		// 2個目
 		//------------------------------------------------
 
-		m_astarNodeManager.DisconnectNodes(
+		AStarNodeManager::Instance().DisconnectNodes(
 			m_connectionStartNode->GetID(),
 			nearestNode->GetID());
 
@@ -1262,7 +1262,7 @@ void Editor::CreateAStarNode(const Math::Vector3& pos)
 	Math::Vector3 nodePos = pos;
 	nodePos.y = 0.5f;
 
-	auto node = m_astarNodeManager.CreateNode(nodePos);
+	auto node = AStarNodeManager::Instance().CreateNode(nodePos);
 
 	if (!node)
 	{
@@ -1285,7 +1285,7 @@ void Editor::SelectAStarNode(const Math::Vector3& pos)
 		NODE_SELECT_RADIUS * NODE_SELECT_RADIUS;
 
 	for (auto& node :
-		m_astarNodeManager.GetNodes())
+		AStarNodeManager::Instance().GetNodes())
 	{
 		if (!node)
 		{
@@ -1324,7 +1324,7 @@ void Editor::SelectAStarNode(const Math::Vector3& pos)
 void Editor::SelectAStarNodeByID(int id)
 {
 	auto node =
-		m_astarNodeManager.FindNode(id);
+		AStarNodeManager::Instance().FindNode(id);
 
 	if (!node)
 	{
@@ -2438,7 +2438,7 @@ void Editor::OnLocationClick(const Math::Vector3& pos)
 
 	float nearestDistanceSq = SELECT_RADIUS * SELECT_RADIUS;
 
-	for (auto& point : m_locationPointManager.GetPoints())
+	for (auto& point : LocationPointManager::Instance().GetPoints())
 	{
 		if (!point)
 		{
@@ -2485,7 +2485,7 @@ void Editor::OnLocationClick(const Math::Vector3& pos)
 		if (!nearest)
 		{
 			auto point =
-				m_locationPointManager.CreatePoint(
+				LocationPointManager::Instance().CreatePoint(
 					m_locationEditorWindow.GetCreateTag(),
 					pos);
 
@@ -2503,7 +2503,7 @@ void Editor::OnLocationClick(const Math::Vector3& pos)
 	{
 		if (nearest)
 		{
-			m_locationPointManager.DeletePoint(nearest->GetID());
+			LocationPointManager::Instance().DeletePoint(nearest->GetID());
 
 			m_locationEditorWindow.SetSelectedPoint(-1);
 		}

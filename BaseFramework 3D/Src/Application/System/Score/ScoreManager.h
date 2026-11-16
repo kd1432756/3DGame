@@ -22,7 +22,9 @@ public:
 	static const char* RankToString(Rank rank);
 
 private:
-	// ランクの境界スコア(要調整)
+	ScoreManager() = default;
+
+	// ランクの区切り
 	static constexpr int kRankS = 3000;
 	static constexpr int kRankA = 2000;
 	static constexpr int kRankB = 1000;

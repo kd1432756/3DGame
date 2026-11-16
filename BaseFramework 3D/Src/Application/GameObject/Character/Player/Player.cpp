@@ -71,7 +71,6 @@ void Player::Update()
 	if (m_isArrested)
 	{
 		UpdateArrested();
-		UpdateLocked();
 		return;
 	}
 
@@ -199,7 +198,16 @@ void Player::SwitchToArrestCamera()
 	cam->SetTarget(std::dynamic_pointer_cast<Player>(shared_from_this()));
 	cam->SetEyeHeight(0.8f * m_sceneScale);
 	cam->SetDegAng(m_fpsCamera->GetDegAng());
+	for (auto& obj : SceneManager::Instance().GetObjList())
+	{
+		if (!obj) continue;
 
+		// 自分自身は除外
+		if (obj.get() == this) continue;
+
+		// 地面・壁などを登録
+		cam->RegistHitObject(obj);
+	}
 	CameraManager::Instance().SetCamera(cam);
 	SetCamera(cam);
 
@@ -208,7 +216,7 @@ void Player::SwitchToArrestCamera()
 
 void Player::RestoreFpsCamera(const std::shared_ptr<ArrestCamera>& arrestCam)
 {
-	if (!m_fpsCamera) return;
+	if (!m_fpsCamera || !arrestCam) return;
 
 	m_fpsCamera->SetDegAng(arrestCam->GetDegAng());
 	CameraManager::Instance().SetCamera(m_fpsCamera);
@@ -379,7 +387,7 @@ bool Player::FindReportPos(Math::Vector3& outPos) const
 		if (!IsVisibleFromCamera(ch->GetPos(), ch.get())) continue;
 
 		// 歩いている途中だけ、プレイヤーから 5m 以内であること
-		// 壊している最中は今まで通り、距離制限なし
+		// いたずらしてる最中は今まで通り、距離制限なし
 		if (!ch->IsDamaging())
 		{
 			Math::Vector3 diff = ch->GetPos() - m_pos;
@@ -394,7 +402,7 @@ bool Player::FindReportPos(Math::Vector3& outPos) const
 		if (sq < nearestSq)
 		{
 			nearestSq = sq;
-			outPos = ch->GetDamagePos();	// 通報地点は壊している現場
+			outPos = ch->GetDamagePos();	// 通報地点はいたずらしてる現場
 			found = true;
 		}
 	}
@@ -404,7 +412,7 @@ bool Player::FindReportPos(Math::Vector3& outPos) const
 		return true;
 	}
 
-	// ② 見えている「最近NPCに壊された物」のうち、一番新しいもの
+	// ② 見えている「最近NPCにいたずらされた物」のうち、一番新しいもの
 	float best = kReportWindowSeconds;
 
 	for (auto& obj : SceneManager::Instance().FindObjects<InteractiveObject>())
@@ -947,7 +955,6 @@ void Player::StartUse()
 	m_skillResult = SkillResult::None;
 
 	m_skillCheck = SkillCheckFactory::Create(
-		true,	// 一時的に
 		m_lastSkillType,
 		DayCycle::Instance().GetTimeProgress());
 
@@ -1252,12 +1259,14 @@ void Player::OnArrested(const std::shared_ptr<Police>& police)
 {
 	CharacterBase::OnArrested(police);
 
+	m_isReleasing = false;
+	m_isHinderCamReturning = false;
+
 	// いたずら/インタラクト/スキルチェック中の状態をキャンセル
 	CancelUse();
 
 	// 妨害中なら解除
 	EndHinder(false, true);
-	m_isHinderCamReturning = false;
 
 	// ===== 逮捕ペナルティ =====
 	{

@@ -50,6 +50,8 @@ private:
 	void UpdateLighting();
 
 private:
+	DayCycle() = default;
+
 	float m_currentTime = StartTime;
 
 	float m_timeScale = 16.0f / 3.0f;

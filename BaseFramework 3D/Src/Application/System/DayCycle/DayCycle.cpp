@@ -14,7 +14,6 @@ void DayCycle::Init()
 void DayCycle::Update()
 {
 	// 現実1秒 = ゲーム内1分
-	// 60秒でゲーム内1時間進む
 	m_currentTime += 1.0f / 60.0f / 60.0f * m_timeScale;
 
 	// 22:00を超えたら終了
@@ -30,12 +29,8 @@ void DayCycle::Update()
 
 void DayCycle::AddTime(float time)
 {
-	// timeは「ゲーム内時間」
-	// 0.5f = 30分
-	// 1.0f = 1時間
 	m_currentTime += time;
 
-	// 22:00を超えないようにする
 	if (m_currentTime >= EndTime)
 	{
 		m_currentTime = EndTime;
@@ -47,13 +42,11 @@ void DayCycle::AddTime(float time)
 
 void DayCycle::UpdateTimeZone()
 {
-	if (m_currentTime >= 6.0f &&
-		m_currentTime < 17.0f)
+	if (m_currentTime >= 6.0f && m_currentTime < 17.0f)
 	{
 		m_timeZone = TimeZone::Day;
 	}
-	else if (m_currentTime >= 17.0f &&
-		m_currentTime < 20.0f)
+	else if (m_currentTime >= 17.0f && m_currentTime < 20.0f)
 	{
 		m_timeZone = TimeZone::Evening;
 	}
@@ -63,39 +56,26 @@ void DayCycle::UpdateTimeZone()
 	}
 }
 
-
 void DayCycle::UpdateLighting()
 {
-	auto& ambientController =
-		KdShaderManager::Instance().WorkAmbientController();
+	auto& ambientController = KdShaderManager::Instance().WorkAmbientController();
 
 	//------------------------------------------------------------
-	// ① 太陽の位置
-	//
-	// 6:00  → 太陽が低い
-	// 14:00 → 太陽が高い
-	// 22:00 → 太陽が沈む
+	// 太陽の位置
 	//------------------------------------------------------------
 
-	float normalizedTime =
-		(m_currentTime - 6.0f) / 16.0f;
+	float normalizedTime = (m_currentTime - 6.0f) / 16.0f;
 
-	normalizedTime =
-		std::clamp(normalizedTime, 0.0f, 1.0f);
+	normalizedTime = std::clamp(normalizedTime, 0.0f, 1.0f);
 
+	float angle = normalizedTime * DirectX::XM_PI;
 
-	// 6:00 ～ 22:00を180度回転させる
-	float angle =
-		normalizedTime * DirectX::XM_PI;
-
-	// 太陽の高さ補正（大きいほど真上から当たる）
-	const float sunHeightScale = 2.5f;  // 昼の高さの倍率
-	const float sunHeightBias = 0.6f;  // 朝夕でも最低限確保する高さ
+	const float sunHeightScale = 2.5f;
+	const float sunHeightBias = 0.6f;  // 最低限の高さ
 
 	float x = cosf(angle);
 	float y = -(sinf(angle) * sunHeightScale + sunHeightBias);
 	float z = 1.0f;
-
 
 	DirectX::XMFLOAT3 sunDirection =
 	{
@@ -104,13 +84,8 @@ void DayCycle::UpdateLighting()
 		z
 	};
 
-
 	//------------------------------------------------------------
-	// ② 光の色・強さ
-	//
-	// 昼    → 明るい白
-	// 夕方  → 少し暖色
-	// 夜    → 少し青みを残して明るめ
+	// 光の色・強さ
 	//------------------------------------------------------------
 
 	DirectX::XMFLOAT3 dayLight =
@@ -134,9 +109,8 @@ void DayCycle::UpdateLighting()
 		1.1f
 	};
 
-
 	//------------------------------------------------------------
-	// ③ Ambient Light
+	// Ambient Light
 	//------------------------------------------------------------
 
 	DirectX::XMFLOAT4 dayAmbient =
@@ -164,19 +138,18 @@ void DayCycle::UpdateLighting()
 	};
 
 	//------------------------------------------------------------
-	// ④ 時間に応じて補間
+	// 時間に応じて補間
 	//------------------------------------------------------------
 
-	// SkyBox::Update の Evening: 15.0 / 16.5 / 18.0 / 19.5 と対応
-	const float redStartTime = 15.0f;  // 赤くなり始める
-	const float eveningStartTime = 16.5f;  // 夕方の光が完全になる
-	const float eveningEndTime = 18.0f;  // 夕方の光が終わり始める
-	const float nightFullTime = 19.5f;  // 夜の光が完全になる
+	const float redStartTime = 15.0f;			// 赤くなり始める
+	const float eveningStartTime = 16.5f;		// 夕方の光が完全になる
+	const float eveningEndTime = 18.0f;		// 夕方の光が終わり始める
+	const float nightFullTime = 19.5f;			// 夜の光が完全になる
 
 	DirectX::XMFLOAT3 lightColor;
 	DirectX::XMFLOAT4 ambientColor;
 
-	// 2色の線形補間
+	// 2色の補間
 	auto LerpColor3 = [](const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3& b, float t)
 		{
 			return DirectX::XMFLOAT3
@@ -229,16 +202,9 @@ void DayCycle::UpdateLighting()
 	}
 
 	//------------------------------------------------------------
-	// ⑤ シェーダーに反映
+	// シェーダーに反映
 	//------------------------------------------------------------
 
-	ambientController.SetDirLight(
-		sunDirection,
-		lightColor
-	);
-
-
-	ambientController.SetAmbientLight(
-		ambientColor
-	);
+	ambientController.SetDirLight(sunDirection, lightColor);
+	ambientController.SetAmbientLight(ambientColor);
 }

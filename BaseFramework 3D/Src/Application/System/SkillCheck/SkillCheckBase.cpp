@@ -1,10 +1,5 @@
 ﻿#include "SkillCheckBase.h"
 
-namespace
-{
-	constexpr float kDeltaTime = 1.0f / 60.0f;	// Player::UpdateUse と同じ固定値
-}
-
 void SkillCheckBase::Start(float difficulty)
 {
 	m_result = SkillResult::None;
@@ -22,11 +17,10 @@ void SkillCheckBase::Update()
 {
 	if (IsFinished()) return;
 
-	PollKeys();	// キー状態は1フレームに1回だけ読む
+	PollKeys();		// キー状態を読む
 
-	m_elapsed += kDeltaTime;
+	m_elapsed += 1.0f / 60.0f;
 
-	// 準備時間中は入力を受け付けない
 	if (!IsReady())
 	{
 		ClearPressed();
@@ -42,7 +36,7 @@ void SkillCheckBase::Update()
 
 	PlayKeyDownSound();
 
-	OnUpdate(kDeltaTime);
+	OnUpdate(1.0f / 60.0f);
 }
 
 void SkillCheckBase::Draw()
@@ -66,14 +60,12 @@ int SkillCheckBase::KeyIndex(int vk)
 	return -1;
 }
 
-// 入力受付中に、いずれかのキーが押されたフレームでSEを鳴らす
 void SkillCheckBase::PlayKeyDownSound() const
 {
 	for (int i = 0; i < kKeyCount; ++i)
 	{
 		if (m_keyPressed[i])
 		{
-			// 同じフレームに複数押されても、鳴らすのは1回だけ			;
 			if (auto se = KdAudioManager::Instance().Play("Asset/Sound/KeyDown/KeyDown.wav"))
 			{
 				se->SetVolume(0.2f);
@@ -91,7 +83,7 @@ void SkillCheckBase::PollKeys()
 		const SHORT state = GetAsyncKeyState(SkillKeyUI::ToVirtualKey(static_cast<SkillKey>(i)));
 		const bool  down = (state & 0x8000) != 0;
 
-		// 「押された記録(0x0001)」か、「前フレームは離れていて今は押している」のどちらか
+		// 「押された記録」、「前フレームは離れていて今は押している」
 		m_keyPressed[i] = ((state & 0x0001) != 0) || (down && !m_keyPrevDown[i]);
 		m_keyDown[i] = down;
 		m_keyPrevDown[i] = down;
@@ -126,7 +118,6 @@ void SkillCheckBase::DrawRect(float x, float y, float halfW, float halfH, const 
 		&c, true);
 }
 
-
 void SkillCheckBase::DrawCircle(float x, float y, float radius, const Math::Color& color, bool fill)
 {
 	if (radius <= 0.0f) return;
@@ -140,7 +131,7 @@ void SkillCheckBase::DrawCircle(float x, float y, float radius, const Math::Colo
 
 void SkillCheckBase::DrawRing(float x, float y, float radius, float thickness, const Math::Color& color)
 {
-	// 半径を1pxずつずらした輪郭を重ねて太く見せる
+	// 半径をずらして太く見せる
 	const float half = thickness * 0.5f;
 
 	for (float d = -half; d <= half; d += 1.0f)
@@ -162,24 +153,24 @@ void SkillCheckBase::DrawTriangle(float x1, float y1, float x2, float y2, float 
 void SkillCheckBase::DrawPanel(float x, float y, float halfW, float halfH, float alpha)
 {
 	DrawRect(x, y, halfW + 2.0f, halfH + 2.0f, { 1.0f, 1.0f, 1.0f, 0.25f * alpha });	// 枠
-	DrawRect(x, y, halfW, halfH, { 0.04f, 0.04f, 0.06f, 0.65f * alpha });			// 板
+	DrawRect(x, y, halfW, halfH, { 0.04f, 0.04f, 0.06f, 0.65f * alpha });		// 中
 }
 
 void SkillCheckBase::DrawArrowShape(float x, float y, int fx, int fy, float s, const Math::Color& color)
 {
 	const float f_x = static_cast<float>(fx);
 	const float f_y = static_cast<float>(fy);
-	const float p_x = static_cast<float>(-fy);	// 進行方向に垂直な向き
+	const float p_x = static_cast<float>(-fy);	//  進行方向を90度回転した方向ベクトル。このベクトルを使って三角形の幅を決める
 	const float p_y = static_cast<float>(fx);
 
-	// 矢じり(三角)
+	// 三角
 	DrawTriangle(
 		x + f_x * s, y + f_y * s,
 		x + p_x * s * 0.9f, y + p_y * s * 0.9f,
 		x - p_x * s * 0.9f, y - p_y * s * 0.9f,
 		color);
 
-	// 軸(矩形)。進行方向が横なら横長、縦なら縦長
+	// 長方形
 	const float len = s * 0.55f;
 	const float wid = s * 0.32f;
 	const bool  horizontal = (fx != 0);
@@ -195,7 +186,7 @@ void SkillCheckBase::DrawTimeBar(float x, float y, float halfW, float perfectTim
 	const float a = GetAlpha();
 	const float halfH = 3.0f;
 
-	float elapsed = m_elapsed - m_readyTime;	// 入力受付開始からの時間
+	float elapsed = m_elapsed - m_readyTime;	 // 開始からの時間
 	if (elapsed < 0.0f) elapsed = 0.0f;
 
 	float remain = 1.0f - elapsed / m_timeLimit;
@@ -205,12 +196,11 @@ void SkillCheckBase::DrawTimeBar(float x, float y, float halfW, float perfectTim
 	// 背景
 	DrawRect(x, y, halfW, halfH, { 0.0f, 0.0f, 0.0f, 0.6f * a });
 
-	// 色: Perfectが狙える間=黄 / 残りわずか=赤 / 通常=白
 	Math::Color color = { 1.0f, 1.0f, 1.0f, a };
 	if (perfectTime > 0.0f && elapsed <= perfectTime) color = { 1.0f, 0.9f, 0.2f, a };
-	else if (remain < 0.25f)                          color = { 1.0f, 0.3f, 0.3f, a };
+	else if (remain < 0.25f) color = { 1.0f, 0.3f, 0.3f, a };
 
-	// 左端固定で、左へ縮んでいく
+	// 左端固定
 	DrawRect(x - halfW + halfW * remain, y, halfW * remain, halfH, color);
 }
 

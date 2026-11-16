@@ -101,7 +101,7 @@ void LocationEditorWindow::DrawTagCoverage()
 {
 	ImGui::SeparatorText("Tag Coverage");
 
-	auto& manager = Editor::Instance().GetLocationPointManager();
+	auto& manager = LocationPointManager::Instance();
 
 	for (int i = 0; i < static_cast<int>(LocationTag::Max); ++i)
 	{
@@ -181,7 +181,7 @@ void LocationEditorWindow::DrawPointList()
 {
 	ImGui::SeparatorText("Points");
 
-	auto& manager = Editor::Instance().GetLocationPointManager();
+	auto& manager = LocationPointManager::Instance();
 
 	for (auto& point : manager.GetPoints())
 	{
@@ -219,7 +219,7 @@ void LocationEditorWindow::DrawPointList()
 
 void LocationEditorWindow::DrawPointInspector()
 {
-	auto& manager = Editor::Instance().GetLocationPointManager();
+	auto& manager = LocationPointManager::Instance();
 
 	auto point = manager.FindPoint(m_selectedPointID);
 

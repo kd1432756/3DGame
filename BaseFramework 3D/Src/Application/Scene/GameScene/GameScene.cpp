@@ -201,9 +201,6 @@ void GameScene::Start()
 		SceneManager::Instance().GetObjList().size());
 	OutputDebugStringA(buf);
 
-	//KdShaderManager::Instance().WorkAmbientController().SetFogEnable(true, false);
-	//KdShaderManager::Instance().WriteCBDistanceFog({ 0.5f,0.5f,0.5f }, 0.005f);
-
 	FootstepSystem::Instance().Init();
 
 	DamageDirector::SpawnInitialDamage(3);

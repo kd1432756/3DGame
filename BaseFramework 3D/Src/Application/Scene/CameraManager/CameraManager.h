@@ -6,12 +6,6 @@ class CameraManager
 {
 public:
 
-	static CameraManager& Instance()
-	{
-		static CameraManager instance;
-		return instance;
-	}
-
 	void SetCamera(const std::shared_ptr<CameraBase>& camera);
 
 	std::shared_ptr<CameraBase> GetCamera() const
@@ -24,6 +18,16 @@ public:
 	void PreDraw();
 
 private:
+	CameraManager() = default;
 
 	std::shared_ptr<CameraBase> m_spCamera;
+
+public:
+
+	static CameraManager& Instance()
+	{
+		static CameraManager instance;
+		return instance;
+	}
+
 };

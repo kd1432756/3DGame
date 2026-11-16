@@ -376,8 +376,6 @@
     <ClInclude Include="Src\Application\System\Node\AStarNode\AStarNodeManager.h" />
     <ClInclude Include="Src\Application\System\Node\AStarNode\AStarNodeSerializer.h" />
     <ClInclude Include="Src\Application\System\Node\AStarNode\AStarPathfinder.h" />
-    <ClInclude Include="Src\Application\System\Node\RoadNode\RoadNode.h" />
-    <ClInclude Include="Src\Application\System\Node\RoadNode\RoadNodeManager.h" />
     <ClInclude Include="Src\Application\System\Score\ScoreManager.h" />
     <ClInclude Include="Src\Application\System\SkillCheck\AltMash\SkillCheckAltMash.h" />
     <ClInclude Include="Src\Application\System\SkillCheck\Arrow\SkillCheckArrow.h" />
@@ -521,7 +519,6 @@
     <ClCompile Include="Src\Application\System\DayCycle\DayCycle.cpp" />
     <ClCompile Include="Src\Application\System\FootStep\FootStep.cpp" />
     <ClCompile Include="Src\Application\System\GrassField\GrassField.cpp" />
-    <ClCompile Include="Src\Application\System\Interact\Interact.cpp" />
     <ClCompile Include="Src\Application\System\Inventory\Inventory.cpp" />
     <ClCompile Include="Src\Application\System\Location\LocationPointManager.cpp" />
     <ClCompile Include="Src\Application\System\Location\LocationPointSerializer.cpp" />
@@ -537,7 +534,6 @@
     <ClCompile Include="Src\Application\System\Node\AStarNode\AStarNodeManager.cpp" />
     <ClCompile Include="Src\Application\System\Node\AStarNode\AStarNodeSerializer.cpp" />
     <ClCompile Include="Src\Application\System\Node\AStarNode\AStarPathfinder.cpp" />
-    <ClCompile Include="Src\Application\System\Node\RoadNode\RoadNodeManager.cpp" />
     <ClCompile Include="Src\Application\System\Score\ScoreManager.cpp" />
     <ClCompile Include="Src\Application\System\SkillCheck\AltMash\SkillCheckAltMash.cpp" />
     <ClCompile Include="Src\Application\System\SkillCheck\Arrow\SkillCheckArrow.cpp" />

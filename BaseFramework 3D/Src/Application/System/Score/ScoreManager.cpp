@@ -11,7 +11,7 @@ int ScoreManager::CalcScore(int baseScore, float progress, SkillResult result, f
 	default: break;
 	}
 
-	// 朝×1.0 → 夜×1.5 に緩やかに上昇
+	// 時間で倍率を変える
 	float timeRate = 1.0f + 0.5f * progress;
 
 	return std::max(1, static_cast<int>(std::round(baseScore * skillRate * timeRate * bonusRate)));

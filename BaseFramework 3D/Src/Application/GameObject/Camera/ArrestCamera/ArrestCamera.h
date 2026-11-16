@@ -21,10 +21,18 @@ public:
 	void SetEyeHeight(float height) override;
 
 	// 釈放時のズームインを開始するトリガー
-	void StartPushIn() { m_state = State::PushingIn; m_transitionTimer = 0.0f; }
+	void StartPushIn()
+	{
+		m_state = State::PushingIn;
+		m_transitionTimer = 0.0f;
+		m_isFinished = false;
+	}
 
 	// 遷移が完了したかどうか（Scene側やPlayer側で判定してカメラを切り替える用）
-	bool IsTransitionFinished() const { return m_isFinished; }
+	bool IsTransitionFinished() const
+	{
+		return m_isFinished;
+	}
 
 private:
 	

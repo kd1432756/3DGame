@@ -157,9 +157,6 @@
     <Filter Include="Src\Application\System\Node">
       <UniqueIdentifier>{236a548a-679d-4cc8-8d73-3490f5a2c136}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\System\Node\RoadNode">
-      <UniqueIdentifier>{6247ec61-679a-4d7f-9081-e2d2083ba636}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Effect">
       <UniqueIdentifier>{a00fe116-9ec5-403a-90d8-27f069f5e649}</UniqueIdentifier>
     </Filter>
@@ -606,12 +603,6 @@
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\InteractiveObject.h">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\System\Node\RoadNode\RoadNode.h">
-      <Filter>Src\Application\System\Node\RoadNode</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\System\Node\RoadNode\RoadNodeManager.h">
-      <Filter>Src\Application\System\Node\RoadNode</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\System\DayCycle\DayCycle.h">
       <Filter>Src\Application\System\DayCycle</Filter>
     </ClInclude>
@@ -1046,9 +1037,6 @@
     <ClCompile Include="Src\Application\System\Inventory\Inventory.cpp">
       <Filter>Src\Application\System\Inventory</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\System\Interact\Interact.cpp">
-      <Filter>Src\Application\System\Interact</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\Item\Item.cpp">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\Item</Filter>
     </ClCompile>
@@ -1078,9 +1066,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\WoodenFence\WoodenFence.cpp">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\WoodenFence</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\System\Node\RoadNode\RoadNodeManager.cpp">
-      <Filter>Src\Application\System\Node\RoadNode</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\System\DayCycle\DayCycle.cpp">
       <Filter>Src\Application\System\DayCycle</Filter>

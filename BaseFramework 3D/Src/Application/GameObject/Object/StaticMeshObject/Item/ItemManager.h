@@ -3,22 +3,11 @@
 class Item;
 class ItemSpawner;
 
-//============================================================
-// ItemManager
-//
-// ・ワールド上のItem（Spawned / Dropped）の登録と数の管理
-// ・種類ごとの上限（.item の "MaxCount"）判定
-//   上限 = ワールド上の数 + 全キャラの所持数
-// ・Spawnerは「出現地点」。いつ・どこで出すかはここが決める
-// ・Dropped生成の一本化
-//============================================================
 class ItemManager
 {
 public:
-	// 毎フレーム1回だけ呼ぶ（シーンのUpdateなど）
 	void Update();
 
-	// シーン切り替え時に呼ぶ
 	void Reset();
 
 	//--------------------------------------------------------
@@ -35,7 +24,7 @@ public:
 	// 生成
 	//--------------------------------------------------------
 
-	// 捨てる・交換で落とす時はこれ1本
+	// 捨てる・交換で落とす時
 	std::shared_ptr<Item> SpawnDropped(
 		const std::string& path,
 		const Math::Vector3& pos,
@@ -45,7 +34,7 @@ public:
 	// 通知
 	//--------------------------------------------------------
 
-	// 拾われた時（Item::Pickup から。Destroy() の前に呼ぶ）
+	// 拾われた時
 	void OnPickedUp(const Item& item);
 
 	//--------------------------------------------------------
@@ -61,7 +50,7 @@ public:
 		return CountInWorld(path) + CountHeld(path);
 	}
 
-	// 種類ごとの上限（.item の MaxCount。未指定ならデフォルト値）
+	// 種類ごとの上限
 	int GetMaxCount(const std::string& path);
 
 	// デフォルト上限の設定

@@ -7,6 +7,7 @@ class LocationPoint
 public:
 	LocationPoint() = default;
 
+	// 引数を指定してオブジェクトを生成できる
 	LocationPoint(int id, LocationTag tag, const Math::Vector3& pos)
 		: m_id(id), m_tag(tag), m_pos(pos)
 	{}

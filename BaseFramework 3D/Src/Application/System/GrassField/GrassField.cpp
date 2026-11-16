@@ -30,10 +30,8 @@ void GrassField::Generate(float density, float obstacleRadius)
 	sphere.m_sphere.Radius = obstacleRadius;
 	sphere.m_type = KdCollider::TypeBump;
 
-	std::mt19937 rng(12345);
-	std::uniform_real_distribution<float> yaw(0.0f, DirectX::XM_2PI);
 	const float baseScale = 0.2f;
-	std::uniform_real_distribution<float> scale(0.8f, 1.2f);
+	const float sceneScale = SceneManager::Instance().GetSceneScale();
 
 	for (const auto& p : points)
 	{
@@ -45,17 +43,22 @@ void GrassField::Generate(float density, float obstacleRadius)
 		{
 			if (!obj) { continue; }
 			obj->Intersects(sphere, &hit);
-			if (!hit.empty()) { break; }	// 1つ当たれば十分
+			if (!hit.empty()) { break; }
 		}
 		if (!hit.empty()) { continue; }
 
-		// 3. 行列を作る(ランダムな向きと大きさ)
-		float s = scale(rng) * baseScale * SceneManager::Instance().GetSceneScale();
+		// 3. ランダムな大きさと向きを設定
+		const float scale = baseScale *
+			KdRandom::GetFloat(0.8f, 1.2f) *
+			sceneScale;
+
+		const float yaw = KdRandom::GetFloat(0.0f, DirectX::XM_2PI);
 
 		m_instances.push_back(
-			Math::Matrix::CreateScale(s) *
-			Math::Matrix::CreateRotationY(yaw(rng)) *
-			Math::Matrix::CreateTranslation(p));
+			Math::Matrix::CreateScale(scale) *
+			Math::Matrix::CreateRotationY(yaw) *
+			Math::Matrix::CreateTranslation(p)
+		);
 	}
 }
 
@@ -63,7 +66,6 @@ void GrassField::DrawLit()
 {
 	if (!m_model) { return; }
 
-	// プレイヤー位置を取得(いなければ全部描画)
 	bool useCull = false;
 	Math::Vector3 center;
 	if (auto player = m_wpPlayer.lock())
@@ -81,7 +83,6 @@ void GrassField::DrawLit()
 	{
 		if (useCull)
 		{
-			// XZ平面の距離で判定(高さは無視)
 			const Math::Vector3 p = m.Translation();
 			const float dx = p.x - center.x;
 			const float dz = p.z - center.z;
