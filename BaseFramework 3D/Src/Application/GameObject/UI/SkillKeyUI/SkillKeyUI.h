@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-// 表示するキーの種類
 enum class SkillKey
 {
 	MouseLeft,
@@ -11,13 +10,12 @@ enum class SkillKey
 	Count,
 };
 
-// キーのアニメーション
 enum class SkillKeyAnim
 {
 	Static,		// 静止
 	Timing,		// タイミングよく押す
 	Mash,		// 連打する
-	Hold,		// 長押しする
+	Hold,			// 長押しする
 };
 
 class SkillKeyUI
@@ -27,7 +25,6 @@ public:
 		SkillKeyAnim anim, float time, bool isDown,
 		float alpha = 1.0f);
 
-	// SkillKey → 仮想キーコード
 	static int ToVirtualKey(SkillKey key);
 
 private:
@@ -36,7 +33,7 @@ private:
 	struct KeyData
 	{
 		std::shared_ptr<KdTexture> tex[2];	// 0=通常 / 1=押された
-		float aspect[2] = { 1.0f, 1.0f };	// 横 / 縦
+		float aspect[2] = { 1.0f, 1.0f };
 	};
 
 	void LoadIfNeeded();
@@ -44,7 +41,7 @@ private:
 	KeyData m_keys[static_cast<int>(SkillKey::Count)];
 	bool   m_loaded = false;
 
-	static constexpr float kKeyHeight = 44.0f;	// 画面上でのキーの高さ(px)
+	static constexpr float kKeyHeight = 44.0f;
 
 public:
 

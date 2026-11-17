@@ -25,7 +25,7 @@ void GrassField::Generate(float density, float obstacleRadius)
 		}
 	}
 
-	// 2. 障害物チェック(Sphere)
+	// 2. 障害物チェック
 	KdCollider::SphereInfo sphere;
 	sphere.m_sphere.Radius = obstacleRadius;
 	sphere.m_type = KdCollider::TypeBump;

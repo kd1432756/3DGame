@@ -6,8 +6,6 @@
 
 void ItemSpawner::Update()
 {
-	// SetItemPath などの設定が終わった後に登録したいので、
-	// Initではなく初回Updateで登録する
 	if (m_registered)
 	{
 		return;
@@ -29,7 +27,6 @@ bool ItemSpawner::IsFree() const
 {
 	auto item = m_current.lock();
 
-	// 未生成、拾われて消えた、Destroy済み → 空き
 	return !item || item->IsExpired();
 }
 
@@ -48,6 +45,5 @@ void ItemSpawner::SpawnItem()
 
 	m_current = item;
 
-	// 数の管理はManager。ここで即登録するので二重出現しない
 	ItemManager::Instance().RegisterWorldItem(item);
 }

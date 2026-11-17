@@ -20,13 +20,13 @@ public:
 		None,
 		Exclamation,	// !
 		Question,		// ?
-		Sad,			// 泣いてる顔
+		Sad,				// 泣いてる顔
 		Angry,			// 怒った顔
 		Alert,			// 捕まった！
 		Stars,			// きらきら
 		Music,			// るんるん
 		Anger,			// むかむか
-		Idea,			// ひらめき
+		Idea,				// ひらめき
 		Laugh,			// 笑ってる顔
 	};
 
@@ -46,58 +46,28 @@ public:
 
 private:
 
-	//========================================
-	// 更新
-	//========================================
-
 	void UpdateIconAnimation();
 	void UpdateIconWorldMatrix();
-
-	//========================================
-	// アニメーション
-	//========================================
 
 	void StartIconAnimation();
 	void StartIconDisappearAnimation();
 
-	//========================================
-	// 描画
-	//========================================
-
 	std::shared_ptr<KdSquarePolygon> m_iconPolygon = nullptr;
 
-	// アイコンを表示する対象キャラクター
 	std::weak_ptr<CharacterBase> m_ownerCharacter;
 
-	// 現在表示しているアイコン
 	IconType m_currentIcon = IconType::None;
-
-	//========================================
-	// アニメーション状態
-	//========================================
 
 	AnimationState m_animationState = AnimationState::None;
 
 	float m_animationElapsed = 0.0f;
 	float m_animationDuration = 0.3f;
 
-	//========================================
-	// 表示設定
-	//========================================
-
-	// 通常時のアイコンサイズ
 	float m_baseScale = 1.0f;
 
-	// キャラクターからの高さ
 	float m_heightOffset = 1.5f;
 
-	//========================================
-	// 表示時間
-	//========================================
-
-	// 残り表示時間(秒)
 	float m_lifeTime = 0.0f;
 
-	// true: 時間経過で自動的に消える
 	bool  m_hasLife = false;
 };

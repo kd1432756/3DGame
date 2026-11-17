@@ -2,46 +2,37 @@
 
 #include "../../Character/Player/Player.h"
 
-void ScoreUI::Init()
-{}
-
 void ScoreUI::Update()
 {
 	auto player = LockPlayer();
-
 	if (!player)
 	{
 		return;
 	}
 
-	// デバッグ
+	const int targetScore = player->GetScore();
+
 	if (GetAsyncKeyState('4') & 0x8000)
 	{
 		player->AddScore(100);
 	}
-
-	const int targetScore = player->GetScore();
 
 	if (m_displayScore == targetScore)
 	{
 		return;
 	}
 
-	const int difference =
-		std::abs(targetScore - m_displayScore);
+	const int difference = std::abs(targetScore - m_displayScore);
 
-	const int speed =
-		(std::max)(1, difference / 10);
+	const int speed = (std::max)(1, difference / 10);
 
 	if (m_displayScore < targetScore)
 	{
-		m_displayScore =
-			(std::min)(m_displayScore + speed, targetScore);
+		m_displayScore = (std::min)(m_displayScore + speed, targetScore);
 	}
 	else
 	{
-		m_displayScore =
-			(std::max)(m_displayScore - speed, targetScore);
+		m_displayScore = (std::max)(m_displayScore - speed, targetScore);
 	}
 }
 
@@ -54,32 +45,22 @@ void ScoreUI::DrawSprite()
 
 	const std::string scoreText = std::to_string(m_displayScore);
 
-	const float DigitWidth = 48.0f;
-
 	const size_t digitCount = scoreText.length();
 
-	const float ScoreTextX = digitCount * DigitWidth;
+	const float ScoreTextX = digitCount * kDigitWidth;
 
-	// -----------------------------
-	// Score : の表示
-	// -----------------------------
-
+	// Score : 
 	DrawLabel(
-		Math::Vector2{ ScoreX - ScoreTextX, ScoreY },
+		Math::Vector2{ kScoreX - ScoreTextX, kScoreY },
 		kWhiteColor,
 		FontID::FutureNormal64,
 		"Score : ",
 		Math::Vector2{ 1.0f, 0.5f });
 
-	// -----------------------------
-	// 数字の表示（1桁ずつ固定幅で描いて桁ズレを防ぐ）
-	// -----------------------------
-
+	// 数字
 	for (size_t i = 0; i < digitCount; ++i)
 	{
-		const float x =
-			ScoreX -
-			(static_cast<float>(digitCount - i) * DigitWidth);
+		const float x = kScoreX - (static_cast<float>(digitCount - i) * kDigitWidth);
 
 		const char digit[] =
 		{
@@ -88,7 +69,7 @@ void ScoreUI::DrawSprite()
 		};
 
 		DrawLabel(
-			Math::Vector2{ x + DigitWidth, ScoreY },
+			Math::Vector2{ x + kDigitWidth, kScoreY },
 			kWhiteColor,
 			FontID::FutureNormal64,
 			digit,

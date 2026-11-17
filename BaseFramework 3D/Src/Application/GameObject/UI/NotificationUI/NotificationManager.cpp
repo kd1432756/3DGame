@@ -9,7 +9,6 @@ void NotificationManager::Push(const std::string& message)
 
 void NotificationManager::Update()
 {
-	// 終了した通知を除去
 	m_active.erase(
 		std::remove_if(m_active.begin(), m_active.end(),
 			[](const std::shared_ptr<NotificationUI>& ui)

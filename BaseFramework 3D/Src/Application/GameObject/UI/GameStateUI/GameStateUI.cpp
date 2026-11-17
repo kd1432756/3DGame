@@ -40,7 +40,6 @@ void GameStateUI::Update()
 
 			if (m_count <= 0)
 			{
-				// START! 表示へ
 				m_displayState = DisplayState::Start;
 
 				// ゲーム開始
@@ -64,7 +63,6 @@ void GameStateUI::Update()
 
 	case DisplayState::Start:
 
-		// START!を1秒表示
 		if (m_timer >= 1.0f)
 		{
 			m_timer = 0.0f;
@@ -130,7 +128,7 @@ void GameStateUI::DrawSprite()
 		return;
 	}
 
-	// 画面を少し暗くして、中央に大きく表示
+	// 画面を少し暗く
 	DrawFullScreenBox(Math::Color{ 0.0f, 0.0f, 0.0f, 0.5f });
 
 	DrawLabel(Math::Vector2{ 0, 0 }, kWhiteColor, FontID::Future128, text.c_str());

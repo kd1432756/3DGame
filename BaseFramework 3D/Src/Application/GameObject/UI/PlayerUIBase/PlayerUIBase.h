@@ -6,9 +6,6 @@ class Player;
 
 //==================================================
 // Player を参照するUIの基底クラス
-//  対象: DamageIndicatorUI / HinderUI / HomeDirectionUI /
-//        InteractionProgress / InteractionPrompt / InventoryUI /
-//        Reticle / ReportUI / ScoreUI
 //==================================================
 class PlayerUIBase : public UIBase
 {

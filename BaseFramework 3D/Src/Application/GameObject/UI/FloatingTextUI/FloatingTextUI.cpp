@@ -9,9 +9,8 @@ FloatingTextUI::FloatingTextUI()
 
 void FloatingTextUI::OnUpdate(float dt, float t)
 {
-	// 上にゆっくり浮かぶ
 	m_pos.y += 0.5f;
 
-	// フェードイン → 維持 → フェードアウト
+	// フェードインからフェードアウト
 	m_alpha = CalcFadeAlpha(t);
 }

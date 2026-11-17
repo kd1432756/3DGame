@@ -2,7 +2,6 @@
 
 #include "../TextPopupUI/TextPopupUI.h"
 
-// 左から滑り込んで、止まって、右へ抜けていく文字
 class SlideTextUI : public TextPopupUI
 {
 public:
@@ -14,7 +13,6 @@ protected:
 	void OnUpdate(float dt, float t) override;
 
 private:
-	// ---- 調整用パラメータ ----
 	static constexpr float kSlideInTime = 0.4f;
 	static constexpr float kStayTime = 1.0f;
 	static constexpr float kSlideOutTime = 0.4f;

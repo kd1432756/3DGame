@@ -5,30 +5,20 @@
 #include "Item.h"
 #include "ItemSpawner.h"
 
-//============================================================
-// Util
-//============================================================
-
 std::string ItemManager::Normalize(std::string path)
 {
-	// ItemData::Load と同じ正規化（Inventory側のパスと揃える）
+	// パスの正規化
 	std::replace(path.begin(), path.end(), '\\', '/');
 	return path;
 }
 
-//============================================================
-// Update
-//============================================================
-
 void ItemManager::Update()
 {
-	const float deltaTime = 1.0f / 60.0f;
-
 	PruneExpired();
 
 	for (auto it = m_pending.begin(); it != m_pending.end();)
 	{
-		it->timer -= deltaTime;
+		it->timer -= 1.0f / 60.0f;
 
 		if (it->timer > 0.0f)
 		{
@@ -36,10 +26,7 @@ void ItemManager::Update()
 			continue;
 		}
 
-		//====================================================
-		// 上限チェック（ワールド + 全キャラの所持品）
-		//====================================================
-
+		// 上限チェック（ワールド + 所持品）
 		if (CountTotal(it->path) >= GetMaxCount(it->path))
 		{
 			it->timer = m_retryInterval;
@@ -47,10 +34,7 @@ void ItemManager::Update()
 			continue;
 		}
 
-		//====================================================
-		// 空いている同種Spawnerを探す
-		//====================================================
-
+		// 空いているSpawnerを探す		
 		auto spawner = FindFreeSpawner(it->path);
 
 		if (!spawner)
@@ -59,12 +43,6 @@ void ItemManager::Update()
 			++it;
 			continue;
 		}
-
-		//====================================================
-		// 出現
-		// SpawnItem内で RegisterWorldItem されるので、
-		// 同フレームの次の判定にも数が反映される（二重出現しない）
-		//====================================================
 
 		spawner->SpawnItem();
 
@@ -80,12 +58,7 @@ void ItemManager::Reset()
 	m_maxCountCache.clear();
 }
 
-//============================================================
-// 登録
-//============================================================
-
-void ItemManager::RegisterSpawner(
-	const std::shared_ptr<ItemSpawner>& spawner)
+void ItemManager::RegisterSpawner(const std::shared_ptr<ItemSpawner>& spawner)
 {
 	if (!spawner)
 	{
@@ -102,8 +75,7 @@ void ItemManager::RegisterSpawner(
 	}
 }
 
-void ItemManager::RegisterWorldItem(
-	const std::shared_ptr<Item>& item)
+void ItemManager::RegisterWorldItem(const std::shared_ptr<Item>& item)
 {
 	if (!item)
 	{
@@ -112,10 +84,6 @@ void ItemManager::RegisterWorldItem(
 
 	m_worldItems.push_back(item);
 }
-
-//============================================================
-// 生成
-//============================================================
 
 std::shared_ptr<Item> ItemManager::SpawnDropped(
 	const std::string& path,
@@ -138,9 +106,7 @@ std::shared_ptr<Item> ItemManager::SpawnDropped(
 
 	item->Drop(pos, dir);
 
-	item->SetScale(
-		item->GetItemData().GetWorldScale() *
-		SceneManager::Instance().GetSceneScale());
+	item->SetScale(item->GetItemData().GetWorldScale() * SceneManager::Instance().GetSceneScale());
 
 	SceneManager::Instance().AddObject(item);
 
@@ -149,14 +115,8 @@ std::shared_ptr<Item> ItemManager::SpawnDropped(
 	return item;
 }
 
-//============================================================
-// 通知
-//============================================================
-
 void ItemManager::OnPickedUp(const Item& item)
 {
-	// Spawnerが出したItemだけ補充対象。
-	// 交換で落としたDroppedは補充しない
 	if (item.GetMode() != ItemMode::Spawned)
 	{
 		return;
@@ -164,10 +124,6 @@ void ItemManager::OnPickedUp(const Item& item)
 
 	m_pending.push_back({ item.GetItemPath(), m_respawnTime });
 }
-
-//============================================================
-// 数の取得
-//============================================================
 
 int ItemManager::CountInWorld(const std::string& path) const
 {
@@ -199,8 +155,7 @@ int ItemManager::CountHeld(const std::string& path) const
 
 	int count = 0;
 
-	for (const auto& character :
-		SceneManager::Instance().FindObjects<CharacterBase>())
+	for (const auto& character : SceneManager::Instance().FindObjects<CharacterBase>())
 	{
 		if (!character)
 		{
@@ -238,12 +193,7 @@ int ItemManager::GetMaxCount(const std::string& path)
 	return maxCount;
 }
 
-//============================================================
-// Private
-//============================================================
-
-std::shared_ptr<ItemSpawner> ItemManager::FindFreeSpawner(
-	const std::string& path)
+std::shared_ptr<ItemSpawner> ItemManager::FindFreeSpawner(const std::string& path)
 {
 	const std::string key = Normalize(path);
 
@@ -276,9 +226,7 @@ std::shared_ptr<ItemSpawner> ItemManager::FindFreeSpawner(
 		return nullptr;
 	}
 
-	// 同種の空き地点からランダムに選ぶ（拾われた場所以外にも出る）
-	int index = KdRandom::GetInt(
-		0, static_cast<int>(candidates.size()) - 1);
+	int index = KdRandom::GetInt(0, static_cast<int>(candidates.size()) - 1);
 
 	return candidates[index];
 }

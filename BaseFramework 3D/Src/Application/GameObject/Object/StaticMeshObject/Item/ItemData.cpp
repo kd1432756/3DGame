@@ -14,20 +14,20 @@ namespace
 const ItemData* ItemData::Get(const std::string& path)
 {
 	std::string key = path;
-	std::replace(key.begin(), key.end(), '\\', '/');   // Loadと同じ正規化
+	std::replace(key.begin(), key.end(), '\\', '/');   // パスの正規化
 
 	auto& cache = Cache();
 
 	auto it = cache.find(key);
 	if (it != cache.end())
 	{
-		return it->second.get();   // 失敗済みならnullptr
+		return it->second.get();
 	}
 
 	auto data = std::make_unique<ItemData>();
 	if (!data->Load(key))
 	{
-		cache.emplace(key, nullptr);   // 失敗も記録して、毎回ファイルを開かない
+		cache.emplace(key, nullptr);
 		return nullptr;
 	}
 
@@ -41,7 +41,7 @@ using json = nlohmann::json;
 
 namespace
 {
-	// [x,y,z] を安全に読む。形式が違えば既定値のまま
+	// [x,y,z] 座標を読む
 	bool ReadVector3(const json& j, const char* key, Math::Vector3& out)
 	{
 		auto it = j.find(key);
@@ -95,14 +95,10 @@ bool ItemData::Load(const std::string& path)
 	m_maxCount = j.value("MaxCount", -1);
 	m_dangerous = j.value("Dangerous", false);
 
-	//--------------------------------------------------
-	// 用途
-	//--------------------------------------------------
 	m_uses.clear();
 
 	if (j.contains("Uses") && j["Uses"].is_array())
 	{
-		// 新形式: "Uses": [ { "Action": "...", "Target": "...", "Text": "..." } ]
 		for (const auto& u : j["Uses"])
 		{
 			ItemUse use;
@@ -112,29 +108,30 @@ bool ItemData::Load(const std::string& path)
 			m_uses.push_back(std::move(use));
 		}
 	}
-	else
-	{
-		// 旧形式: "Action" / "Target" 単体 → Use 1件に変換
-		const std::string actionStr = j.value("Action", "None");
 
-		ItemUse use;
-		use.action = ParseAction(actionStr);
-		use.target = j.value("Target", "None");
-		use.actionText = actionStr;	// 旧仕様: 文言にAction名をそのまま使っていた
+	m_worldScale = {
+		j["WorldScale"][0].get<float>(),
+		j["WorldScale"][1].get<float>(),
+		j["WorldScale"][2].get<float>()
+	};
 
-		if (use.action != ItemAction::None)
-		{
-			m_uses.push_back(std::move(use));
-		}
-	}
+	m_handOffset = {
+		j["HandOffset"][0].get<float>(),
+		j["HandOffset"][1].get<float>(),
+		j["HandOffset"][2].get<float>()
+	};
 
-	//--------------------------------------------------
-	// 持ち手・スケール
-	//--------------------------------------------------
-	ReadVector3(j, "WorldScale", m_worldScale);
-	ReadVector3(j, "HandOffset", m_handOffset);
-	ReadVector3(j, "HandRotation", m_handRotation);
-	ReadVector3(j, "HandScale", m_handScale);
+	m_handRotation = {
+		j["HandRotation"][0].get<float>(),
+		j["HandRotation"][1].get<float>(),
+		j["HandRotation"][2].get<float>()
+	};
+
+	m_handScale = {
+		j["HandScale"][0].get<float>(),
+		j["HandScale"][1].get<float>(),
+		j["HandScale"][2].get<float>()
+	};
 
 	return true;
 }

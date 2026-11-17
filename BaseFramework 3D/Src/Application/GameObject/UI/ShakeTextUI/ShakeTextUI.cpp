@@ -9,9 +9,7 @@ ShakeTextUI::ShakeTextUI()
 
 void ShakeTextUI::OnUpdate(float dt, float t)
 {
-	// -------------------------
-	// 回転揺れ(前半60%だけ、徐々に弱く)
-	// -------------------------
+	// 回転揺れ(６割り超えたら緩める)
 	if (t < 0.6f)
 	{
 		const float shakeT = t / 0.6f;
@@ -24,8 +22,5 @@ void ShakeTextUI::OnUpdate(float dt, float t)
 		m_angle = 0.0f;
 	}
 
-	// -------------------------
-	// フェード
-	// -------------------------
 	m_alpha = CalcFadeAlpha(t);
 }

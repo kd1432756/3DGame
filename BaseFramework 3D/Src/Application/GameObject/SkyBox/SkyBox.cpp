@@ -17,18 +17,12 @@ void SkyBox::Init()
 	SetScale(50.0f);
 	SetRot({ 0,-75,0 });
 
-	// 初期時刻に合わせてSkyBoxのアルファ値を設定
 	float time = DayCycle::Instance().GetCurrentTime();
 
-	auto CalcAlpha = [](float t, float start,
-		float peakStart, float peakEnd, float end)
-		{
+	auto CalcAlpha = [](float t, float start,		float peakStart, float peakEnd, float end)	{
 			if (t < start || t > end) return 0.0f;
 			if (t >= peakStart && t <= peakEnd) return 1.0f;
-
-			if (t < peakStart)
-				return (t - start) / (peakStart - start);
-
+			if (t < peakStart) return (t - start) / (peakStart - start);
 			return (end - t) / (end - peakEnd);
 		};
 
@@ -42,7 +36,6 @@ void SkyBox::Init()
 
 void SkyBox::Update()
 {
-	// DayCycleから現在の時刻を取得 (6.0f ～ 22.0f)
 	float time = DayCycle::Instance().GetCurrentTime();
 
 	float normalizedTime = (time - 6.0f) / 16.0f;
@@ -53,20 +46,18 @@ void SkyBox::Update()
 
 	m_rot.y = startDeg + (endDeg - startDeg) * normalizedTime;
 
-	// 修正したCalcAlpha関数（安全に補間を行えるように調整）
+	// CalcAlpha関数
 	auto CalcAlpha = [](float t, float start, float peakStart, float peakEnd, float end) {
 		if (t < start || t > end) return 0.0f;
 		if (t >= peakStart && t <= peakEnd) return 1.0f;
-		if (t < peakStart) {
-			return (t - start) / (peakStart - start);
-		}
+		if (t < peakStart) { return (t - start) / (peakStart - start); }
 		return (end - t) / (end - peakEnd);
 		};
 
-	// --- 常に背景が透けないように時間が連続して繋がるように調整 ---
-	// Day     : 6:00 ～ 17:00 (完全にDayなのは 6:00～15:00)
+	// 常に背景が透けないように時間が連続して繋がるように調整
+	// Day       : 6:00 ～ 17:00 (完全にDayなのは 6:00～15:00)
 	// Evening : 15:00 ～ 19:30 (完全にEveningなのは 16:30～18:00)
-	// Night   : 18:00 ～ 22:00 (完全にNightなのは 19:30～22:00)
+	// Night     : 18:00 ～ 22:00 (完全にNightなのは 19:30～22:00)
 
 	m_dayAlpha = CalcAlpha(time, 6.0f, 6.0f, 15.0f, 17.0f);
 	m_eveningAlpha = CalcAlpha(time, 15.0f, 16.5f, 18.0f, 19.5f);
@@ -79,7 +70,6 @@ void SkyBox::DrawUnLit()
 {
 	KdShaderManager::Instance().ChangeBlendState(KdBlendState::Alpha);
 	KdShaderManager::Instance().ChangeDepthStencilState(KdDepthStencilState::ZWriteDisable);
-
 
 	// Day
 	KdShaderManager::Instance().m_StandardShader.DrawModel(

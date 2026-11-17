@@ -12,7 +12,7 @@ public:
 		m_progress = progress;
 	}
 
-	// ※ 現在は "Loading" 固定表示のため描画には使っていない(呼び出し側の互換用)
+	// パスを表示する場合
 	void SetCurrentPath(const std::string& path)
 	{
 		m_currentPath = path;

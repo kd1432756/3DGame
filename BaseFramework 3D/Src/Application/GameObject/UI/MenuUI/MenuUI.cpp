@@ -1,4 +1,4 @@
-#include "MenuUI.h"
+﻿#include "MenuUI.h"
 
 void MenuUI::Init()
 {
@@ -16,8 +16,8 @@ void MenuUI::UpdateMouse()
 {
 	m_mousePos = GetMousePos();
 
-	// クリックした瞬間だけ true にする
-	const bool click = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
+	// クリックした瞬間だけtrue
+	const bool click = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) != false;
 	m_clickTrigger = click && !m_prevClick;
 	m_prevClick = click;
 }
@@ -49,8 +49,7 @@ void MenuUI::DrawButtons(const MenuButton* buttons, int count,
 		Math::Vector2 drawPos = btn.pos;
 		drawPos.y += offsetY;
 
-		DrawLabel(drawPos, btn.hover ? hoverColor : normalColor,
-			btn.font, btn.text);
+		DrawLabel(drawPos, btn.hover ? hoverColor : normalColor, btn.font, btn.text);
 	}
 }
 
@@ -75,7 +74,7 @@ void MenuUI::UpdateFade()
 
 	m_fadeAlpha = (std::min)(m_fadeAlpha + kFadeSpeed * DeltaTime(), 1.0f);
 
-	// フェードに合わせて BGM を小さくする
+	// フェードに合わせてBGMを小さくする
 	if (m_fadeBgm)
 	{
 		m_fadeBgm->SetVolume((std::max)(m_fadeBgmVolume * (1.0f - m_fadeAlpha), 0.0f));

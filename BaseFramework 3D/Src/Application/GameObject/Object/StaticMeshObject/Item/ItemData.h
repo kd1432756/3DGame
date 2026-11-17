@@ -23,15 +23,11 @@ public:
 
 	bool Load(const std::string& path);
 
-	// キャッシュ経由で取得（失敗時はnullptr）。返したポインタは有効なまま
+	// キャッシュ経由で取得
 	static const ItemData* Get(const std::string& path);
 
-	// .itemファイルを編集して再読み込みしたい時用
 	static void ClearCache();
 
-	//--------------------------------------------------
-	// 基本情報
-	//--------------------------------------------------
 	const std::string& GetName() const { return m_name; }
 	const std::string& GetModelPath() const { return m_modelPath; }
 	const std::string& GetIconPath() const { return m_iconPath; }
@@ -44,12 +40,9 @@ public:
 
 	int GetMaxCount() const { return m_maxCount; }
 
-	//--------------------------------------------------
-	// 用途
-	//--------------------------------------------------
 	const std::vector<ItemUse>& GetUses() const { return m_uses; }
 
-	// 指定の (action, target) で使えるか。使えるならそのUseを返す
+	// 指定の (action, target) で使えるか
 	const ItemUse* FindUse(ItemAction action, const std::string& target) const
 	{
 		for (const auto& use : m_uses)
@@ -62,7 +55,6 @@ public:
 		return nullptr;
 	}
 
-	// 修復用途を1つでも持つ
 	bool HasRepairUse() const
 	{
 		for (const auto& use : m_uses)
@@ -72,7 +64,6 @@ public:
 		return false;
 	}
 
-	// いたずら用途（Repair/None以外）を1つでも持つ
 	bool HasPrankUse() const
 	{
 		for (const auto& use : m_uses)
@@ -82,10 +73,6 @@ public:
 		}
 		return false;
 	}
-
-	//--------------------------------------------------
-	// 警察
-	//--------------------------------------------------
 
 	// 危険物フラグ
 	bool IsDangerous() const { return m_dangerous; }

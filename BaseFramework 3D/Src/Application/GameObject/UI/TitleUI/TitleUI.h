@@ -10,11 +10,11 @@ public:
 	void DrawSprite() override;
 
 protected:
-	// フェードが終わったらローディングシーンへ
+
 	void OnFadeOutFinished() override;
 
 private:
-	// ボタン
+	
 	enum ButtonID { BtnStart, BtnHowTo, BtnExit, BtnMax };
 	MenuButton m_buttons[BtnMax];
 
@@ -27,7 +27,7 @@ private:
 	int  m_howToPage = 0;
 	bool m_showHowTo = false;
 
-	// 操作説明（アイコン＋説明文）
+	// 操作説明
 	struct ControlInfo
 	{
 		std::vector<std::shared_ptr<KdTexture>> icons;

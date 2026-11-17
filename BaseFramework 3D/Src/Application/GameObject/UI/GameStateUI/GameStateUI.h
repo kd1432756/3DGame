@@ -7,7 +7,7 @@ class GameScene;
 class GameStateUI : public UIBase
 {
 public:
-	// カウントダウン中はゲームが止まっているので常時更新
+	// 常時更新
 	GameStateUI() : UIBase(true) {}
 
 	void Init() override;

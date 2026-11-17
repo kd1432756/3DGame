@@ -12,11 +12,9 @@ Math::Vector2 UIBase::GetMousePos()
 {
 	POINT p;
 
-	// ディスプレイ基準 → ウィンドウ内基準(左上が(0,0))
 	GetCursorPos(&p);
 	ScreenToClient(Application::Instance().GetWindowHandle(), &p);
 
-	// 画面中央原点・Y上向きに変換
 	return Math::Vector2{
 		static_cast<float>(p.x - kHalfW),
 		static_cast<float>(-(p.y - kHalfH)) };
@@ -33,8 +31,7 @@ bool UIBase::HitTestRect(const Math::Vector2& point,
 
 void UIBase::DrawFullScreenBox(const Math::Color& color)
 {
-	KdShaderManager::Instance().m_spriteShader.DrawBox(
-		0, 0, kHalfW, kHalfH, &color);
+	KdShaderManager::Instance().m_spriteShader.DrawBox(0, 0, kHalfW, kHalfH, &color);
 }
 
 void UIBase::DrawGauge(int x, int y, int halfW, int halfH, float ratio,
@@ -45,7 +42,7 @@ void UIBase::DrawGauge(int x, int y, int halfW, int halfH, float ratio,
 	// 背景
 	sprite.DrawBox(x, y, halfW, halfH, &bgColor);
 
-	// 前景（左詰め）
+	// ゲージ
 	ratio = std::clamp(ratio, 0.0f, 1.0f);
 	const int currentW = static_cast<int>(halfW * ratio);
 	if (currentW <= 0) return;
@@ -67,7 +64,7 @@ void UIBase::DrawKeyAndText(const KdTexture* keyTex, const Math::Vector2& pos,
 {
 	auto& sprite = KdShaderManager::Instance().m_spriteShader;
 
-	// アイコンサイズ（縦横比維持）
+	// アイコンサイズ
 	const float iconW = iconH *
 		static_cast<float>(keyTex->GetInfo().Width) /
 		static_cast<float>(keyTex->GetInfo().Height);
@@ -77,7 +74,7 @@ void UIBase::DrawKeyAndText(const KdTexture* keyTex, const Math::Vector2& pos,
 		static_cast<int>(font), text, false);
 	const Math::Vector2 textSize = sprite.CalcFontSize(fontSprite);
 
-	// 「アイコン + 隙間 + 文字」全体を中央揃え
+	// アイコン & 文字
 	const float totalW = iconW + gap + textSize.x;
 	const float left = pos.x - totalW * 0.5f;
 

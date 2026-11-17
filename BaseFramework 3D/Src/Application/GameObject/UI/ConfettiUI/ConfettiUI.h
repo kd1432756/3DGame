@@ -5,7 +5,7 @@
 class ConfettiUI : public UIBase
 {
 public:
-	// ポーズ中も動くので常時更新
+	// 常時更新
 	ConfettiUI() : UIBase(true) {}
 	~ConfettiUI() override {}
 
@@ -13,9 +13,7 @@ public:
 	void Update() override;
 	void DrawSprite() override;
 
-	// 発射開始（クラッカー + 上から降らせる）
 	void Start();
-	// 上から降らせるのを止める（残りの紙吹雪は落ち切るまで描画）
 	void Stop();
 
 private:
@@ -23,30 +21,39 @@ private:
 	{
 		Math::Vector2 pos;
 		Math::Vector2 vel;
-		float rot = 0.0f;		// 回転角(rad)
+		float rot = 0.0f;
 		float rotSpeed = 0.0f;
-		float flip = 0.0f;		// 裏返り用の位相
+		float flip = 0.0f;
 		float flipSpeed = 0.0f;
-		float swayAmp = 0.0f;	// 横揺れの強さ
+		float swayAmp = 0.0f;
 		float w = 0.0f;
 		float h = 0.0f;
 		Math::Color color;
 	};
 
-	void Burst(bool isLeft);	// クラッカー発射
-	void SpawnRain();			// 上から1個生成
-	Particle MakeBase();		// 共通パラメータ生成
+	void Burst(bool isLeft);
+	void SpawnRain();
+	Particle MakeBase();
 
 	std::vector<Particle> m_particles;
 
 	bool  m_active = false;
 	float m_rainTimer = 0.0f;
 
-	// ---- 調整用パラメータ ----
-	static constexpr int   kBurstCount = 80;		// 片側の発射数
+	static constexpr int   kBurstCount = 80;
 	static constexpr int   kMaxParticles = 400;
-	static constexpr float kGravity = 300.0f;	// 下向き加速
-	static constexpr float kDrag = 2.5f;	// 空気抵抗（大きいほど早く減速）
-	static constexpr float kRainInterval = 0.04f;	// 上から降らせる間隔(秒)
-	static constexpr float kBottom = -400.0f;	// これより下で消す
+	static constexpr float kGravity = 300.0f;
+	static constexpr float kDrag = 2.5f;
+	static constexpr float kRainInterval = 0.04f;
+	static constexpr float kBottom = -400.0f;
+
+	static inline Math::Color kColors[] =
+	{
+		{ 1.0f, 0.3f, 0.3f, 1.0f },	// 赤
+		{ 1.0f, 0.8f, 0.2f, 1.0f },	// 黄
+		{ 0.3f, 0.8f, 0.4f, 1.0f },	// 緑
+		{ 0.3f, 0.6f, 1.0f, 1.0f },	// 青
+		{ 1.0f, 0.5f, 0.8f, 1.0f },	// ピンク
+		{ 0.7f, 0.4f, 1.0f, 1.0f },	// 紫
+	};
 };

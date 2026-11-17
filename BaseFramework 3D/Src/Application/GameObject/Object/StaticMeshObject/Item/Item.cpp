@@ -5,7 +5,6 @@
 #include "ItemSpawner.h"
 #include "ItemManager.h"
 
-
 void Item::Init()
 {
 	if (!m_modelPath.empty())
@@ -20,13 +19,6 @@ void Item::Update()
 {
 	switch (m_mode)
 	{
-	case ItemMode::Spawned:
-
-	
-		break;
-	case ItemMode::InInventory:
-
-		break;
 	case ItemMode::Dropped:
 		UpdateGravity();
 		UpdateFriction();
@@ -47,21 +39,17 @@ void Item::DrawLit()
 	if (!m_spModel) return;
 	StaticMeshObject::DrawLit();
 
-	KdShaderManager::Instance().
-		m_StandardShader.SetEnableOutLineDraw(true);
-	KdShaderManager::Instance().
-		m_StandardShader.DrawModel(*m_spModel, m_mWorld);
+	// アウトライン描画
+	KdShaderManager::Instance().m_StandardShader.SetEnableOutLineDraw(true);
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
 }
 
 void Item::GenerateDepthMapFromLight()
 {
 	if (!m_spModel) return;
-
 	if (m_mode == ItemMode::InInventory)return;
 
-	KdShaderManager::Instance().m_StandardShader.DrawModel(
-		*m_spModel,
-		m_mWorld);
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
 }
 
 bool Item::LoadItem(const std::string& path)
@@ -71,7 +59,6 @@ bool Item::LoadItem(const std::string& path)
 		return false;
 	}
 
-	// StaticMeshObjectへモデルを反映
 	SetModelPath(m_itemData.GetModelPath());
 
 	return true;
@@ -86,10 +73,7 @@ void Item::Interact(std::shared_ptr<Player> player)
 
 	Inventory& inventory = player->GetInventory();
 
-	//============================================================
 	// 空きスロットがあれば通常通り拾う
-	//============================================================
-
 	if (inventory.HasEmptySlot())
 	{
 		Pickup(inventory);
@@ -97,22 +81,16 @@ void Item::Interact(std::shared_ptr<Player> player)
 		return;
 	}
 
-	//============================================================
 	// 満杯 → 選択中スロットと交換
-	//============================================================
-
 	int selectIndex = inventory.GetSelectIndex();
 
 	if (selectIndex < 0)
 	{
-		// 何も選択していない場合は交換不可（拾えない）
+		// 何も選択していない場合は交換不可
 		return;
 	}
 
-	player->SwapItem(
-		std::dynamic_pointer_cast<Item>(shared_from_this()),
-		selectIndex
-	);
+	player->SwapItem(std::dynamic_pointer_cast<Item>(shared_from_this()), selectIndex);
 }
 
 bool Item::Pickup(Inventory& inventory, int replaceIndex)
@@ -206,6 +184,34 @@ void Item::UpdateFriction()
 	}
 }
 
+void Item::UpdateWorldMatrix()
+{
+	m_pos += m_velocity;
+	m_pos.y += m_gravity;
+
+	Math::Matrix rotMat =
+		Math::Matrix::CreateFromYawPitchRoll(
+			DirectX::XMConvertToRadians(m_rot.y),
+			DirectX::XMConvertToRadians(m_rot.x),
+			DirectX::XMConvertToRadians(m_rot.z));
+
+	m_mWorld =
+		Math::Matrix::CreateScale(m_scale) *
+		rotMat *
+		Math::Matrix::CreateTranslation(m_pos);
+}
+
+void Item::UpdateDropTimer()
+{
+	m_dropTimer -= 1.0f / 60.0f;
+
+	if (m_dropTimer <= 0.0f)
+	{
+		Destroy();
+		return;
+	}
+}
+
 void Item::CheckGround()
 {
 	m_isGround = false;
@@ -263,34 +269,6 @@ void Item::CheckGround()
 		m_gravity = 0.0f;
 		m_velocity.y *= 0.5f;
 		m_isGround = true;
-	}
-}
-
-void Item::UpdateWorldMatrix()
-{
-	m_pos += m_velocity;
-	m_pos.y += m_gravity;
-
-	Math::Matrix rotMat =
-		Math::Matrix::CreateFromYawPitchRoll(
-			DirectX::XMConvertToRadians(m_rot.y),
-			DirectX::XMConvertToRadians(m_rot.x),
-			DirectX::XMConvertToRadians(m_rot.z));
-
-	m_mWorld =
-		Math::Matrix::CreateScale(m_scale) *
-		rotMat *
-		Math::Matrix::CreateTranslation(m_pos);
-}
-
-void Item::UpdateDropTimer()
-{
-	m_dropTimer -= 1.0f / 60.0f;
-
-	if (m_dropTimer <= 0.0f)
-	{
-		Destroy();
-		return;
 	}
 }
 

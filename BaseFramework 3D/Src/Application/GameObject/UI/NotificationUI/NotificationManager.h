@@ -19,12 +19,11 @@ private:
 	void ApplyStackPositions();
 	float GetSlotY(size_t index) const;
 
-	// ---- 調整用パラメータ ----
 	static constexpr size_t kMaxActive = 3;
-	static constexpr float  kBaseY = 180.0f;	// 一番上のY
-	static constexpr float  kLineSpace = 80.0f;		// 行間
+	static constexpr float  kBaseY = 180.0f;	// 一番上の座標
+	static constexpr float  kLineSpace = 80.0f;
 
-	std::deque<std::string>                      m_pending;	// 表示待ち
+	std::deque<std::string> m_pending;	// 表示待ち
 	std::vector<std::shared_ptr<NotificationUI>> m_active;	// [0]が一番上
 
 public:

@@ -4,8 +4,7 @@
 
 class Player;
 
-class Ground :
-	public StaticMeshObject
+class Ground : public StaticMeshObject
 {
 public:
 
@@ -20,8 +19,6 @@ public:
 	};
 
 	void Init() override;
-
-	void GenerateDepthMapFromLight() override;
 
 	const char* GetTypeName() const override
 	{

@@ -4,10 +4,9 @@
 
 void ArrestCamera::Init()
 {
-	// 親クラスの初期化呼び出し
 	CameraBase::Init();
 
-	// 注視点
+	// 仮注視点
 	m_mLocalPos = Math::Matrix::CreateTranslation(0, 1.5f, -1.0f);
 
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
@@ -19,19 +18,17 @@ void ArrestCamera::Init()
 
 void ArrestCamera::PostUpdate()
 {
-	// 目標とするTPSの通常距離（例: -10.0f）と、FPSの近い距離（例: -1.0f または 0.0f）
-	float startZ = -0.0f * SceneManager::Instance().GetSceneScale();
-	float targetZ = -10.0f * SceneManager::Instance().GetSceneScale();
-	float currentZ = -10.0f * SceneManager::Instance().GetSceneScale();
+	float startZ = -0.0f * SceneManager::Instance().GetSceneScale();	// FPSの位置
+	float targetZ = -10.0f * SceneManager::Instance().GetSceneScale();	// 離れた位置
+	float currentZ = -10.0f * SceneManager::Instance().GetSceneScale();	// 現在位置	
 
 	// 状態に応じたズーム処理
 	if (m_state == State::PullingOut)
 	{
 		m_transitionTimer += 1.0f / 60.0f;;
-		float t = m_transitionTimer / m_transitionDuration;
-		if (t >= 1.0f) { t = 1.0f; m_state = State::Normal; } // 引き終わり
+		float t = m_transitionTimer / kTransitionDuration;
+		if (t >= 1.0f) { t = 1.0f; m_state = State::Normal; } 
 
-		// 補間（イージングを入れたい場合はここに数式を挟むと滑らかになります）
 		currentZ = std::lerp(startZ, targetZ, t);
 	}
 	else if (m_state == State::Normal)
@@ -41,18 +38,16 @@ void ArrestCamera::PostUpdate()
 	else if (m_state == State::PushingIn)
 	{
 		m_transitionTimer += 1.0f / 60.0f;
-		float t = m_transitionTimer / m_transitionDuration;
-		if (t >= 1.0f) { t = 1.0f; m_isFinished = true; } // ズームイン完了
+		float t = m_transitionTimer / kTransitionDuration;
+		if (t >= 1.0f) { t = 1.0f; m_isFinished = true; }
 
-		// 逆に遠くから近く（FPSの目線）へ戻る
 		currentZ = std::lerp(targetZ, startZ, t);
 	}
 
-	// ローカル位置のZを更新（高さ1.5f、ZをcurrentZにする）
+	// ローカル位置のZを更新（高さm_height、ZをcurrentZにする）
 	m_mLocalPos = Math::Matrix::CreateTranslation(0.0f, m_height, currentZ);
 
-	// ターゲットの行列(有効な場合利用する)
-	Math::Matrix								_targetMat = Math::Matrix::Identity;
+	Math::Matrix _targetMat = Math::Matrix::Identity;
 	const std::shared_ptr<const KdGameObject>	_spTarget = m_wpTarget.lock();
 	if (_spTarget)
 	{
@@ -69,18 +64,13 @@ void ArrestCamera::PostUpdate()
 	//========================================
 	// めり込み防止処理
 	//========================================
-
 	KdCollider::RayInfo rayInfo;
-
 	// Rayの開始位置：ターゲット
 	rayInfo.m_pos = _spTarget->GetPos();
-
 	// 少し高さを加える
 	rayInfo.m_pos.y += m_height;
-
 	// ターゲットからカメラへの方向
 	rayInfo.m_dir = idealPos - rayInfo.m_pos;
-
 	// Rayの長さ
 	rayInfo.m_range = rayInfo.m_dir.Length();
 
@@ -95,19 +85,14 @@ void ArrestCamera::PostUpdate()
 	// 最も近い衝突位置を探す
 	float minDistance = rayInfo.m_range;
 	bool hit = false;
-
 	Math::Vector3 hitPos = {};
 
 	for (std::weak_ptr<KdGameObject> wpGameObj : m_wpHitObjectList)
 	{
 		std::shared_ptr<KdGameObject> spGameObj = wpGameObj.lock();
-
 		if (!spGameObj) continue;
-
 		std::list<KdCollider::CollisionResult> retRayList;
-
 		spGameObj->Intersects(rayInfo, &retRayList);
-
 		for (auto& ret : retRayList)
 		{
 			float distance = (ret.m_hitPos - rayInfo.m_pos).Length();
@@ -129,9 +114,7 @@ void ArrestCamera::PostUpdate()
 	{
 		// 衝突位置から少し手前に移動
 		const float offset = 0.4f;
-
 		Math::Vector3 cameraPos = hitPos - rayInfo.m_dir * offset;
-
 		m_mWorld.Translation(cameraPos);
 	}
 }

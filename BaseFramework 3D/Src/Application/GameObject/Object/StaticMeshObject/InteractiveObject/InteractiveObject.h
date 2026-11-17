@@ -19,7 +19,7 @@ enum class InteractiveState
 enum class DamageSource
 {
 	None,
-	Initial,	// 開始時から壊れている
+	Initial,		// 開始時から壊れている
 	NPC			// NPCに壊された
 };
 
@@ -44,7 +44,7 @@ struct InteractiveAction
 
 	bool needItem = true;
 
-	std::string actionText = "";	// アイテムなし用テキスト
+	std::string actionText = "";
 
 	bool npcCanUse = true;
 };
@@ -56,32 +56,17 @@ class InteractiveObject
 public:
 
 	void DrawLit() override;
-
 	void DrawBright() override;
 
-	//==============================
-	// Usable
-	//==============================
+	bool CanUse(const std::shared_ptr<Player>& player) override;
+	void Use(const std::shared_ptr<Player>& player) override;
+	virtual float GetUseTime(const std::shared_ptr<Player>& player) const;
 
-	bool CanUse(
-		const std::shared_ptr<Player>& player) override;
-	void Use(
-		const std::shared_ptr<Player>& player) override;
-	virtual float GetUseTime(
-		const std::shared_ptr<Player>& player) const;
+	virtual std::string GetActionText(const std::shared_ptr<Player>& player) const;
 
-	virtual std::string GetActionText(
-		const std::shared_ptr<Player>& player) const;
-
-	bool CanNPCUse(
-		const ItemData& item,
-		const std::string& npcName) const override;
-	float GetNPCUseTime(
-		const ItemData& itemData,
-		const std::string& npcName) const;
-	void NPCUse(
-		const ItemData& item,
-		const std::shared_ptr<Neighbor>& npc) override;
+	bool CanNPCUse(const ItemData& item, const std::string& npcName) const override;
+	float GetNPCUseTime(const ItemData& itemData, const std::string& npcName) const;
+	void NPCUse(const ItemData& item, const std::shared_ptr<Neighbor>& npc) override;
 
 	bool  CanNPCUseBare(const std::string& npcName) const;
 	float GetNPCUseTimeBare(const std::string& npcName) const;
@@ -91,7 +76,7 @@ public:
 
 	bool SetInitialDamaged();
 	DamageSource GetDamageSource() const { return m_damageSource; }
-	float GetDamagedTime() const { return m_damagedTime; }	// 壊れた時刻(DayCycleの時刻)
+	float GetDamagedTime() const { return m_damagedTime; }
 
 	bool CanBeTargetedBy(const CharacterBase* npc) const;
 	bool TryReserve(const std::shared_ptr<CharacterBase>& npc);
@@ -99,34 +84,27 @@ public:
 
 	float GetSecondsSinceDamaged() const;
 
-	// このアイテムで、今後NPCが壊せる可能性があるか(状態は問わない)
+	// NPCが壊せる可能性があるか
 	bool CanEverBeBrokenBy(const ItemData& item) const;
 
 protected:
 
-	// 実際に状態が変わった後の特殊処理
-	virtual void OnAction(
-		const InteractiveAction& action,
-		const std::shared_ptr<Player>& player)
+	// 状態が変わった後の処理
+	virtual void OnAction(const InteractiveAction& action, const std::shared_ptr<Player>& player)
 	{}
 
 	// アクション登録
-	void RegisterAction(
-		const InteractiveAction& action);
+	void RegisterAction(const InteractiveAction& action);
 
-	const InteractiveAction* FindAction(
-		const std::shared_ptr<Player>& player) const;
+	const InteractiveAction* FindAction(const std::shared_ptr<Player>& player) const;
 
-	const InteractiveAction* FindNPCAction(
-		const ItemData& item,
-		const std::string& npcName) const;
+	const InteractiveAction* FindNPCAction(const ItemData& item, const std::string& npcName) const;
 
 	const InteractiveAction* FindNPCBareAction(const std::string& npcName) const;
-	void ExecuteNPCAction(const InteractiveAction& action,
-		const std::shared_ptr<Neighbor>& npc);
+	void ExecuteNPCAction(const InteractiveAction& action, const std::shared_ptr<Neighbor>& npc);
 
-	virtual void OnInitialDamage() {}	// 初期損壊の時だけ呼ばれる演出用
-	void NotifyPlayer(const InteractiveAction& action);	// NotifyOwner の代わり
+	virtual void OnInitialDamage() {} // 初期損壊の時
+	void NotifyPlayer(const InteractiveAction& action);
 	void OnStateChanged(DamageSource source);
 
 	// 現在の状態
@@ -142,6 +120,6 @@ protected:
 	std::weak_ptr<CharacterBase> m_reservedBy;
 	float m_repairedTime = -100.0f;
 
-	// 修復直後に再び壊されない時間(ゲーム内時間。0.5 = 実時間約10秒)
-	const float m_repairCooldownHours = 0.5f;
+	// 修復直後に壊されない(ゲーム内時間)
+	static constexpr float kRepairCooldownHours = 0.5f;
 };

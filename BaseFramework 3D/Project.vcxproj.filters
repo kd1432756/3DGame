@@ -193,9 +193,6 @@
     <Filter Include="Src\Application\Scene\LoadingScene">
       <UniqueIdentifier>{ff135c06-a08e-479d-9f07-56f3e869a58f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Camera\EventCamera">
-      <UniqueIdentifier>{fe386973-202f-4d1c-a59d-0d1fd6ce46ae}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Library\Clipper2lib">
       <UniqueIdentifier>{f8753e9e-ef11-4ef7-981c-e61c53559782}</UniqueIdentifier>
     </Filter>
@@ -342,6 +339,9 @@
     </Filter>
     <Filter Include="Src\Application\GameObject\UI\BonusUI">
       <UniqueIdentifier>{9fa2b85a-9d3d-47bc-80b9-d41f7cccf37e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Camera\EventCamera">
+      <UniqueIdentifier>{35821b10-f7f9-4ede-90aa-194152323d32}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -663,9 +663,6 @@
     <ClInclude Include="Src\Application\Scene\LoadingScene\LoadingScene.h">
       <Filter>Src\Application\Scene\LoadingScene</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Camera\EventCamera\EventCamera.h">
-      <Filter>Src\Application\GameObject\Camera\EventCamera</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\System\Navigation\NavMesh\NavMeshGrid.h">
       <Filter>Src\Application\System\Navigation\NavMesh</Filter>
     </ClInclude>
@@ -845,6 +842,9 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\UI\BonusUI\BonusUI.h">
       <Filter>Src\Application\GameObject\UI\BonusUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Camera\EventCamera\EventCamera.h">
+      <Filter>Src\Application\GameObject\Camera\EventCamera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1124,9 +1124,6 @@
     <ClCompile Include="Src\Application\Scene\LoadingScene\LoadingScene.cpp">
       <Filter>Src\Application\Scene\LoadingScene</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Camera\EventCamera\EventCamera.cpp">
-      <Filter>Src\Application\GameObject\Camera\EventCamera</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\System\Navigation\NavMesh\NavMeshGrid.cpp">
       <Filter>Src\Application\System\Navigation\NavMesh</Filter>
     </ClCompile>
@@ -1303,6 +1300,9 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\BonusUI\BonusUI.cpp">
       <Filter>Src\Application\GameObject\UI\BonusUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Camera\EventCamera\EventCamera.cpp">
+      <Filter>Src\Application\GameObject\Camera\EventCamera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

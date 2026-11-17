@@ -25,31 +25,25 @@ void HinderUI::Update()
 
 void HinderUI::DrawSprite()
 {
-	//============================================================
-	// 妨害可能プロンプト（InteractionPromptの下に出す）
-	//============================================================
+	// 「Hinder」
 	if (m_canHinder)
 	{
 		DrawKeyAndText(&m_texKeyF, Math::Vector2{ 0, 90 }, "Hinder", kWhiteColor);
 	}
 
-	//============================================================
-	// 妨害中：残り時間バー + 連打指示
-	//============================================================
 	if (m_isHindering)
 	{
-		// 残り時間バー（左詰め）
+		// バー
 		DrawGauge(0, -140, 120, 8, m_hinderRatio,
 			Math::Color{ 0.0f, 0.0f, 0.0f, 0.5f },
 			Math::Color{ 1.0f, 0.8f, 0.3f, 1.0f });
 
-		// 連打指示（約0.3秒周期で点滅）
+		// 連打点滅
 		const bool bright = (m_frame / 10) % 2 == 0;
 		const Math::Color blink = bright
 			? Math::Color{ 1.0f, 0.9f, 0.3f, 1.0f }
 		: Math::Color{ 1.0f, 1.0f, 1.0f, 1.0f };
 
-		// アイコンも文字も一緒に点滅
 		DrawKeyAndText(&m_texKeySpace, Math::Vector2{ 0, -105 }, "Struggle!", blink);
 	}
 }

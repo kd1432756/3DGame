@@ -427,45 +427,6 @@ void Editor::DrawDebug()
 			}
 
 			//------------------------------------------------
-			// A* Path
-			//------------------------------------------------
-
-/*			for (size_t i = 1;
-				i < m_navMeshPath.size();
-				++i)
-			{
-				auto from =
-					NavMeshManager::Instance().FindPolygon(
-						m_navMeshPath[i - 1]);
-
-				auto to =
-					NavMeshManager::Instance().FindPolygon(
-						m_navMeshPath[i]);
-
-				if (!from || !to)
-				{
-					continue;
-				}
-
-				m_pDebugWire->AddDebugLine(
-					from->GetCenter(),
-					to->GetCenter(),
-					kAStarPathColor);
-			}*/
-
-			//------------------------------------------------
-			// Actual Point Path
-			//
-			// A* Polygon Path
-			//     ↓
-			// Portal
-			//     ↓
-			// Funnel
-			//     ↓
-			// 保存済みPoint
-			//------------------------------------------------
-
-			//------------------------------------------------
 			// Actual Route
 			//
 			// 緑線 = Funnel後の実際の経路
@@ -539,15 +500,6 @@ void Editor::SaveNavigation()
 
 void Editor::SaveNode()
 {
-/*	const std::string dir =
-		GetNavigationDirectory();
-
-	std::filesystem::create_directories(dir);
-
-	AStarNodeSerializer::Save(
-		dir + "/nodes.json",
-		m_astarNodeManager);*/
-
 	if (!AStarNodeSerializer::Save(
 		"Asset/Data/astarnode.json",
 		AStarNodeManager::Instance()))
@@ -558,15 +510,6 @@ void Editor::SaveNode()
 
 void Editor::SaveNavMesh()
 {
-/*	const std::string dir =
-		GetNavigationDirectory();
-
-	std::filesystem::create_directories(dir);
-
-	AStarNodeSerializer::Save(
-		dir + "/navmesh.json",
-		m_astarNodeManager);*/
-
 	if (!NavMeshSerializer::Save(
 		"Asset/Data/navmesh.json",
 		NavMeshManager::Instance()))
@@ -689,40 +632,20 @@ void Editor::DrawStagePreview()
 		m_previewPath = tile->modelPath;
 	}
 
-/*	//------------------------------------------------
-	// 位置
-	//------------------------------------------------
-
-	m_previewPos =
-		m_sceneWindow.GetDropPosition(m_editorCamera);
-
-	//------------------------------------------------
-	// GridSnap
-	//------------------------------------------------
-	
-	const float grid = 8.0f;
-
-	m_previewPos.x = roundf(m_previewPos.x / grid) * grid;
-	m_previewPos.y = roundf(m_previewPos.y / grid) * grid;
-	m_previewPos.z = roundf(m_previewPos.z / grid) * grid;*/
-
 	//------------------------------------------------
 	// Matrix
 	//------------------------------------------------
 
-	Math::Matrix scale =
-		Math::Matrix::CreateScale(GRID_SIZE / 8.0f);
+	Math::Matrix scale = Math::Matrix::CreateScale(GRID_SIZE / 8.0f);
 
 	Math::Matrix rot =
 		Math::Matrix::CreateRotationY(
 			DirectX::XMConvertToRadians(
 				m_stageEditorWindow.GetRotation()));
 
-	Math::Matrix trans =
-		Math::Matrix::CreateTranslation(m_previewPos);
+	Math::Matrix trans = Math::Matrix::CreateTranslation(m_previewPos);
 
-	Math::Matrix previewMatrix =
-		scale * rot * trans;
+	Math::Matrix previewMatrix = scale * rot * trans;
 
 	//------------------------------------------------
 	// 描画
@@ -736,8 +659,7 @@ void Editor::DrawStagePreview()
 
 void Editor::DrawErasePreview()
 {
-	Math::Matrix mat =
-		Math::Matrix::CreateTranslation(m_previewPos);
+	Math::Matrix mat = Math::Matrix::CreateTranslation(m_previewPos);
 
 	m_pDebugWire->AddDebugBox(
 		mat,
@@ -1339,388 +1261,6 @@ void Editor::SelectAStarNodeByID(int id)
 		node->GetID());
 }
 
-/*void Editor::GenerateNavMesh()
-{
-	m_navMeshStartPolygon = nullptr;
-	m_navMeshGoalPolygon = nullptr;
-	m_navMeshPath.clear();
-
-	//--------------------------------------------------------
-	// Generator入力
-	//--------------------------------------------------------
-
-	std::vector<std::pair<
-		std::shared_ptr<KdModelData>,
-		Math::Matrix
-		>> meshes;
-
-	std::vector<NavMeshGenerator::NavMeshObstacleBounds> obstacles;
-
-	//--------------------------------------------------------
-	// Scene Object取得
-	//--------------------------------------------------------
-
-	for (auto& obj :
-		SceneManager::Instance().GetObjList())
-	{
-		//----------------------------------------------------
-		// Ground
-		//----------------------------------------------------
-
-		if (auto ground =
-			std::dynamic_pointer_cast<Ground>(obj))
-		{
-			auto modelData =
-				ground->GetModelData();
-
-			if (!modelData)
-			{
-				continue;
-			}
-
-			Math::Matrix worldMatrix =
-				ground->GetMatrix();
-
-			meshes.push_back(
-				{
-					modelData,
-					worldMatrix
-				});
-
-			continue;
-		}
-
-		//----------------------------------------------------
-		// StaticMeshObject
-		//----------------------------------------------------
-
-		auto staticMeshObject =
-			std::dynamic_pointer_cast<StaticMeshObject>(obj);
-
-		if (!staticMeshObject ||
-			staticMeshObject->GetCategory() != KdGameObject::ObjectCategory::Prop)
-		{
-			continue;
-		}
-
-		//----------------------------------------------------
-		// ModelData取得
-		//----------------------------------------------------
-
-		auto modelData =
-			staticMeshObject->GetModelData();
-
-		if (!modelData)
-		{
-			continue;
-		}
-
-		//----------------------------------------------------
-		// World Matrix
-		//----------------------------------------------------
-
-		const Math::Matrix worldMatrix =
-			staticMeshObject->GetMatrix();
-
-		//----------------------------------------------------
-		// Node取得
-		//----------------------------------------------------
-
-		const auto& nodes =
-			modelData->GetOriginalNodes();
-
-		const auto& collisionNodeIndices =
-			modelData->GetCollisionMeshNodeIndices();
-
-		//----------------------------------------------------
-		// COL Nodeごとに処理
-		//----------------------------------------------------
-
-		for (int nodeIndex :
-		collisionNodeIndices)
-		{
-			if (nodeIndex < 0 ||
-				nodeIndex >= static_cast<int>(nodes.size()))
-			{
-				continue;
-			}
-
-			const auto& node =
-				nodes[nodeIndex];
-
-			if (!node.m_spMesh)
-			{
-				continue;
-			}
-
-			//------------------------------------------------
-			// Local AABB
-			//------------------------------------------------
-
-			const auto& localAABB =
-				node.m_spMesh->GetBoundingBox();
-
-			//------------------------------------------------
-			// World AABB
-			//------------------------------------------------
-
-			DirectX::BoundingBox worldAABB;
-
-			Math::Matrix transform =
-				node.m_worldTransform *
-				worldMatrix;
-
-			localAABB.Transform(
-				worldAABB,
-				transform);
-
-			//------------------------------------------------
-			// XZ Bounds
-			//------------------------------------------------
-
-			NavMeshGenerator::NavMeshObstacleBounds obstacle;
-
-			obstacle.minX =
-				worldAABB.Center.x -
-				worldAABB.Extents.x;
-
-			obstacle.maxX =
-				worldAABB.Center.x +
-				worldAABB.Extents.x;
-
-			obstacle.minZ =
-				worldAABB.Center.z -
-				worldAABB.Extents.z;
-
-			obstacle.maxZ =
-				worldAABB.Center.z +
-				worldAABB.Extents.z;
-
-			obstacles.push_back(
-				obstacle);
-		}
-	}
-
-	//--------------------------------------------------------
-	// Generate
-	//--------------------------------------------------------
-
-	m_navMeshGenerator.Generate(
-		NavMeshManager::Instance(),
-		meshes,
-		obstacles);
-}*/
-
-/*void Editor::GenerateNavMeshVer2()
-{
-	m_navMeshStartPolygon = nullptr;
-	m_navMeshGoalPolygon = nullptr;
-	m_navMeshPath.clear();
-
-	//--------------------------------------------------------
-	// Generator入力
-	//--------------------------------------------------------
-
-	std::vector<NavMeshGenerator::NavMeshTile>
-		stageTiles;
-
-	std::vector<NavMeshGenerator::NavMeshObstacleBounds>
-		obstacles;
-
-	//--------------------------------------------------------
-	// Scene Object取得
-	//--------------------------------------------------------
-
-	for (auto& obj :
-		SceneManager::Instance().GetObjList())
-	{
-		//----------------------------------------------------
-		// Ground
-		//----------------------------------------------------
-
-		if (auto ground =
-			std::dynamic_pointer_cast<Ground>(obj))
-		{
-			NavMeshGenerator::NavMeshTile tile;
-
-			const float halfSize =
-				GRID_SIZE;
-
-			const Math::Matrix worldMatrix =
-				ground->GetMatrix();
-
-			auto TransformTilePoint =
-				[&](float x, float z)
-				{
-					return Math::Vector3::Transform(
-						Math::Vector3(x, 0.0f, z),
-						worldMatrix);
-				};
-
-			tile.v0 =
-				TransformTilePoint(
-					-halfSize,
-					-halfSize);
-
-			tile.v1 =
-				TransformTilePoint(
-					halfSize,
-					-halfSize);
-
-			tile.v2 =
-				TransformTilePoint(
-					-halfSize,
-					halfSize);
-
-			tile.v3 =
-				TransformTilePoint(
-					halfSize,
-					halfSize);
-
-			stageTiles.push_back(tile);
-
-			continue;
-		}
-
-		//----------------------------------------------------
-		// StaticMeshObject
-		//----------------------------------------------------
-
-		auto staticMeshObject =
-			std::dynamic_pointer_cast<StaticMeshObject>(obj);
-
-		if (!staticMeshObject ||
-			staticMeshObject->GetCategory() !=
-			KdGameObject::ObjectCategory::Prop)
-		{
-			continue;
-		}
-
-		if (staticMeshObject->IsGround())
-		{
-			continue;
-		}
-
-		//----------------------------------------------------
-		// ModelData取得
-		//----------------------------------------------------
-
-		auto modelData =
-			staticMeshObject->GetModelData();
-
-		if (!modelData)
-		{
-			continue;
-		}
-
-		//----------------------------------------------------
-		// World Matrix
-		//----------------------------------------------------
-
-		const Math::Matrix worldMatrix =
-			staticMeshObject->GetMatrix();
-
-		//----------------------------------------------------
-		// Node取得
-		//----------------------------------------------------
-
-		const auto& nodes =
-			modelData->GetOriginalNodes();
-
-		const auto& collisionNodeIndices =
-			modelData->GetCollisionMeshNodeIndices();
-
-		//----------------------------------------------------
-		// COL Nodeごとに処理
-		//----------------------------------------------------
-
-		for (int nodeIndex :
-		collisionNodeIndices)
-		{
-			if (nodeIndex < 0 ||
-				nodeIndex >=
-				static_cast<int>(nodes.size()))
-			{
-				continue;
-			}
-
-			const auto& node =
-				nodes[nodeIndex];
-
-			if (!node.m_spMesh)
-			{
-				continue;
-			}
-
-			//------------------------------------------------
-			// Local AABB
-			//------------------------------------------------
-
-			const auto& localAABB =
-				node.m_spMesh->GetBoundingBox();
-
-			//------------------------------------------------
-			// World AABB
-			//------------------------------------------------
-
-			DirectX::BoundingBox worldAABB;
-
-			Math::Matrix transform =
-				node.m_worldTransform *
-				worldMatrix;
-
-			localAABB.Transform(
-				worldAABB,
-				transform);
-
-			//------------------------------------------------
-			// XZ Bounds
-			//------------------------------------------------
-
-			NavMeshGenerator::NavMeshObstacleBounds obstacle;
-
-			obstacle.minX =
-				worldAABB.Center.x -
-				worldAABB.Extents.x;
-
-			obstacle.maxX =
-				worldAABB.Center.x +
-				worldAABB.Extents.x;
-
-			obstacle.minZ =
-				worldAABB.Center.z -
-				worldAABB.Extents.z;
-
-			obstacle.maxZ =
-				worldAABB.Center.z +
-				worldAABB.Extents.z;
-
-			obstacles.push_back(
-				obstacle);
-		}
-	}
-
-	//--------------------------------------------------------
-	// Generate
-	//--------------------------------------------------------
-	for (const auto& tile : stageTiles)
-	{
-		Math::Vector3 a = tile.v1 - tile.v0;
-		Math::Vector3 b = tile.v2 - tile.v0;
-
-		Math::Vector3 normal =
-			a.Cross(b);
-
-		float area =
-			normal.Length() * 0.5f;
-	}
-
-	m_navMeshGenerator.Generate(
-		NavMeshManager::Instance(),
-		stageTiles,
-		obstacles);
-}*/
-
 void Editor::GenerateNavMeshVer3(float agentRadius)
 {
 	NavMeshGenerator generator;
@@ -2063,12 +1603,10 @@ void Editor::SelectNavMeshPolygon(
 	// Set Start
 	//------------------------------------------------
 
-	if (mode ==
-		NavigationEditorWindow::NavMeshEditMode::SetStart)
+	if (mode == NavigationEditorWindow::NavMeshEditMode::SetStart)
 	{
 		m_navMeshStartPolygon = polygon;
 
-		// 古い経路を消す
 		m_navMeshPath.clear();
 		m_navMeshPointPath.clear();
 
@@ -2079,12 +1617,10 @@ void Editor::SelectNavMeshPolygon(
 	// Set Goal
 	//------------------------------------------------
 
-	if (mode ==
-		NavigationEditorWindow::NavMeshEditMode::SetGoal)
+	if (mode == NavigationEditorWindow::NavMeshEditMode::SetGoal)
 	{
 		m_navMeshGoalPolygon = polygon;
 
-		// 古い経路を消す
 		m_navMeshPath.clear();
 		m_navMeshPointPath.clear();
 
@@ -2096,17 +1632,14 @@ void Editor::CalculateNavMeshPath()
 {
 	m_navMeshPath.clear();
 
-	if (!m_navMeshStartPolygon ||
-		!m_navMeshGoalPolygon)
+	if (!m_navMeshStartPolygon || !m_navMeshGoalPolygon)
 	{
 		return;
 	}
 
-	const int startID =
-		m_navMeshStartPolygon->GetID();
+	const int startID = m_navMeshStartPolygon->GetID();
 
-	const int goalID =
-		m_navMeshGoalPolygon->GetID();
+	const int goalID = m_navMeshGoalPolygon->GetID();
 
 	//------------------------------------------------
 	// Same Polygon
@@ -2142,22 +1675,18 @@ void Editor::CalculateNavMeshPath()
 
 		NodeRecord record;
 
-		record.id =
-			polygon->GetID();
+		record.id = polygon->GetID();
 
-		records[record.id] =
-			record;
+		records[record.id] = record;
 	}
 
 	//------------------------------------------------
 	// Start / Goal
 	//------------------------------------------------
 
-	auto start =
-		NavMeshManager::Instance().FindPolygon(startID);
+	auto start = NavMeshManager::Instance().FindPolygon(startID);
 
-	auto goal =
-		NavMeshManager::Instance().FindPolygon(goalID);
+	auto goal = NavMeshManager::Instance().FindPolygon(goalID);
 
 	if (!start || !goal)
 	{
@@ -2166,9 +1695,7 @@ void Editor::CalculateNavMeshPath()
 
 	records[startID].g = 0.0f;
 
-	records[startID].f =
-		(start->GetCenter() -
-			goal->GetCenter()).Length();
+	records[startID].f = (start->GetCenter() - goal->GetCenter()).Length();
 
 	std::vector<int> openList;
 
@@ -2188,13 +1715,11 @@ void Editor::CalculateNavMeshPath()
 		// F最小を検索
 		//------------------------------------------------
 
-		int currentID =
-			openList.front();
+		int currentID = openList.front();
 
 		for (int id : openList)
 		{
-			if (records[id].f <
-				records[currentID].f)
+			if (records[id].f < records[currentID].f)
 			{
 				currentID = id;
 			}
@@ -2223,9 +1748,7 @@ void Editor::CalculateNavMeshPath()
 
 		closedList.insert(currentID);
 
-		auto current =
-			NavMeshManager::Instance().FindPolygon(
-				currentID);
+		auto current = NavMeshManager::Instance().FindPolygon(currentID);
 
 		if (!current)
 		{
@@ -2236,47 +1759,33 @@ void Editor::CalculateNavMeshPath()
 		// Neighbor
 		//------------------------------------------------
 
-		for (int neighborID :
-		current->GetConnections())
+		for (int neighborID : current->GetConnections())
 		{
-			if (closedList.contains(
-				neighborID))
+			if (closedList.contains(neighborID))
 			{
 				continue;
 			}
 
-			auto neighbor =
-				NavMeshManager::Instance().FindPolygon(
-					neighborID);
+			auto neighbor = NavMeshManager::Instance().FindPolygon(neighborID);
 
 			if (!neighbor)
 			{
 				continue;
 			}
 
-			float cost =
-				(current->GetCenter() -
-					neighbor->GetCenter()).Length();
+			float cost = (current->GetCenter() - neighbor->GetCenter()).Length();
 
-			float newG =
-				records[currentID].g +
-				cost;
+			float newG = records[currentID].g + cost;
 
-			if (newG <
-				records[neighborID].g)
+			if (newG < records[neighborID].g)
 			{
-				records[neighborID].parent =
-					currentID;
+				records[neighborID].parent = currentID;
 
-				records[neighborID].g =
-					newG;
+				records[neighborID].g = newG;
 
-				float h =
-					(neighbor->GetCenter() -
-						goal->GetCenter()).Length();
+				float h = (neighbor->GetCenter() - goal->GetCenter()).Length();
 
-				records[neighborID].f =
-					newG + h;
+				records[neighborID].f = newG + h;
 
 				if (std::find(
 					openList.begin(),
@@ -2284,8 +1793,7 @@ void Editor::CalculateNavMeshPath()
 					neighborID)
 					== openList.end())
 				{
-					openList.push_back(
-						neighborID);
+					openList.push_back(neighborID);
 				}
 			}
 		}
@@ -2304,30 +1812,25 @@ void Editor::CalculateNavMeshPath()
 	// Path復元
 	//------------------------------------------------
 
-	int currentID =
-		goalID;
+	int currentID = goalID;
 
 	while (currentID != -1)
 	{
-		m_navMeshPath.push_back(
-			currentID);
+		m_navMeshPath.push_back(currentID);
 
 		if (currentID == startID)
 		{
 			break;
 		}
 
-		currentID =
-			records[currentID].parent;
+		currentID = records[currentID].parent;
 	}
 
 	//------------------------------------------------
 	// Start -> Goal
 	//------------------------------------------------
 
-	std::reverse(
-		m_navMeshPath.begin(),
-		m_navMeshPath.end());
+	std::reverse(m_navMeshPath.begin(), m_navMeshPath.end());
 }
 
 void Editor::CalculateNavMeshPointPath()

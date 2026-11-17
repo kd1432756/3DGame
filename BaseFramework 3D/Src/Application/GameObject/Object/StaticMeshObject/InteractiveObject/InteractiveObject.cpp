@@ -15,7 +15,7 @@ void InteractiveObject::DrawLit()
 	auto player = SceneManager::Instance().FindObject<Player>();
 	bool canUse = CanUse(player);
 
-	float cycle = canUse ? 1.0f : 2.0f;	// 周期
+	float cycle = canUse ? 1.0f : 2.0f;
 	m_limLightTimer += (2.0f * DirectX::XM_PI) / (cycle * 60.0f);
 
 	float t = (sinf(m_limLightTimer) + 1.0f) * 0.5f;
@@ -50,15 +50,12 @@ void InteractiveObject::DrawBright()
 		color);
 }
 
-void InteractiveObject::RegisterAction(
-	const InteractiveAction& action)
+void InteractiveObject::RegisterAction(const InteractiveAction& action)
 {
 	m_actions.push_back(action);
 }
 
-const InteractiveAction*
-InteractiveObject::FindAction(
-	const std::shared_ptr<Player>& player) const
+const InteractiveAction* InteractiveObject::FindAction(const std::shared_ptr<Player>& player) const
 {
 	if (!player)
 	{
@@ -71,7 +68,6 @@ InteractiveObject::FindAction(
 	{
 		if (action.fromState != m_state) continue;
 
-		// プレイヤーは修復アクションだけ
 		if (action.action != ItemAction::Repair) continue;
 
 		if (action.needItem)
@@ -90,8 +86,7 @@ InteractiveObject::FindAction(
 	return nullptr;
 }
 
-const InteractiveAction*
-InteractiveObject::FindNPCAction(
+const InteractiveAction* InteractiveObject::FindNPCAction(
 	const ItemData& item,
 	const std::string& npcName) const
 {
@@ -139,14 +134,12 @@ void InteractiveObject::ExecuteNPCAction(const InteractiveAction& action, const 
 	OnAction(action, nullptr);
 }
 
-bool InteractiveObject::CanUse(
-	const std::shared_ptr<Player>& player)
+bool InteractiveObject::CanUse(const std::shared_ptr<Player>& player)
 {
 	return FindAction(player) != nullptr;
 }
 
-float InteractiveObject::GetUseTime(
-	const std::shared_ptr<Player>& player) const
+float InteractiveObject::GetUseTime(const std::shared_ptr<Player>& player) const
 {
 	const auto* action = FindAction(player);
 
@@ -158,8 +151,7 @@ float InteractiveObject::GetUseTime(
 	return action->useTime;
 }
 
-void InteractiveObject::Use(
-	const std::shared_ptr<Player>& player)
+void InteractiveObject::Use(const std::shared_ptr<Player>& player)
 {
 	const auto* action = FindAction(player);
 
@@ -168,26 +160,23 @@ void InteractiveObject::Use(
 		return;
 	}
 
-	// 状態変更
 	m_state = action->toState;
 
 	OnStateChanged(DamageSource::None);
 
-	// モデル変更
 	if (!action->modelPath.empty())
 	{
 		SetModelPath(action->modelPath);
 	}
 
-	// スコア
 	if (action->score > 0)
 	{
 		int score = ScoreManager::Instance().CalcScore(
-			action->score, 
+			action->score,
 			DayCycle::Instance().GetTimeProgress(),
 			player->GetSkillResult(),
 			player->GetRepairBonusRate()
-			);
+		);
 
 		player->OnRepairSuccess(score, action->message);
 	}
@@ -199,12 +188,11 @@ void InteractiveObject::Use(
 
 	NotifyPlayer(*action);
 
-	// 個別特殊処理
+	// 個別の処理
 	OnAction(*action, player);
 }
 
-std::string InteractiveObject::GetActionText(
-	const std::shared_ptr<Player>& player) const
+std::string InteractiveObject::GetActionText(const std::shared_ptr<Player>& player) const
 {
 	const auto* action = FindAction(player);
 	if (!action)
@@ -223,8 +211,7 @@ std::string InteractiveObject::GetActionText(
 		return "";
 	}
 
-	const auto* use =
-		item->GetItemData().FindUse(action->action, action->target);
+	const auto* use = item->GetItemData().FindUse(action->action, action->target);
 
 	if (!use)
 	{
@@ -234,19 +221,14 @@ std::string InteractiveObject::GetActionText(
 	return use->actionText.empty() ? action->actionText : use->actionText;
 }
 
-bool InteractiveObject::CanNPCUse(
-	const ItemData& item,
-	const std::string& npcName) const
+bool InteractiveObject::CanNPCUse(const ItemData& item, const std::string& npcName) const
 {
 	return FindNPCAction(item, npcName) != nullptr;
 }
 
-float InteractiveObject::GetNPCUseTime(
-	const ItemData& itemData,
-	const std::string& npcName) const
+float InteractiveObject::GetNPCUseTime(const ItemData& itemData, const std::string& npcName) const
 {
-	const auto* action =
-		FindNPCAction(itemData, npcName);
+	const auto* action = FindNPCAction(itemData, npcName);
 
 	if (!action)
 	{
@@ -256,12 +238,9 @@ float InteractiveObject::GetNPCUseTime(
 	return action->useTime;
 }
 
-void InteractiveObject::NPCUse(
-	const ItemData& item,
-	const std::shared_ptr<Neighbor>& npc)
+void InteractiveObject::NPCUse(const ItemData& item, const std::shared_ptr<Neighbor>& npc)
 {
-	const auto* action =
-		FindNPCAction(item, npc->GetName());
+	const auto* action = FindNPCAction(item, npc->GetName());
 
 	if (!action)
 	{
@@ -303,7 +282,7 @@ void InteractiveObject::OnStateChanged(DamageSource source)
 	else
 	{
 		m_damageSource = DamageSource::None;
-		m_repairedTime = now;	// 修復された時刻
+		m_repairedTime = now;	// 修復された時間
 	}
 }
 
@@ -314,9 +293,7 @@ void InteractiveObject::NotifyPlayer(const InteractiveAction& action)
 	auto player = SceneManager::Instance().FindObject<Player>();
 	if (!player) return;
 
-	player->OnObjectDamaged(
-		std::dynamic_pointer_cast<InteractiveObject>(shared_from_this()),
-		action);
+	player->OnObjectDamaged(std::dynamic_pointer_cast<InteractiveObject>(shared_from_this()), action);
 }
 
 bool InteractiveObject::SetInitialDamaged()
@@ -349,7 +326,7 @@ bool InteractiveObject::CanBeTargetedBy(const CharacterBase* npc) const
 	if (reserved && reserved.get() != npc) return false;
 
 	const float elapsed = DayCycle::Instance().GetCurrentTime() - m_repairedTime;
-	return elapsed >= m_repairCooldownHours;
+	return elapsed >= kRepairCooldownHours;
 }
 
 bool InteractiveObject::TryReserve(const std::shared_ptr<CharacterBase>& npc)
@@ -376,8 +353,7 @@ float InteractiveObject::GetSecondsSinceDamaged() const
 		return FLT_MAX;
 	}
 
-	const float hours =
-		DayCycle::Instance().GetCurrentTime() - m_damagedTime;
+	const float hours = DayCycle::Instance().GetCurrentTime() - m_damagedTime;
 
 	return DayCycle::Instance().GameHoursToRealSeconds(hours);
 }

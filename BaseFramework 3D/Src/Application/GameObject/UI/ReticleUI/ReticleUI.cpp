@@ -21,10 +21,8 @@ void Reticle::Update()
 void Reticle::DrawSprite()
 {
 	if (!m_tex) return;
-
 	if (!m_isVisible) return;
 
-	// 触れるものがあるときは緑
 	const Math::Color color = m_canInteract
 		? Math::Color{ 0, 1, 0, 1 }
 	: Math::Color{ 1, 1, 1, 1 };
@@ -33,8 +31,8 @@ void Reticle::DrawSprite()
 		m_tex,
 		0,
 		0,
-		32,
-		32,
+		kReticleSize,
+		kReticleSize,
 		nullptr,
 		&color);
 }

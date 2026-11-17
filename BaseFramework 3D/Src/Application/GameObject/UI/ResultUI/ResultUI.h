@@ -11,7 +11,7 @@ class ConfettiUI;
 class ResultUI : public MenuUI
 {
 public:
-	// リザルトはポーズ中も動くので常時更新
+	// リザルトは常時更新
 	ResultUI() : MenuUI(true) {}
 
 	void Init() override;
@@ -26,17 +26,17 @@ public:
 	void SetConfetti(const std::shared_ptr<ConfettiUI>& confetti) { m_wpConfetti = confetti; }
 
 protected:
-	// フェードが終わったらタイトルへ
+
 	void OnFadeOutFinished() override;
 
 private:
 
 	enum class Phase
 	{
-		ScoreCount,		// スコアのカウントアップ
-		RankWait,		// ランク登場前の間
-		RankReveal,		// ランク登場
-		Done			// 演出完了(ボタン操作可)
+		ScoreCount,	// スコア
+		RankWait,		// 間
+		RankReveal,	// ランク
+		Done				// 演出おわり
 	};
 
 	void ShowResult();
@@ -56,7 +56,6 @@ private:
 	int m_displayScore = 0;
 	ScoreManager::Rank m_rank = ScoreManager::Rank::C;
 
-	// Titleボタン
 	MenuButton m_titleButton;
 
 	float m_animTime = 0.0f;
@@ -66,8 +65,7 @@ private:
 
 	std::shared_ptr<KdSoundInstance> m_resultBgm;
 
-	// ---- 調整用パラメータ ----
-	static constexpr float kCountTime = 1.5f;		// スコアのカウントアップ時間
-	static constexpr float kRankWaitTime = 0.6f;	// ランクが出るまでの間
-	static constexpr float kRankRevealTime = 0.4f;	// ランクの登場アニメ時間
+	static constexpr float kCountTime = 1.5f;
+	static constexpr float kRankWaitTime = 0.6f;
+	static constexpr float kRankRevealTime = 0.4f;
 };

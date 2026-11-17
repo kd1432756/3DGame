@@ -2,8 +2,6 @@
 
 NotificationUI::NotificationUI()
 {
-	// 寿命 = 滑り込み + 滞在 + フェードアウト
-	// (フェードアウトが終わって初めて m_isExpired が立ち、枠が空く)
 	m_lifeTime = kSlideInTime + kStayTime + kFadeOutTime;
 	m_fontId = FontID::Future48;
 	m_color = { 1.0f, 0.45f, 0.10f, 1.0f };
@@ -16,28 +14,25 @@ void NotificationUI::Init()
 
 void NotificationUI::OnUpdate(float dt, float t)
 {
-	// スタック位置への滑らかな移動（全ステート共通）
 	m_pos.y += (m_targetY - m_pos.y) * kMoveSpeed;
 
 	const float e = m_elapsedTime;
 
 	if (e < kSlideInTime)
 	{
-		// 滑り込み (Ease Out)
+		// 横から
 		m_pos.x = kStartX + (kCenterX - kStartX) * EaseOutCubic(e / kSlideInTime);
 		m_alpha = 1.0f;
 	}
 	else if (e < kSlideInTime + kStayTime)
 	{
-		// 滞在
 		m_pos.x = kCenterX;
 		m_alpha = 1.0f;
 	}
 	else
 	{
 		// フェードアウト
-		const float s = std::clamp(
-			(e - kSlideInTime - kStayTime) / kFadeOutTime, 0.0f, 1.0f);
+		const float s = std::clamp((e - kSlideInTime - kStayTime) / kFadeOutTime, 0.0f, 1.0f);
 		m_pos.x = kCenterX;
 		m_alpha = 1.0f - s;
 	}

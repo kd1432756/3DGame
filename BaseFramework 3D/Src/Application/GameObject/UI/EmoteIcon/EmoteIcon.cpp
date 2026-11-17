@@ -36,10 +36,6 @@ void EmoteIcon::Update()
 		return;
 	}
 
-	//========================================
-	// ライフ処理
-	//========================================
-
 	if (m_hasLife)
 	{
 		m_lifeTime -= 1.0f / 60.0f;
@@ -49,22 +45,10 @@ void EmoteIcon::Update()
 		}
 	}
 
-	//========================================
-	// キャラクターの頭上に配置
-	//========================================
-
 	m_pos = ownerCharacter->GetMatrix().Translation();
 	m_pos.y += m_heightOffset * m_baseScale;
 
-	//========================================
-	// アイコンアニメーション
-	//========================================
-
 	UpdateIconAnimation();
-
-	//========================================
-	// ワールド行列更新
-	//========================================
 
 	UpdateIconWorldMatrix();
 }
@@ -76,9 +60,7 @@ void EmoteIcon::DrawUnLit()
 		return;
 	}
 
-	KdShaderManager::Instance()
-		.m_StandardShader
-		.DrawPolygon(*m_iconPolygon, m_mWorld);
+	KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_iconPolygon, m_mWorld);
 }
 
 bool EmoteIcon::SetIcon(IconType iconType, float duration, bool force)
@@ -101,87 +83,56 @@ bool EmoteIcon::SetIcon(IconType iconType, float duration, bool force)
 	switch (m_currentIcon)
 	{
 	case IconType::Exclamation:
-
 		m_iconPolygon->SetUVRect(8);
 		m_iconPolygon->SetEnable(true);
-
 		StartIconAnimation();
 		break;
-
 	case IconType::Question:
-
 		m_iconPolygon->SetUVRect(9);
 		m_iconPolygon->SetEnable(true);
-
 		StartIconAnimation();
 		break;
-
 	case IconType::Sad:
-
 		m_iconPolygon->SetUVRect(14);
 		m_iconPolygon->SetEnable(true);
-
 		StartIconAnimation();
 		break;
-
 	case IconType::Angry:
-
 		m_iconPolygon->SetUVRect(15);
 		m_iconPolygon->SetEnable(true);
-
 		StartIconAnimation();
 		break;
-
 	case IconType::Alert:
-
 		m_iconPolygon->SetUVRect(16);
 		m_iconPolygon->SetEnable(true);
-
 		StartIconAnimation();
 		break;
-
 	case IconType::Stars:
-
 		m_iconPolygon->SetUVRect(18);
 		m_iconPolygon->SetEnable(true);
-
 		StartIconAnimation();
 		break;
-
 	case IconType::Music:
-
 		m_iconPolygon->SetUVRect(19);
 		m_iconPolygon->SetEnable(true);
-
 		StartIconAnimation();
 		break;
-
 	case IconType::Anger:
-
 		m_iconPolygon->SetUVRect(22);
 		m_iconPolygon->SetEnable(true);
-
 		StartIconAnimation();
 		break;
-
 	case IconType::Idea:
-
 		m_iconPolygon->SetUVRect(27);
 		m_iconPolygon->SetEnable(true);
-
 		StartIconAnimation();
 		break;
-
 	case IconType::Laugh:
-
 		m_iconPolygon->SetUVRect(28);
 		m_iconPolygon->SetEnable(true);
-
 		StartIconAnimation();
 		break;
-
 	default:
-
 		return false;
 	}
 
@@ -190,21 +141,13 @@ bool EmoteIcon::SetIcon(IconType iconType, float duration, bool force)
 
 void EmoteIcon::UpdateIconAnimation()
 {
-	//========================================
-	// 消滅アニメーション
-	//========================================
-
 	if (m_animationState == AnimationState::Disappear)
 	{
 		m_animationElapsed += 1.0f / 60.0f;
 
-		float progress =
-			m_animationElapsed / m_animationDuration;
+		float progress = m_animationElapsed / m_animationDuration;
 
-		//========================================
-		// 1.0 → 1.1 → 0.0
-		//========================================
-
+		// 少し大きくなってから消える
 		if (progress >= 1.0f)
 		{
 			progress = 1.0f;
@@ -221,45 +164,24 @@ void EmoteIcon::UpdateIconAnimation()
 
 		if (progress < 0.25f)
 		{
-			// 1.0 → 1.1
-			const float scaleProgress =
-				progress / 0.25f;
+			const float scaleProgress = progress / 0.25f;
 
-			const float eased =
-				1.0f - std::pow(1.0f - scaleProgress, 2.0f);
+			const float eased = 1.0f - std::pow(1.0f - scaleProgress, 2.0f);
 
-			SetScale(
-				std::lerp(
-					m_baseScale,
-					m_baseScale * 1.1f,
-					eased
-				)
-			);
+			SetScale(std::lerp(m_baseScale, m_baseScale * 1.1f, eased));
 		}
 		else
 		{
-			// 1.1 → 0.0
-			const float scaleProgress =
-				(progress - 0.25f) / 0.75f;
+			const float scaleProgress = (progress - 0.25f) / 0.75f;
 
-			const float eased =
-				scaleProgress * scaleProgress;
+			const float eased = scaleProgress * scaleProgress;
 
-			SetScale(
-				std::lerp(
-					m_baseScale * 1.1f,
-					0.0f,
-					eased
-				)
-			);
+			SetScale(std::lerp(m_baseScale * 1.1f, 0.0f, eased));
 		}
 
 		return;
 	}
 
-	//========================================
-	// アニメーションしていない
-	//========================================
 
 	if (m_animationState != AnimationState::Appear)
 	{
@@ -267,14 +189,10 @@ void EmoteIcon::UpdateIconAnimation()
 		return;
 	}
 
-	//========================================
-	// 出現アニメーション
-	//========================================
 
 	m_animationElapsed += 1.0f / 60.0f;
 
-	float progress =
-		m_animationElapsed / m_animationDuration;
+	float progress = m_animationElapsed / m_animationDuration;
 
 	if (progress >= 1.0f)
 	{
@@ -282,46 +200,24 @@ void EmoteIcon::UpdateIconAnimation()
 		m_animationState = AnimationState::None;
 	}
 
-	//========================================
-	// 0 → 1.3 → 1.0
-	//========================================
-
+	// 大きくなって出現
 	if (progress < 0.4f)
 	{
-		const float scaleProgress =
-			progress / 0.4f;
+		const float scaleProgress = progress / 0.4f;
 
-		SetScale(
-			std::lerp(
-				0.0f,
-				m_baseScale * 1.3f,
-				scaleProgress
-			)
-		);
+		SetScale(std::lerp(0.0f, m_baseScale * 1.3f, scaleProgress));
 	}
 	else
 	{
-		const float scaleProgress =
-			(progress - 0.4f) / 0.6f;
+		const float scaleProgress = (progress - 0.4f) / 0.6f;
 
-		SetScale(
-			std::lerp(
-				m_baseScale * 1.3f,
-				m_baseScale,
-				scaleProgress
-			)
-		);
+		SetScale(std::lerp(m_baseScale * 1.3f, m_baseScale, scaleProgress));
 	}
 
-	//========================================
-	// 上方向への跳ね上げ
-	//========================================
+	// ぴょんと跳ねる
+	const float jumpProgress = std::sin(progress * DirectX::XM_PI);
 
-	const float jumpProgress =
-		std::sin(progress * DirectX::XM_PI);
-
-	const float jumpHeight =
-		0.20f * m_baseScale;
+	const float jumpHeight = 0.20f * m_baseScale;
 
 	m_pos.y += jumpProgress * jumpHeight;
 }
@@ -335,14 +231,11 @@ void EmoteIcon::UpdateIconWorldMatrix()
 		return;
 	}
 
-	const Math::Vector3 cameraPosition =
-		camera->GetMatrix().Translation();
+	// Y軸ビルボード
+	const Math::Vector3 cameraPosition = camera->GetMatrix().Translation();
 
-	// アイコンからカメラへの方向
-	Math::Vector3 direction =
-		cameraPosition - m_pos;
+	Math::Vector3 direction = cameraPosition - m_pos;
 
-	// Y方向は無視して水平回転だけ求める
 	direction.y = 0.0f;
 
 	if (direction.LengthSquared() < 0.0001f)
@@ -352,9 +245,7 @@ void EmoteIcon::UpdateIconWorldMatrix()
 
 	direction.Normalize();
 
-	const float yaw =
-		std::atan2(direction.x, direction.z)
-		+ DirectX::XM_PI;
+	const float yaw = std::atan2(direction.x, direction.z) + DirectX::XM_PI;
 
 	m_mWorld =
 		Math::Matrix::CreateScale(m_scale)

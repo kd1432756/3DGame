@@ -25,7 +25,7 @@ enum class SkillCheckType
 class SkillCheckBase
 {
 public:
-	virtual ~SkillCheckBase() = default;
+	//virtual ~SkillCheckBase() = default;
 
 	void Start(float difficulty = 1.0f);
 	void Update();

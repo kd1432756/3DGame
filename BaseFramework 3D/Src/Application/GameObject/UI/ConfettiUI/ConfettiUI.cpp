@@ -1,25 +1,5 @@
 ﻿#include "ConfettiUI.h"
 
-namespace
-{
-	float Rand(float minV, float maxV)
-	{
-		static std::mt19937 engine{ std::random_device{}() };
-		std::uniform_real_distribution<float> dist(minV, maxV);
-		return dist(engine);
-	}
-
-	const Math::Color kColors[] =
-	{
-		{ 1.0f, 0.3f, 0.3f, 1.0f },	// 赤
-		{ 1.0f, 0.8f, 0.2f, 1.0f },	// 黄
-		{ 0.3f, 0.8f, 0.4f, 1.0f },	// 緑
-		{ 0.3f, 0.6f, 1.0f, 1.0f },	// 青
-		{ 1.0f, 0.5f, 0.8f, 1.0f },	// ピンク
-		{ 0.7f, 0.4f, 1.0f, 1.0f },	// 紫
-	};
-}
-
 void ConfettiUI::Init()
 {
 	m_particles.clear();
@@ -45,14 +25,14 @@ void ConfettiUI::Stop()
 ConfettiUI::Particle ConfettiUI::MakeBase()
 {
 	Particle p;
-	p.rot = Rand(0.0f, DirectX::XM_2PI);
-	p.rotSpeed = Rand(-6.0f, 6.0f);
-	p.flip = Rand(0.0f, DirectX::XM_2PI);
-	p.flipSpeed = Rand(4.0f, 10.0f);
-	p.swayAmp = Rand(20.0f, 60.0f);
-	p.w = Rand(10.0f, 18.0f);
-	p.h = Rand(5.0f, 9.0f);
-	p.color = kColors[rand() % (sizeof(kColors) / sizeof(kColors[0]))];
+	p.rot = KdRandom::GetFloat(0.0f, DirectX::XM_2PI);
+	p.rotSpeed = KdRandom::GetFloat(-6.0f, 6.0f);
+	p.flip = KdRandom::GetFloat(0.0f, DirectX::XM_2PI);
+	p.flipSpeed = KdRandom::GetFloat(4.0f, 10.0f);
+	p.swayAmp = KdRandom::GetFloat(20.0f, 60.0f);
+	p.w = KdRandom::GetFloat(10.0f, 18.0f);
+	p.h = KdRandom::GetFloat(5.0f, 9.0f);
+	p.color = kColors[KdRandom::GetInt(0, static_cast<int>(sizeof(kColors) / sizeof(kColors[0])) - 1)];
 	return p;
 }
 
@@ -70,10 +50,8 @@ void ConfettiUI::Burst(bool isLeft)
 		Particle p = MakeBase();
 		p.pos = { originX, -360.0f };
 
-		// 画面中央へ向かって斜め上に発射（水平から50〜85度）
-		float angle = DirectX::XMConvertToRadians(Rand(50.0f, 85.0f));
-		//float speed = Rand(700.0f, 1500.0f);
-		float speed = Rand(1500.0f, 2500.0f);
+		float angle = DirectX::XMConvertToRadians(KdRandom::GetFloat(50.0f, 85.0f));
+		float speed = KdRandom::GetFloat(1500.0f, 3000.0f);
 
 		float dirX = cosf(angle) * (isLeft ? 1.0f : -1.0f);
 		float dirY = sinf(angle);
@@ -92,8 +70,8 @@ void ConfettiUI::SpawnRain()
 	}
 
 	Particle p = MakeBase();
-	p.pos = { Rand(-640.0f, 640.0f), 380.0f };
-	p.vel = { 0.0f, Rand(-120.0f, -40.0f) };
+	p.pos = { KdRandom::GetFloat(-640.0f, 640.0f), 380.0f };
+	p.vel = { 0.0f, KdRandom::GetFloat(-120.0f, -40.0f) };
 
 	m_particles.push_back(p);
 }
@@ -105,9 +83,8 @@ void ConfettiUI::Update()
 		return;
 	}
 
-	const float dt = Application::Instance().GetDeltaTime();
+	const float dt = DeltaTime();
 
-	// 上から降らせる
 	if (m_active)
 	{
 		m_rainTimer += dt;
@@ -120,20 +97,20 @@ void ConfettiUI::Update()
 
 	for (auto& p : m_particles)
 	{
-		// 重力 + 空気抵抗（勢いよく飛び出して、ゆっくり落ちる動きになる）
 		p.vel.y -= kGravity * dt;
 		p.vel -= p.vel * (kDrag * dt);
 
 		p.pos += p.vel * dt;
 
+		// 回転
 		p.rot += p.rotSpeed * dt;
+		// 裏帰り
 		p.flip += p.flipSpeed * dt;
 
-		// ひらひら横揺れ
+		// 横揺れ
 		p.pos.x += sinf(p.flip) * p.swayAmp * dt;
 	}
 
-	// 画面下に落ちたものを削除
 	m_particles.erase(
 		std::remove_if(m_particles.begin(), m_particles.end(),
 			[](const Particle& p) { return p.pos.y < kBottom; }),
@@ -144,12 +121,12 @@ void ConfettiUI::DrawSprite()
 {
 	for (const auto& p : m_particles)
 	{
-		// 紙が裏返る表現：横幅を cos で伸縮
+		// cosカーブで伸縮
 		const float flipScale = cosf(p.flip);
 		const float hw = p.w * 0.5f * flipScale;
 		const float hh = p.h * 0.5f;
 
-		// 裏面は少し暗く
+		// 裏面は暗くする
 		Math::Color color = p.color;
 		if (flipScale < 0.0f)
 		{
@@ -161,7 +138,7 @@ void ConfettiUI::DrawSprite()
 		const float c = cosf(p.rot);
 		const float s = sinf(p.rot);
 
-		// 回転させた四隅
+		// 回転角度から四隅の座標を計算
 		auto corner = [&](float lx, float ly, int& outX, int& outY)
 			{
 				outX = static_cast<int>(p.pos.x + lx * c - ly * s);
@@ -174,10 +151,7 @@ void ConfettiUI::DrawSprite()
 		corner(hw, hh, x3, y3);
 		corner(hw, -hh, x4, y4);
 
-		// 四角形 = 三角形2枚
-		KdShaderManager::Instance().m_spriteShader.DrawTriangle(
-			x1, y1, x2, y2, x3, y3, &color, true);
-		KdShaderManager::Instance().m_spriteShader.DrawTriangle(
-			x1, y1, x3, y3, x4, y4, &color, true);
+		KdShaderManager::Instance().m_spriteShader.DrawTriangle(x1, y1, x2, y2, x3, y3, &color, true);
+		KdShaderManager::Instance().m_spriteShader.DrawTriangle(x1, y1, x3, y3, x4, y4, &color, true);
 	}
 }

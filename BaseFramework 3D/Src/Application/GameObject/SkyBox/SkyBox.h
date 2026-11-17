@@ -4,9 +4,6 @@ class SkyBox : public KdGameObject
 {
 public:
 
-	SkyBox() {}
-	~SkyBox() { Release(); }
-
 	void Init() override;
 	void Update() override;
 	void DrawUnLit() override;
@@ -25,10 +22,10 @@ private:
 
 	std::array<std::shared_ptr<KdModelData>, 3>  m_spModel;
 
-	static constexpr float DayStart = 6.0f;
-	static constexpr float EveningStart = 17.0f;
-	static constexpr float NightStart = 20.0f;
-	static constexpr float NightEnd = 22.0f;
+	static constexpr float kDayStart = 6.0f;
+	static constexpr float kEveningStart = 17.0f;
+	static constexpr float kNightStart = 20.0f;
+	static constexpr float kNightEnd = 22.0f;
 
 	float m_dayAlpha = 0.0f;
 	float m_eveningAlpha = 0.0f;

@@ -5,7 +5,6 @@
 
 void TitleUI::Init()
 {
-	// ポインタ画像の読み込みなど(基底クラス)
 	MenuUI::Init();
 
 	m_titleLogoTex = LoadTexture("Asset/Textures/Title_Logo.png");
@@ -19,18 +18,19 @@ void TitleUI::Init()
 			return LoadTexture(std::string("Asset/Textures/UI/Key/") + name);
 		};
 
+	// 操作説明
 	m_controls =
 	{
-		{ { load("keyboard_w.png"), load("keyboard_a.png"), load("keyboard_s.png"), load("keyboard_d.png") },	"移動" },
-		{ { load("mouse_outline.png") },																		"視点" },
-		{ { load("keyboard_1.png"), load("keyboard_2.png"), load("keyboard_3.png") },							"アイテム選択" },
-		{ { load("keyboard_e.png") },																			"アイテムを拾う" },
-		{ { load("keyboard_g.png") },																			"アイテムを捨てる" },
-		{ { load("keyboard_f.png") },																			"妨害" },
-		{ { load("keyboard_r.png") },																			"警察に通報" },
-		{ { load("mouse_left_outline.png") },																	"修復・スキルチェック" },
-		{ { load("mouse_right_outline.png") },																	"中断" },
-		{ { load("keyboard_w.png"), load("keyboard_a.png"), load("keyboard_s.png"), load("keyboard_d.png") },	"スキルチェック（方向入力）" },
+		{ { load("keyboard_w.png"), load("keyboard_a.png"), load("keyboard_s.png"), load("keyboard_d.png") }, "移動" },
+		{ { load("mouse_outline.png") }, "視点" },
+		{ { load("keyboard_1.png"), load("keyboard_2.png"), load("keyboard_3.png") }, "アイテム選択" },
+		{ { load("keyboard_e.png") }, "アイテムを拾う" },
+		{ { load("keyboard_g.png") }, "アイテムを捨てる" },
+		{ { load("keyboard_f.png") },	 "妨害" },
+		{ { load("keyboard_r.png") },	 "警察に通報" },
+		{ { load("mouse_left_outline.png") }, "修復・スキルチェック" },
+		{ { load("mouse_right_outline.png") }, "中断" },
+		{ { load("keyboard_w.png"), load("keyboard_a.png"), load("keyboard_s.png"), load("keyboard_d.png") }, "スキルチェック（方向入力）" },
 	};
 
 	m_bgm = KdAudioManager::Instance().Play("Asset/Sound/BGM/TitleBGM.wav", true);
@@ -38,19 +38,18 @@ void TitleUI::Init()
 	{
 		m_bgm->SetVolume(0.3f);
 
-		// フェードアウト時はこのBGMを小さくしていく
 		SetFadeBgm(m_bgm, 0.3f);
 	}
 }
 
 void TitleUI::OnFadeOutFinished()
 {
+	// ロードを始める
 	SceneManager::Instance().SetNextScene(SceneManager::SceneType::Loading);
 }
 
 void TitleUI::Update()
 {
-	// フェード中は入力を受け付けない
 	if (IsFadingOut())
 	{
 		UpdateFade();
@@ -60,25 +59,18 @@ void TitleUI::Update()
 	m_animTime += 0.05f;
 	m_scaleOffset = sinf(m_animTime * 0.5f) * 5.0f;
 
-	// マウス座標とクリック（押した瞬間）を更新
 	UpdateMouse();
 
-	// 遊び方パネル表示中：クリックかESCで閉じる
 	if (m_showHowTo)
 	{
 		if (IsClickTriggered())
 		{
 			m_howToPage++;
-			if (m_howToPage >= 2)   // 2ページ目の次で閉じる
+			if (m_howToPage >= 2)
 			{
 				m_howToPage = 0;
 				m_showHowTo = false;
 			}
-		}
-		if (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
-		{
-			m_howToPage = 0;
-			m_showHowTo = false;
 		}
 		return;
 	}
@@ -111,7 +103,7 @@ void TitleUI::DrawSprite()
 {
 	auto& sprite = KdShaderManager::Instance().m_spriteShader;
 
-	// ロゴ（ゆっくり拡大縮小）
+	// ロゴ
 	const Math::Vector2 titlePos = { 0, 160 };
 	const Math::Vector2 logoTexSize = { 1534, 1024 };
 	const float logoScale = 0.35f * (1 + m_scaleOffset * 0.005f);
@@ -123,16 +115,15 @@ void TitleUI::DrawSprite()
 		logoSize.x, logoSize.y,
 		nullptr, &kWhiteColor, Math::Vector2{ 0.5f, 0.5f });
 
-	// ボタン描画（ホバー時は黄色）
+	// ボタン
 	DrawButtons(m_buttons);
 
-	// 遊び方パネル
 	if (m_showHowTo)
 	{
-		// 背景を暗くする
+		// 背景を暗く
 		DrawFullScreenBox(Math::Color{ 0.0f, 0.0f, 0.0f, 0.75f });
 
-		// パネル本体
+		// 遊び方
 		Math::Color panelColor = { 0.15f, 0.15f, 0.2f, 0.95f };
 		sprite.DrawBox(0, 0, 520, 300, &panelColor);
 
@@ -167,7 +158,7 @@ void TitleUI::DrawSprite()
 		}
 		else
 		{
-			// ---- 2ページ目：操作方法（アイコン＋説明）----
+			// ---- 2ページ目：操作方法 ----
 			const float iconSize = 38.0f;
 			const float iconStep = 42.0f;
 			float y = 160.0f;
@@ -199,6 +190,6 @@ void TitleUI::DrawSprite()
 
 	DrawPointer();
 
-	// フェードアウト用の暗転（フェード開始前は何も描かない）
+	// フェードアウト
 	DrawFadeOverlay();
 }

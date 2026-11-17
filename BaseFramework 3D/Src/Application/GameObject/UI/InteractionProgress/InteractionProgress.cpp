@@ -17,7 +17,7 @@ void InteractionProgress::DrawSprite()
 {
 	if (!m_visible) return;
 
-	// 画面中央の少し下に、緑の進捗バー（左詰め）
+	// バー
 	DrawGauge(0, -40, 90, 6, m_progress,
 		Math::Color{ 0.0f, 0.0f, 0.0f, 0.5f },
 		Math::Color{ 0.0f, 1.0f, 0.0f, 1.0f });

@@ -7,9 +7,9 @@ public:
 
 	enum class State
 	{
-		PullingOut,   // 捕まってだんだん引く（ズームアウト）
-		Normal,       // 通常の連行中TPS（マウス操作可能）
-		PushingIn,    // 釈放に向かってだんだん近づく（ズームイン）
+		PullingOut,		// ズームアウト
+		Normal,			// マウス操作可能
+		PushingIn,		// ズームイン
 	};
 
 	ArrestCamera()							{}
@@ -20,7 +20,7 @@ public:
 
 	void SetEyeHeight(float height) override;
 
-	// 釈放時のズームインを開始するトリガー
+	// 釈放時のズームインを開始
 	void StartPushIn()
 	{
 		m_state = State::PushingIn;
@@ -28,7 +28,7 @@ public:
 		m_isFinished = false;
 	}
 
-	// 遷移が完了したかどうか（Scene側やPlayer側で判定してカメラを切り替える用）
+	// 遷移が完了したかどうか
 	bool IsTransitionFinished() const
 	{
 		return m_isFinished;
@@ -39,8 +39,8 @@ private:
 	float m_height = 0.0f;
 
 	State m_state = State::PullingOut;
-	float m_transitionTimer = 0.0f;       // 遷移にかかる時間計測用
-	const float m_transitionDuration = 0.5f; // ズームにかかる秒数（例: 1秒）
+	float m_transitionTimer = 0.0f;	 // 遷移にかかる時間計測用
+	static constexpr float kTransitionDuration = 0.5f;		// ズームにかかる秒数
 
 	bool m_isFinished = false;
 };

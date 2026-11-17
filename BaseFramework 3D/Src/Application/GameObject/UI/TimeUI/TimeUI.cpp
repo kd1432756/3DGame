@@ -17,7 +17,6 @@ void TimeUI::DrawSprite()
 	DrawIndicator();
 }
 
-// ※ UIBase::DrawGauge(進捗バー用)と区別するため DrawTimeGauge という名前にしている
 void TimeUI::DrawTimeGauge()
 {
 	if (!m_gaugeTex)
@@ -27,47 +26,40 @@ void TimeUI::DrawTimeGauge()
 
 	KdShaderManager::Instance().m_spriteShader.DrawTex(
 		m_gaugeTex,
-		StartX,
-		StartY,
-		GaugeWidth,
-		GaugeHeight
+		kStartX,
+		kStartY,
+		kGaugeWidth,
+		kGaugeHeight
 	);
 }
 
 void TimeUI::DrawTimeIcons()
 {
-	auto& spriteShader =
-		KdShaderManager::Instance().m_spriteShader;
+	const float gaugeStartX = kStartX - kGaugeWidth * 0.5f;
 
-	// ゲージ左端
-	const float gaugeStartX =
-		StartX - GaugeWidth * 0.5f;
+	const float sunX = gaugeStartX + kGaugeLeft;
 
-	const float sunX =
-		gaugeStartX + GaugeLeft;
-
-	const float moonX =
-		gaugeStartX + GaugeRight;
+	const float moonX = gaugeStartX + kGaugeRight;
 
 	if (m_sunTex)
 	{
-		spriteShader.DrawTex(
+		KdShaderManager::Instance().m_spriteShader.DrawTex(
 			m_sunTex,
 			static_cast<int>(sunX),
-			StartY,
-			TimeIconSize,
-			TimeIconSize
+			kStartY,
+			kTimeIconSize,
+			kTimeIconSize
 		);
 	}
 
 	if (m_moonTex)
 	{
-		spriteShader.DrawTex(
+		KdShaderManager::Instance().m_spriteShader.DrawTex(
 			m_moonTex,
 			static_cast<int>(moonX),
-			StartY,
-			TimeIconSize,
-			TimeIconSize
+			kStartY,
+			kTimeIconSize,
+			kTimeIconSize
 		);
 	}
 }
@@ -79,26 +71,20 @@ void TimeUI::DrawIndicator()
 		return;
 	}
 
-	const float progress =
-		DayCycle::Instance().GetTimeProgress();
+	const float progress = DayCycle::Instance().GetTimeProgress();
 
-	const float gaugeStartX =
-		StartX - GaugeWidth * 0.5f;
+	const float gaugeStartX = kStartX - kGaugeWidth * 0.5f;
 
-	const float indicatorX =
-		gaugeStartX
-		+ GaugeLeft
-		+ (GaugeRight - GaugeLeft) * progress;
+	const float indicatorX = gaugeStartX + kGaugeLeft + (kGaugeRight - kGaugeLeft) * progress;
 
-	const float indicatorY =
-		StartY;
+	const float indicatorY = kStartY;
 
 	KdShaderManager::Instance().m_spriteShader.DrawTex(
 		m_indicatorTex,
 		static_cast<int>(indicatorX),
 		static_cast<int>(indicatorY),
-		IndicatorSize,
-		IndicatorSize,
+		kIndicatorSize,
+		kIndicatorSize,
 		nullptr,
 		&kWhiteColor,
 		Math::Vector2{ 0.5f, 1.5f }

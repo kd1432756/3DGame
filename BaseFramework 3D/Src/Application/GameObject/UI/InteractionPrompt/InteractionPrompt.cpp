@@ -56,12 +56,12 @@ void InteractionPrompt::DrawSprite()
 
 	if (m_showKeyIcon)
 	{
-		// 「Eキー + 文字」を中央揃えで描く
+		// E & 文字
 		DrawKeyAndText(&m_texKeyE, pos, m_prompt.c_str(), kWhiteColor);
 	}
 	else
 	{
-		// アイコン不要なら文字だけ中央に描く
+		// 文字だけ
 		DrawLabel(pos, kWhiteColor, FontID::Future24, m_prompt.c_str());
 	}
 }

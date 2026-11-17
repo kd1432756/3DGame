@@ -9,10 +9,9 @@ void TextPopupUI::Update()
 	const float life = (std::max)(m_lifeTime, 0.0001f);
 	const float t = std::clamp(m_elapsedTime / life, 0.0f, 1.0f);
 
-	// 演出固有の更新
+	// クラスごとの固有の更新
 	OnUpdate(dt, t);
 
-	// 寿命が来たら消える
 	if (m_elapsedTime >= m_lifeTime)
 	{
 		m_isExpired = true;

@@ -13,7 +13,7 @@ private:
 	bool  m_canHinder = false;
 	bool  m_isHindering = false;
 	float m_hinderRatio = 0.0f;
-	int   m_frame = 0;   // 連打表示の点滅用
+	int   m_frame = 0;
 
 	KdTexture m_texKeyF;
 	KdTexture m_texKeySpace;

@@ -263,7 +263,7 @@ private:
 
 	float m_arrestTimer = 0.0f;
 
-	static constexpr float kArrestTime = 0.2f;
+	static constexpr float kArrestTime = 0.05f;
 
 	float m_arrestDistance = 1.6f;
 

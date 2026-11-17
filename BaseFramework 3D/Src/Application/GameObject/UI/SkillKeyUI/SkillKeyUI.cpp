@@ -5,7 +5,7 @@ namespace
 	// 見た目の段階
 	enum Frame
 	{
-		kNormal = 0,	// 通常
+		kNormal = 0,		// 通常
 		kPressed = 1,	// 押された
 	};
 
@@ -19,11 +19,11 @@ namespace
 
 	constexpr FrameStyle kStyle[2] =
 	{
-		/* 通常     */ { 0, 1.00f,  0.00f, 1.00f },
-		/* 押された */ { 1, 0.90f, -0.06f, 0.90f },
+		{ 0, 1.00f,  0.00f, 1.00f },
+		 { 1, 0.90f, -0.06f, 0.90f },
 	};
 
-	// アニメーションの1コマ分(どの段階を何秒見せるか)
+	// どの段階をを何秒みせるか
 	struct Step
 	{
 		Frame frame;
@@ -88,11 +88,11 @@ void SkillKeyUI::LoadIfNeeded()
 
 	const Def defs[] =
 	{
-		{ SkillKey::MouseLeft, "mouse_outline.png",  "mouse_left_outline.png"     },
-		{ SkillKey::A,         "keyboard_a.png",     "keyboard_a.png"     },
-		{ SkillKey::S,         "keyboard_s.png",     "keyboard_s.png"     },
-		{ SkillKey::W,         "keyboard_w.png",     "keyboard_w.png"     },
-		{ SkillKey::D,         "keyboard_d.png",     "keyboard_d.png"     },
+		{ SkillKey::MouseLeft, "mouse_outline.png",  "mouse_left_outline.png" },
+		{ SkillKey::A,         "keyboard_a.png",     "keyboard_a.png" },
+		{ SkillKey::S,         "keyboard_s.png",     "keyboard_s.png" },
+		{ SkillKey::W,         "keyboard_w.png",     "keyboard_w.png" },
+		{ SkillKey::D,         "keyboard_d.png",     "keyboard_d.png" },
 	};
 
 	for (const auto& d : defs)

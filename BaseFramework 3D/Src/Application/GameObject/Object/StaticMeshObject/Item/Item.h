@@ -6,9 +6,9 @@
 
 enum class ItemMode
 {
-	Spawned,        // マップに最初から存在
-	InInventory,    // インベントリ内
-	Dropped         // 世界に落ちている
+	Spawned,		// マップに存在
+	InInventory,	// インベントリ内
+	Dropped		// キャラが落とした
 };
 
 class Inventory;
@@ -35,23 +35,19 @@ public:
 		return ObjectCategory::Item;
 	}
 
-	// .itemファイルを読み込む
 	bool LoadItem(const std::string& path);
 
-	// ItemData取得
 	const ItemData& GetItemData() const
 	{
 		return m_itemData;
 	}
 
-	// 保存用
 	const std::string& GetItemPath() const
 	{
 		return m_itemData.GetItemPath();
 	}
 
-	void SetSpawner(
-		const std::shared_ptr<ItemSpawner>& spawner)
+	void SetSpawner(const std::shared_ptr<ItemSpawner>& spawner)
 	{
 		m_spawner = spawner;
 	}
@@ -91,9 +87,7 @@ public:
 
 	bool Pickup(Inventory& inventory, int replaceIndex = -1);
 
-	void Drop(
-		const Math::Vector3& pos,
-		const Math::Vector3& dir);
+	void Drop(const Math::Vector3& pos, const Math::Vector3& dir);
 
 private:
 

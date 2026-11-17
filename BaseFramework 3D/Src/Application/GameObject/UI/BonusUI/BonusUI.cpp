@@ -1,5 +1,4 @@
-﻿// BonusUI.cpp
-#include "BonusUI.h"
+﻿#include "BonusUI.h"
 
 #include "../../Character/Player/Player.h"
 
@@ -20,18 +19,17 @@ void BonusUI::DrawSprite()
 
 	if (!player) return;
 
-	// ---- 倍率 + 残り時間バー ----
 	if (player->GetRepairBonusCount() > 0)
 	{
 		const float remain = player->GetRepairBonusTime();
 
-		// 残りわずかは赤
 		const bool low = remain <= 10.0f;
 
 		const Math::Color labelColor = low
 			? Math::Color{ 1.0f, 0.4f, 0.3f, 1.0f }
 		: Math::Color{ 1.0f, 0.85f, 0.2f, 1.0f };
 
+		// 倍率
 		char text[32];
 		sprintf_s(text, "x%.1f  %ds",
 			player->GetRepairBonusRate(),
@@ -40,6 +38,7 @@ void BonusUI::DrawSprite()
 		DrawLabel(Math::Vector2{ kBonusX, kBonusY }, labelColor,
 			FontID::Future24, text);
 
+		// 残り時間
 		DrawGauge(
 			static_cast<int>(kBonusX),
 			static_cast<int>(kBonusY + kBarOffsetY),
@@ -49,8 +48,7 @@ void BonusUI::DrawSprite()
 			labelColor);
 	}
 
-	// ---- [E] Deliver ----
-	// 使用中(スキルチェック)と逮捕中は出さない
+	// Eキーと「Deliver」
 	if (player->CanDeliver() && !player->IsUsing() && !player->IsArrested())
 	{
 		const float a = 0.75f + 0.25f * std::sin(m_animTime * 6.0f);

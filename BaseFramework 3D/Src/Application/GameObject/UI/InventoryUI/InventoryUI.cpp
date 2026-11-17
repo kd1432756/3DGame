@@ -12,15 +12,13 @@ void InventoryUI::Init()
 	m_keyTex.resize(Inventory::MaxItem);
 	for (int i = 0; i < Inventory::MaxItem; ++i)
 	{
-		m_keyTex[i] = LoadTexture(
-			"Asset/Textures/UI/Key/keyboard_" + std::to_string(i + 1) + ".png");
+		m_keyTex[i] = LoadTexture("Asset/Textures/UI/Key/keyboard_" + std::to_string(i + 1) + ".png");
 	}
 }
 
 void InventoryUI::DrawSprite()
 {
 	auto player = LockPlayer();
-
 	if (!player)
 	{
 		return;
@@ -34,22 +32,16 @@ void InventoryUI::DrawSprite()
 
 	for (int i = 0; i < Inventory::MaxItem; ++i)
 	{
-		DrawSlot(
-			i,
-			items[i],
-			i == selectIndex);
+		DrawSlot(i, items[i], i == selectIndex);
 	}
 }
 
-void InventoryUI::DrawSlot(
-	int index,
-	const InventoryItem& item,
-	bool selected)
+void InventoryUI::DrawSlot(int index, const InventoryItem& item, bool selected)
 {
-	const int x = StartX + index * (SlotSize + SlotSpace);
-	const int y = StartY;
+	const int x = kStartX + index * (kSlotSize + kSlotSpace);
+	const int y = kStartY;
 
-	// --- 危険アイテム判定 ---
+	// 危険アイテム
 	bool dangerous = false;
 	if (!item.IsEmpty() && !item.itemPath.empty())
 	{
@@ -57,7 +49,6 @@ void InventoryUI::DrawSlot(
 		dangerous = (data && data->IsDangerous());
 	}
 
-	// --- 色の選択 ---
 	const Math::Color* bgColor;
 	const Math::Color* borderColor;
 
@@ -72,36 +63,33 @@ void InventoryUI::DrawSlot(
 		borderColor = selected ? &kSlotSelectedBorderColor : &kSlotBorderColor;
 	}
 
-	// --- スロット背景（DrawBox）---
-	const int drawSize = selected ? SelectedSlotSize : SlotSize;
+	// アイテムスロット
+	const int drawSize = selected ? kSelectedSlotSize : kSlotSize;
 	const int half = drawSize / 2;
 
 	auto& sprite = KdShaderManager::Instance().m_spriteShader;
 
-	sprite.DrawBox(x, y, half, half, bgColor, true);      // 塗り
-	sprite.DrawBox(x, y, half, half, borderColor, false); // 枠
+	sprite.DrawBox(x, y, half, half, bgColor, true);
+	sprite.DrawBox(x, y, half, half, borderColor, false);
 
-	// 選択時は枠を重ねて太く
+	// 選択時
 	if (selected)
 	{
 		sprite.DrawBox(x, y, half - 1, half - 1, borderColor, false);
 		sprite.DrawBox(x, y, half - 2, half - 2, borderColor, false);
 	}
 
-	// --- アイテムアイコン（空でなければ）---
+	// アイテムアイコン
 	if (!item.IsEmpty())
 	{
 		DrawItemIcon(index, item, selected);
 	}
 
-	// --- キーアイコン（空スロットでも常に表示）---
+	// キーアイコン
 	DrawKeyIcon(index, selected);
 }
 
-void InventoryUI::DrawItemIcon(
-	int index,
-	const InventoryItem& item,
-	bool selected)
+void InventoryUI::DrawItemIcon(int index, const InventoryItem& item, bool selected)
 {
 	if (item.itemPath.empty())
 	{
@@ -138,8 +126,8 @@ void InventoryUI::DrawItemIcon(
 			texture).first;
 	}
 
-	const int x = StartX + index * (SlotSize + SlotSpace);
-	const int y = StartY;
+	const int x = kStartX + index * (kSlotSize + kSlotSpace);
+	const int y = kStartY;
 
 	auto& sprite = KdShaderManager::Instance().m_spriteShader;
 
@@ -147,25 +135,23 @@ void InventoryUI::DrawItemIcon(
 		it->second,
 		x,
 		y,
-		IconSize,
-		IconSize);
+		kIconSize,
+		kIconSize);
 
-	// --- 危険アイテムのバッジ ---
+	// 危険アイテム表示「！」
 	const ItemData* data = ItemData::Get(item.itemPath);
 	if (data && data->IsDangerous())
 	{
-		// 実際に描画されているスロットサイズを基準にする
-		const int drawSize = selected ? SelectedSlotSize : SlotSize;
+		const int drawSize = selected ? kSelectedSlotSize : kSlotSize;
 		const int half = drawSize / 2;
 
-		// 角から「バッジ半径 + 余白」だけ内側に置く
-		const int bx = x + half - BadgeRadius - BadgeMargin;
-		const int by = y + half - BadgeRadius - BadgeMargin;
+		const int bx = x + half - kBadgeRadius - kBadgeMargin;
+		const int by = y + half - kBadgeRadius - kBadgeMargin;
 
 		const Math::Color badgeColor{ 0.8f, 0.2f, 0.2f, 1.0f };
 
-		sprite.DrawCircle(bx, by, BadgeRadius, &badgeColor, true);
-		sprite.DrawCircle(bx, by, BadgeRadius, &kWhiteColor, false);
+		sprite.DrawCircle(bx, by, kBadgeRadius, &badgeColor, true);
+		sprite.DrawCircle(bx, by, kBadgeRadius, &kWhiteColor, false);
 
 		DrawLabel(
 			Math::Vector2{ static_cast<float>(bx) + 5.0f, static_cast<float>(by) },
@@ -184,20 +170,18 @@ void InventoryUI::DrawKeyIcon(int index, bool selected)
 
 	auto& sprite = KdShaderManager::Instance().m_spriteShader;
 
-	// 縦横比維持
-	const float iconW = KeyIconH *
+	const float iconW = kKeyIconH *
 		static_cast<float>(texPtr->GetInfo().Width) /
 		static_cast<float>(texPtr->GetInfo().Height);
 
-	// スロット中央X / スロット上端のさらに上（拡大前のSlotSizeを基準にして固定）
-	const int x = StartX + index * (SlotSize + SlotSpace);
-	const int y = StartY + SlotSize / 2 + KeyGap + KeyIconH / 2;
+	const int x = kStartX + index * (kSlotSize + kSlotSpace);
+	const int y = kStartY + kSlotSize / 2 + kKeyGap + kKeyIconH / 2;
 
 	const Math::Color color = selected
 		? Math::Color{ 1.0f, 1.0f, 1.0f, 1.0f }
-	: Math::Color{ 1.0f, 1.0f, 1.0f, KeyDimAlpha };
+	: Math::Color{ 1.0f, 1.0f, 1.0f, kKeyDimAlpha };
 
 	sprite.DrawTex(texPtr, x, y,
-		static_cast<int>(iconW), KeyIconH,
+		static_cast<int>(iconW), kKeyIconH,
 		nullptr, &color, Math::Vector2{ 0.5f, 0.5f });
 }
