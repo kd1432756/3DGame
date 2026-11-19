@@ -112,7 +112,8 @@ public :
 	enum class StageType
 	{
 		Stage1,
-		Stage2
+		Stage2,
+		Stage3
 	};
 
 	struct StageData
@@ -128,7 +129,9 @@ public :
 		m_stageType = stage;
 	}
 
-	StageData GetStageData() const;
+	StageData GetStageData() const { return GetStageData(m_stageType); }
+	StageData GetStageData(StageType type) const;
+	StageType GetStageType() const { return m_stageType; }
 
 private :
 

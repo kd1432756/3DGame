@@ -1,6 +1,5 @@
 ﻿#include "LocationEditorWindow.h"
 
-#include "../Editor.h"
 #include "../../System/Location/LocationPoint.h"
 #include "../../System/Location/LocationPointManager.h"
 

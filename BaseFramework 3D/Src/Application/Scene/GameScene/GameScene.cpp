@@ -5,6 +5,7 @@
 
 #include"../../System/Node/AStarNode/AStarNodeManager.h"
 #include"../../System/Navigation/NavMesh/NavMeshManager.h"
+#include"../../System/Location/LocationPointManager.h"
 
 #include "../SceneSerializer/SceneSerializer.h"
 #include "../../System/Node/AStarNode/AStarNodeSerializer.h"
@@ -330,8 +331,6 @@ void GameScene::Init()
 
 	m_spGameCamera->Init();
 	m_spGameCamera->SetMouseLock(true);
-
-	Editor::Instance().SetGameCamera(m_spGameCamera);
 
 	CameraManager::Instance().SetCamera(m_spGameCamera);
 

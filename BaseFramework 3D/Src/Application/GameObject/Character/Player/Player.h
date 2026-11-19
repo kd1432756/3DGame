@@ -126,10 +126,9 @@ public:
 	// 妨害UI用
 	std::shared_ptr<CharacterBase> FindHinderTarget() const;
 
-	bool  CanHinder() const 
+	bool  CanHinder() const
 	{
-		if (m_isHindering || m_isRestrained || m_isArrested || m_isHinderCamReturning)
-			return false;
+		if (m_isHindering || m_isRestrained || m_isArrested || m_isHinderCamReturning) return false;
 		if (m_hinderCooldownTimer > 0.0f) return false;
 		return FindHinderTarget() != nullptr;
 	}

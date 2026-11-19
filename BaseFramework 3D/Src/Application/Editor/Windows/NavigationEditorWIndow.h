@@ -21,9 +21,7 @@ public:
 
 	void Draw(NodeEditorWindow& nodeEditorWindow);
 
-	void SetLayout(
-		const ImVec2& pos,
-		const ImVec2& size)
+	void SetLayout(const ImVec2& pos, const ImVec2& size)
 	{
 		m_windowPos = pos;
 		m_windowSize = size;
@@ -67,6 +65,26 @@ public:
 			NavMeshEditMode::None;
 	}
 
+	enum class Request
+	{
+		None,
+		Generate,
+		Clear,
+		FindPath,
+		ClearPath,
+	};	
+
+	// 押されたボタンを返してリセットする
+	Request ConsumeRequest()
+	{
+		const Request r = m_request;
+		m_request = Request::None;
+		return r;
+	}
+
+	float GetAgentRadius() const { return m_navMeshAgentRadius; }
+
+
 private:
 
 	void DrawToolbar();
@@ -84,4 +102,6 @@ private:
 		NavMeshEditMode::None;
 
 	float m_navMeshAgentRadius = 0.2f;
+
+	Request m_request = Request::None;
 };

@@ -190,9 +190,9 @@ std::shared_ptr<KdGameObject> SceneManager::CreateObjectRaw(const std::string& t
 	return obj;
 }
 
-SceneManager::StageData SceneManager::GetStageData() const
+SceneManager::StageData SceneManager::GetStageData(StageType type) const
 {
-	switch (m_stageType)
+	switch (type)
 	{
 	case StageType::Stage1:
 		return
@@ -210,6 +210,15 @@ SceneManager::StageData SceneManager::GetStageData() const
 			"Asset/Stage/Stage2/astarnode.json",
 			"Asset/Stage/Stage2/navmesh.json",
 			"Asset/Stage/Stage2/location.json"
+		};
+
+	case StageType::Stage3:
+		return
+		{
+			"Asset/Stage/Stage3/scene.json",
+			"Asset/Stage/Stage3/astarnode.json",
+			"Asset/Stage/Stage3/navmesh.json",
+			"Asset/Stage/Stage3/location.json"
 		};
 	}
 

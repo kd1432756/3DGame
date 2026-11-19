@@ -343,6 +343,15 @@
     <Filter Include="Src\Application\GameObject\Camera\EventCamera">
       <UniqueIdentifier>{35821b10-f7f9-4ede-90aa-194152323d32}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\Editor\Mode">
+      <UniqueIdentifier>{128420c5-faaa-4fa9-a960-9cebc544b161}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\Editor\Mode\Navigation">
+      <UniqueIdentifier>{565df344-9e36-41b2-b172-e041ec8522a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\System\Stage">
+      <UniqueIdentifier>{ca7dd073-ca54-4476-8ca5-2c0cece3b281}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -624,9 +633,6 @@
     <ClInclude Include="Src\Application\System\Node\AStarNode\AStarPathfinder.h">
       <Filter>Src\Application\System\Node\AStarNode</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\Editor\Windows\NavigationEditorWIndow.h">
-      <Filter>Src\Application\Editor\Windows</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\System\Navigation\NavMesh\NavMeshManager.h">
       <Filter>Src\Application\System\Navigation\NavMesh</Filter>
     </ClInclude>
@@ -663,17 +669,8 @@
     <ClInclude Include="Src\Application\Scene\LoadingScene\LoadingScene.h">
       <Filter>Src\Application\Scene\LoadingScene</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\System\Navigation\NavMesh\NavMeshGrid.h">
-      <Filter>Src\Application\System\Navigation\NavMesh</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\System\Navigation\NavMesh\NavMeshPolygonBuilder.h">
       <Filter>Src\Application\System\Navigation\NavMesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\System\Navigation\NavMesh\NavMeshGroundTile.h">
-      <Filter>Src\Application\Editor\Windows</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\System\Navigation\NavMesh\NavMeshObstacleBounds.h">
-      <Filter>Src\Application\Editor\Windows</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\System\Navigation\NavMesh\PolygonBoolean.h">
       <Filter>Src\Application\System\Navigation\NavMesh</Filter>
@@ -845,6 +842,45 @@
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Camera\EventCamera\EventCamera.h">
       <Filter>Src\Application\GameObject\Camera\EventCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Editor\EditorContext.h">
+      <Filter>Src\Application\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Editor\EditorGrid.h">
+      <Filter>Src\Application\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Editor\EditorIO.h">
+      <Filter>Src\Application\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Editor\Mode\IEditorMode.h">
+      <Filter>Src\Application\Editor\Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Editor\Mode\LocationMode.h">
+      <Filter>Src\Application\Editor\Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Editor\Mode\ObjectMode.h">
+      <Filter>Src\Application\Editor\Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Editor\Mode\StageMode.h">
+      <Filter>Src\Application\Editor\Mode</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Editor\Mode\Navigation\NavigationMode.h">
+      <Filter>Src\Application\Editor\Mode\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Editor\Mode\Navigation\NavMeshPreviewTool.h">
+      <Filter>Src\Application\Editor\Mode\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Editor\Mode\Navigation\NodeEditorTool.h">
+      <Filter>Src\Application\Editor\Mode\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\Editor\Windows\NavigationEditorWindow.h">
+      <Filter>Src\Application\Editor\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\Stage\StageConst.h">
+      <Filter>Src\Application\System\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\System\Navigation\NavMesh\NavMeshBuilder.h">
+      <Filter>Src\Application\System\Navigation\NavMesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1085,9 +1121,6 @@
     <ClCompile Include="Src\Application\System\Node\AStarNode\AStarPathfinder.cpp">
       <Filter>Src\Application\System\Node\AStarNode</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\Editor\Windows\NavigationEditorWIndow.cpp">
-      <Filter>Src\Application\Editor\Windows</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\System\Navigation\NavMesh\NavMeshManager.cpp">
       <Filter>Src\Application\System\Navigation\NavMesh</Filter>
     </ClCompile>
@@ -1123,9 +1156,6 @@
     </ClCompile>
     <ClCompile Include="Src\Application\Scene\LoadingScene\LoadingScene.cpp">
       <Filter>Src\Application\Scene\LoadingScene</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\System\Navigation\NavMesh\NavMeshGrid.cpp">
-      <Filter>Src\Application\System\Navigation\NavMesh</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\System\Navigation\NavMesh\NavMeshPolygonBuilder.cpp">
       <Filter>Src\Application\System\Navigation\NavMesh</Filter>
@@ -1303,6 +1333,36 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Camera\EventCamera\EventCamera.cpp">
       <Filter>Src\Application\GameObject\Camera\EventCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Editor\EditorGrid.cpp">
+      <Filter>Src\Application\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Editor\EditorIO.cpp">
+      <Filter>Src\Application\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Editor\Mode\LocationMode.cpp">
+      <Filter>Src\Application\Editor\Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Editor\Mode\ObjectMode.cpp">
+      <Filter>Src\Application\Editor\Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Editor\Mode\StageMode.cpp">
+      <Filter>Src\Application\Editor\Mode</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Editor\Mode\Navigation\NavigationMode.cpp">
+      <Filter>Src\Application\Editor\Mode\Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Editor\Mode\Navigation\NavMeshPreviewTool.cpp">
+      <Filter>Src\Application\Editor\Mode\Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Editor\Mode\Navigation\NodeEditorTool.cpp">
+      <Filter>Src\Application\Editor\Mode\Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\Editor\Windows\NavigationEditorWindow.cpp">
+      <Filter>Src\Application\Editor\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\System\Navigation\NavMesh\NavMeshBuilder.cpp">
+      <Filter>Src\Application\System\Navigation\NavMesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

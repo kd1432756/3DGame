@@ -110,9 +110,9 @@ protected:
 
 	bool ConsumeRepathRequest()
 	{
-		const bool r = m_needRepath;
+		const bool re = m_needRepath;
 		m_needRepath = false;
-		return r;
+		return re;
 	}
 
 	virtual void OnRepathRequested()
@@ -140,7 +140,7 @@ private:
 	static constexpr float kStuckMoveRatio = 0.3f;      // 期待移動量のこの割合未満なら「進めていない」
 	static constexpr float kGhostMinTime= 1.5f;        // ゴースト最低継続時間
 	static constexpr float kGhostCooldownTime = 3.0f;   // 復帰後、再ゴースト化までの時間
-	static constexpr float kMaxCharaPush = 0.15f;       // 1フレームのキャラ押し出し上限（×スケール）
+	static constexpr float kMaxCharaPush = 0.15f;       // 1フレームのキャラ押し出し上限
 
 	float m_blockedTimer = 0.0f;
 	float m_repathCooldown = 0.0f;

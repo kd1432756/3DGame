@@ -6,70 +6,72 @@ namespace
 	// VertexId Hash
 	//============================================================
 
+	// 頂点座標を効率よく検索するためのハッシュ
 	struct VertexIdHash
 	{
-		size_t operator()(
-			const NavMeshPolygonBuilder::VertexId& v) const noexcept
+		size_t operator()(const NavMeshPolygonBuilder::VertexId& v) const noexcept
 		{
+			// ハッシュ化
 			const size_t hx = std::hash<int>{}(v.x);
 			const size_t hy = std::hash<int>{}(v.y);
 
+			// 合成
 			return hx ^ (hy << 1);
 		}
 	};
-
 
 	//============================================================
 	// Edge Hash
 	//============================================================
 
+	// 辺を効率よく検索するためのハッシュ
 	struct EdgeHash
 	{
-		size_t operator()(
-			const NavMeshPolygonBuilder::Edge& edge) const noexcept
+		size_t operator()(const NavMeshPolygonBuilder::Edge& edge) const noexcept
 		{
 			const VertexIdHash vertexHash;
 
+			// 辺の両端の頂点をハッシュ化
 			const size_t ha = vertexHash(edge.a);
 			const size_t hb = vertexHash(edge.b);
 
+			// 合成
 			return ha ^ (hb << 1);
 		}
 	};
 
-
 	//============================================================
 	// DirectedEdge
-	//
-	// Edge と違い、a -> b の方向を保持する。
 	//============================================================
 
+	// 方向を持つ辺
 	struct DirectedEdge
 	{
 		NavMeshPolygonBuilder::VertexId a;
 		NavMeshPolygonBuilder::VertexId b;
 
+		// 始点と終点が一致するか
 		bool operator==(const DirectedEdge& other) const
 		{
-			return a == other.a &&
-				b == other.b;
+			return a == other.a && b == other.b;
 		}
 	};
 
-
+	// 方向付き辺のハッシュ
 	struct DirectedEdgeHash
 	{
 		size_t operator()(const DirectedEdge& edge) const noexcept
 		{
 			const VertexIdHash vertexHash;
 
+			// 辺の両端の頂点をハッシュ化
 			const size_t ha = vertexHash(edge.a);
 			const size_t hb = vertexHash(edge.b);
 
+			// 合成
 			return ha ^ (hb << 1);
 		}
 	};
-
 
 	//============================================================
 	// Cross / Signed Area
@@ -78,8 +80,7 @@ namespace
 	// < 0 : CW
 	//============================================================
 
-	double CalculateSignedArea(
-		const std::vector<NavMeshPolygonBuilder::VertexId>& polygon)
+	double CalculateSignedArea(const std::vector<NavMeshPolygonBuilder::VertexId>& polygon)
 	{
 		if (polygon.size() < 3)
 		{
@@ -90,9 +91,11 @@ namespace
 
 		for (size_t i = 0; i < polygon.size(); ++i)
 		{
+			// すべての辺を調べる
 			const auto& a = polygon[i];
-			const auto& b = polygon[(i + 1) % polygon.size()];
+			const auto& b = polygon[(i + 1) % polygon.size()];		// 最初の頂点に戻れる
 
+			// 靴紐公式
 			area +=
 				static_cast<double>(a.x) * static_cast<double>(b.y) -
 				static_cast<double>(b.x) * static_cast<double>(a.y);
@@ -101,68 +104,45 @@ namespace
 		return area * 0.5;
 	}
 
-
 	//============================================================
 	// Direction
-	//
-	// Grid 上の VertexId 同士の方向を返す。
-	//
-	// 0 = East
-	// 1 = North
-	// 2 = West
-	// 3 = South
 	//============================================================
 
-	int GetDirection(
-		const NavMeshPolygonBuilder::VertexId& from,
-		const NavMeshPolygonBuilder::VertexId& to)
+	int GetDirection(const NavMeshPolygonBuilder::VertexId& from, const NavMeshPolygonBuilder::VertexId& to)
 	{
+		// 移動量を計算
 		const int dx = to.x - from.x;
 		const int dy = to.y - from.y;
 
+		// ４方向判定
 		if (dx > 0)
 		{
-			return 0; // East
+			return 0;	// East
 		}
 
 		if (dy > 0)
 		{
-			return 1; // North
+			return 1;	// North
 		}
 
 		if (dx < 0)
 		{
-			return 2; // West
+			return 2;	// West
 		}
 
-		return 3; // South
+		return 3;	// South
 	}
-
 
 	//============================================================
 	// Turn priority
-	//
-	// Boundary を辿る際、
-	// 「内側を左側に維持する」ような方向を優先する。
-	//
-	// 同じ Vertex に複数の Edge が集まるケース
-	// （特に点で接触するケース）にも対応する。
 	//============================================================
 
-	int GetTurnPriority(
-		int incomingDirection,
-		int outgoingDirection)
+	int GetTurnPriority(int incomingDirection, int outgoingDirection)
 	{
-		// outgoing が incoming に対して何度回転するか
-		const int turn =
-			(outgoingDirection - incomingDirection + 4) % 4;
+		// outgoingがincomingに対して何度回転するか
+		const int turn = (outgoingDirection - incomingDirection + 4) % 4;
 
-		// 左  -> 0
-		// 直進 -> 1
-		// 右  -> 2
-		// Uターン -> 3
-		//
-		// CCW の境界を作るため左方向を優先。
+		// CCWの境界を作るため左方向を優先
 		switch (turn)
 		{
 		case 1:
@@ -175,7 +155,6 @@ namespace
 			return 3; // U-turn
 		}
 	}
-
 
 	//============================================================
 	// Find next directed edge
@@ -191,29 +170,24 @@ namespace
 	{
 		bool found = false;
 
-		int bestPriority =
-			std::numeric_limits<int>::max();
+		int bestPriority = std::numeric_limits<int>::max();
 
 		for (const DirectedEdge& edge : edges)
 		{
-			// 現在のVertexから出ていない
+			// 現在の頂点から出ていない
 			if (!(edge.a == current))
 			{
 				continue;
 			}
 
-			const int outgoingDirection =
-				GetDirection(
-					edge.a,
-					edge.b);
+			// 次の辺の方向を取得
+			const int outgoingDirection = GetDirection(edge.a, edge.b);
 
-			const int priority =
-				GetTurnPriority(
-					incomingDirection,
-					outgoingDirection);
+			// 曲がる方向を取得（左方向優先）
+			const int priority = GetTurnPriority(incomingDirection, outgoingDirection);
 
-			if (!found ||
-				priority < bestPriority)
+			// 最も優先順位の高い辺を選択
+			if (!found || priority < bestPriority)
 			{
 				found = true;
 				bestPriority = priority;
@@ -224,26 +198,25 @@ namespace
 		return found;
 	}
 
-
 	//============================================================
 	// Remove duplicate consecutive vertices
 	//============================================================
 
-	void RemoveDuplicateVertices(
-		std::vector<NavMeshPolygonBuilder::VertexId>& polygon)
+	void RemoveDuplicateVertices(std::vector<NavMeshPolygonBuilder::VertexId>& polygon)
 	{
 		if (polygon.empty())
 		{
 			return;
 		}
 
+		// 新しい頂点配列
 		std::vector<NavMeshPolygonBuilder::VertexId> result;
 		result.reserve(polygon.size());
 
 		for (const auto& vertex : polygon)
 		{
-			if (!result.empty() &&
-				result.back() == vertex)
+			// 現在の頂点と追加した頂点が同じなら、追加した頂点を削除
+			if (!result.empty() && result.back() == vertex)
 			{
 				continue;
 			}
@@ -252,38 +225,27 @@ namespace
 		}
 
 		// 先頭と末尾が同じなら末尾を削除
-		if (result.size() >= 2 &&
-			result.front() == result.back())
+		if (result.size() >= 2 && result.front() == result.back())
 		{
 			result.pop_back();
 		}
 
+		// 置き換える
 		polygon = std::move(result);
 	}
 
-
 	//============================================================
-	// Collinear vertices を削除
-	//
-	// 例えば
-	//
-	// (0,0) -> (1,0) -> (2,0)
-	//
-	// を
-	//
-	// (0,0) -> (2,0)
-	//
-	// にする。
+	// Remove collinear vertices 
 	//============================================================
 
-	void RemoveCollinearVertices(
-		std::vector<NavMeshPolygonBuilder::VertexId>& polygon)
+	void RemoveCollinearVertices(std::vector<NavMeshPolygonBuilder::VertexId>& polygon)
 	{
 		if (polygon.size() < 3)
 		{
 			return;
 		}
 
+		// 削除したか　
 		bool removed = true;
 
 		while (removed && polygon.size() >= 3)
@@ -294,38 +256,33 @@ namespace
 
 			for (size_t i = 0; i < count; ++i)
 			{
-				const auto& prev =
-					polygon[(i + count - 1) % count];
+				// 1つ前の頂点
+				const auto& prev = polygon[(i + count - 1) % count];
 
-				const auto& current =
-					polygon[i];
+				// 現在の頂点
+				const auto& current = polygon[i];
 
-				const auto& next =
-					polygon[(i + 1) % count];
+				// 1つ後の頂点
+				const auto& next = polygon[(i + 1) % count];
 
-				const int dx1 =
-					current.x - prev.x;
+				// 頂点の方向を計算
+				const int dx1 = current.x - prev.x;
+				const int dy1 = current.y - prev.y;
 
-				const int dy1 =
-					current.y - prev.y;
+				const int dx2 = next.x - current.x;
+				const int dy2 = next.y - current.y;
 
-				const int dx2 =
-					next.x - current.x;
+				// 外積を計算
+				const int cross = dx1 * dy2 - dy1 * dx2;
 
-				const int dy2 =
-					next.y - current.y;
-
-				const int cross =
-					dx1 * dy2 -
-					dy1 * dx2;
-
+				// 一直線でない
 				if (cross != 0)
 				{
 					continue;
 				}
 
-				polygon.erase(
-					polygon.begin() + static_cast<std::ptrdiff_t>(i));
+				// 一直線なら現在の頂点を削除
+				polygon.erase(polygon.begin() + static_cast<std::ptrdiff_t>(i));
 
 				removed = true;
 				break;
@@ -334,15 +291,12 @@ namespace
 	}
 }
 
-
 //============================================================
 // Build
 //============================================================
 
-std::vector<NavMeshPolygonBuilder::Polygon>
-NavMeshPolygonBuilder::BuildTiles(
-	const std::vector<Tile>& tiles,
-	float tileSize)
+std::vector<NavMeshPolygonBuilder::Polygon> NavMeshPolygonBuilder::BuildTiles(
+	const std::vector<Tile>& tiles, float tileSize)
 {
 	std::vector<Polygon> result;
 
@@ -350,31 +304,25 @@ NavMeshPolygonBuilder::BuildTiles(
 	{
 		return result;
 	}
-
 	if (tileSize <= 0.0f)
 	{
 		return result;
 	}
 
-
 	//============================================================
 	// 1. 全 Tile の境界 Edge を抽出
 	//============================================================
 
-	std::unordered_set<
-		DirectedEdge,
-		DirectedEdgeHash> boundaryEdges;
+	std::unordered_set<DirectedEdge, DirectedEdgeHash> boundaryEdges;
 
-	boundaryEdges.reserve(
-		tiles.size() * 4);
+	boundaryEdges.reserve(tiles.size() * 4);
 
 	for (const Tile& tile : tiles)
 	{
-		const auto vertices =
-			GetTileVertices(
-				tile,
-				tileSize);
+		// 頂点を取得
+		const auto vertices = GetTileVertices(tile, tileSize);
 
+		// 辺を取得
 		const DirectedEdge edges[] =
 		{
 			{ vertices[0], vertices[1] },
@@ -385,31 +333,29 @@ NavMeshPolygonBuilder::BuildTiles(
 
 		for (const DirectedEdge& edge : edges)
 		{
-			const DirectedEdge reverse{
-				edge.b,
-				edge.a
-			};
+			// 逆向きの辺を作る
+			const DirectedEdge reverse{ edge.b, edge.a };
 
-			auto reverseIt =
-				boundaryEdges.find(reverse);
+			// 共有辺を探す
+			auto reverseIt = boundaryEdges.find(reverse);
 
 			if (reverseIt != boundaryEdges.end())
 			{
+				// 存在したらその辺を消す
 				boundaryEdges.erase(reverseIt);
 			}
 			else
 			{
+				// 存在しなかったら追加する
 				boundaryEdges.insert(edge);
 			}
 		}
 	}
 
-
 	if (boundaryEdges.empty())
 	{
 		return result;
 	}
-
 
 	//============================================================
 	// 2. Boundary Edge から Loop を作る
@@ -417,56 +363,50 @@ NavMeshPolygonBuilder::BuildTiles(
 
 	std::vector<std::vector<VertexId>> loops;
 
+	// すべての境界辺をLoopにする
 	while (!boundaryEdges.empty())
 	{
-		auto firstIt =
-			boundaryEdges.begin();
+		// 最初の辺を取得
+		auto firstIt = boundaryEdges.begin();
 
-		const DirectedEdge firstEdge =
-			*firstIt;
+		const DirectedEdge firstEdge = *firstIt;
 
 		boundaryEdges.erase(firstIt);
 
-
+		// loopの頂点群
 		std::vector<VertexId> loop;
 
 		loop.reserve(16);
 
-		loop.push_back(
-			firstEdge.a);
+		loop.push_back(firstEdge.a);
 
+		// 現在頂点
+		VertexId current = firstEdge.b;
 
-		VertexId current =
-			firstEdge.b;
+		// 開始頂点
+		const VertexId start = firstEdge.a;
 
-		const VertexId start =
-			firstEdge.a;
-
-		int incomingDirection =
-			GetDirection(
-				firstEdge.a,
-				firstEdge.b);
-
+		// 辺の進行方向を取得
+		int incomingDirection = GetDirection(firstEdge.a, firstEdge.b);
 
 		size_t safetyCounter = 0;
 
-		const size_t safetyLimit =
-			tiles.size() * 4 + 16;
+		const size_t safetyLimit = tiles.size() * 4 + 16;
 
-
+		// Loopが完成するまで
 		while (safetyCounter++ < safetyLimit)
 		{
-			loop.push_back(
-				current);
+			loop.push_back(current);
 
+			// 開始点にもどったか
 			if (current == start)
 			{
 				break;
 			}
 
-
 			DirectedEdge nextEdge;
 
+			// 左折優先で次の辺を選択
 			if (!FindNextEdge(
 				current,
 				incomingDirection,
@@ -476,167 +416,126 @@ NavMeshPolygonBuilder::BuildTiles(
 				break;
 			}
 
+			boundaryEdges.erase(nextEdge);
 
-			boundaryEdges.erase(
-				nextEdge);
+			// 進行方法更新
+			incomingDirection = GetDirection(nextEdge.a, nextEdge.b);
 
-
-			incomingDirection =
-				GetDirection(
-					nextEdge.a,
-					nextEdge.b);
-
-
-			current =
-				nextEdge.b;
+			// 現在頂点更新
+			current = nextEdge.b;
 		}
 
-
-		// 閉じていない
-		if (loop.size() < 4 ||
-			loop.back() != start)
+		// 閉じているか
+		if (loop.size() < 4 || loop.back() != start)
 		{
 			continue;
 		}
 
-
-		// 最後の start を削除
+		// 最後のstart（開始点と重なる）を削除
 		loop.pop_back();
 
+		// 重複した頂点を削除
+		RemoveDuplicateVertices(loop);
 
-		RemoveDuplicateVertices(
-			loop);
-
-		RemoveCollinearVertices(
-			loop);
-
+		// 直線上にある中間頂点を削除
+		RemoveCollinearVertices(loop);
 
 		if (loop.size() < 3)
 		{
 			continue;
 		}
 
-
-		const double area =
-			CalculateSignedArea(
-				loop);
+		const double area = CalculateSignedArea(loop);
 
 		if (std::abs(area) < 0.000001)
 		{
 			continue;
 		}
 
-
-		loops.push_back(
-			std::move(loop));
+		// loopsに移して追加
+		loops.push_back(std::move(loop));
 	}
-
 
 	if (loops.empty())
 	{
 		return result;
 	}
 
-
 	//============================================================
 	// 3. Outer / Hole に分類
 	//============================================================
 
-	std::vector<std::vector<VertexId>>
-		outerLoops;
+	std::vector<std::vector<VertexId>>	outerLoops;
 
-	std::vector<std::vector<VertexId>>
-		holeLoops;
-
+	std::vector<std::vector<VertexId>>	holeLoops;
 
 	for (auto& loop : loops)
 	{
-		const double area =
-			CalculateSignedArea(
-				loop);
+		// 頂点の格納順から符号付で面積を求める
+		const double area = CalculateSignedArea(loop);
 
 		if (area > 0.0)
 		{
-			outerLoops.push_back(
-				std::move(loop));
+			// 正の値（反時計回り）だったらOuter
+			outerLoops.push_back(std::move(loop));
 		}
 		else
 		{
-			holeLoops.push_back(
-				std::move(loop));
+			// 負の値（時計回り）だったらHole
+			holeLoops.push_back(std::move(loop));
 		}
 	}
-
 
 	//============================================================
 	// 4. Grid Polygon を作る
 	//============================================================
-	//
-	// ここではまだ VertexId のまま。
-	//
 
 	struct GridPolygon
 	{
 		std::vector<VertexId> outer;
 
-		std::vector<
-			std::vector<VertexId>> holes;
+		std::vector<std::vector<VertexId>> holes;
 	};
 
+	std::vector<GridPolygon>	gridPolygons;
 
-	std::vector<GridPolygon>
-		gridPolygons;
+	gridPolygons.reserve(outerLoops.size());
 
-	gridPolygons.reserve(
-		outerLoops.size());
-
-
+	// 外周のLoopをGrid Polygonに変換
 	for (auto& outer : outerLoops)
 	{
 		GridPolygon polygon;
 
-		polygon.outer =
-			std::move(outer);
+		polygon.outer = std::move(outer);
 
-		gridPolygons.push_back(
-			std::move(polygon));
+		gridPolygons.push_back(std::move(polygon));
 	}
-
 
 	//============================================================
 	// 5. Hole の所属する Outer を探す
 	//============================================================
 
-	auto IsPointInsidePolygon =
-		[](
-			const VertexId& point,
-			const std::vector<VertexId>& polygon)
+	// 頂点がポリゴンの内部にあるか判定するラムダ式の関数
+	auto IsPointInsidePolygon = [](const VertexId& point,
+		const std::vector<VertexId>& polygon)
 		{
 			bool inside = false;
 
-			const size_t count =
-				polygon.size();
+			const size_t count = polygon.size();
 
 			if (count < 3)
 			{
 				return false;
 			}
 
-
-			for (size_t i = 0, j = count - 1;
-				i < count;
-				j = i++)
+			for (size_t i = 0, j = count - 1; i < count; j = i++)
 			{
-				const VertexId& a =
-					polygon[i];
+				const VertexId& a = polygon[i];
 
-				const VertexId& b =
-					polygon[j];
+				const VertexId& b = polygon[j];
 
-
-				const bool intersect =
-					((a.y > point.y) !=
-						(b.y > point.y)) &&
+				// レイキャスティング法
+				const bool intersect = ((a.y > point.y) != (b.y > point.y)) &&
 					(
 						static_cast<double>(point.x) <
 						(
@@ -647,17 +546,15 @@ NavMeshPolygonBuilder::BuildTiles(
 							)
 						);
 
-
+				// 奇数回交差したら内部判定
 				if (intersect)
 				{
 					inside = !inside;
 				}
 			}
 
-
 			return inside;
 		};
-
 
 	for (auto& hole : holeLoops)
 	{
@@ -666,146 +563,100 @@ NavMeshPolygonBuilder::BuildTiles(
 			continue;
 		}
 
+		// 内部かの判定用頂点
+		const VertexId testPoint = hole.front();
 
-		const VertexId testPoint =
-			hole.front();
-
-
+		// 所属先のポリゴン
 		int bestPolygonIndex = -1;
 
-		double bestArea =
-			std::numeric_limits<double>::max();
+		// 最小外周面積
+		double bestArea = std::numeric_limits<double>::max();
 
-
-		for (size_t i = 0;
-			i < gridPolygons.size();
-			++i)
+		for (size_t i = 0; i < gridPolygons.size(); ++i)
 		{
-			const GridPolygon& polygon =
-				gridPolygons[i];
+			const GridPolygon& polygon = gridPolygons[i];
 
-
-			if (!IsPointInsidePolygon(
-				testPoint,
-				polygon.outer))
+			// HoleがOuterの中にあるか
+			if (!IsPointInsidePolygon(testPoint, polygon.outer))
 			{
 				continue;
 			}
 
+			const double area = std::abs(CalculateSignedArea(polygon.outer));
 
-			const double area =
-				std::abs(
-					CalculateSignedArea(
-						polygon.outer));
-
-
+			// 最も小さいOuterを選択
 			if (area < bestArea)
 			{
 				bestArea = area;
 
-				bestPolygonIndex =
-					static_cast<int>(i);
+				bestPolygonIndex = static_cast<int>(i);
 			}
 		}
 
-
 		if (bestPolygonIndex >= 0)
 		{
-			gridPolygons[
-				bestPolygonIndex]
-				.holes
-				.push_back(
-					std::move(hole));
+			// Grid Polygonに追加
+			gridPolygons[bestPolygonIndex].holes.push_back(std::move(hole));
 		}
 	}
-
 
 	//============================================================
 	// 6. VertexId → Vector2
 	//============================================================
 
-	result.reserve(
-		gridPolygons.size());
+	result.reserve(gridPolygons.size());
 
-
-	for (auto& gridPolygon :
-		gridPolygons)
+	for (auto& gridPolygon : gridPolygons)
 	{
 		Polygon polygon;
-
 
 		//--------------------------------------------------------
 		// Outer
 		//--------------------------------------------------------
 
-		polygon.outer.reserve(
-			gridPolygon.outer.size());
+		polygon.outer.reserve(gridPolygon.outer.size());
 
-
-		for (const VertexId& vertex :
-			gridPolygon.outer)
+		// 頂点番号を座標に変換
+		for (const VertexId& vertex : gridPolygon.outer)
 		{
-			polygon.outer.push_back(
-				Math::Vector2{
-					static_cast<float>(vertex.x) *
-						(tileSize * 0.5f),
-
-					static_cast<float>(vertex.y) *
-						(tileSize * 0.5f)
+			polygon.outer.push_back(Math::Vector2{
+					static_cast<float>(vertex.x) * (tileSize * 0.5f),
+					static_cast<float>(vertex.y) * (tileSize * 0.5f)
 				});
 		}
-
 
 		//--------------------------------------------------------
 		// Holes
 		//--------------------------------------------------------
 
-		polygon.holes.reserve(
-			gridPolygon.holes.size());
+		polygon.holes.reserve(gridPolygon.holes.size());
 
-
-		for (const auto& gridHole :
-			gridPolygon.holes)
+		for (const auto& gridHole : gridPolygon.holes)
 		{
-			std::vector<Math::Vector2>
-				hole;
+			std::vector<Math::Vector2> hole;
 
-			hole.reserve(
-				gridHole.size());
+			hole.reserve(gridHole.size());
 
-
-			for (const VertexId& vertex :
-				gridHole)
+			// 頂点番号を座標に変換
+			for (const VertexId& vertex : gridHole)
 			{
-				hole.push_back(
-					Math::Vector2{
-						static_cast<float>(vertex.x) *
-							(tileSize * 0.5f),
-
-						static_cast<float>(vertex.y) *
-							(tileSize * 0.5f)
+				hole.push_back(Math::Vector2{
+						static_cast<float>(vertex.x) * (tileSize * 0.5f),
+						static_cast<float>(vertex.y) * (tileSize * 0.5f)
 					});
 			}
 
-
-			polygon.holes.push_back(
-				std::move(hole));
+			polygon.holes.push_back(std::move(hole));
 		}
 
-
-		result.push_back(
-			std::move(polygon));
+		result.push_back(std::move(polygon));
 	}
-
 
 	return result;
 }
 
-
-std::vector<NavMeshPolygonBuilder::Polygon>
-NavMeshPolygonBuilder::BuildObstacles(
-	const std::vector<Obstacle>& obstacles,
-	float agentRadius)
+std::vector<NavMeshPolygonBuilder::Polygon> NavMeshPolygonBuilder::BuildObstacles(
+	const std::vector<Obstacle>& obstacles, float agentRadius)
 {
 	std::vector<Polygon> result;
 
@@ -814,14 +665,12 @@ NavMeshPolygonBuilder::BuildObstacles(
 		return result;
 	}
 
-	result.reserve(
-		obstacles.size());
+	result.reserve(obstacles.size());
 
 	for (const Obstacle& obstacle : obstacles)
 	{
-		// 不正なAABBは無視
-		if (obstacle.minX >= obstacle.maxX ||
-			obstacle.minZ >= obstacle.maxZ)
+		// 不正なAABBは除外
+		if (obstacle.minX >= obstacle.maxX || obstacle.minZ >= obstacle.maxZ)
 		{
 			continue;
 		}
@@ -830,6 +679,7 @@ NavMeshPolygonBuilder::BuildObstacles(
 
 		polygon.outer.reserve(4);
 
+		// agent radius分外側に広げる
 		// Bottom Left
 		polygon.outer.push_back(
 			Math::Vector2{
@@ -858,8 +708,7 @@ NavMeshPolygonBuilder::BuildObstacles(
 				obstacle.maxZ + agentRadius
 			});
 
-		result.push_back(
-			std::move(polygon));
+		result.push_back(std::move(polygon));
 	}
 
 	return result;
@@ -869,83 +718,53 @@ NavMeshPolygonBuilder::BuildObstacles(
 // GetTileOrigin
 //============================================================
 
-NavMeshPolygonBuilder::VertexId
-NavMeshPolygonBuilder::GetTileOrigin(
-	const Tile& tile,
-	float tileSize) const
+NavMeshPolygonBuilder::VertexId NavMeshPolygonBuilder::GetTileOrigin(
+	const Tile& tile, float tileSize) const
 {
-	const float vertexGridSize =
-		tileSize * 0.5f;
+	// 頂点間隔
+	const float vertexGridSize = tileSize * 0.5f;
 
-	const int centerX =
-		static_cast<int>(
-			std::round(
-				tile.centerPos.x /
-				vertexGridSize));
+	// 中心座標のグリッドを計算
+	const int centerX = static_cast<int>(std::round(tile.centerPos.x / vertexGridSize));
+	const int centerY = static_cast<int>(std::round(tile.centerPos.y / vertexGridSize));
 
-	const int centerY =
-		static_cast<int>(
-			std::round(
-				tile.centerPos.y /
-				vertexGridSize));
-
-	return
-	{
-		centerX - 1,
-		centerY - 1
-	};
+	// 基準の頂点グリッド
+	return { centerX - 1, centerY - 1 };
 }
-
 
 //============================================================
 // GetTileVertices
 //============================================================
 
-std::array<NavMeshPolygonBuilder::VertexId, 4>
-NavMeshPolygonBuilder::GetTileVertices(
-	const Tile& tile,
-	float tileSize) const
+std::array<NavMeshPolygonBuilder::VertexId, 4> NavMeshPolygonBuilder::GetTileVertices(
+	const Tile& tile, float tileSize) const
 {
-	const VertexId origin =
-		GetTileOrigin(
-			tile,
-			tileSize);
+	// 基準の頂点を取得
+	const VertexId origin = GetTileOrigin(tile, tileSize);
 
-	const int tileWidth =
-		static_cast<int>(
-			std::round(
-				tileSize /
-				(tileSize * 0.5f)));
+	const int tileWidth = static_cast<int>(std::round(tileSize / (tileSize * 0.5f)));
 
+	// ４頂点の座標
 	return
 	{ {
-		{ origin.x,          origin.y          },
-		{ origin.x + tileWidth, origin.y       },
+		{ origin.x, origin.y },
+		{ origin.x + tileWidth, origin.y },
 		{ origin.x + tileWidth, origin.y + tileWidth },
-		{ origin.x,          origin.y + tileWidth }
+		{ origin.x, origin.y + tileWidth }
 	} };
 }
 
 //============================================================
 // MakeEdge
-//
-// 無向 Edge として比較したい場合に使用。
 //============================================================
 
-NavMeshPolygonBuilder::Edge
-NavMeshPolygonBuilder::MakeEdge(
-	VertexId a,
-	VertexId b) const
+NavMeshPolygonBuilder::Edge NavMeshPolygonBuilder::MakeEdge(VertexId a, VertexId b) const
 {
-	if (a.x > b.x ||
-		(a.x == b.x && a.y > b.y))
+	// 辺の向きを統一
+	if (a.x > b.x || (a.x == b.x && a.y > b.y))
 	{
 		std::swap(a, b);
 	}
 
-	return
-	{
-		a,
-		b
-	};
+	return	{ a, b };
 }

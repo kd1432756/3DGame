@@ -16,13 +16,11 @@ public:
 	void Draw();
 	void DrawContents();
 
-	void SetLayout(
-		const ImVec2& pos,
-		const ImVec2& size)
+	void SetLayout(const ImVec2& pos, const ImVec2& size)
 	{
 		m_windowPos = pos;
 		m_windowSize = size;
-	}	
+	}
 	
 	void SetSelectedNode(int id)
 	{
@@ -41,6 +39,20 @@ public:
 
 	void SetMode(Mode mode);
 
+	bool ConsumeModeChanged()
+	{
+		const bool changed = m_modeChanged;
+		m_modeChanged = false;
+		return changed;
+	}
+
+	int ConsumeClickedNodeID()
+	{
+		const int id = m_clickedNodeID;
+		m_clickedNodeID = -1;
+		return id;
+	}
+
 private:
 
 	void DrawToolbar();
@@ -53,4 +65,7 @@ private:
 	int m_selectedNodeID = -1;
 
 	Mode m_mode = Mode::Select;
+
+	bool m_modeChanged = false;
+	int  m_clickedNodeID = -1;
 };

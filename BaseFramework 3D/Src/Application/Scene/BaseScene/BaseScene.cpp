@@ -1,8 +1,9 @@
 ﻿#include "BaseScene.h"
 
 #include "../../Editor/Editor.h"
-
+#include "../../GameObject/Object/StaticMeshObject/StaticMeshObject.h"
 #include "../CameraManager/CameraManager.h"
+#include "../../GameObject/Camera/CameraBase.h"
 
 void BaseScene::PreUpdate()
 {
@@ -12,7 +13,7 @@ void BaseScene::PreUpdate()
 
 	while (it != m_objList.end())
 	{
-		if ((*it)->IsExpired())	// IsExpired() ・・・ 無効ならtrue
+		if ((*it)->IsExpired())		// IsExpired() ・・・ 無効ならtrue
 		{
 			// 無効なオブジェクトをリストから削除
 			it = m_objList.erase(it);

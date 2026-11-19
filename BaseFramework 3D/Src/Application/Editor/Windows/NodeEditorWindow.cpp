@@ -1,6 +1,6 @@
 ﻿#include "NodeEditorWindow.h"
 
-#include "../Editor.h"
+#include "../../System/Node/AStarNode/AStarNodeManager.h"
 
 void NodeEditorWindow::Draw()
 {
@@ -112,13 +112,10 @@ void NodeEditorWindow::DrawNodeList()
 		bool selected =
 			(m_selectedNodeID == id);
 
-		if (ImGui::Selectable(
-			label,
-			selected))
+		if (ImGui::Selectable(label, selected))
 		{
 			m_selectedNodeID = id;
-
-			Editor::Instance().SelectAStarNodeByID(id);
+			m_clickedNodeID = id;
 		}
 	}
 }
@@ -209,7 +206,7 @@ void NodeEditorWindow::SetMode(Mode mode)
 {
 	if (m_mode != mode)
 	{
-		Editor::Instance().ResetNodeConnection();
+		m_modeChanged = true;
 	}
 
 	m_mode = mode;

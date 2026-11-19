@@ -6,8 +6,7 @@ class PolygonBoolean
 {
 public:
 
-	using Polygon =
-		NavMeshPolygonBuilder::Polygon;
+	using Polygon = NavMeshPolygonBuilder::Polygon;
 
 	//============================================================
 	// Union

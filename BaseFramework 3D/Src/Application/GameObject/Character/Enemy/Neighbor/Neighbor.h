@@ -212,15 +212,13 @@ private:
 
 	void UpdateSearchItem();
 
-	bool FindBestSearchItem(
-		SearchItemCandidate& outCandidate);
+	bool FindBestSearchItem(		SearchItemCandidate& outCandidate);
 
 	float EvaluateSearchItemCandidate(
 		const std::shared_ptr<Item>& item,
 		float pathDistance);
 
-	void SelectSearchItemCandidate(
-		const SearchItemCandidate& candidate);
+	void SelectSearchItemCandidate(		const SearchItemCandidate& candidate);
 
 	MoveResult MoveToSearchItem();
 

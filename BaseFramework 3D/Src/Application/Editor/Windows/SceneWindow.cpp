@@ -1,119 +1,58 @@
 ﻿#include "SceneWindow.h"
+#include "../EditorContext.h"
+#include "../Mode/IEditorMode.h"
 #include "../../Scene/SceneManager.h"
 #include"../../GameObject/Camera/EditorCamera/EditorCamera.h"
-#include "../Editor.h"
 
 #include "../../GameObject/Object/StaticMeshObject/StaticMeshObject.h"
 #include "../../GameObject/Object/StaticMeshObject/Item/Item.h"
 
-void SceneWindow::Draw(
-	std::shared_ptr<EditorCamera>& editorCamera,
-	std::shared_ptr<KdGameObject>& selectObject)
+void SceneWindow::Draw(EditorContext& ctx, IEditorMode& mode)
 {
-	ImGui::SetNextWindowPos(
-		m_windowPos,
-		ImGuiCond_Always);
-	ImGui::SetNextWindowSize(
-		m_windowSize,
-		ImGuiCond_Always);
+	auto& editorCamera = ctx.camera;
+	auto& selectObject = ctx.selectObject;
+
+	ImGui::SetNextWindowPos(m_windowPos, ImGuiCond_Always);
+	ImGui::SetNextWindowSize(m_windowSize, ImGuiCond_Always);
 
 	ImGui::Begin("Scene", nullptr,
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoResize);
 
 	//---------------------------------
-	// Camera
+	// Camera（変更なし）
 	//---------------------------------
 
 	bool enableInput = ImGui::IsWindowHovered();
 
 	editorCamera->Update(enableInput);
-	if (selectObject)
-	{
-		if (ImGui::IsKeyPressed(ImGuiKey_F))
-		{
-			editorCamera->Focus(selectObject->GetPos());
-		}
-	}
-	//editorCamera->PreDraw();
-	
-	//---------------------------------
-	// Toolbar
-	//---------------------------------
 
-	if (Editor::Instance().GetEditMode() == Editor::EditMode::Object)
+	if (selectObject && ImGui::IsKeyPressed(ImGuiKey_F))
+	{
+		editorCamera->Focus(selectObject->GetPos());
+	}
+
+	// Toolbar
+	if (mode.ShowGizmo())
 	{
 		DrawToolbar();
 	}
 
-	//---------------------------------
 	// Scene
-	//---------------------------------
-
 	DrawSceneImage(editorCamera);
 
-	//---------------------------------
-	// Guizmo
-	//---------------------------------
-
-	if (Editor::Instance().GetEditMode() == Editor::EditMode::Object)
+	// Gizmo
+	if (mode.ShowGizmo())
 	{
 		DrawGuizmo(editorCamera, selectObject);
 	}
 
-	//---------------------------------
-	// Picking
-	//---------------------------------
-
-	if (ImageClicked())
+	// Click
+	if (ImageClicked() &&
+		!ImGuizmo::IsOver() &&
+		!ImGuizmo::IsUsing())
 	{
-		if (!ImGuizmo::IsOver() && !ImGuizmo::IsUsing())
-		{
-			switch (Editor::Instance().GetEditMode())
-			{
-			case Editor::EditMode::Object:
-
-				PickObject(editorCamera, selectObject);
-
-				break;
-
-			case Editor::EditMode::Stage:
-
-				Editor::Instance().ApplyStageBrush(
-					GetDropPosition(editorCamera));
-
-				break;
-
-			case Editor::EditMode::Navigation:
-			{
-				Math::Vector3 pos =
-					GetDropPosition(editorCamera);
-
-				auto& editor =
-					Editor::Instance();
-
-				if (editor.GetNavigationMode() ==
-					NavigationEditorWindow::NavigationMode::Node)
-				{
-					editor.OnNodeClick(pos);
-				}
-				else
-				{
-					editor.SelectNavMeshPolygon(pos);
-				}
-
-				break;
-			}
-			case Editor::EditMode::Location:
-
-				Math::Vector3 pos =
-					GetDropPosition(editorCamera);
-
-				Editor::Instance().OnLocationClick(pos);
-
-				break;
-			}
-		}
+		mode.OnSceneClick(ctx, GetDropPosition(editorCamera));
 	}
 
 	ImGui::End();
@@ -121,38 +60,29 @@ void SceneWindow::Draw(
 
 void SceneWindow::DrawToolbar()
 {
-	if (ImGui::Button("Move"))
-		m_operation = ImGuizmo::TRANSLATE;
+	if (ImGui::Button("Move"))  m_operation = ImGuizmo::TRANSLATE;
 
 	ImGui::SameLine();
 
-	if (ImGui::Button("Rotate"))
-		m_operation = ImGuizmo::ROTATE;
+	if (ImGui::Button("Rotate")) m_operation = ImGuizmo::ROTATE;
 
 	ImGui::SameLine();
 
-	if (ImGui::Button("Scale"))
-		m_operation = ImGuizmo::SCALE;
+	if (ImGui::Button("Scale")) m_operation = ImGuizmo::SCALE;
 }
 
-void SceneWindow::DrawSceneImage(
-	std::shared_ptr<EditorCamera>& editorCamera)
+void SceneWindow::DrawSceneImage(std::shared_ptr<EditorCamera>& editorCamera)
 {
 	m_imagePos = ImGui::GetCursorScreenPos();
 	m_imageSize = ImGui::GetContentRegionAvail();
 
-	auto tex =
-		KdShaderManager::Instance()
-		.m_postProcessShader
-		.GetPostEffectTexture();
+	auto tex = KdShaderManager::Instance().m_postProcessShader.GetPostEffectTexture();
 
 	m_imageSize.y = m_imageSize.x / 16.0f * 9.0f;
 
 	if (tex)
 	{
-		ImGui::Image(
-			(ImTextureID)tex->WorkSRView(),
-			m_imageSize);
+		ImGui::Image((ImTextureID)tex->WorkSRView(), m_imageSize);
 	}
 
 	m_imagePos = ImGui::GetItemRectMin();
@@ -160,46 +90,34 @@ void SceneWindow::DrawSceneImage(
 
 	if (ImGui::BeginDragDropTarget())
 	{
-		if (const ImGuiPayload* payload =
-			ImGui::AcceptDragDropPayload("ASSET_PATH"))
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
 		{
-			const char* path =
-				(const char*)payload->Data;
+			const char* path = (const char*)payload->Data;
 
 			std::filesystem::path file(path);
 
-			auto obj =
-				SceneManager::Instance().CreateObject(
-					"StaticMeshObject",
-					file.stem().string());
+			auto obj = SceneManager::Instance().CreateObject("StaticMeshObject", file.stem().string());
 
-			auto mesh =
-				std::dynamic_pointer_cast<StaticMeshObject>(obj);
-
+			auto mesh = std::dynamic_pointer_cast<StaticMeshObject>(obj);
 
 			mesh->SetModelPath(path);
 
 			mesh->SetPos(GetDropPosition(editorCamera));
 		}
 
-		if (const ImGuiPayload* payload =
-			ImGui::AcceptDragDropPayload("ITEM_PATH"))
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ITEM_PATH"))
 		{
-			const char* path =
-				(const char*)payload->Data;
+			const char* path = (const char*)payload->Data;
 
-			auto obj =
-				SceneManager::Instance().CreateObject("Item");
+			auto obj = SceneManager::Instance().CreateObject("Item");
 
-			auto item =
-				std::dynamic_pointer_cast<Item>(obj);
+			auto item = std::dynamic_pointer_cast<Item>(obj);
 
 			if (item)
 			{
 				item->LoadItem(path);
 
-				item->SetPos(
-					GetDropPosition(editorCamera));
+				item->SetPos(GetDropPosition(editorCamera));
 			}
 		}
 
@@ -251,8 +169,7 @@ void SceneWindow::PickObject(
 
 		std::list<KdCollider::CollisionResult> results;
 
-		if (!obj->Intersects(ray, &results))
-			continue;
+		if (!obj->Intersects(ray, &results)) continue;
 
 		for (auto& r : results)
 		{
@@ -316,8 +233,7 @@ void SceneWindow::DrawGuizmo(std::shared_ptr<EditorCamera>& editorCamera, std::s
 	}
 }
 
-Math::Vector3 SceneWindow::GetDropPosition(
-    std::shared_ptr<EditorCamera>& camera)
+Math::Vector3 SceneWindow::GetDropPosition(std::shared_ptr<EditorCamera>& camera)
 {
 	ImVec2 mouse = ImGui::GetMousePos();
 
@@ -373,15 +289,9 @@ Math::Vector3 SceneWindow::GetDropPosition(
 		return hitPos;
 	}
 
-	if (fabs(rayDir.y) < 0.0001f)
-		return { 0,0,0 };
+	if (fabs(rayDir.y) < 0.0001f) return { 0,0,0 };
 
 	float t = -rayPos.y / rayDir.y;
 
 	return rayPos + rayDir * t;
 }
-
-/*void SceneWindow::OnNodeClick(const Math::Vector3& pos)
-{
-	static constexpr float NODE_SELECT_RADIUS = 1.0f;
-}*/

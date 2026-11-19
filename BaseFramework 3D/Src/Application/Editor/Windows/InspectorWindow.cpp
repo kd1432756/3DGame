@@ -10,9 +10,7 @@
 
 void InspectorWindow::Draw(std::shared_ptr<KdGameObject> obj)
 {
-	ImGui::SetNextWindowPos(
-		m_windowPos,
-		ImGuiCond_Always);
+	ImGui::SetNextWindowPos(m_windowPos, ImGuiCond_Always);
 	ImGui::SetNextWindowSize(
 		m_windowSize,
 		ImGuiCond_Always);

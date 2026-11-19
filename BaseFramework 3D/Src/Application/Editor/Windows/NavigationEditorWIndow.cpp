@@ -76,72 +76,37 @@ void NavigationEditorWindow::DrawNavigationActions()
 {
 	ImGui::SeparatorText("NavMesh");
 
-/*	if (ImGui::Button(
-		"Generate NavMesh",
-		{ -1, 0 }))
+	if (ImGui::Button("Generate NavMesh", { -1, 0 }))
 	{
-		Editor::Instance().GenerateNavMesh();
-	}*/
-
-	/*if (ImGui::Button(
-		"Generate NavMesh",
-		{ -1, 0 }))
-	{
-		Editor::Instance().GenerateNavMeshVer2();
-	}*/
-
-	if (ImGui::Button(
-		"Generate NavMesh",
-		{ -1, 0 }))
-	{
-		Editor::Instance().GenerateNavMeshVer3(m_navMeshAgentRadius);
+		m_request = Request::Generate;
 	}
 
-	if (ImGui::Button(
-		"Clear NavMesh",
-		{ -1, 0 }))
+	if (ImGui::Button("Clear NavMesh", { -1, 0 }))
 	{
-		Editor::Instance().ClearNavMesh();
+		m_request = Request::Clear;
 	}
 
 	ImGui::SeparatorText("Preview");
 
-	if (ImGui::RadioButton(
-		"Set Start",
-		m_navMeshEditMode ==
-		NavMeshEditMode::SetStart))
+	if (ImGui::RadioButton("Set Start", m_navMeshEditMode == NavMeshEditMode::SetStart))
 	{
-		m_navMeshEditMode =
-			NavMeshEditMode::SetStart;
+		m_navMeshEditMode = NavMeshEditMode::SetStart;
 	}
 
-	if (ImGui::RadioButton(
-		"Set Goal",
-		m_navMeshEditMode ==
-		NavMeshEditMode::SetGoal))
+	if (ImGui::RadioButton("Set Goal", m_navMeshEditMode == NavMeshEditMode::SetGoal))
 	{
-		m_navMeshEditMode =
-			NavMeshEditMode::SetGoal;
+		m_navMeshEditMode = NavMeshEditMode::SetGoal;
 	}
 
-	ImGui::TextDisabled(
-		"Click a NavMesh polygon in Scene");
+	ImGui::TextDisabled("Click a NavMesh polygon in Scene");
 
-	if (ImGui::Button(
-		"Find Path",
-		{ -1, 0 }))
+	if (ImGui::Button("Find Path", { -1, 0 }))
 	{
-		Editor::Instance().CalculateNavMeshPointPath();
+		m_request = Request::FindPath;
 	}
 
-	if (ImGui::Button(
-		"Clear Path",
-		{ -1, 0 }))
+	if (ImGui::Button("Clear Path", { -1, 0 }))
 	{
-		Editor::Instance().ClearNavMeshPath();
-
-		m_navMeshEditMode =
-			NavMeshEditMode::None;
+		m_request = Request::ClearPath;
 	}
 }
-

@@ -1,27 +1,26 @@
 ﻿#pragma once
 
 class EditorCamera;
+class EditorContext;
+class IEditorMode;
 class KdGameObject;
 
 class SceneWindow
 {
 public:
-	void Draw(
+	void Draw(EditorContext& ctx, IEditorMode& mode);
+
+	Math::Vector3 GetDropPosition(std::shared_ptr<EditorCamera>& camera);
+
+	void PickObject(
 		std::shared_ptr<EditorCamera>& editorCamera,
 		std::shared_ptr<KdGameObject>& selectObject);
 
-	Math::Vector3 GetDropPosition(
-		std::shared_ptr<EditorCamera>& camera);
-
-	void SetLayout(
-		const ImVec2& pos,
-		const ImVec2& size)
+	void SetLayout(const ImVec2& pos, const ImVec2& size)
 	{
 		m_windowPos = pos;
 		m_windowSize = size;
 	}
-
-	//void OnNodeClick(const Math::Vector3& pos);
 
 private:
 
@@ -34,12 +33,8 @@ private:
 	ImGuizmo::OPERATION m_operation = ImGuizmo::TRANSLATE;
 
 	void DrawToolbar();
-	void DrawSceneImage(
-		std::shared_ptr<EditorCamera>& editorCamera);
+	void DrawSceneImage(std::shared_ptr<EditorCamera>& editorCamera);
 	bool ImageClicked();
-	void PickObject(
-		std::shared_ptr<EditorCamera>& editorCamera,
-		std::shared_ptr<KdGameObject>& selectObject);
 	void DrawGuizmo(
 		std::shared_ptr<EditorCamera>& editorCamera,
 		std::shared_ptr<KdGameObject>& selectObject);
