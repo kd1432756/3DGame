@@ -71,7 +71,7 @@ private:
 	SceneManager::StageType m_gameStageAtClose = SceneManager::StageType::Stage1;
 	bool m_openStagePopup = false;
 
-	std::weak_ptr<CameraBase> m_returnCamera;
+	std::weak_ptr<CameraBase> m_previousCamera;
 
 public:
 	// シングルトン

@@ -2,48 +2,17 @@
 
 #include "NavMeshManager.h"
 
-//============================================================
-// NavMesh Pathfinder
-//============================================================
-//
-// NavMesh上でA*による経路探索を行う。
-//
-// A*の探索単位:
-//
-//     Polygon + Entry Polygon
-//
-// Polygonだけではなく、どのPolygonから入ってきたかを
-// Stateとして保持する。
-//
-// A*:
-//     Polygon Pathを決定
-//
-// Funnel:
-//     Polygon Pathから実際の移動Pointを生成
-//
-// 座標系:
-//     XZ平面をNavMeshの移動平面として扱う。
-//     Yは経路コスト・Funnel判定には使用しない。
-//
-//============================================================
-
 class NavMeshPathfinder
 {
 public:
 
-	//============================================================
-	// Polygon Path
-	//============================================================
-
+	// ポリゴン経路探索
 	std::vector<int> FindPath(
 		const NavMeshManager& navMeshManager,
 		const Math::Vector3& start,
 		const Math::Vector3& goal) const;
 
-	//============================================================
-	// Point Path
-	//============================================================
-
+	// 移動する座標を取得
 	std::vector<Math::Vector3> FindPathPoints(
 		const NavMeshManager& navMeshManager,
 		const Math::Vector3& start,
@@ -51,81 +20,57 @@ public:
 
 private:
 
-	//============================================================
-	// Search State
-	//============================================================
-
+	// 探索状態
 	struct State
 	{
+		// 現在のポリゴン
 		int polygonID = -1;
 
+		// 来たポリゴン
 		int entryPolygonID = -1;
 
-		bool operator==(
-			const State& other) const
+		bool operator==(const State& other) const
 		{
-			return
-				polygonID ==
-				other.polygonID &&
-				entryPolygonID ==
-				other.entryPolygonID;
+			return polygonID == other.polygonID && entryPolygonID == other.entryPolygonID;
 		}
 	};
 
-	//============================================================
-	// State Hash
-	//============================================================
-
+	// 探索状態のハッシュ
 	struct StateHash
 	{
-		size_t operator()(
-			const State& state) const
+		size_t operator()(const State& state) const
 		{
-			const size_t h1 =
-				std::hash<int>{}(
-					state.polygonID);
+			const size_t h1 = std::hash<int>{}(state.polygonID);
 
-			const size_t h2 =
-				std::hash<int>{}(
-					state.entryPolygonID);
+			const size_t h2 = std::hash<int>{}(state.entryPolygonID);
 
-			return
-				h1 ^
+			return h1 ^
 				(
-					h2 +
-					static_cast<size_t>(0x9e3779b9) +
-					(h1 << 6) +
-					(h1 >> 2)
+					h2 + static_cast<size_t>(0x9e3779b9) +
+					(h1 << 6) + (h1 >> 2)
 					);
 		}
 	};
 
-	//============================================================
-	// A* Node
-	//============================================================
-
+	// AStarのノード
 	struct Node
 	{
+		// 現在の探索状態
 		State state;
 
-		//--------------------------------------------------------
-		// このPolygonへ入ったPoint
-		//
-		// Start:
-		//     start
-		//
-		// その他:
-		//     前のPortal上の最近点
-		//--------------------------------------------------------
-
+		// 入ってきた位置
 		Math::Vector3 entryPoint;
 
+		// スタートから現在までの移動コスト
 		float gCost = 0.0f;
 
+		// 現在からゴールまでの推定コスト
 		float hCost = 0.0f;
 
+		// ひとつ前の探索状態
 		State parentState;
 
+		// 親を持っているか
 		bool hasParent = false;
 
 		float GetFCost() const
@@ -134,10 +79,7 @@ private:
 		}
 	};
 
-	//============================================================
-	// Portal
-	//============================================================
-
+	// ポータル
 	struct Portal
 	{
 		Math::Vector3 left;
@@ -145,43 +87,28 @@ private:
 		Math::Vector3 right;
 	};
 
-	//============================================================
-	// Portal
-	//============================================================
-
+	// ポータル生成
 	bool CreatePortal(
 		const NavMeshPolygon& from,
 		const NavMeshPolygon& to,
 		Portal& outPortal) const;
 
-	//============================================================
-	// Closest Point
-	//============================================================
-
+	// ポータル上の最近点を取得
 	Math::Vector3 GetClosestPointOnPortal(
 		const Math::Vector3& point,
 		const Portal& portal) const;
 
-	//============================================================
-	// Heuristic
-	//============================================================
-
+	// 推定コスト計算
 	float CalculateHeuristic(
 		const Math::Vector3& currentPoint,
 		const Math::Vector3& goalPoint) const;
 
-	//============================================================
-	// XZ Distance
-	//============================================================
-
+	// 移動距離計算
 	float CalculateDistanceXZ(
 		const Math::Vector3& a,
 		const Math::Vector3& b) const;
 
-	//============================================================
-	// Path Reconstruction
-	//============================================================
-
+	// ポリゴン経路復元
 	std::vector<int> ReconstructPath(
 		const std::unordered_map<
 		State,

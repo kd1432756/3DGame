@@ -38,8 +38,7 @@ public:
 
 		if (m_mode == NavigationMode::Node)
 		{
-			m_navMeshEditMode =
-				NavMeshEditMode::None;
+			m_navMeshEditMode = NavMeshEditMode::None;
 		}
 	}
 
@@ -53,16 +52,14 @@ public:
 		return m_navMeshEditMode;
 	}
 
-	void SetNavMeshEditMode(
-		NavMeshEditMode mode)
+	void SetNavMeshEditMode(NavMeshEditMode mode)
 	{
 		m_navMeshEditMode = mode;
 	}
 
 	void ClearNavMeshEditMode()
 	{
-		m_navMeshEditMode =
-			NavMeshEditMode::None;
+		m_navMeshEditMode = NavMeshEditMode::None;
 	}
 
 	enum class Request
@@ -98,8 +95,7 @@ private:
 
 	bool m_showNavMesh = false;
 
-	NavMeshEditMode m_navMeshEditMode =
-		NavMeshEditMode::None;
+	NavMeshEditMode m_navMeshEditMode = NavMeshEditMode::None;
 
 	float m_navMeshAgentRadius = 0.2f;
 

@@ -4,12 +4,7 @@
 
 using json = nlohmann::json;
 
-//============================================================
-// Vector3
-//============================================================
-
-static json Vector3ToJson(
-	const Math::Vector3& v)
+static json Vector3ToJson(const Math::Vector3& v)
 {
 	return
 	{
@@ -19,18 +14,15 @@ static json Vector3ToJson(
 	};
 }
 
-static bool JsonToVector3(
-	const json& j,
-	Math::Vector3& out)
+static bool JsonToVector3(const json& j, Math::Vector3& out)
 {
-	if (!j.is_object() ||
-		!j.contains("x") ||
-		!j.contains("y") ||
-		!j.contains("z"))
+	// 存在確認
+	if (!j.is_object() || !j.contains("x") || !j.contains("y") || !j.contains("z"))
 	{
 		return false;
 	}
 
+	// 3値取得
 	try
 	{
 		out.x = j["x"].get<float>();
@@ -45,24 +37,14 @@ static bool JsonToVector3(
 	return true;
 }
 
-//============================================================
-// Save
-//============================================================
-
-bool NavMeshSerializer::Save(
-	const std::string& path,
-	const NavMeshManager& manager)
+bool NavMeshSerializer::Save(const std::string& path, const NavMeshManager& manager)
 {
 	json root;
 
 	root["polygons"] = json::array();
 
-	//--------------------------------------------------------
 	// Polygon
-	//--------------------------------------------------------
-
-	for (const auto& polygon :
-		manager.GetPolygons())
+	for (const auto& polygon : manager.GetPolygons())
 	{
 		if (!polygon)
 		{
@@ -71,46 +53,25 @@ bool NavMeshSerializer::Save(
 
 		json polygonJson;
 
-		//----------------------------------------------------
 		// ID
-		//----------------------------------------------------
+		polygonJson["id"] = polygon->GetID();
 
-		polygonJson["id"] =
-			polygon->GetID();
-
-		//----------------------------------------------------
 		// Vertices
-		//----------------------------------------------------
+		polygonJson["vertices"] = json::array();
 
-		polygonJson["vertices"] =
-			json::array();
-
-		for (const auto& vertex :
-			polygon->GetVertices())
+		for (const auto& vertex : polygon->GetVertices())
 		{
-			polygonJson["vertices"].push_back(
-				Vector3ToJson(vertex));
+			polygonJson["vertices"].push_back(Vector3ToJson(vertex));
 		}
 
-		//----------------------------------------------------
 		// Connections
-		//----------------------------------------------------
+		polygonJson["connections"] = polygon->GetConnections();
 
-		polygonJson["connections"] =
-			polygon->GetConnections();
-
-		//----------------------------------------------------
 		// Add
-		//----------------------------------------------------
-
-		root["polygons"].push_back(
-			polygonJson);
+		root["polygons"].push_back(polygonJson);
 	}
 
-	//--------------------------------------------------------
 	// File
-	//--------------------------------------------------------
-
 	std::ofstream ofs(path);
 
 	if (!ofs.is_open())
@@ -123,13 +84,7 @@ bool NavMeshSerializer::Save(
 	return true;
 }
 
-//============================================================
-// Load
-//============================================================
-
-bool NavMeshSerializer::Load(
-	const std::string& path,
-	NavMeshManager& manager)
+bool NavMeshSerializer::Load(const std::string& path, NavMeshManager& manager)
 {
 	// すでにロード済みなら何もしない
 	if (manager.IsLoaded())
@@ -155,80 +110,51 @@ bool NavMeshSerializer::Load(
 		return false;
 	}
 
-	//--------------------------------------------------------
 	// Clear
-	//--------------------------------------------------------
-
 	manager.Clear();
 
-	//--------------------------------------------------------
 	// Polygon
-	//--------------------------------------------------------
-
-	if (!root.contains("polygons") ||
-		!root["polygons"].is_array())
+	if (!root.contains("polygons") || !root["polygons"].is_array())
 	{
 		manager.SetLoaded(true);
 		return true;
 	}
 
-	//--------------------------------------------------------
 	// Polygon生成
-	//--------------------------------------------------------
-	//
-	// まず全Polygonを作成する。
-	// Connectionsはこの後で復元する。
-	//
-	//--------------------------------------------------------
-
-	for (const auto& polygonJson :
-		root["polygons"])
+	for (const auto& polygonJson : root["polygons"])
 	{
-		if (!polygonJson.contains("id") ||
-			!polygonJson.contains("vertices"))
+		if (!polygonJson.contains("id") || !polygonJson.contains("vertices"))
 		{
 			continue;
 		}
 
-		//----------------------------------------------------
 		// ID
-		//----------------------------------------------------
-
 		int id = -1;
 
 		try
 		{
-			id =
-				polygonJson["id"].get<int>();
+			id = polygonJson["id"].get<int>();
 		}
 		catch (...)
 		{
 			continue;
 		}
 
-		//----------------------------------------------------
 		// Vertices
-		//----------------------------------------------------
+		const auto& verticesJson = polygonJson["vertices"];
 
-		const auto& verticesJson =
-			polygonJson["vertices"];
-
-		if (!verticesJson.is_array() ||
-			verticesJson.empty())
+		if (!verticesJson.is_array() || verticesJson.empty())
 		{
 			continue;
 		}
 
 		std::vector<Math::Vector3> vertices;
 
-		for (const auto& vertexJson :
-			verticesJson)
+		for (const auto& vertexJson : verticesJson)
 		{
 			Math::Vector3 vertex;
 
-			if (!JsonToVector3(
-				vertexJson,
-				vertex))
+			if (!JsonToVector3(vertexJson, vertex))
 			{
 				vertices.clear();
 				break;
@@ -242,28 +168,14 @@ bool NavMeshSerializer::Load(
 			continue;
 		}
 
-		//----------------------------------------------------
 		// Polygon生成
-		//----------------------------------------------------
-
-		manager.CreatePolygon(
-			id,
-			vertices);
+		manager.CreatePolygon(id, vertices);
 	}
 
-	//--------------------------------------------------------
 	// Connections復元
-	//--------------------------------------------------------
-	//
-	// 全Polygon生成後に接続する。
-	//
-	//--------------------------------------------------------
-
-	for (const auto& polygonJson :
-		root["polygons"])
+	for (const auto& polygonJson : root["polygons"])
 	{
-		if (!polygonJson.contains("id") ||
-			!polygonJson.contains("connections"))
+		if (!polygonJson.contains("id") || !polygonJson.contains("connections"))
 		{
 			continue;
 		}
@@ -272,40 +184,34 @@ bool NavMeshSerializer::Load(
 
 		try
 		{
-			fromID =
-				polygonJson["id"].get<int>();
+			fromID = polygonJson["id"].get<int>();
 		}
 		catch (...)
 		{
 			continue;
 		}
 
-		const auto& connectionsJson =
-			polygonJson["connections"];
+		const auto& connectionsJson = polygonJson["connections"];
 
 		if (!connectionsJson.is_array())
 		{
 			continue;
 		}
 
-		for (const auto& connectionJson :
-			connectionsJson)
+		for (const auto& connectionJson : connectionsJson)
 		{
 			int toID = -1;
 
 			try
 			{
-				toID =
-					connectionJson.get<int>();
+				toID = connectionJson.get<int>();
 			}
 			catch (...)
 			{
 				continue;
 			}
 
-			manager.ConnectPolygons(
-				fromID,
-				toID);
+			manager.ConnectPolygons(fromID, toID);
 		}
 	}
 
@@ -315,7 +221,7 @@ bool NavMeshSerializer::Load(
 }
 
 bool NavMeshSerializer::LoadWithScale(const std::string& path, NavMeshManager& manager, float scale)
-{	
+{
 	// すでにロード済みなら何もしない
 	if (manager.IsLoaded())
 	{
@@ -340,89 +246,57 @@ bool NavMeshSerializer::LoadWithScale(const std::string& path, NavMeshManager& m
 		return false;
 	}
 
-	//--------------------------------------------------------
 	// Clear
-	//--------------------------------------------------------
-
 	manager.Clear();
 
-	//--------------------------------------------------------
 	// Polygon
-	//--------------------------------------------------------
-
-	if (!root.contains("polygons") ||
-		!root["polygons"].is_array())
+	if (!root.contains("polygons") || !root["polygons"].is_array())
 	{
 		manager.SetLoaded(true);
 		return true;
 	}
 
-	//--------------------------------------------------------
 	// Polygon生成
-	//--------------------------------------------------------
-	//
-	// まず全Polygonを作成する。
-	// Connectionsはこの後で復元する。
-	//
-	//--------------------------------------------------------
-
-	for (const auto& polygonJson :
-		root["polygons"])
+	for (const auto& polygonJson : root["polygons"])
 	{
-		if (!polygonJson.contains("id") ||
-			!polygonJson.contains("vertices"))
+		if (!polygonJson.contains("id") || !polygonJson.contains("vertices"))
 		{
 			continue;
 		}
 
-		//----------------------------------------------------
 		// ID
-		//----------------------------------------------------
-
 		int id = -1;
 
 		try
 		{
-			id =
-				polygonJson["id"].get<int>();
+			id = polygonJson["id"].get<int>();
 		}
 		catch (...)
 		{
 			continue;
 		}
 
-		//----------------------------------------------------
 		// Vertices
-		//----------------------------------------------------
+		const auto& verticesJson = polygonJson["vertices"];
 
-		const auto& verticesJson =
-			polygonJson["vertices"];
-
-		if (!verticesJson.is_array() ||
-			verticesJson.empty())
+		if (!verticesJson.is_array() || verticesJson.empty())
 		{
 			continue;
 		}
 
 		std::vector<Math::Vector3> vertices;
 
-		for (const auto& vertexJson :
-			verticesJson)
+		for (const auto& vertexJson : verticesJson)
 		{
 			Math::Vector3 vertex;
 
-			if (!JsonToVector3(
-				vertexJson,
-				vertex))
+			if (!JsonToVector3(vertexJson, vertex))
 			{
 				vertices.clear();
 				break;
 			}
 
-			//------------------------------------------------
 			// Scale
-			//------------------------------------------------
-
 			vertex *= scale;
 
 			vertices.push_back(vertex);
@@ -433,28 +307,14 @@ bool NavMeshSerializer::LoadWithScale(const std::string& path, NavMeshManager& m
 			continue;
 		}
 
-		//----------------------------------------------------
 		// Polygon生成
-		//----------------------------------------------------
-
-		manager.CreatePolygon(
-			id,
-			vertices);
+		manager.CreatePolygon(id, vertices);
 	}
 
-	//--------------------------------------------------------
 	// Connections復元
-	//--------------------------------------------------------
-	//
-	// 全Polygon生成後に接続する。
-	//
-	//--------------------------------------------------------
-
-	for (const auto& polygonJson :
-		root["polygons"])
+	for (const auto& polygonJson : root["polygons"])
 	{
-		if (!polygonJson.contains("id") ||
-			!polygonJson.contains("connections"))
+		if (!polygonJson.contains("id") || !polygonJson.contains("connections"))
 		{
 			continue;
 		}
@@ -463,40 +323,34 @@ bool NavMeshSerializer::LoadWithScale(const std::string& path, NavMeshManager& m
 
 		try
 		{
-			fromID =
-				polygonJson["id"].get<int>();
+			fromID = polygonJson["id"].get<int>();
 		}
 		catch (...)
 		{
 			continue;
 		}
 
-		const auto& connectionsJson =
-			polygonJson["connections"];
+		const auto& connectionsJson = polygonJson["connections"];
 
 		if (!connectionsJson.is_array())
 		{
 			continue;
 		}
 
-		for (const auto& connectionJson :
-			connectionsJson)
+		for (const auto& connectionJson : connectionsJson)
 		{
 			int toID = -1;
 
 			try
 			{
-				toID =
-					connectionJson.get<int>();
+				toID = connectionJson.get<int>();
 			}
 			catch (...)
 			{
 				continue;
 			}
 
-			manager.ConnectPolygons(
-				fromID,
-				toID);
+			manager.ConnectPolygons(fromID, toID);
 		}
 	}
 

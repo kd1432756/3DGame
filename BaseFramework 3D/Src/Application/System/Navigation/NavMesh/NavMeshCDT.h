@@ -23,6 +23,5 @@ public:
 		}
 	};
 
-	std::vector<Triangle> Triangulate(
-		const std::vector<NavMeshPolygonBuilder::Polygon>& polygons) const;
+	std::vector<Triangle> Triangulate(const std::vector<NavMeshPolygonBuilder::Polygon>& polygons) const;
 };

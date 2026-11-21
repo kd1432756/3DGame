@@ -55,16 +55,14 @@ public:
 		{
 			m_rotation = 0.0f;
 		}
-	}	
-	
-	void SetLayout(
-		const ImVec2& pos,
-		const ImVec2& size)
+	}
+
+	void SetLayout(const ImVec2& pos, const ImVec2& size)
 	{
 		m_windowPos = pos;
 		m_windowSize = size;
 	}
-	
+
 private:
 
 	void DrawRoadCategory();

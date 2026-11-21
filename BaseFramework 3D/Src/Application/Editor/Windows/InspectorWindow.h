@@ -11,9 +11,7 @@ class InspectorWindow
 public:
 	void Draw(std::shared_ptr<KdGameObject> object);
 
-	void SetLayout(
-		const ImVec2& pos,
-		const ImVec2& size)
+	void SetLayout(const ImVec2& pos, const ImVec2& size)
 	{
 		m_windowPos = pos;
 		m_windowSize = size;

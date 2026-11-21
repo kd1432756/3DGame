@@ -4,17 +4,10 @@ namespace fs = std::filesystem;
 
 void AssetBrowserWindow::Draw()
 {
-	ImGui::SetNextWindowPos(
-		m_windowPos,
-		ImGuiCond_Always);
-	ImGui::SetNextWindowSize(
-		m_windowSize,
-		ImGuiCond_Always);
+	ImGui::SetNextWindowPos(m_windowPos, ImGuiCond_Always);
+	ImGui::SetNextWindowSize(m_windowSize, ImGuiCond_Always);
 
-	ImGui::Begin("Asset Browser",
-		nullptr,
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoResize);
+	ImGui::Begin("Asset Browser", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
 	DrawDirectory("Asset");
 
@@ -38,8 +31,7 @@ void AssetBrowserWindow::DrawDirectory(const std::string& path)
 
 		if (entry.is_directory())
 		{
-			if (ImGui::TreeNode(
-				entry.path().filename().string().c_str()))
+			if (ImGui::TreeNode(entry.path().filename().string().c_str()))
 			{
 				DrawDirectory(entry.path().string());
 
@@ -55,18 +47,10 @@ void AssetBrowserWindow::DrawDirectory(const std::string& path)
 				continue;
 			}
 
-			if (ImGui::Selectable(
-				entry.path().filename().string().c_str(),
-				m_selectedPath == entry.path().string()))
+			if (ImGui::Selectable(entry.path().filename().string().c_str(), m_selectedPath == entry.path().string()))
 			{
 				m_selectedPath = entry.path().string();
 			}
-
-			/*if (ImGui::IsItemHovered() &&
-				ImGui::IsMouseDoubleClicked(0))
-			{
-				m_openPath = path;
-			}*/
 
 			if (ImGui::BeginDragDropSource())
 			{
@@ -79,8 +63,7 @@ void AssetBrowserWindow::DrawDirectory(const std::string& path)
 						path.c_str(),
 						path.size() + 1);
 
-					ImGui::Text("%s",
-						entry.path().filename().string().c_str());
+					ImGui::Text("%s", entry.path().filename().string().c_str());
 				}
 				else
 				{

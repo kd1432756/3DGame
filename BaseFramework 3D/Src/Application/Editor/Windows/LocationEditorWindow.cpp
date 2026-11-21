@@ -8,11 +8,7 @@ void LocationEditorWindow::Draw()
 	ImGui::SetNextWindowPos(m_windowPos, ImGuiCond_Always);
 	ImGui::SetNextWindowSize(m_windowSize, ImGuiCond_Always);
 
-	ImGui::Begin(
-		"Location Editor",
-		nullptr,
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoResize);
+	ImGui::Begin("Location Editor", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
 	DrawContents();
 
@@ -69,17 +65,13 @@ void LocationEditorWindow::DrawToolbar()
 	{
 		int currentTag = static_cast<int>(m_createTag);
 
-		if (ImGui::BeginCombo(
-			"Create Tag",
-			LocationTagToString(m_createTag)))
+		if (ImGui::BeginCombo("Create Tag", LocationTagToString(m_createTag)))
 		{
 			for (int i = 0; i < static_cast<int>(LocationTag::Max); ++i)
 			{
 				bool selected = (currentTag == i);
 
-				if (ImGui::Selectable(
-					LocationTagToString(static_cast<LocationTag>(i)),
-					selected))
+				if (ImGui::Selectable(LocationTagToString(static_cast<LocationTag>(i)), selected))
 				{
 					m_createTag = static_cast<LocationTag>(i);
 				}
@@ -144,10 +136,7 @@ void LocationEditorWindow::DrawTagFilter()
 {
 	ImGui::SeparatorText("Filter");
 
-	std::string preview =
-		(m_filterTag < 0)
-		? "All"
-		: LocationTagToString(static_cast<LocationTag>(m_filterTag));
+	std::string preview = (m_filterTag < 0) ? "All" : LocationTagToString(static_cast<LocationTag>(m_filterTag));
 
 	if (ImGui::BeginCombo("Tag Filter", preview.c_str()))
 	{
@@ -160,9 +149,7 @@ void LocationEditorWindow::DrawTagFilter()
 		{
 			bool selected = (m_filterTag == i);
 
-			if (ImGui::Selectable(
-				LocationTagToString(static_cast<LocationTag>(i)),
-				selected))
+			if (ImGui::Selectable(LocationTagToString(static_cast<LocationTag>(i)), selected))
 			{
 				m_filterTag = i;
 			}
@@ -189,8 +176,7 @@ void LocationEditorWindow::DrawPointList()
 			continue;
 		}
 
-		if (m_filterTag >= 0 &&
-			point->GetTag() != static_cast<LocationTag>(m_filterTag))
+		if (m_filterTag >= 0 && point->GetTag() != static_cast<LocationTag>(m_filterTag))
 		{
 			continue;
 		}
@@ -246,9 +232,7 @@ void LocationEditorWindow::DrawPointInspector()
 		{
 			bool selected = (point->GetTag() == static_cast<LocationTag>(i));
 
-			if (ImGui::Selectable(
-				LocationTagToString(static_cast<LocationTag>(i)),
-				selected))
+			if (ImGui::Selectable(LocationTagToString(static_cast<LocationTag>(i)), selected))
 			{
 				point->SetTag(static_cast<LocationTag>(i));
 			}

@@ -15,14 +15,9 @@ void SceneWindow::Draw(EditorContext& ctx, IEditorMode& mode)
 	ImGui::SetNextWindowPos(m_windowPos, ImGuiCond_Always);
 	ImGui::SetNextWindowSize(m_windowSize, ImGuiCond_Always);
 
-	ImGui::Begin("Scene", nullptr,
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoResize);
+	ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
-	//---------------------------------
-	// Camera（変更なし）
-	//---------------------------------
-
+	// Camera
 	bool enableInput = ImGui::IsWindowHovered();
 
 	editorCamera->Update(enableInput);
@@ -48,9 +43,7 @@ void SceneWindow::Draw(EditorContext& ctx, IEditorMode& mode)
 	}
 
 	// Click
-	if (ImageClicked() &&
-		!ImGuizmo::IsOver() &&
-		!ImGuizmo::IsUsing())
+	if (ImageClicked() && !ImGuizmo::IsOver() && !ImGuizmo::IsUsing())
 	{
 		mode.OnSceneClick(ctx, GetDropPosition(editorCamera));
 	}

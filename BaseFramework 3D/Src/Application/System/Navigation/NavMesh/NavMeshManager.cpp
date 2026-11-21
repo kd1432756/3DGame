@@ -1,45 +1,23 @@
 ﻿#include "NavMeshManager.h"
 
-//============================================================
-// Create
-//============================================================
-
-std::shared_ptr<NavMeshPolygon>
-NavMeshManager::CreatePolygon(
-	const std::vector<Math::Vector3>& vertices)
+std::shared_ptr<NavMeshPolygon> NavMeshManager::CreatePolygon(const std::vector<Math::Vector3>& vertices)
 {
-	//--------------------------------------------------------
-	// Polygon生成
-	//--------------------------------------------------------
+	// ポリゴン生成
+	auto polygon = std::make_shared<NavMeshPolygon>();
 
-	auto polygon =
-		std::make_shared<NavMeshPolygon>();
-
-	//--------------------------------------------------------
-	// ID
-	//--------------------------------------------------------
-
+	// ID設定
 	polygon->SetID(m_nextID);
 
-	//--------------------------------------------------------
-	// Vertex
-	//--------------------------------------------------------
-
+	// 頂点設定
 	polygon->SetVertices(vertices);
 
-	//--------------------------------------------------------
-	// Polygon妥当性チェック
-	//--------------------------------------------------------
-
+	// ポリゴン妥当性チェック
 	if (!polygon->IsValid())
 	{
 		return nullptr;
 	}
 
-	//--------------------------------------------------------
 	// 登録
-	//--------------------------------------------------------
-
 	m_polygons.push_back(polygon);
 
 	++m_nextID;
@@ -47,62 +25,35 @@ NavMeshManager::CreatePolygon(
 	return polygon;
 }
 
-//============================================================
-// Create with ID
-//============================================================
-
-std::shared_ptr<NavMeshPolygon>
-NavMeshManager::CreatePolygon(
-	int id,
-	const std::vector<Math::Vector3>& vertices)
+std::shared_ptr<NavMeshPolygon> NavMeshManager::CreatePolygon(int id, const std::vector<Math::Vector3>& vertices)
 {
-	//--------------------------------------------------------
-	// IDチェック
-	//--------------------------------------------------------
-
 	if (id < 0)
 	{
 		return nullptr;
 	}
 
-	//--------------------------------------------------------
 	// ID重複チェック
-	//--------------------------------------------------------
-
 	if (FindPolygon(id))
 	{
 		return nullptr;
 	}
 
-	//--------------------------------------------------------
-	// Polygon生成
-	//--------------------------------------------------------
+	// ポリゴン生成
+	auto polygon = std::make_shared<NavMeshPolygon>();
 
-	auto polygon =
-		std::make_shared<NavMeshPolygon>();
-
+	// 指定したidで生成
 	polygon->SetID(id);
 
 	polygon->SetVertices(vertices);
 
-	//--------------------------------------------------------
-	// Polygon妥当性チェック
-	//--------------------------------------------------------
-
+	// ポリゴン妥当性チェック
 	if (!polygon->IsValid())
 	{
 		return nullptr;
 	}
 
-	//--------------------------------------------------------
 	// 登録
-	//--------------------------------------------------------
-
 	m_polygons.push_back(polygon);
-
-	//--------------------------------------------------------
-	// 次のIDを更新
-	//--------------------------------------------------------
 
 	if (m_nextID <= id)
 	{
@@ -112,47 +63,29 @@ NavMeshManager::CreatePolygon(
 	return polygon;
 }
 
-//============================================================
-// Delete
-//============================================================
-
 void NavMeshManager::DeletePolygon(int id)
 {
-	auto it =
-		std::find_if(
-			m_polygons.begin(),
-			m_polygons.end(),
-			[id](
-				const std::shared_ptr<NavMeshPolygon>& polygon)
-			{
-				return polygon->GetID() == id;
-			});
+	// 指定したIDのポリゴンを検索
+	auto it = 
+		std::find_if(m_polygons.begin(), m_polygons.end(), [id](const std::shared_ptr<NavMeshPolygon>& polygon)
+		{
+			return polygon->GetID() == id;
+		});
 
 	if (it == m_polygons.end())
 	{
 		return;
 	}
 
-	//--------------------------------------------------------
-	// 他Polygonから接続解除
-	//--------------------------------------------------------
-
+	// 他ポリゴンから接続解除
 	for (auto& polygon : m_polygons)
 	{
 		polygon->RemoveConnection(id);
 	}
 
-	//--------------------------------------------------------
 	// 削除
-	//--------------------------------------------------------
-
 	m_polygons.erase(it);
 }
-
-
-//============================================================
-// Clear
-//============================================================
 
 void NavMeshManager::Clear()
 {
@@ -162,73 +95,37 @@ void NavMeshManager::Clear()
 	m_isLoaded = false;
 }
 
-//============================================================
-// Set Polygon Vertex
-//============================================================
-
-void NavMeshManager::SetPolygonVertex(
-	int polygonID,
-	size_t vertexIndex,
-	const Math::Vector3& position)
+void NavMeshManager::SetPolygonVertex(int polygonID, size_t vertexIndex, const Math::Vector3& position)
 {
-	//--------------------------------------------------------
-	// Polygon検索
-	//--------------------------------------------------------
-
-	auto polygon =
-		FindPolygon(polygonID);
+	// ポリゴン検索
+	auto polygon = FindPolygon(polygonID);
 
 	if (!polygon)
 	{
 		return;
 	}
 
-	//--------------------------------------------------------
-	// Indexチェック
-	//--------------------------------------------------------
-
+	// 頂点Indexチェック
 	if (vertexIndex >= polygon->GetVertexCount())
 	{
 		return;
 	}
 
-	//--------------------------------------------------------
 	// 元の位置を保存
-	//--------------------------------------------------------
+	const Math::Vector3 oldPosition = polygon->GetVertex(vertexIndex);
 
-	const Math::Vector3 oldPosition =
-		polygon->GetVertex(vertexIndex);
-
-	//--------------------------------------------------------
 	// 頂点変更
-	//--------------------------------------------------------
+	polygon->SetVertex(vertexIndex, position);
 
-	polygon->SetVertex(
-		vertexIndex,
-		position);
-
-	//--------------------------------------------------------
-	// Polygon妥当性チェック
-	//--------------------------------------------------------
-
+	// ポリゴン妥当性チェック
 	if (!polygon->IsValid())
 	{
-		//----------------------------------------------------
 		// 不正なら元に戻す
-		//----------------------------------------------------
-
-		polygon->SetVertex(
-			vertexIndex,
-			oldPosition);
+		polygon->SetVertex(vertexIndex, oldPosition);
 	}
 }
 
-//============================================================
-// Find
-//============================================================
-
-std::shared_ptr<NavMeshPolygon>
-NavMeshManager::FindPolygon(int id)
+std::shared_ptr<NavMeshPolygon> NavMeshManager::FindPolygon(int id)
 {
 	for (auto& polygon : m_polygons)
 	{
@@ -241,12 +138,7 @@ NavMeshManager::FindPolygon(int id)
 	return nullptr;
 }
 
-//============================================================
-// Find const
-//============================================================
-
-std::shared_ptr<const NavMeshPolygon>
-NavMeshManager::FindPolygon(int id) const
+std::shared_ptr<const NavMeshPolygon> NavMeshManager::FindPolygon(int id) const
 {
 	for (const auto& polygon : m_polygons)
 	{
@@ -259,93 +151,51 @@ NavMeshManager::FindPolygon(int id) const
 	return nullptr;
 }
 
-//============================================================
-// Connection
-//============================================================
-
-void NavMeshManager::ConnectPolygons(
-	int fromID,
-	int toID)
+void NavMeshManager::ConnectPolygons(int fromID, int toID)
 {
-	//--------------------------------------------------------
 	// 自分自身には接続しない
-	//--------------------------------------------------------
-
 	if (fromID == toID)
 	{
 		return;
 	}
 
-	//--------------------------------------------------------
-	// Polygon検索
-	//--------------------------------------------------------
-
-	auto from =
-		FindPolygon(fromID);
-
-	auto to =
-		FindPolygon(toID);
+	// ポリゴン検索
+	auto from = FindPolygon(fromID);
+	auto to = FindPolygon(toID);
 
 	if (!from || !to)
 	{
 		return;
 	}
 
-	//--------------------------------------------------------
 	// 双方向接続
-	//--------------------------------------------------------
-
 	from->AddConnection(toID);
 	to->AddConnection(fromID);
 }
 
-//============================================================
-// Disconnect
-//============================================================
-
-void NavMeshManager::DisconnectPolygons(
-	int fromID,
-	int toID)
+void NavMeshManager::DisconnectPolygons(int fromID, int toID)
 {
-	//--------------------------------------------------------
 	// 自分自身は対象外
-	//--------------------------------------------------------
-
 	if (fromID == toID)
 	{
 		return;
 	}
 
-	//--------------------------------------------------------
-	// Polygon検索
-	//--------------------------------------------------------
-
-	auto from =
-		FindPolygon(fromID);
-
-	auto to =
-		FindPolygon(toID);
+	// ポリゴン検索
+	auto from = FindPolygon(fromID);
+	auto to = FindPolygon(toID);
 
 	if (!from || !to)
 	{
 		return;
 	}
 
-	//--------------------------------------------------------
 	// 双方向接続解除
-	//--------------------------------------------------------
-
 	from->RemoveConnection(toID);
 	to->RemoveConnection(fromID);
 }
 
-//============================================================
-// Find Polygon From Point
-//============================================================
-
-std::shared_ptr<NavMeshPolygon>
-NavMeshManager::FindPolygonFromPoint(
-	const Math::Vector3& point)
+std::shared_ptr<NavMeshPolygon> NavMeshManager::FindPolygonFromPoint(const Math::Vector3& point)
 {
 	for (auto& polygon : m_polygons)
 	{
@@ -358,13 +208,7 @@ NavMeshManager::FindPolygonFromPoint(
 	return nullptr;
 }
 
-//============================================================
-// Find Polygon From Point const
-//============================================================
-
-std::shared_ptr<const NavMeshPolygon>
-NavMeshManager::FindPolygonFromPoint(
-	const Math::Vector3& point) const
+std::shared_ptr<const NavMeshPolygon> NavMeshManager::FindPolygonFromPoint(	const Math::Vector3& point) const
 {
 	for (const auto& polygon : m_polygons)
 	{
@@ -377,28 +221,16 @@ NavMeshManager::FindPolygonFromPoint(
 	return nullptr;
 }
 
-//============================================================
-// FindNearestPoint
-//============================================================
-//
-// pointが属するPolygonが無い場合に、
-// 全Polygonの中からXZ平面上で最も近い点を返す。
-//
-// maxSearchRadius <= 0 の場合は距離制限なし。
-// 見つからない、または範囲外の場合はpointをそのまま返す。
-//
-//============================================================
-
-Math::Vector3 NavMeshManager::FindNearestPoint(
-	const Math::Vector3& point,
-	float maxSearchRadius) const
+Math::Vector3 NavMeshManager::FindNearestPoint(const Math::Vector3& point, float maxSearchRadius) const
 {
+	// 初期値設定
 	Math::Vector3 bestPoint = point;
 
 	float bestDistSq = FLT_MAX;
 
 	bool found = false;
 
+	// 全ポリゴン調べる
 	for (const auto& polygon : m_polygons)
 	{
 		if (!polygon)
@@ -406,15 +238,17 @@ Math::Vector3 NavMeshManager::FindNearestPoint(
 			continue;
 		}
 
-		Math::Vector3 closest =
-			polygon->GetClosestPoint(point);
+		// ポリゴン上の最近点を取得
+		Math::Vector3 closest = polygon->GetClosestPoint(point);
 
+		// 指定座標との距離を計算
 		Math::Vector3 diff = closest - point;
 
 		diff.y = 0.0f;
 
 		const float distSq = diff.LengthSquared();
 
+		// 最も近い点を更新
 		if (distSq < bestDistSq)
 		{
 			bestDistSq = distSq;
@@ -430,12 +264,8 @@ Math::Vector3 NavMeshManager::FindNearestPoint(
 		return point;
 	}
 
-	//--------------------------------------------------------
-	// 範囲外なら補正しない
-	//--------------------------------------------------------
-
-	if (maxSearchRadius > 0.0f &&
-		bestDistSq > maxSearchRadius * maxSearchRadius)
+	// 検索範囲のチェック
+	if (maxSearchRadius > 0.0f && bestDistSq > maxSearchRadius * maxSearchRadius)
 	{
 		return point;
 	}

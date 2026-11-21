@@ -1,48 +1,23 @@
 ﻿#include "NavMeshPolygon.h"
 
-//============================================================
-// Polygon Valid
-//============================================================
-//
-// 以下をチェックする。
-//
-// ・頂点数が3以上
-// ・重複頂点がない
-// ・3点が一直線ではない
-// ・凸Polygonである
-//
-// NavMeshはXZ平面を使用する。
-//============================================================
-
 bool NavMeshPolygon::IsValid() const
 {
-	//--------------------------------------------------------
-	// 頂点数
-	//--------------------------------------------------------
-
+	// 頂点数チェック
 	if (m_vertices.size() < 3)
 	{
 		return false;
 	}
 
+	// 誤差
 	constexpr float EPSILON = 0.0001f;
-	constexpr float EPSILON_SQ =
-		EPSILON * EPSILON;
+	constexpr float EPSILON_SQ = EPSILON * EPSILON;
 
-	//--------------------------------------------------------
 	// 重複頂点チェック
-	//--------------------------------------------------------
-
-	for (size_t i = 0;
-		i < m_vertices.size();
-		++i)
+	for (size_t i = 0; i < m_vertices.size(); ++i)
 	{
-		for (size_t j = i + 1;
-			j < m_vertices.size();
-			++j)
+		for (size_t j = i + 1; j < m_vertices.size(); ++j)
 		{
-			const Math::Vector3 diff =
-				m_vertices[i] - m_vertices[j];
+			const Math::Vector3 diff = m_vertices[i] - m_vertices[j];
 
 			if (diff.LengthSquared() <= EPSILON_SQ)
 			{
@@ -51,44 +26,31 @@ bool NavMeshPolygon::IsValid() const
 		}
 	}
 
-	//--------------------------------------------------------
-	// 凸Polygonチェック
-	//--------------------------------------------------------
-
+	// 時計回り方向の曲がりを検出
 	bool hasNegative = false;
+	// 反時計回り方向の曲がりを検出
 	bool hasPositive = false;
 
-	for (size_t i = 0;
-		i < m_vertices.size();
-		++i)
+	// 凸ポリゴンチェック
+	for (size_t i = 0; i < m_vertices.size(); ++i)
 	{
-		const auto& a =
-			m_vertices[i];
+		// 連続する三頂点を取得
+		const auto& a = m_vertices[i];
 
-		const auto& b =
-			m_vertices[
-				(i + 1) % m_vertices.size()
-			];
+		const auto& b = m_vertices[(i + 1) % m_vertices.size()];
 
-		const auto& c =
-			m_vertices[
-				(i + 2) % m_vertices.size()
-			];
+		const auto& c = m_vertices[(i + 2) % m_vertices.size()];
 
-		const float cross =
-			(b.x - a.x) * (c.z - b.z)
-			-
-			(b.z - a.z) * (c.x - b.x);
+		// 外積を計算
+		const float cross = (b.x - a.x) * (c.z - b.z) - (b.z - a.z) * (c.x - b.x);
 
-		//----------------------------------------------------
 		// ほぼ一直線
-		//----------------------------------------------------
-
 		if (std::abs(cross) <= EPSILON)
 		{
 			return false;
 		}
 
+		// 曲がる方向を記録
 		if (cross < 0.0f)
 		{
 			hasNegative = true;
@@ -98,66 +60,46 @@ bool NavMeshPolygon::IsValid() const
 			hasPositive = true;
 		}
 
-		//----------------------------------------------------
-		// 符号が混在したら凹Polygon
-		//----------------------------------------------------
-
+		// 符号が混在したら凹ポリゴン
 		if (hasNegative && hasPositive)
 		{
 			return false;
 		}
 	}
-
 	return true;
 }
 
-
-//============================================================
-// PointがPolygon内にあるか
-//============================================================
-//
-// XZ平面上で判定する。
-// NavMeshがXZ平面を歩行面としている前提。
-//
-//============================================================
-
-bool NavMeshPolygon::ContainsPoint(
-	const Math::Vector3& point) const
+bool NavMeshPolygon::ContainsPoint(const Math::Vector3& point) const
 {
+	// 頂点数チェック
 	if (m_vertices.size() < 3)
 	{
 		return false;
 	}
 
+	// 誤差
 	constexpr float EPSILON = 0.0001f;
 
 	const float px = point.x;
 	const float pz = point.z;
 
+	// 時計回り方向の曲がりを検出
 	bool hasNegative = false;
+	// 反時計回り方向の曲がりを検出
 	bool hasPositive = false;
 
-	//--------------------------------------------------------
 	// 各辺について符号を確認
-	//--------------------------------------------------------
-
-	for (size_t i = 0;
-		i < m_vertices.size();
-		++i)
+	for (size_t i = 0; i < m_vertices.size(); ++i)
 	{
-		const auto& a =
-			m_vertices[i];
+		// 頂点を取得
+		const auto& a = m_vertices[i];
 
-		const auto& b =
-			m_vertices[
-				(i + 1) % m_vertices.size()
-			];
+		const auto& b = m_vertices[(i + 1) % m_vertices.size()];
 
-		const float cross =
-			(b.x - a.x) * (pz - a.z)
-			-
-			(b.z - a.z) * (px - a.x);
+		// 外積を計算
+		const float cross = (b.x - a.x) * (pz - a.z) - (b.z - a.z) * (px - a.x);
 
+		// 辺のどちら側にあるか
 		if (cross < -EPSILON)
 		{
 			hasNegative = true;
@@ -167,53 +109,31 @@ bool NavMeshPolygon::ContainsPoint(
 			hasPositive = true;
 		}
 
-		//----------------------------------------------------
-		// 凸Polygonで符号が混在したら外側
-		//----------------------------------------------------
-
+		// 凸ポリゴンで符号が混在したら外側
 		if (hasNegative && hasPositive)
 		{
 			return false;
 		}
 	}
 
+	// 内側か境界上
 	return true;
 }
 
-//============================================================
-// GetClosestPoint
-//============================================================
-//
-// XZ平面上で、指定Pointからこのポリゴンへの最近傍点を求める。
-// ポリゴン内ならそのまま、外なら一番近い辺上の点を返す。
-//
-//============================================================
-
-Math::Vector3 NavMeshPolygon::GetClosestPoint(
-	const Math::Vector3& point) const
+Math::Vector3 NavMeshPolygon::GetClosestPoint(const Math::Vector3& point) const
 {
-	//--------------------------------------------------------
 	// ポリゴン内ならそのまま返す
-	//--------------------------------------------------------
-
 	if (ContainsPoint(point))
 	{
 		return point;
 	}
-
-	//--------------------------------------------------------
-	// 頂点が2つ未満なら計算不可
-	//--------------------------------------------------------
 
 	if (m_vertices.size() < 2)
 	{
 		return m_center;
 	}
 
-	//--------------------------------------------------------
-	// 各辺への最近点を総当たり
-	//--------------------------------------------------------
-
+	// 最近点の初期化
 	Math::Vector3 bestPoint = m_vertices[0];
 
 	float bestDistSq = FLT_MAX;
@@ -222,47 +142,43 @@ Math::Vector3 NavMeshPolygon::GetClosestPoint(
 
 	for (size_t i = 0; i < vertexCount; ++i)
 	{
+		// ポリゴンの各辺を取得
 		const Math::Vector3& a = m_vertices[i];
 
-		const Math::Vector3& b =
-			m_vertices[(i + 1) % vertexCount];
+		const Math::Vector3& b = m_vertices[(i + 1) % vertexCount];
 
-		//------------------------------------------------
-		// 辺 a → b への射影（XZ平面）
-		//------------------------------------------------
-
+		// 辺のベクトル
 		Math::Vector3 edge = b - a;
 
 		edge.y = 0.0f;
 
-		const float edgeLengthSq =
-			edge.x * edge.x + edge.z * edge.z;
+		// 辺の長さを計算
+		const float edgeLengthSq = edge.x * edge.x + edge.z * edge.z;
 
 		Math::Vector3 closestOnEdge;
 
+		// 辺と指定座標がほぼ同じ位置
 		if (edgeLengthSq <= 0.000001f)
 		{
 			closestOnEdge = a;
 		}
 		else
 		{
+			// 辺の始点から指定座標へのベクトル
 			Math::Vector3 toPoint = point - a;
 
 			toPoint.y = 0.0f;
 
-			float t =
-				(toPoint.x * edge.x + toPoint.z * edge.z) /
-				edgeLengthSq;
+			// 内積から、射影係数を計算
+			float t = (toPoint.x * edge.x + toPoint.z * edge.z) / edgeLengthSq;
 
 			t = std::clamp(t, 0.0f, 1.0f);
 
+			// 辺上の最近点を計算
 			closestOnEdge = a + edge * t;
 		}
 
-		//------------------------------------------------
-		// XZ距離で比較
-		//------------------------------------------------
-
+		// 距離を比較
 		Math::Vector3 diff = closestOnEdge - point;
 
 		diff.y = 0.0f;
@@ -277,476 +193,148 @@ Math::Vector3 NavMeshPolygon::GetClosestPoint(
 		}
 	}
 
+	// 最近点を取得
 	return bestPoint;
 }
 
-//============================================================
-// 2つのPolygonが辺を共有しているか
-//============================================================
-//
-// XZ平面上で辺同士が同一直線上にあり、一定以上重なっている
-//
-//============================================================
-
-bool NavMeshPolygon::SharesEdgeWith(
-	const NavMeshPolygon& other) const
+bool NavMeshPolygon::SharesEdgeWith(const NavMeshPolygon& other) const
 {
 	Math::Vector3 start;
 	Math::Vector3 end;
 
-	return GetSharedEdge(
-		other,
-		start,
-		end);
+	return GetSharedEdge(other, start, end);
 }
-
-/*bool NavMeshPolygon::SharesEdgeWith(
-	const NavMeshPolygon& other) const
-{
-	if (m_vertices.size() < 3 ||
-		other.GetVertexCount() < 3)
-	{
-		return false;
-	}
-
-	constexpr float EPSILON = 0.01f;
-
-	//--------------------------------------------------------
-	// Edge overlap
-	//--------------------------------------------------------
-
-	auto IsOverlappingEdge =
-		[EPSILON](
-			const Math::Vector3& a1,
-			const Math::Vector3& a2,
-			const Math::Vector3& b1,
-			const Math::Vector3& b2)
-		{
-			//------------------------------------------------
-			// 方向ベクトル
-			//------------------------------------------------
-
-			const float ax =
-				a2.x - a1.x;
-
-			const float az =
-				a2.z - a1.z;
-
-			const float bx =
-				b2.x - b1.x;
-
-			const float bz =
-				b2.z - b1.z;
-
-			//------------------------------------------------
-			// 短すぎる辺
-			//------------------------------------------------
-
-			const float aLengthSq =
-				ax * ax + az * az;
-
-			const float bLengthSq =
-				bx * bx + bz * bz;
-
-			if (aLengthSq <= EPSILON * EPSILON ||
-				bLengthSq <= EPSILON * EPSILON)
-			{
-				return false;
-			}
-
-			//------------------------------------------------
-			// 平行チェック
-			//------------------------------------------------
-
-			const float cross =
-				ax * bz -
-				az * bx;
-
-			if (std::abs(cross) >
-				EPSILON *
-				std::sqrt(aLengthSq * bLengthSq))
-			{
-				return false;
-			}
-
-			//------------------------------------------------
-			// 同一直線上かチェック
-			//------------------------------------------------
-
-			const float cross1 =
-				ax * (b1.z - a1.z) -
-				az * (b1.x - a1.x);
-
-			const float cross2 =
-				ax * (b2.z - a1.z) -
-				az * (b2.x - a1.x);
-
-			if (std::abs(cross1) >
-				EPSILON * std::sqrt(aLengthSq))
-			{
-				return false;
-			}
-
-			if (std::abs(cross2) >
-				EPSILON * std::sqrt(aLengthSq))
-			{
-				return false;
-			}
-
-			//------------------------------------------------
-			// Aの辺方向に投影
-			//------------------------------------------------
-
-			const float aLength =
-				std::sqrt(aLengthSq);
-
-			const float dx =
-				ax / aLength;
-
-			const float dz =
-				az / aLength;
-
-			const float aStart = 0.0f;
-			const float aEnd = aLength;
-
-			const float bStart =
-				(b1.x - a1.x) * dx +
-				(b1.z - a1.z) * dz;
-
-			const float bEnd =
-				(b2.x - a1.x) * dx +
-				(b2.z - a1.z) * dz;
-
-			const float bMin =
-				std::min(bStart, bEnd);
-
-			const float bMax =
-				std::max(bStart, bEnd);
-
-			//------------------------------------------------
-			// 区間の重なり
-			//------------------------------------------------
-
-			const float overlapMin =
-				std::max(aStart, bMin);
-
-			const float overlapMax =
-				std::min(aEnd, bMax);
-
-			//------------------------------------------------
-			// 一定以上重なっている
-			//------------------------------------------------
-
-			return
-				(overlapMax - overlapMin)
-	> EPSILON;
-		};
-
-	//--------------------------------------------------------
-	// 全Edge比較
-	//--------------------------------------------------------
-
-	for (size_t i = 0;
-		i < m_vertices.size();
-		++i)
-	{
-		const auto& a1 =
-			m_vertices[i];
-
-		const auto& a2 =
-			m_vertices[
-				(i + 1) % m_vertices.size()
-			];
-
-		for (size_t j = 0;
-			j < other.GetVertexCount();
-			++j)
-		{
-			const auto& b1 =
-				other.GetVertex(j);
-
-			const auto& b2 =
-				other.GetVertex(
-					(j + 1) %
-					other.GetVertexCount());
-
-			if (IsOverlappingEdge(
-				a1,
-				a2,
-				b1,
-				b2))
-			{
-				return true;
-			}
-		}
-	}
-
-	return false;
-}*/
-
-//============================================================
-// Shared Edge取得
-//============================================================
-//
-// 2つのPolygonが共有しているEdge部分を取得する。
-//
-// ・XZ平面で判定
-// ・完全一致でなくてもOK
-// ・部分的な重なりにも対応
-//
-// outStart / outEnd:
-//    実際に共有しているEdgeの両端
-//
-//============================================================
 
 bool NavMeshPolygon::GetSharedEdge(
 	const NavMeshPolygon& other,
 	Math::Vector3& outStart,
 	Math::Vector3& outEnd) const
 {
-	if (m_vertices.size() < 3 ||
-		other.GetVertexCount() < 3)
+	if (m_vertices.size() < 3 || other.GetVertexCount() < 3)
 	{
 		return false;
 	}
 
+	// 誤差
 	constexpr float EPSILON = 0.01f;
-	constexpr float EPSILON_SQ =
-		EPSILON * EPSILON;
+	constexpr float EPSILON_SQ = EPSILON * EPSILON;
 
-	//--------------------------------------------------------
-	// 出力初期化
-	//--------------------------------------------------------
-
+	// 初期化
 	outStart = Math::Vector3::Zero;
 	outEnd = Math::Vector3::Zero;
 
-	//--------------------------------------------------------
-	// 全Edge比較
-	//--------------------------------------------------------
-
-	for (size_t i = 0;
-		i < m_vertices.size();
-		++i)
+	for (size_t i = 0; i < m_vertices.size(); ++i)
 	{
-		const Math::Vector3& a1 =
-			m_vertices[i];
+		// ポリゴンの辺を取得
+		const Math::Vector3& a1 = m_vertices[i];
 
-		const Math::Vector3& a2 =
-			m_vertices[
-				(i + 1) % m_vertices.size()
-			];
+		const Math::Vector3& a2 = m_vertices[(i + 1) % m_vertices.size()];
 
-		//----------------------------------------------------
-		// A Edge方向
-		//----------------------------------------------------
+		// A側の辺の方向と長さを計算
+		const float ax = a2.x - a1.x;
 
-		const float ax =
-			a2.x - a1.x;
+		const float az = a2.z - a1.z;
 
-		const float az =
-			a2.z - a1.z;
-
-		const float aLengthSq =
-			ax * ax +
-			az * az;
+		const float aLengthSq = ax * ax + az * az;
 
 		if (aLengthSq <= EPSILON_SQ)
 		{
 			continue;
 		}
 
-		const float aLength =
-			std::sqrt(aLengthSq);
+		// 辺の長さを求める
+		const float aLength = std::sqrt(aLengthSq);
 
-		const float dx =
-			ax / aLength;
+		// 単位ベクトルを求める
+		const float dx = ax / aLength;
 
-		const float dz =
-			az / aLength;
+		const float dz = az / aLength;
 
-		//----------------------------------------------------
-		// A Edgeの法線方向
-		//
-		// 同一直線上か判定するために使用
-		//----------------------------------------------------
-
-		for (size_t j = 0;
-			j < other.GetVertexCount();
-			++j)
+		for (size_t j = 0; j < other.GetVertexCount(); ++j)
 		{
-			const Math::Vector3& b1 =
-				other.GetVertex(j);
+			// ポリゴンの辺を取得
+			const Math::Vector3& b1 = other.GetVertex(j);
 
-			const Math::Vector3& b2 =
-				other.GetVertex(
-					(j + 1) %
-					other.GetVertexCount());
+			const Math::Vector3& b2 = other.GetVertex((j + 1) % other.GetVertexCount());
 
-			//------------------------------------------------
-			// B Edge方向
-			//------------------------------------------------
+			// B側の辺の方向と長さを計算
+			const float bx = b2.x - b1.x;
 
-			const float bx =
-				b2.x - b1.x;
+			const float bz = b2.z - b1.z;
 
-			const float bz =
-				b2.z - b1.z;
-
-			const float bLengthSq =
-				bx * bx +
-				bz * bz;
+			const float bLengthSq = bx * bx + bz * bz;
 
 			if (bLengthSq <= EPSILON_SQ)
 			{
 				continue;
 			}
 
-			//------------------------------------------------
-			// 平行チェック
-			//------------------------------------------------
+			// 2辺の外積を計算
+			const float cross = ax * bz - az * bx;
 
-			const float cross =
-				ax * bz -
-				az * bx;
-
-			if (std::abs(cross) >
-				EPSILON *
-				std::sqrt(
-					aLengthSq *
-					bLengthSq))
+			// 平衡か
+			if (std::abs(cross) > EPSILON * std::sqrt(aLengthSq * bLengthSq))
 			{
 				continue;
 			}
 
-			//------------------------------------------------
+			// B側の始点とAの外積
+			const float cross1 = ax * (b1.z - a1.z) - az * (b1.x - a1.x);
+
+			// B側の終点とAの外積
+			const float cross2 = ax * (b2.z - a1.z) - az * (b2.x - a1.x);
+
 			// 同一直線上かチェック
-			//------------------------------------------------
-
-			const float cross1 =
-				ax * (b1.z - a1.z) -
-				az * (b1.x - a1.x);
-
-			const float cross2 =
-				ax * (b2.z - a1.z) -
-				az * (b2.x - a1.x);
-
-			if (std::abs(cross1) >
-				EPSILON * aLength)
+			if (std::abs(cross1) > EPSILON * aLength)
+			{
+				continue;
+			}
+			if (std::abs(cross2) > EPSILON * aLength)
 			{
 				continue;
 			}
 
-			if (std::abs(cross2) >
-				EPSILON * aLength)
-			{
-				continue;
-			}
+			// A側の始点を0
+			const float aStart = 0.0f;
 
-			//------------------------------------------------
-			// A Edge上へBの端点を投影
-			//------------------------------------------------
+			// A側の終点を長さ
+			const float aEnd = aLength;
 
-			const float aStart =
-				0.0f;
+			// 内積で投影
+			const float bStart = (b1.x - a1.x) * dx + (b1.z - a1.z) * dz;
 
-			const float aEnd =
-				aLength;
+			const float bEnd = (b2.x - a1.x) * dx + (b2.z - a1.z) * dz;
 
-			const float bStart =
-				(b1.x - a1.x) * dx +
-				(b1.z - a1.z) * dz;
+			// B側で投影範囲を計算
+			const float bMin = std::min(bStart, bEnd);
 
-			const float bEnd =
-				(b2.x - a1.x) * dx +
-				(b2.z - a1.z) * dz;
+			const float bMax = std::max(bStart, bEnd);
 
-			//------------------------------------------------
-			// B Edgeの投影範囲
-			//------------------------------------------------
+			// 共有している範囲
+			const float overlapMin = std::max(aStart, bMin);
 
-			const float bMin =
-				std::min(
-					bStart,
-					bEnd);
+			const float overlapMax = std::min(aEnd, bMax);
 
-			const float bMax =
-				std::max(
-					bStart,
-					bEnd);
-
-			//------------------------------------------------
-			// 重なり範囲
-			//------------------------------------------------
-
-			const float overlapMin =
-				std::max(
-					aStart,
-					bMin);
-
-			const float overlapMax =
-				std::min(
-					aEnd,
-					bMax);
-
-			//------------------------------------------------
 			// 共有部分がない
-			//------------------------------------------------
-
-			if (overlapMax - overlapMin <=
-				EPSILON)
+			if (overlapMax - overlapMin <= EPSILON)
 			{
 				continue;
 			}
 
-			//------------------------------------------------
-			// A Edge上の共有点を取得
-			//------------------------------------------------
+			// 共有部分の始点
+			outStart = a1 + Math::Vector3(dx, 0.0f, dz) * overlapMin;
 
-			outStart =
-				a1 +
-				Math::Vector3(
-					dx,
-					0.0f,
-					dz) *
-				overlapMin;
+			// 共有部分の終点
+			outEnd = a1 + Math::Vector3(dx, 0.0f, dz) * overlapMax;
 
-			outEnd =
-				a1 +
-				Math::Vector3(
-					dx,
-					0.0f,
-					dz) *
-				overlapMax;
+			// Y座標を補間
+			const float tStart = overlapMin / aLength;
 
-			//------------------------------------------------
-			// Y座標
-			//------------------------------------------------
-			//
-			// A側のEdge上の座標を使用する。
-			//
-			// NavMeshでは同一の接続面を想定しているため、
-			// 基本的には問題ない。
-			//
-			//------------------------------------------------
+			const float tEnd = overlapMax / aLength;
 
-			const float tStart =
-				overlapMin /
-				aLength;
+			outStart.y = a1.y + (a2.y - a1.y) * tStart;
 
-			const float tEnd =
-				overlapMax /
-				aLength;
-
-			outStart.y =
-				a1.y +
-				(a2.y - a1.y) *
-				tStart;
-
-			outEnd.y =
-				a1.y +
-				(a2.y - a1.y) *
-				tEnd;
+			outEnd.y = a1.y + (a2.y - a1.y) * tEnd;
 
 			return true;
 		}

@@ -11,9 +11,7 @@
 void InspectorWindow::Draw(std::shared_ptr<KdGameObject> obj)
 {
 	ImGui::SetNextWindowPos(m_windowPos, ImGuiCond_Always);
-	ImGui::SetNextWindowSize(
-		m_windowSize,
-		ImGuiCond_Always);
+	ImGui::SetNextWindowSize(m_windowSize, ImGuiCond_Always);
 
 	ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
@@ -23,23 +21,23 @@ void InspectorWindow::Draw(std::shared_ptr<KdGameObject> obj)
 
 		ImGui::SeparatorText("Transform");
 
-		// Position
+		// Pos
 		Math::Vector3 pos = obj->GetPos();
-		if(ImGui::DragFloat3("Position", &pos.x, 0.05f))
+		if (ImGui::DragFloat3("Position", &pos.x, 0.05f))
 		{
 			obj->SetPos(pos);
 		}
 
-		// Rotation
+		// Rot
 		Math::Vector3 rot = obj->GetRot();
-		if(ImGui::DragFloat3("Rotation", &rot.x, 0.5f))
+		if (ImGui::DragFloat3("Rotation", &rot.x, 0.5f))
 		{
 			obj->SetRot(rot);
 		}
 
 		// Scale
 		Math::Vector3 scale = obj->GetScale();
-		if(ImGui::DragFloat3("Scale", &scale.x, 0.001f, 0.001f, 100.0f))
+		if (ImGui::DragFloat3("Scale", &scale.x, 0.001f, 0.001f, 100.0f))
 		{
 			obj->SetScale(scale);
 		}
@@ -48,41 +46,35 @@ void InspectorWindow::Draw(std::shared_ptr<KdGameObject> obj)
 		{
 			Math::Color color = obj->GetColor();
 
-			if (ImGui::ColorEdit3(
-				"Color",
-				&color.x))
+			if (ImGui::ColorEdit3("Color", &color.x))
 			{
 				obj->SetColor(color);
 			}
 		}
 	}
 
-	auto meshObj =
-		std::dynamic_pointer_cast<StaticMeshObject>(obj);
+	auto meshObj = std::dynamic_pointer_cast<StaticMeshObject>(obj);
 
 	if (meshObj)
 	{
 		DrawStaticMesh(meshObj);
 	}
 
-	auto item =
-		std::dynamic_pointer_cast<Item>(obj);
+	auto item = std::dynamic_pointer_cast<Item>(obj);
 
 	if (item)
 	{
 		DrawItem(item);
 	}
 
-	auto character =
-		std::dynamic_pointer_cast<CharacterBase>(obj);
+	auto character = std::dynamic_pointer_cast<CharacterBase>(obj);
 
 	if (character)
 	{
 		DrawCharacter(character);
 	}
 
-	auto neighbor =
-		std::dynamic_pointer_cast<Neighbor>(obj);
+	auto neighbor = std::dynamic_pointer_cast<Neighbor>(obj);
 
 	if (neighbor)
 	{
@@ -92,16 +84,13 @@ void InspectorWindow::Draw(std::shared_ptr<KdGameObject> obj)
 	ImGui::End();
 }
 
-void InspectorWindow::DrawStaticMesh(
-	std::shared_ptr<StaticMeshObject> obj)
+void InspectorWindow::DrawStaticMesh(std::shared_ptr<StaticMeshObject> obj)
 {
 	ImGui::SeparatorText("Static Mesh");
 
 	char buf[260];
 
-	strcpy_s(
-		buf,
-		obj->GetModelPath().c_str());
+	strcpy_s(buf, obj->GetModelPath().c_str());
 
 	if (ImGui::InputText(
 		"Model Path",
@@ -114,18 +103,16 @@ void InspectorWindow::DrawStaticMesh(
 
 	if (ImGui::BeginDragDropTarget())
 	{
-		if (const ImGuiPayload* payload =
-			ImGui::AcceptDragDropPayload("ASSET_PATH"))
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
 		{
-			const char* path =
-				(const char*)payload->Data;
+			const char* path = (const char*)payload->Data;
 
 			obj->SetModelPath(path);
 		}
 
 		ImGui::EndDragDropTarget();
 	}
-		
+
 	bool isGround = obj->IsGround();
 	if (ImGui::Checkbox("Is Ground", &isGround))
 	{
@@ -139,9 +126,7 @@ void InspectorWindow::DrawItem(std::shared_ptr<Item> obj)
 
 	char buf[260];
 
-	strcpy_s(
-		buf,
-		obj->GetItemPath().c_str());
+	strcpy_s(buf, obj->GetItemPath().c_str());
 
 	// Enterで変更
 	if (ImGui::InputText(
@@ -159,8 +144,7 @@ void InspectorWindow::DrawItem(std::shared_ptr<Item> obj)
 		if (const ImGuiPayload* payload =
 			ImGui::AcceptDragDropPayload("ITEM_PATH"))
 		{
-			const char* path =
-				(const char*)payload->Data;
+			const char* path = (const char*)payload->Data;
 
 			obj->LoadItem(path);
 		}
@@ -189,8 +173,7 @@ void InspectorWindow::DrawNeighbor(std::shared_ptr<Neighbor> obj)
 
 	if (ImGui::BeginDragDropTarget())
 	{
-		if (const ImGuiPayload* payload =
-			ImGui::AcceptDragDropPayload("ASSET_PATH"))
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_PATH"))
 		{
 			obj->SetModelPath((const char*)payload->Data);
 		}

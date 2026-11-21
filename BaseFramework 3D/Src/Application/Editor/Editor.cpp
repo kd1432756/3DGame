@@ -82,7 +82,7 @@ void Editor::SetOpen(bool open)
 
 	if (open)
 	{
-		m_returnCamera = CameraManager::Instance().GetCamera();
+		m_previousCamera = CameraManager::Instance().GetCamera();
 		CameraManager::Instance().SetCamera(m_context.camera);
 
 		if (SceneManager::Instance().GetStageType() != m_gameStageAtClose)
@@ -99,7 +99,7 @@ void Editor::SetOpen(bool open)
 
 		m_gameStageAtClose = SceneManager::Instance().GetStageType();
 
-		CameraManager::Instance().SetCamera(m_returnCamera.lock());
+		CameraManager::Instance().SetCamera(m_previousCamera.lock());
 	}
 }
 
@@ -158,9 +158,7 @@ void Editor::DrawMenuBar()
 
 	GetCurrentMode().DrawMenuBar(m_context);
 
-	ImGui::TextDisabled("| Target: %s  %s",
-		m_io.GetStageName(),
-		m_io.GetStatus().c_str());
+	ImGui::TextDisabled("| Target: %s  %s", m_io.GetStageName(), m_io.GetStatus().c_str());
 
 	DrawStageSwitchPopup();
 

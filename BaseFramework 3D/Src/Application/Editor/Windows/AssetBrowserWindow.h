@@ -5,9 +5,7 @@ class AssetBrowserWindow
 public:
 	void Draw();
 
-	void SetLayout(
-		const ImVec2& pos,
-		const ImVec2& size)
+	void SetLayout(const ImVec2& pos, const ImVec2& size)
 	{
 		m_windowPos = pos;
 		m_windowSize = size;

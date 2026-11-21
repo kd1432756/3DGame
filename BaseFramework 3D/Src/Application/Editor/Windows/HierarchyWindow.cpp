@@ -4,46 +4,24 @@
 
 void HierarchyWindow::Draw(std::shared_ptr<KdGameObject>& selectObject)
 {
-	ImGui::SetNextWindowPos(
-		m_windowPos,
-		ImGuiCond_Always);
-	ImGui::SetNextWindowSize(
-		m_windowSize,
-		ImGuiCond_Always);
+	ImGui::SetNextWindowPos(m_windowPos, ImGuiCond_Always);
+	ImGui::SetNextWindowSize(m_windowSize, ImGuiCond_Always);
 
 	ImGui::Begin("Hierarchy", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
 	if (ImGui::TreeNode("Scene"))
 	{
-		DrawCategory(
-			"Character",
-			KdGameObject::ObjectCategory::Character,
-			selectObject);
+		DrawCategory("Character", KdGameObject::ObjectCategory::Character, selectObject);
 
-		DrawCategory(
-			"Stage",
-			KdGameObject::ObjectCategory::Stage,
-			selectObject);
+		DrawCategory("Stage", KdGameObject::ObjectCategory::Stage, selectObject);
 
-		DrawCategory(
-			"Prop",
-			KdGameObject::ObjectCategory::Prop,
-			selectObject);
+		DrawCategory("Prop", KdGameObject::ObjectCategory::Prop, selectObject);
 
-		DrawCategory(
-			"Interactive",
-			KdGameObject::ObjectCategory::Interactive,
-			selectObject);
+		DrawCategory("Interactive", KdGameObject::ObjectCategory::Interactive, selectObject);
 
-		DrawCategory(
-			"Item",
-			KdGameObject::ObjectCategory::Item,
-			selectObject);
+		DrawCategory("Item", KdGameObject::ObjectCategory::Item, selectObject);
 
-		DrawCategory(
-			"Other",
-			KdGameObject::ObjectCategory::Other,
-			selectObject);
+		DrawCategory("Other", KdGameObject::ObjectCategory::Other, selectObject);
 
 		ImGui::TreePop();
 	}

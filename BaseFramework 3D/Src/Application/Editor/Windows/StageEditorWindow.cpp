@@ -74,18 +74,10 @@ void StageEditorWindow::Init()
 
 void StageEditorWindow::Draw()
 {
-	ImGui::SetNextWindowPos(
-		m_windowPos,
-		ImGuiCond_Always);
-	ImGui::SetNextWindowSize(
-		m_windowSize,
-		ImGuiCond_Always);
+	ImGui::SetNextWindowPos(m_windowPos, ImGuiCond_Always);
+	ImGui::SetNextWindowSize(m_windowSize, ImGuiCond_Always);
 
-	ImGui::Begin(
-		"Stage Editor",
-		nullptr,
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoResize);
+	ImGui::Begin("Stage Editor", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
 	//----------------------------------
 	// Brush
@@ -93,17 +85,12 @@ void StageEditorWindow::Draw()
 
 	ImGui::SeparatorText("Brush");
 
-	if (ImGui::RadioButton(
-		"Paint (B)",
-		m_brushMode == BrushMode::Paint))
+	if (ImGui::RadioButton("Paint (B)", m_brushMode == BrushMode::Paint))
 	{
 		m_brushMode = BrushMode::Paint;
 	}
 
-	if (ImGui::RadioButton(
-		"Erase (E)",
-		m_brushMode == BrushMode::Erase))
-
+	if (ImGui::RadioButton("Erase (E)", m_brushMode == BrushMode::Erase))
 	{
 		m_brushMode = BrushMode::Erase;
 	}
@@ -150,9 +137,7 @@ void StageEditorWindow::DrawRoadCategory()
 	{
 		bool selected = (i == m_selectedIndex);
 
-		if (ImGui::Selectable(
-			m_tiles[i].name.c_str(),
-			selected))
+		if (ImGui::Selectable(m_tiles[i].name.c_str(), selected))
 		{
 			m_selectedIndex = i;
 

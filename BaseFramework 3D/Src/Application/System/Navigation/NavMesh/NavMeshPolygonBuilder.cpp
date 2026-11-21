@@ -2,10 +2,6 @@
 
 namespace
 {
-	//============================================================
-	// VertexId Hash
-	//============================================================
-
 	// 頂点座標を効率よく検索するためのハッシュ
 	struct VertexIdHash
 	{
@@ -19,10 +15,6 @@ namespace
 			return hx ^ (hy << 1);
 		}
 	};
-
-	//============================================================
-	// Edge Hash
-	//============================================================
 
 	// 辺を効率よく検索するためのハッシュ
 	struct EdgeHash
@@ -39,10 +31,6 @@ namespace
 			return ha ^ (hb << 1);
 		}
 	};
-
-	//============================================================
-	// DirectedEdge
-	//============================================================
 
 	// 方向を持つ辺
 	struct DirectedEdge
@@ -104,10 +92,7 @@ namespace
 		return area * 0.5;
 	}
 
-	//============================================================
-	// Direction
-	//============================================================
-
+	// 方向取得
 	int GetDirection(const NavMeshPolygonBuilder::VertexId& from, const NavMeshPolygonBuilder::VertexId& to)
 	{
 		// 移動量を計算
@@ -133,10 +118,7 @@ namespace
 		return 3;	// South
 	}
 
-	//============================================================
-	// Turn priority
-	//============================================================
-
+	// 角度から方向取得
 	int GetTurnPriority(int incomingDirection, int outgoingDirection)
 	{
 		// outgoingがincomingに対して何度回転するか
@@ -156,10 +138,7 @@ namespace
 		}
 	}
 
-	//============================================================
-	// Find next directed edge
-	//============================================================
-
+	// 次の辺を探す
 	bool FindNextEdge(
 		const NavMeshPolygonBuilder::VertexId& current,
 		int incomingDirection,
@@ -198,10 +177,7 @@ namespace
 		return found;
 	}
 
-	//============================================================
-	// Remove duplicate consecutive vertices
-	//============================================================
-
+	// 頂点配列
 	void RemoveDuplicateVertices(std::vector<NavMeshPolygonBuilder::VertexId>& polygon)
 	{
 		if (polygon.empty())
@@ -234,10 +210,7 @@ namespace
 		polygon = std::move(result);
 	}
 
-	//============================================================
-	// Remove collinear vertices 
-	//============================================================
-
+	// 直線上の頂点削除
 	void RemoveCollinearVertices(std::vector<NavMeshPolygonBuilder::VertexId>& polygon)
 	{
 		if (polygon.size() < 3)

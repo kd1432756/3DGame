@@ -4,19 +4,11 @@
 
 void NavigationEditorWindow::Draw(NodeEditorWindow& nodeEditorWindow)
 {
-	ImGui::SetNextWindowPos(
-		m_windowPos,
-		ImGuiCond_Always);
+	ImGui::SetNextWindowPos(		m_windowPos,		ImGuiCond_Always);
 
-	ImGui::SetNextWindowSize(
-		m_windowSize,
-		ImGuiCond_Always);
+	ImGui::SetNextWindowSize(		m_windowSize,		ImGuiCond_Always);
 
-	ImGui::Begin(
-		"Navigation Editor",
-		nullptr,
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoResize);
+	ImGui::Begin("Navigation Editor", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
 	DrawToolbar();
 
@@ -39,18 +31,14 @@ void NavigationEditorWindow::DrawToolbar()
 {
 	ImGui::Text("Mode");
 
-	if (ImGui::RadioButton(
-		"Node",
-		m_mode == NavigationMode::Node))
+	if (ImGui::RadioButton("Node", m_mode == NavigationMode::Node))
 	{
 		SetMode(NavigationMode::Node);
 	}
 
 	ImGui::SameLine();
 
-	if (ImGui::RadioButton(
-		"NavMesh",
-		m_mode == NavigationMode::NavMesh))
+	if (ImGui::RadioButton("NavMesh", m_mode == NavigationMode::NavMesh))
 	{
 		SetMode(NavigationMode::NavMesh);
 	}
@@ -59,10 +47,8 @@ void NavigationEditorWindow::DrawToolbar()
 void NavigationEditorWindow::DrawNavigationSettings()
 {
 	ImGui::SeparatorText("NavMesh Settings");
-	
-	ImGui::Checkbox(
-		"Show NavMesh",
-		&m_showNavMesh);
+
+	ImGui::Checkbox("Show NavMesh", &m_showNavMesh);
 
 	ImGui::SliderFloat(
 		"Agent Radius",

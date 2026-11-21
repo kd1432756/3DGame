@@ -1,62 +1,31 @@
 ﻿#include "NavMeshPathfinder.h"
 
-//============================================================
-// FindPath
-//============================================================
-//
-// A*によってPolygon IDの経路を求める。
-//
-// State:
-//     Polygon + Entry Polygon
-//
-// Node:
-//     State
-//     Entry Point
-//     G Cost
-//     H Cost
-//
-//============================================================
-
-std::vector<int>
-NavMeshPathfinder::FindPath(
+std::vector<int> NavMeshPathfinder::FindPath(
 	const NavMeshManager& navMeshManager,
 	const Math::Vector3& start,
 	const Math::Vector3& goal) const
 {
-	//--------------------------------------------------------
-	// Start Polygon
-	//--------------------------------------------------------
-
-	auto startPolygon =
-		navMeshManager.FindPolygonFromPoint(start);
+	// スタート地点のポリゴンを取得
+	auto startPolygon = navMeshManager.FindPolygonFromPoint(start);
 
 	if (!startPolygon)
 	{
 		return {};
 	}
-
-	//--------------------------------------------------------
-	// Goal Polygon
-	//--------------------------------------------------------
-
-	auto goalPolygon =
-		navMeshManager.FindPolygonFromPoint(goal);
+	
+	// ゴール地点のポリゴンを取得
+	auto goalPolygon = navMeshManager.FindPolygonFromPoint(goal);
 
 	if (!goalPolygon)
 	{
 		return {};
 	}
 
-	const int startPolygonID =
-		startPolygon->GetID();
+	const int startPolygonID = startPolygon->GetID();
 
-	const int goalPolygonID =
-		goalPolygon->GetID();
+	const int goalPolygonID = goalPolygon->GetID();
 
-	//--------------------------------------------------------
-	// Start == Goal
-	//--------------------------------------------------------
-
+	// 同じポリゴン
 	if (startPolygonID == goalPolygonID)
 	{
 		return
@@ -65,299 +34,169 @@ NavMeshPathfinder::FindPath(
 		};
 	}
 
-	//--------------------------------------------------------
-	// Nodes
-	//--------------------------------------------------------
+	// 探索したノード情報を確保
+	std::unordered_map<State, Node, StateHash> nodes;
 
-	std::unordered_map<
-		State,
-		Node,
-		StateHash> nodes;
-
-	//--------------------------------------------------------
-	// Open
-	//--------------------------------------------------------
-
+	// 探索候補のState
 	std::vector<State> openList;
 
-	//--------------------------------------------------------
-	// Closed
-	//--------------------------------------------------------
+	// 探索済のState
+	std::unordered_set<State, StateHash> closedSet;
 
-	std::unordered_set<
-		State,
-		StateHash> closedSet;
-
-	//--------------------------------------------------------
-	// Start State
-	//--------------------------------------------------------
-
+	// 初期設定
 	State startState;
 
-	startState.polygonID =
-		startPolygonID;
+	startState.polygonID = startPolygonID;
 
-	startState.entryPolygonID =
-		-1;
+	startState.entryPolygonID = -1;
 
 	Node startNode;
 
-	startNode.state =
-		startState;
+	startNode.state = startState;
 
-	startNode.entryPoint =
-		start;
+	startNode.entryPoint = start;
 
-	startNode.gCost =
-		0.0f;
+	startNode.gCost = 0.0f;
 
-	startNode.hCost =
-		CalculateHeuristic(
-			start,
-			goal);
+	startNode.hCost = CalculateHeuristic(start, goal);
 
-	startNode.hasParent =
-		false;
+	startNode.hasParent = false;
 
-	nodes.emplace(
-		startState,
-		startNode);
+	nodes.emplace(startState, startNode);
 
-	openList.push_back(
-		startState);
+	openList.push_back(startState);
 
-	//--------------------------------------------------------
-	// A*
-	//--------------------------------------------------------
-
+	// AStar
 	int iteration = 0;
 
 	while (!openList.empty())
 	{
 		++iteration;
 
-		//----------------------------------------------------
-		// F Cost最小
-		//----------------------------------------------------
-
+		// 最小Fコスト
 		size_t bestIndex = 0;
 
-		for (size_t i = 1;
-			i < openList.size();
-			++i)
+		for (size_t i = 1; i < openList.size(); ++i)
 		{
-			const Node& candidate =
-				nodes.at(openList[i]);
+			const Node& candidate = nodes.at(openList[i]);
 
-			const Node& best =
-				nodes.at(openList[bestIndex]);
+			const Node& best = nodes.at(openList[bestIndex]);
 
-			if (candidate.GetFCost() <
-				best.GetFCost())
+			if (candidate.GetFCost() < best.GetFCost())
 			{
 				bestIndex = i;
 			}
-			else if (
-				candidate.GetFCost() ==
-				best.GetFCost())
+			else if (candidate.GetFCost() == best.GetFCost())
 			{
-				if (candidate.hCost <
-					best.hCost)
+				if (candidate.hCost < best.hCost)
 				{
 					bestIndex = i;
 				}
 			}
 		}
 
-		//----------------------------------------------------
-		// Current
-		//----------------------------------------------------
+		// 対象として取得
+		const State currentState = openList[bestIndex];
 
-		const State currentState =
-			openList[bestIndex];
+		const Node currentNode = nodes.at(currentState);
 
-		const Node currentNode =
-			nodes.at(currentState);
+		// 探索済みとして削除
+		openList.erase(openList.begin() + bestIndex);
 
-		//----------------------------------------------------
-		// Open Remove
-		//----------------------------------------------------
+		// 探索済みとして登録
+		closedSet.insert(currentState);
 
-		openList.erase(
-			openList.begin() +
-			bestIndex);
-
-		closedSet.insert(
-			currentState);
-
-		//----------------------------------------------------
-		// Goal
-		//----------------------------------------------------
-
-		if (currentState.polygonID ==
-			goalPolygonID)
+		// ゴールに到達するか
+		if (currentState.polygonID == goalPolygonID)
 		{
-			const auto path =
-				ReconstructPath(
-					nodes,
-					currentState);
+			const auto path = ReconstructPath(nodes, currentState);
 
 			return path;
 		}
 
-		//----------------------------------------------------
-		// Current Polygon
-		//----------------------------------------------------
-
-		auto currentPolygon =
-			navMeshManager.FindPolygon(
-				currentState.polygonID);
+		auto currentPolygon = navMeshManager.FindPolygon(currentState.polygonID);
 
 		if (!currentPolygon)
 		{
 			continue;
 		}
 
-		//----------------------------------------------------
-		// Neighbor
-		//----------------------------------------------------
-
-		for (int neighborID :
-		currentPolygon->GetConnections())
+		for (int neighborID : currentPolygon->GetConnections())
 		{
-			//------------------------------------------------
-			// Neighbor Polygon
-			//------------------------------------------------
-
-			auto neighborPolygon =
-				navMeshManager.FindPolygon(
-					neighborID);
+			// 隣接ポリゴンを調べる
+			auto neighborPolygon = navMeshManager.FindPolygon(neighborID);
 
 			if (!neighborPolygon)
 			{
 				continue;
 			}
 
-			//------------------------------------------------
-			// Portal
-			//------------------------------------------------
-
+			// ポータル作成
 			Portal portal;
 
-			if (!CreatePortal(
-				*currentPolygon,
-				*neighborPolygon,
-				portal))
+			if (!CreatePortal(*currentPolygon, *neighborPolygon, portal))
 			{
 				continue;
 			}
 
-			//------------------------------------------------
-			// Closest Point
-			//------------------------------------------------
+			// ポータル上の最近点を取得
+			const Math::Vector3 portalPoint = GetClosestPointOnPortal(currentNode.entryPoint, portal);
 
-			const Math::Vector3 portalPoint =
-				GetClosestPointOnPortal(
-					currentNode.entryPoint,
-					portal);
+			const float moveCost = CalculateDistanceXZ(currentNode.entryPoint, portalPoint);
 
-			//------------------------------------------------
-			// Move Cost
-			//------------------------------------------------
-
-			const float moveCost =
-				CalculateDistanceXZ(
-					currentNode.entryPoint,
-					portalPoint);
-
-			const float newGCost =
-				currentNode.gCost +
-				moveCost;
-
-			//------------------------------------------------
-			// Neighbor State
-			//------------------------------------------------
-
+			const float newGCost = currentNode.gCost + moveCost;
+					
+			// 次の探索State
 			State neighborState;
 
-			neighborState.polygonID =
-				neighborID;
+			neighborState.polygonID = neighborID;
 
-			neighborState.entryPolygonID =
-				currentState.polygonID;
-
-			//------------------------------------------------
-			// Closed
-			//------------------------------------------------
-
-			if (closedSet.find(
-				neighborState)
-				!=
-				closedSet.end())
+			neighborState.entryPolygonID = currentState.polygonID;
+				
+			// 探索済みStateは無視
+			if (closedSet.find(neighborState) != closedSet.end())
 			{
 				continue;
 			}
-
-			//------------------------------------------------
-			// Existing Node
-			//------------------------------------------------
-
-			auto it =
-				nodes.find(
-					neighborState);
+			
+			// ノードが存在するか
+			auto it = nodes.find(neighborState);
 
 			if (it == nodes.end())
 			{
+				// 新しいノードを生成
 				Node neighborNode;
 
-				neighborNode.state =
-					neighborState;
+				neighborNode.state = neighborState;
 
-				neighborNode.entryPoint =
-					portalPoint;
+				neighborNode.entryPoint = portalPoint;
 
-				neighborNode.gCost =
-					newGCost;
+				neighborNode.gCost = newGCost;
 
-				neighborNode.hCost =
-					CalculateHeuristic(
-						portalPoint,
-						goal);
+				neighborNode.hCost = CalculateHeuristic(portalPoint, goal);
 
-				neighborNode.parentState =
-					currentState;
+				neighborNode.parentState = currentState;
 
-				neighborNode.hasParent =
-					true;
+				neighborNode.hasParent = true;
 
-				nodes.emplace(
-					neighborState,
-					neighborNode);
+				nodes.emplace(neighborState, neighborNode);
 
-				openList.push_back(
-					neighborState);
+				openList.push_back(neighborState);
 			}
 			else
 			{
-				Node& neighborNode =
-					it->second;
+				Node& neighborNode = it->second;
 
-				if (newGCost <
-					neighborNode.gCost)
+				// 経路が短いか
+				if (newGCost < neighborNode.gCost)
 				{
-					neighborNode.entryPoint =
-						portalPoint;
+					neighborNode.entryPoint = portalPoint;
 
-					neighborNode.gCost =
-						newGCost;
+					neighborNode.gCost = newGCost;
 
-					neighborNode.hCost =
-						CalculateHeuristic(
-							portalPoint,
-							goal);
+					neighborNode.hCost = CalculateHeuristic(portalPoint, goal);
 
-					neighborNode.parentState =
-						currentState;
+					neighborNode.parentState = currentState;
 				}
 			}
 		}
@@ -366,376 +205,190 @@ NavMeshPathfinder::FindPath(
 	return {};
 }
 
-//============================================================
-// FindPathPoints
-//============================================================
-//
-// Polygon Path
-//     ↓
-// Portal List
-//     ↓
-// Portal Normalize
-//     ↓
-// Funnel
-//     ↓
-// Point Path
-//
-//============================================================
-
-std::vector<Math::Vector3>
-NavMeshPathfinder::FindPathPoints(
+std::vector<Math::Vector3> NavMeshPathfinder::FindPathPoints(
 	const NavMeshManager& navMeshManager,
 	const Math::Vector3& start,
 	const Math::Vector3& goal) const
 {
-	//--------------------------------------------------------
-	// Polygon Path
-	//--------------------------------------------------------
 
-	const std::vector<int> polygonPath =
-		FindPath(
-			navMeshManager,
-			start,
-			goal);
+	// AStarの経路探索
+	const std::vector<int> polygonPath = FindPath(navMeshManager, start, goal);
 
 	if (polygonPath.empty())
 	{
 		return {};
 	}
 
-	//--------------------------------------------------------
-	// Same Polygon
-	//--------------------------------------------------------
-
+	// 同じポリゴンの場合
 	if (polygonPath.size() == 1)
 	{
-		return
-		{
-			start,
-			goal
-		};
+		return		{ start,			goal };
 	}
 
-	//--------------------------------------------------------
-	// Portal List
-	//
-	// [0]         Start
-	// [1..N-1]    Shared Edge
-	// [N]         Goal
-	//
-	//--------------------------------------------------------
-
+	// ポータルリストを作成
 	std::vector<Portal> portals;
 
-	portals.reserve(
-		polygonPath.size() + 1);
+	portals.reserve(polygonPath.size() + 1);
 
-	//--------------------------------------------------------
-	// Start Portal
-	//--------------------------------------------------------
-
+	// スタートのポータル
 	{
 		Portal portal;
 
-		portal.left =
-			start;
+		portal.left = start;
 
-		portal.right =
-			start;
+		portal.right = start;
 
-		portals.push_back(
-			portal);
+		portals.push_back(portal);
 	}
 
-	//--------------------------------------------------------
-	// Shared Portals
-	//--------------------------------------------------------
-
-	for (size_t i = 0;
-		i + 1 < polygonPath.size();
-		++i)
+	// 隣接するポリゴン同士の共有辺
+	for (size_t i = 0; i + 1 < polygonPath.size(); ++i)
 	{
-		auto fromPolygon =
-			navMeshManager.FindPolygon(
-				polygonPath[i]);
+		// 隣接するポリゴンを取得
+		auto fromPolygon = navMeshManager.FindPolygon(polygonPath[i]);
 
-		auto toPolygon =
-			navMeshManager.FindPolygon(
-				polygonPath[i + 1]);
+		auto toPolygon = navMeshManager.FindPolygon(polygonPath[i + 1]);
 
-		if (!fromPolygon ||
-			!toPolygon)
+		if (!fromPolygon || !toPolygon)
 		{
 			return {};
 		}
 
 		Portal portal;
 
-		if (!CreatePortal(
-			*fromPolygon,
-			*toPolygon,
-			portal))
+		// 共有辺を取得
+		if (!CreatePortal(*fromPolygon, *toPolygon, portal))
 		{
 			return {};
 		}
 
-		//----------------------------------------------------
-		// Travel Direction
-		//
-		// Polygon A → Polygon B
-		//
-		//----------------------------------------------------
+		// 左右を統一
+		Math::Vector3 travelDirection = toPolygon->GetCenter() - fromPolygon->GetCenter();
 
-		Math::Vector3 travelDirection =
-			toPolygon->GetCenter() -
-			fromPolygon->GetCenter();
-
-		//----------------------------------------------------
-		// XZ Length
-		//----------------------------------------------------
-
-		const float travelLengthSq =
-			travelDirection.x *
-			travelDirection.x +
-			travelDirection.z *
-			travelDirection.z;
+		const float travelLengthSq = travelDirection.x * travelDirection.x + travelDirection.z * travelDirection.z;
 
 		if (travelLengthSq <= 0.000001f)
 		{
-			travelDirection =
-				goal -
-				start;
+			travelDirection = goal - start;
 		}
 
-		//----------------------------------------------------
-		// Portal Edge
-		//----------------------------------------------------
+		// 辺の方向を取得
+		const Math::Vector3 portalEdge = portal.right - portal.left;
+		
+		// 外積を計算
+		const float cross = travelDirection.x * portalEdge.z - travelDirection.z * portalEdge.x;
 
-		const Math::Vector3 portalEdge =
-			portal.right -
-			portal.left;
-
-		//----------------------------------------------------
-		// XZ Cross
-		//
-		// travel × edge
-		//
-		// cross > 0
-		//     edge.right 側が Left 側になる
-		//
-		// その場合、現在の left/right を swap。
-		//
-		//----------------------------------------------------
-
-		const float cross =
-			travelDirection.x *
-			portalEdge.z
-			-
-			travelDirection.z *
-			portalEdge.x;
-
-		//----------------------------------------------------
-		// Normalize Left / Right
-		//----------------------------------------------------
-
+		// 外積の符号で左右を統一
 		if (cross > 0.0f)
 		{
-			std::swap(
-				portal.left,
-				portal.right);
+			std::swap(portal.left, portal.right);
 		}
 
-		portals.push_back(
-			portal);
+		portals.push_back(portal);
 	}
 
-	//--------------------------------------------------------
-	// Goal Portal
-	//--------------------------------------------------------
-
+	// ゴールのポータル
 	{
 		Portal portal;
 
-		portal.left =
-			goal;
+		portal.left = goal;
 
-		portal.right =
-			goal;
+		portal.right = goal;
 
-		portals.push_back(
-			portal);
+		portals.push_back(portal);
 	}
 
-	//--------------------------------------------------------
-	// Utility
-	//--------------------------------------------------------
-
-	auto TriArea2 =
-		[](
-			const Math::Vector3& a,
-			const Math::Vector3& b,
-			const Math::Vector3& c)
+	// 三角形の面積の符号から3点が並んでいる向きを計算
+	auto TriArea2 = [](const Math::Vector3& a, const Math::Vector3& b, const Math::Vector3& c)
 		{
-			const float abx =
-				b.x - a.x;
+			const float abx = b.x - a.x;
 
-			const float abz =
-				b.z - a.z;
+			const float abz = b.z - a.z;
 
-			const float acx =
-				c.x - a.x;
+			const float acx = c.x - a.x;
 
-			const float acz =
-				c.z - a.z;
+			const float acz = c.z - a.z;
 
-			return
-				acx * abz -
-				abx * acz;
+			return acx * abz - abx * acz;};
+
+	// 2点がほぼ同じ位置か
+	auto IsSamePoint = [](const Math::Vector3& a, const Math::Vector3& b)
+		{
+			constexpr float EPSILON = 0.001f;
+
+			const float dx = a.x - b.x;
+
+			const float dy = a.y - b.y;
+
+			const float dz = a.z - b.z;
+
+			return dx * dx + dy * dy + dz * dz <= EPSILON * EPSILON;
 		};
 
+	// funnel初期化
+	Math::Vector3 apex = portals[0].left;
 
-	auto IsSamePoint =
-		[](
-			const Math::Vector3& a,
-			const Math::Vector3& b)
-		{
-			constexpr float EPSILON =
-				0.001f;
+	Math::Vector3 funnelLeft = portals[0].left;
 
-			const float dx =
-				a.x - b.x;
+	Math::Vector3 funnelRight = portals[0].right;
 
-			const float dy =
-				a.y - b.y;
+	size_t apexIndex = 0;
 
-			const float dz =
-				a.z - b.z;
+	size_t leftIndex = 0;
 
-			return
-				dx * dx +
-				dy * dy +
-				dz * dz
-				<=
-				EPSILON * EPSILON;
-		};
-
-	//--------------------------------------------------------
-	// Funnel Initial State
-	//--------------------------------------------------------
-
-	Math::Vector3 apex =
-		portals[0].left;
-
-	Math::Vector3 funnelLeft =
-		portals[0].left;
-
-	Math::Vector3 funnelRight =
-		portals[0].right;
-
-	size_t apexIndex =
-		0;
-
-	size_t leftIndex =
-		0;
-
-	size_t rightIndex =
-		0;
+	size_t rightIndex = 0;
 
 	std::vector<Math::Vector3> path;
 
-	path.push_back(
-		start);
-
-	//--------------------------------------------------------
-	// Funnel
-	//--------------------------------------------------------
+	path.push_back(start);
 
 	size_t i = 1;
 
+	// funnelアルゴリズム
 	while (i < portals.size())
 	{
-		const Math::Vector3 newLeft =
-			portals[i].left;
+		const Math::Vector3 newLeft = portals[i].left;
 
-		const Math::Vector3 newRight =
-			portals[i].right;
+		const Math::Vector3 newRight = portals[i].right;
 
-		//----------------------------------------------------
-		//====================================================
-		// Update Right
-		//====================================================
-		//----------------------------------------------------
-
-		const float rightArea =
-			TriArea2(
-				apex,
-				funnelRight,
-				newRight);
+		// 右側を更新
+		const float rightArea = TriArea2(apex, funnelRight, newRight);
 
 		if (rightArea <= 0.0f)
 		{
-			const float rightCross =
-				TriArea2(
-					apex,
-					funnelLeft,
-					newRight);
+			// 外積を計算
+			const float rightCross = TriArea2(apex, funnelLeft, newRight);
 
-			//------------------------------------------------
-			// Right can tighten.
-			//------------------------------------------------
-
-			if (IsSamePoint(
-				apex,
-				funnelRight)
-				||
-				rightCross > 0.0f)
+			// 右側の境界をポータルの端点に狭める
+			if (IsSamePoint(apex, funnelRight) || rightCross > 0.0f)
 			{
-				funnelRight =
-					newRight;
+				funnelRight = newRight;
 
-				rightIndex =
-					i;
+				rightIndex = i;
 			}
 			else
 			{
-				//------------------------------------------------
-				// Right crossed Left.
-				//
-				// Left becomes corner.
-				//------------------------------------------------
-
-				if (!IsSamePoint(
-					path.back(),
-					funnelLeft))
+				// 左側と交差する
+				if (!IsSamePoint(path.back(), funnelLeft))
 				{
-					path.push_back(
-						funnelLeft);
+					path.push_back(funnelLeft);
 				}
 
-				apex =
-					funnelLeft;
+				apex = funnelLeft;
 
-				apexIndex =
-					leftIndex;
+				apexIndex = leftIndex;
 
-				funnelLeft =
-					apex;
+				// funnelリセット
+				funnelLeft = apex;
 
-				funnelRight =
-					apex;
+				funnelRight = apex;
 
-				leftIndex =
-					apexIndex;
+				leftIndex = apexIndex;
 
-				rightIndex =
-					apexIndex;
-
-				//------------------------------------------------
-				// Restart from Apex Portal
-				//------------------------------------------------
-
-				i =
-					apexIndex;
+				rightIndex = apexIndex;
+						
+				// 新しいスタート地点とする
+				i = apexIndex;
 
 				++i;
 
@@ -743,82 +396,43 @@ NavMeshPathfinder::FindPathPoints(
 			}
 		}
 
-		//----------------------------------------------------
-		//====================================================
-		// Update Left
-		//====================================================
-		//----------------------------------------------------
-
-		const float leftArea =
-			TriArea2(
-				apex,
-				funnelLeft,
-				newLeft);
+		// 左側を更新
+		const float leftArea = TriArea2(apex, funnelLeft, newLeft);
 
 		if (leftArea >= 0.0f)
 		{
-			const float leftCross =
-				TriArea2(
-					apex,
-					funnelRight,
-					newLeft);
+			const float leftCross = TriArea2(apex, funnelRight, newLeft);
 
-			//------------------------------------------------
-			// Left can tighten.
-			//------------------------------------------------
-
-			if (IsSamePoint(
-				apex,
-				funnelLeft)
-				||
-				leftCross < 0.0f)
+			// 左側の境界をポータルの端点に狭める
+			if (IsSamePoint(apex, funnelLeft) || leftCross < 0.0f)
 			{
-				funnelLeft =
-					newLeft;
+				funnelLeft = newLeft;
 
-				leftIndex =
-					i;
+				leftIndex = i;
 			}
 			else
 			{
-				//------------------------------------------------
-				// Left crossed Right.
-				//
-				// Right becomes corner.
-				//------------------------------------------------
-
-				if (!IsSamePoint(
-					path.back(),
-					funnelRight))
+				// 右側と交差する
+				if (!IsSamePoint(path.back(), funnelRight))
 				{
-					path.push_back(
-						funnelRight);
+					path.push_back(funnelRight);
 				}
 
-				apex =
-					funnelRight;
+				apex = funnelRight;
 
-				apexIndex =
-					rightIndex;
+				apexIndex = rightIndex;
 
-				funnelLeft =
-					apex;
+				// funnelリセット
+				funnelLeft = apex;
 
-				funnelRight =
-					apex;
+				funnelRight = apex;
 
-				leftIndex =
-					apexIndex;
+				leftIndex = apexIndex;
 
-				rightIndex =
-					apexIndex;
+				rightIndex = apexIndex;
 
-				//------------------------------------------------
-				// Restart from Apex Portal
-				//------------------------------------------------
-
-				i =
-					apexIndex;
+				// 新しいスタート地点とする
+				i = apexIndex;
 
 				++i;
 
@@ -826,42 +440,20 @@ NavMeshPathfinder::FindPathPoints(
 			}
 		}
 
-		//----------------------------------------------------
-		// Next Portal
-		//----------------------------------------------------
-
+		// 次のポータルへ
 		++i;
 	}
 
-	//--------------------------------------------------------
-	// Goal
-	//--------------------------------------------------------
-
-	if (path.empty() ||
-		!IsSamePoint(
-			path.back(),
-			goal))
+	// 最後にポータルを作成
+	if (path.empty() || !IsSamePoint(path.back(), goal))
 	{
-		path.push_back(
-			goal);
+		path.push_back(goal);
 	}
 
 	return path;
 }
 
-//============================================================
-// CreatePortal
-//============================================================
-//
-// from → to
-//
-// Shared Edgeをそのまま取得する。
-// Left / Right の向きはここでは決めない。
-//
-//============================================================
-
-bool
-NavMeshPathfinder::CreatePortal(
+bool NavMeshPathfinder::CreatePortal(
 	const NavMeshPolygon& from,
 	const NavMeshPolygon& to,
 	Portal& outPortal) const
@@ -869,205 +461,104 @@ NavMeshPathfinder::CreatePortal(
 	Math::Vector3 edgeStart;
 	Math::Vector3 edgeEnd;
 
-	//--------------------------------------------------------
-	// Shared Edge
-	//--------------------------------------------------------
-
-	if (!from.GetSharedEdge(
-		to,
-		edgeStart,
-		edgeEnd))
+	// 共有辺を取得
+	if (!from.GetSharedEdge(to, edgeStart, edgeEnd))
 	{
 		return false;
 	}
 
-	//--------------------------------------------------------
-	// Do not determine Left / Right here.
-	//--------------------------------------------------------
+	// ポータルに端点を格納
+	outPortal.left = edgeStart;
 
-	outPortal.left =
-		edgeStart;
-
-	outPortal.right =
-		edgeEnd;
+	outPortal.right = edgeEnd;
 
 	return true;
 }
 
-//============================================================
-// GetClosestPointOnPortal
-//============================================================
-//
-// XZ平面上でPointからPortalへの最近点を求める。
-//
-// YはPortalの線形補間によって保持する。
-//
-//============================================================
-
-Math::Vector3
-NavMeshPathfinder::GetClosestPointOnPortal(
+Math::Vector3 NavMeshPathfinder::GetClosestPointOnPortal(
 	const Math::Vector3& point,
 	const Portal& portal) const
 {
-	const Math::Vector3 edge =
-		portal.right -
-		portal.left;
+	// 方向ベクトルを取得
+	const Math::Vector3 edge = portal.right - portal.left;
 
-	//--------------------------------------------------------
-	// XZ Length
-	//--------------------------------------------------------
+	const float edgeLengthSq = edge.x * edge.x + edge.z * edge.z;
 
-	const float edgeLengthSq =
-		edge.x * edge.x +
-		edge.z * edge.z;
-
-	//--------------------------------------------------------
-	// Degenerate Portal
-	//--------------------------------------------------------
-
-	if (edgeLengthSq <=
-		0.000001f)
+	// 0除算を起こさないため
+	if (edgeLengthSq <= 0.000001f)
 	{
 		return portal.left;
 	}
 
-	//--------------------------------------------------------
-	// Point → Portal Start
-	//--------------------------------------------------------
+	// ポータルの始点へのベクトルを取得
+	const Math::Vector3 toPoint = point - portal.left;
 
-	const Math::Vector3 toPoint =
-		point -
-		portal.left;
+	// 内積を計算
+	const float dot = toPoint.x * edge.x + toPoint.z * edge.z;
 
-	//--------------------------------------------------------
-	// XZ Dot
-	//--------------------------------------------------------
+	// 射影位置を計算
+	float t = dot / edgeLengthSq;
 
-	const float dot =
-		toPoint.x * edge.x +
-		toPoint.z * edge.z;
+	// 線分内に収める
+	t = std::clamp(t, 0.0f, 1.0f);
 
-	//--------------------------------------------------------
-	// Projection
-	//--------------------------------------------------------
-
-	float t =
-		dot /
-		edgeLengthSq;
-
-	//--------------------------------------------------------
-	// Clamp
-	//--------------------------------------------------------
-
-	t =
-		std::clamp(
-			t,
-			0.0f,
-			1.0f);
-
-	//--------------------------------------------------------
-	// Result
-	//--------------------------------------------------------
-
-	return
-		portal.left +
-		edge * t;
+	return portal.left + edge * t;
 }
 
-//============================================================
-// CalculateDistanceXZ
-//============================================================
-
-float
-NavMeshPathfinder::CalculateDistanceXZ(
+float NavMeshPathfinder::CalculateDistanceXZ(
 	const Math::Vector3& a,
 	const Math::Vector3& b) const
 {
-	const float dx =
-		b.x -
-		a.x;
+	const float dx = b.x - a.x;
 
-	const float dz =
-		b.z -
-		a.z;
+	const float dz = b.z - a.z;
 
-	return std::sqrt(
-		dx * dx +
-		dz * dz);
+	// 距離を計算
+	return std::sqrt(dx * dx + dz * dz);
 }
 
-//============================================================
-// CalculateHeuristic
-//============================================================
-
-float
-NavMeshPathfinder::CalculateHeuristic(
+float NavMeshPathfinder::CalculateHeuristic(
 	const Math::Vector3& currentPoint,
 	const Math::Vector3& goalPoint) const
 {
-	return CalculateDistanceXZ(
-		currentPoint,
-		goalPoint);
+	// ヒューリスティックコスト計算
+	return CalculateDistanceXZ(currentPoint, goalPoint);
 }
 
-//============================================================
-// ReconstructPath
-//============================================================
-
-std::vector<int>
-NavMeshPathfinder::ReconstructPath(
-	const std::unordered_map<
-	State,
-	Node,
-	StateHash>& nodes,
+std::vector<int> NavMeshPathfinder::ReconstructPath(
+	const std::unordered_map<	State, Node, StateHash>& nodes,
 	const State& goalState) const
 {
 	std::vector<int> path;
 
-	State currentState =
-		goalState;
+	State currentState = goalState;
 
-	//--------------------------------------------------------
-	// Goal → Start
-	//--------------------------------------------------------
-
+	// ゴールからスタートに戻る
 	while (true)
 	{
-		auto it =
-			nodes.find(
-				currentState);
+		// 親ノードをたどる
+		auto it = nodes.find(currentState);
 
 		if (it == nodes.end())
 		{
 			return {};
 		}
 
-		const Node& node =
-			it->second;
+		const Node& node = it->second;
 
-		path.push_back(
-			node.state.polygonID);
+		path.push_back(node.state.polygonID);
 
-		//----------------------------------------------------
-		// Start
-		//----------------------------------------------------
-
+		// スタートまでもどった
 		if (!node.hasParent)
 		{
 			break;
 		}
 
-		currentState =
-			node.parentState;
+		currentState = node.parentState;
 	}
 
-	//--------------------------------------------------------
-	// Start → Goal
-	//--------------------------------------------------------
-
-	std::reverse(
-		path.begin(),
-		path.end());
+	// 親ノードに移動
+	std::reverse(path.begin(), path.end());
 
 	return path;
 }

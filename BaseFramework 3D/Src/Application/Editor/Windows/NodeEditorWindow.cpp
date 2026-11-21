@@ -4,19 +4,11 @@
 
 void NodeEditorWindow::Draw()
 {
-	ImGui::SetNextWindowPos(
-		m_windowPos,
-		ImGuiCond_Always);
+	ImGui::SetNextWindowPos(m_windowPos, ImGuiCond_Always);
 
-	ImGui::SetNextWindowSize(
-		m_windowSize,
-		ImGuiCond_Always);
+	ImGui::SetNextWindowSize(m_windowSize, ImGuiCond_Always);
 
-	ImGui::Begin(
-		"Node Editor",
-		nullptr,
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoResize);
+	ImGui::Begin("Node Editor", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
 	DrawContents();
 
@@ -40,45 +32,35 @@ void NodeEditorWindow::DrawToolbar()
 {
 	ImGui::Text("Mode");
 
-	if (ImGui::RadioButton(
-		"Select",
-		m_mode == Mode::Select))
+	if (ImGui::RadioButton("Select", m_mode == Mode::Select))
 	{
 		SetMode(Mode::Select);
 	}
 
 	ImGui::SameLine();
 
-	if (ImGui::RadioButton(
-		"Create",
-		m_mode == Mode::Create))
+	if (ImGui::RadioButton("Create", m_mode == Mode::Create))
 	{
 		SetMode(Mode::Create);
 	}
 
 	ImGui::SameLine();
 
-	if (ImGui::RadioButton(
-		"Connect",
-		m_mode == Mode::Connect))
+	if (ImGui::RadioButton("Connect", m_mode == Mode::Connect))
 	{
 		SetMode(Mode::Connect);
 	}
 
-//	ImGui::SameLine();
+	ImGui::SameLine();
 
-	if (ImGui::RadioButton(
-		"Disconnect",
-		m_mode == Mode::Disconnect))
+	if (ImGui::RadioButton("Disconnect", m_mode == Mode::Disconnect))
 	{
 		SetMode(Mode::Disconnect);
 	}
 
 	ImGui::SameLine();
 
-	if (ImGui::RadioButton(
-		"Erase",
-		m_mode == Mode::Erase))
+	if (ImGui::RadioButton("Erase", m_mode == Mode::Erase))
 	{
 		SetMode(Mode::Erase);
 	}
@@ -86,12 +68,11 @@ void NodeEditorWindow::DrawToolbar()
 
 void NodeEditorWindow::DrawNodeList()
 {
-	auto& manager =	AStarNodeManager::Instance();
+	auto& manager = AStarNodeManager::Instance();
 
 	ImGui::SeparatorText("Nodes");
 
-	const auto& nodes =
-		manager.GetNodes();
+	const auto& nodes = manager.GetNodes();
 
 	for (auto& node : nodes)
 	{
@@ -104,13 +85,9 @@ void NodeEditorWindow::DrawNodeList()
 
 		char label[64];
 
-		sprintf_s(
-			label,
-			"Node %d",
-			id);
+		sprintf_s(label, "Node %d", id);
 
-		bool selected =
-			(m_selectedNodeID == id);
+		bool selected = (m_selectedNodeID == id);
 
 		if (ImGui::Selectable(label, selected))
 		{
@@ -124,13 +101,11 @@ void NodeEditorWindow::DrawNodeInspector()
 {
 	auto& manager = AStarNodeManager::Instance();
 
-	auto node =
-		manager.FindNode(m_selectedNodeID);
+	auto node = manager.FindNode(m_selectedNodeID);
 
 	if (!node)
 	{
-		ImGui::TextDisabled(
-			"No Node Selected");
+		ImGui::TextDisabled("No Node Selected");
 
 		return;
 	}
@@ -141,21 +116,15 @@ void NodeEditorWindow::DrawNodeInspector()
 	// ID
 	//--------------------------------------------------------
 
-	ImGui::Text(
-		"ID : %d",
-		node->GetID());
+	ImGui::Text("ID : %d", node->GetID());
 
 	//--------------------------------------------------------
 	// Position
 	//--------------------------------------------------------
 
-	Math::Vector3 pos =
-		node->GetPos();
+	Math::Vector3 pos = node->GetPos();
 
-	if (ImGui::DragFloat3(
-		"Position",
-		&pos.x,
-		0.05f))
+	if (ImGui::DragFloat3("Position", &pos.x, 0.05f))
 	{
 		node->SetPos(pos);
 	}
@@ -164,24 +133,19 @@ void NodeEditorWindow::DrawNodeInspector()
 	// Connections
 	//--------------------------------------------------------
 
-	ImGui::SeparatorText(
-		"Connections");
+	ImGui::SeparatorText("Connections");
 
-	const auto& connections =
-		node->GetConnections();
+	const auto& connections = node->GetConnections();
 
 	if (connections.empty())
 	{
-		ImGui::TextDisabled(
-			"No Connections");
+		ImGui::TextDisabled("No Connections");
 	}
 	else
 	{
 		for (int id : connections)
 		{
-			ImGui::BulletText(
-				"Node %d",
-				id);
+			ImGui::BulletText("Node %d", id);
 		}
 	}
 
@@ -191,12 +155,9 @@ void NodeEditorWindow::DrawNodeInspector()
 
 	ImGui::Separator();
 
-	if (ImGui::Button(
-		"Delete Node",
-		{ -1, 0 }))
+	if (ImGui::Button("Delete Node", { -1, 0 }))
 	{
-		manager.DeleteNode(
-			node->GetID());
+		manager.DeleteNode(node->GetID());
 
 		m_selectedNodeID = -1;
 	}
