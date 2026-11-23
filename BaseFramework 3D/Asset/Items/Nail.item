@@ -9,7 +9,7 @@
 
 	"Uses": [
 		{
-			"Action": "Pirece",
+			"Action": "Pierce",
 			"Target": "Car",
 			"Text": "Puncture"
 		}

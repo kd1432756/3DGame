@@ -101,5 +101,4 @@ protected:
 	void CalcLocalBounds();
 	bool IsInView() const;
 	bool IsInShadowRange() const;
-	// ====================
 };

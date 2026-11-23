@@ -4,9 +4,9 @@
 
 void NavigationEditorWindow::Draw(NodeEditorWindow& nodeEditorWindow)
 {
-	ImGui::SetNextWindowPos(		m_windowPos,		ImGuiCond_Always);
+	ImGui::SetNextWindowPos(m_windowPos, ImGuiCond_Always);
 
-	ImGui::SetNextWindowSize(		m_windowSize,		ImGuiCond_Always);
+	ImGui::SetNextWindowSize(m_windowSize, ImGuiCond_Always);
 
 	ImGui::Begin("Navigation Editor", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
 
@@ -55,6 +55,13 @@ void NavigationEditorWindow::DrawNavigationSettings()
 		&m_navMeshAgentRadius,
 		0.0f,
 		1.0f,
+		"%.2f");
+
+	ImGui::SliderFloat(
+		"Obstacle Max Height",
+		&m_navMeshObstacleMaxHeight,
+		0.0f,
+		10.0f,
 		"%.2f");
 }
 

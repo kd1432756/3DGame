@@ -31,8 +31,6 @@ void DeliveryPointEffect::Update()
 
 	if (spEffect)
 	{
-		spEffect->SetWorldMatrix(
-			Math::Matrix::CreateScale(scale) *
-			Math::Matrix::CreateTranslation(pos));
+		spEffect->SetWorldMatrix(Math::Matrix::CreateScale(scale) * Math::Matrix::CreateTranslation(pos));
 	}
 }

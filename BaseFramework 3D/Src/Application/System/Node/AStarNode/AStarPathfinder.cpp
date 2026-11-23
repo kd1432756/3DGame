@@ -10,11 +10,9 @@ std::vector<int> AStarPathfinder::FindPath(
 	// Start / Goal
 	//------------------------------------------------------------
 
-	auto startNode =
-		manager.FindNode(startID);
+	auto startNode = manager.FindNode(startID);
 
-	auto goalNode =
-		manager.FindNode(goalID);
+	auto goalNode = manager.FindNode(goalID);
 
 	if (!startNode || !goalNode)
 	{
@@ -45,14 +43,9 @@ std::vector<int> AStarPathfinder::FindPath(
 
 	startSearch.nodeID = startID;
 	startSearch.gCost = 0.0f;
-	startSearch.hCost =
-		CalculateHCost(
-			*startNode,
-			*goalNode);
+	startSearch.hCost = CalculateHCost(*startNode, *goalNode);
 
-	startSearch.fCost =
-		startSearch.gCost +
-		startSearch.hCost;
+	startSearch.fCost = startSearch.gCost + startSearch.hCost;
 
 	startSearch.parentID = -1;
 
@@ -68,23 +61,20 @@ std::vector<int> AStarPathfinder::FindPath(
 		// F Costが一番小さいNodeを取得
 		//--------------------------------------------------------
 
-		int currentIndex =
-			FindLowestFCostNode(openList);
+		int currentIndex = FindLowestFCostNode(openList);
 
 		if (currentIndex < 0)
 		{
 			break;
 		}
 
-		SearchNode current =
-			openList[currentIndex];
+		SearchNode current = openList[currentIndex];
 
 		//--------------------------------------------------------
 		// Openから削除
 		//--------------------------------------------------------
 
-		openList.erase(
-			openList.begin() + currentIndex);
+		openList.erase(openList.begin() + currentIndex);
 
 		//--------------------------------------------------------
 		// Goal到達
@@ -94,10 +84,7 @@ std::vector<int> AStarPathfinder::FindPath(
 		{
 			closedList.push_back(current);
 
-			return BuildPath(
-				closedList,
-				startID,
-				goalID);
+			return BuildPath(closedList, startID, goalID);
 		}
 
 		//--------------------------------------------------------
@@ -110,9 +97,7 @@ std::vector<int> AStarPathfinder::FindPath(
 		// Current Node
 		//--------------------------------------------------------
 
-		auto currentNode =
-			manager.FindNode(
-				current.nodeID);
+		auto currentNode = manager.FindNode(current.nodeID);
 
 		if (!currentNode)
 		{
@@ -123,15 +108,13 @@ std::vector<int> AStarPathfinder::FindPath(
 		// Connection
 		//--------------------------------------------------------
 
-		for (int nextID :
-		currentNode->GetConnections())
+		for (int nextID : currentNode->GetConnections())
 		{
 			//----------------------------------------------------
 			// 接続先Node
 			//----------------------------------------------------
 
-			auto nextNode =
-				manager.FindNode(nextID);
+			auto nextNode = manager.FindNode(nextID);
 
 			if (!nextNode)
 			{
@@ -142,9 +125,7 @@ std::vector<int> AStarPathfinder::FindPath(
 			// Closedなら無視
 			//----------------------------------------------------
 
-			if (FindSearchNode(
-				closedList,
-				nextID))
+			if (FindSearchNode(closedList, nextID))
 			{
 				continue;
 			}
@@ -153,20 +134,13 @@ std::vector<int> AStarPathfinder::FindPath(
 			// G Cost
 			//----------------------------------------------------
 
-			float newGCost =
-				current.gCost +
-				CalculateGCost(
-					*currentNode,
-					*nextNode);
+			float newGCost = current.gCost + CalculateGCost(*currentNode, *nextNode);
 
 			//----------------------------------------------------
 			// Openに存在するか
 			//----------------------------------------------------
 
-			SearchNode* openNode =
-				FindSearchNode(
-					openList,
-					nextID);
+			SearchNode* openNode = FindSearchNode(openList, nextID);
 
 			//----------------------------------------------------
 			// Openに存在しない
@@ -176,26 +150,17 @@ std::vector<int> AStarPathfinder::FindPath(
 			{
 				SearchNode newNode;
 
-				newNode.nodeID =
-					nextID;
+				newNode.nodeID = nextID;
 
-				newNode.gCost =
-					newGCost;
+				newNode.gCost = newGCost;
 
-				newNode.hCost =
-					CalculateHCost(
-						*nextNode,
-						*goalNode);
+				newNode.hCost = CalculateHCost(*nextNode, *goalNode);
 
-				newNode.fCost =
-					newNode.gCost +
-					newNode.hCost;
+				newNode.fCost = newNode.gCost + newNode.hCost;
 
-				newNode.parentID =
-					current.nodeID;
+				newNode.parentID = current.nodeID;
 
-				openList.push_back(
-					newNode);
+				openList.push_back(newNode);
 
 				continue;
 			}
@@ -206,15 +171,11 @@ std::vector<int> AStarPathfinder::FindPath(
 
 			if (newGCost < openNode->gCost)
 			{
-				openNode->gCost =
-					newGCost;
+				openNode->gCost = newGCost;
 
-				openNode->fCost =
-					openNode->gCost +
-					openNode->hCost;
+				openNode->fCost = openNode->gCost + openNode->hCost;
 
-				openNode->parentID =
-					current.nodeID;
+				openNode->parentID = current.nodeID;
 			}
 		}
 	}
@@ -226,28 +187,17 @@ std::vector<int> AStarPathfinder::FindPath(
 	return {};
 }
 
-float AStarPathfinder::CalculateGCost(
-	const AStarNode& current,
-	const AStarNode& next) const
+float AStarPathfinder::CalculateGCost(const AStarNode& current, const AStarNode& next) const
 {
-	return (
-		next.GetPos() -
-		current.GetPos()
-		).Length();
+	return (next.GetPos() - current.GetPos()).Length();
 }
 
-float AStarPathfinder::CalculateHCost(
-	const AStarNode& current,
-	const AStarNode& goal) const
+float AStarPathfinder::CalculateHCost(const AStarNode& current, const AStarNode& goal) const
 {
-	return (
-		goal.GetPos() -
-		current.GetPos()
-		).Length();
+	return (goal.GetPos() - current.GetPos()).Length();
 }
 
-int AStarPathfinder::FindLowestFCostNode(
-	const std::vector<SearchNode>& openList) const
+int AStarPathfinder::FindLowestFCostNode(const std::vector<SearchNode>& openList) const
 {
 	if (openList.empty())
 	{
@@ -256,15 +206,11 @@ int AStarPathfinder::FindLowestFCostNode(
 
 	int bestIndex = 0;
 
-	for (int i = 1;
-		i < static_cast<int>(openList.size());
-		++i)
+	for (int i = 1; i < static_cast<int>(openList.size()); ++i)
 	{
-		const SearchNode& current =
-			openList[i];
+		const SearchNode& current = openList[i];
 
-		const SearchNode& best =
-			openList[bestIndex];
+		const SearchNode& best = openList[bestIndex];
 
 		//--------------------------------------------------------
 		// F Cost
@@ -280,8 +226,7 @@ int AStarPathfinder::FindLowestFCostNode(
 		// Fが同じならHが小さい方
 		//--------------------------------------------------------
 
-		if (current.fCost == best.fCost &&
-			current.hCost < best.hCost)
+		if (current.fCost == best.fCost && current.hCost < best.hCost)
 		{
 			bestIndex = i;
 		}
@@ -290,10 +235,8 @@ int AStarPathfinder::FindLowestFCostNode(
 	return bestIndex;
 }
 
-AStarPathfinder::SearchNode*
-AStarPathfinder::FindSearchNode(
-	std::vector<SearchNode>& nodes,
-	int nodeID) const
+AStarPathfinder::SearchNode* AStarPathfinder::FindSearchNode(
+	std::vector<SearchNode>& nodes, int nodeID) const
 {
 	for (auto& node : nodes)
 	{
@@ -306,10 +249,8 @@ AStarPathfinder::FindSearchNode(
 	return nullptr;
 }
 
-const AStarPathfinder::SearchNode*
-AStarPathfinder::FindSearchNode(
-	const std::vector<SearchNode>& nodes,
-	int nodeID) const
+const AStarPathfinder::SearchNode* AStarPathfinder::FindSearchNode(
+	const std::vector<SearchNode>& nodes, int nodeID) const
 {
 	for (const auto& node : nodes)
 	{
@@ -352,10 +293,7 @@ std::vector<int> AStarPathfinder::BuildPath(
 		// SearchNode
 		//--------------------------------------------------------
 
-		const SearchNode* node =
-			FindSearchNode(
-				searchNodes,
-				currentID);
+		const SearchNode* node = FindSearchNode(searchNodes, currentID);
 
 		if (!node)
 		{
@@ -363,16 +301,14 @@ std::vector<int> AStarPathfinder::BuildPath(
 			return {};
 		}
 
-		currentID =
-			node->parentID;
+		currentID = node->parentID;
 	}
 
 	//------------------------------------------------------------
 	// Startまで到達していなければ失敗
 	//------------------------------------------------------------
 
-	if (path.empty() ||
-		path.back() != startID)
+	if (path.empty() || path.back() != startID)
 	{
 		return {};
 	}
@@ -383,9 +319,7 @@ std::vector<int> AStarPathfinder::BuildPath(
 	// Start → Goal
 	//------------------------------------------------------------
 
-	std::reverse(
-		path.begin(),
-		path.end());
+	std::reverse(path.begin(), path.end());
 
 	return path;
 }

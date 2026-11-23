@@ -9,12 +9,14 @@ void Window::Init()
 {
 	SetModelPath("Asset/Models/Props/House/Window.gltf");
 
+	m_iconPath = "Asset/Textures/Icon/Window.png";
+
 	RegisterAction({
 		InteractiveState::Normal,
 		InteractiveState::Damaged,
 		ItemAction::Break,
 		"Window",
-		2.4f,
+		8.0f,
 		140,
 		"Window Break!",
 		"Window has been Broken!",
@@ -27,7 +29,7 @@ void Window::Init()
 		ItemAction::Repair,
 		"Window",
 		1.8f,
-		100,
+		140,
 		"Window Repair!",
 		"",
 		"Asset/Models/Props/House/WindowRepaired.gltf"

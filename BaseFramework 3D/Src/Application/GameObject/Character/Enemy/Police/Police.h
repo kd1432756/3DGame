@@ -16,7 +16,7 @@ public:
 	~Police() { Release(); }
 
 	void Init() override;
-	void Release();
+	void Release() const;
 
 	const char* GetTypeName() const override
 	{
@@ -31,12 +31,12 @@ public:
 	enum class State
 	{
 		Patrol,
-		Chase, 
+		Chase,
 		Arrest,
 		Escort,
 		LastSeen,
 		Search,
-		Return, 
+		Return,
 		Investigate
 	};
 
@@ -55,7 +55,7 @@ protected:
 	//============================================================
 
 	void UpdateBehavior() override;
-	void UpdateExtra() override;
+	void UpdateExtra()  const override;
 
 	//============================================================
 	// キャラクター当たり判定
@@ -104,7 +104,7 @@ private:
 	// Last Seen
 	//============================================================
 
-	void UpdateLastSeen();	
+	void UpdateLastSeen();
 
 	//============================================================
 	// Search
@@ -130,8 +130,7 @@ private:
 
 	void FindPatrolPath();
 
-	int FindNearestPatrolNode(
-		const Math::Vector3& pos);
+	int FindNearestPatrolNode(const Math::Vector3& pos) const;
 
 	bool MoveToNextPathNode();
 
@@ -145,7 +144,7 @@ private:
 
 	bool SearchTarget();
 
-	bool CanSeeTarget(const std::shared_ptr<CharacterBase>& target);
+	bool CanSeeTarget(const std::shared_ptr<CharacterBase>& target) const;
 
 	bool IsWanted(const std::shared_ptr<CharacterBase>& c) const
 	{
@@ -200,10 +199,10 @@ private:
 	//============================================================
 
 	static constexpr float kPatrolSpeed = 0.01f;
-	static constexpr float kChaseSpeed = 0.030f;
+	static constexpr float kChaseSpeed = 0.03f;
 	static constexpr float kReturnSpeed = 0.01f;
 	static constexpr float kEscortSpeed = 0.016f;
-	static constexpr float kInvestigateSpeed = 0.018f;
+	static constexpr float kInvestigateSpeed = 0.025f;
 
 	//============================================================
 	// A*
@@ -240,8 +239,7 @@ private:
 
 	static constexpr float kPathUpdateInterval = 0.2f;
 
-	Math::Vector3 m_lastTargetPos =
-		Math::Vector3::Zero;
+	Math::Vector3 m_lastTargetPos = Math::Vector3::Zero;
 
 	bool m_chasingForCrime = false;
 
@@ -251,7 +249,7 @@ private:
 
 	Math::Vector3 m_investigatePos = Math::Vector3::Zero;
 
-	static constexpr float kHearRange = 25.0f;
+	static constexpr float kHearRange = 30.0f;
 
 	float m_investigateCooldown = 0.0f;
 

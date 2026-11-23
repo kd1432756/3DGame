@@ -2,7 +2,7 @@
 
 #include "../../Scene/SceneManager.h"
 #include "../../GameObject/Object/StaticMeshObject/InteractiveObject/InteractiveObject.h"
-
+#include "../../GameObject/Character/Player/Player.h"
 #include "../DayCycle/DayCycle.h"
 
 void DamageDirector::SpawnInitialDamage(int count)
@@ -20,6 +20,11 @@ void DamageDirector::SpawnInitialDamage(int count)
 		if (obj->SetInitialDamaged())
 		{
 			++done;
+
+			if (auto player = SceneManager::Instance().FindObject<Player>())
+			{
+				player->AddDamageTarget(obj);
+			}
 		}
 	}
 }
@@ -41,9 +46,9 @@ int DamageDirector::CountDamaged()
 
 int DamageDirector::GetMaxDamaged()
 {
-	// 朝5 → 夜10
+	// 朝8 → 夜15
 	const float progress = DayCycle::Instance().GetTimeProgress();
-	return 5 + static_cast<int>(progress * 5.0f);
+	return 8 + static_cast<int>(progress * 7.0f);
 }
 
 bool DamageDirector::CanDamageMore()

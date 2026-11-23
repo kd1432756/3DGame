@@ -9,13 +9,15 @@ void Car::Init()
 {
 	SetModelPath("Asset/Models/Props/Car/Car.gltf");
 
+	m_iconPath = "Asset/Textures/Icon/Tire.png";
+
 	RegisterAction({
 		InteractiveState::Normal,
 		InteractiveState::Damaged,
 		ItemAction::Pierce,
 		"Car",
-		1.5f,
-		200,
+		6.0f,
+		300,
 		"Car Punctured!",
 		"Car was Punctured!",
 		"Asset/Models/Props/Car/CarPanctured.gltf"
@@ -27,7 +29,7 @@ void Car::Init()
 		ItemAction::Repair,
 		"Car",
 		3.0f,
-		80,
+		300,
 		"Tire Inflated!",
 		"",
 		"Asset/Models/Props/Car/Car.gltf"
@@ -89,17 +91,19 @@ void Car::OnAction(const InteractiveAction& action, const std::shared_ptr<Player
 	KdEffekseerManager::GetInstance().Play("interact.efkefc", m_pos, SceneManager::Instance().GetSceneScale() * 10.0f);
 
 	if (m_state == InteractiveState::Damaged)
-	{						   
-		if (auto se = KdAudioManager::Instance().Play("Asset/Sound/Intaract/punk.wav"))
+	{
+		if (auto se = KdAudioManager::Instance().Play3D("Asset/Sound/Intaract/punk.wav", m_pos))
 		{
 			se->SetVolume(0.1f);
+			se->SetCurveDistanceScaler(SceneManager::Instance().GetSceneScale());
 		}
 	}
 	else if (m_state == InteractiveState::Normal)
 	{
-		if (auto se = KdAudioManager::Instance().Play("Asset/Sound/Intaract/pump.wav"))
+		if (auto se = KdAudioManager::Instance().Play3D("Asset/Sound/Intaract/pump.wav", m_pos))
 		{
 			se->SetVolume(0.2f);
+			se->SetCurveDistanceScaler(SceneManager::Instance().GetSceneScale());
 		}
 	}
 }

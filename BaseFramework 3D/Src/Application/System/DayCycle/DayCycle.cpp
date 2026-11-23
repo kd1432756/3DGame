@@ -13,7 +13,6 @@ void DayCycle::Init()
 
 void DayCycle::Update()
 {
-	// 現実1秒 = ゲーム内1分
 	m_currentTime += 1.0f / 60.0f / 60.0f * m_timeScale;
 
 	// 22:00を超えたら終了

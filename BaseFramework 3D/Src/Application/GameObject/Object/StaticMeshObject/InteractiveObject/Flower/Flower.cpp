@@ -9,13 +9,15 @@ void Flower::Init()
 {
 	SetModelPath("Asset/Models/Props/Flower/Flower.gltf");
 
+	m_iconPath = "Asset/Textures/Icon/Flower.png";
+
 	RegisterAction({
 		InteractiveState::Normal,
 		InteractiveState::Damaged,
 		ItemAction::Cut,
 		"Flower",
-		1.5f,
-		200,
+		6.0f,
+		120,
 		"Flower Cut!",
 		"Flower has been Cut!",
 		"Asset/Models/Props/Flower/FlowerCut.gltf"
@@ -27,7 +29,7 @@ void Flower::Init()
 		ItemAction::Repair,
 		"Flower",
 		3.0f,
-		80,
+		120,
 		"Flower Repair!",
 		"",
 		"Asset/Models/Props/Flower/FlowerTape.gltf"

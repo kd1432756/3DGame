@@ -310,7 +310,6 @@
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Car\Car.h" />
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Faucet\Faucet.h" />
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Flower\Flower.h" />
-    <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Hose\Hose.h" />
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\InteractiveObject.h" />
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\PaintCan\PaintCan.h" />
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Window\Window.h" />
@@ -320,11 +319,11 @@
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\Item\ItemManager.h" />
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\Item\ItemSpawner.h" />
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\StaticMeshObject.h" />
-    <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\Tree\Tree.h" />
     <ClInclude Include="Src\Application\GameObject\Object\TitleProp\TitleProp.h" />
     <ClInclude Include="Src\Application\GameObject\SkyBox\SkyBox.h" />
     <ClInclude Include="Src\Application\GameObject\UI\BonusUI\BonusUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\ConfettiUI\ConfettiUI.h" />
+    <ClInclude Include="Src\Application\GameObject\UI\DamageDirectionUI\DamageDirectionUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\DamageIndicatorUI\DamageIndicatorUI.h" />
     <ClInclude Include="Src\Application\GameObject\UI\EmoteIcon\EmoteIcon.h" />
     <ClInclude Include="Src\Application\GameObject\UI\FloatingTextUI\FloatingTextUI.h" />
@@ -483,7 +482,6 @@
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Car\Car.cpp" />
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Faucet\Faucet.cpp" />
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Flower\Flower.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Hose\Hose.cpp" />
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\InteractiveObject.cpp" />
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\PaintCan\PaintCan.cpp" />
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Window\Window.cpp" />
@@ -493,11 +491,11 @@
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\Item\ItemManager.cpp" />
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\Item\ItemSpawner.cpp" />
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\StaticMeshObject.cpp" />
-    <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\Tree\Tree.cpp" />
     <ClCompile Include="Src\Application\GameObject\Object\TitleProp\TitleProp.cpp" />
     <ClCompile Include="Src\Application\GameObject\SkyBox\SkyBox.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\BonusUI\BonusUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\ConfettiUI\ConfettiUI.cpp" />
+    <ClCompile Include="Src\Application\GameObject\UI\DamageDirectionUI\DamageDirectionUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\DamageIndicatorUI\DamageIndicatorUI.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\EmoteIcon\EmoteIcon.cpp" />
     <ClCompile Include="Src\Application\GameObject\UI\FloatingTextUI\FloatingTextUI.cpp" />

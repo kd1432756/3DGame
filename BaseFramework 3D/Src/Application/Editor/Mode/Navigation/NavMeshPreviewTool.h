@@ -7,7 +7,7 @@
 class NavMeshPreviewTool
 {
 public:
-	void Generate(float agentRadius);
+	void Generate(float agentRadius, float obstacleMaxHeight);
 	void Clear();
 
 	void OnClick(const Math::Vector3& pos, NavigationEditorWindow::NavMeshEditMode mode);

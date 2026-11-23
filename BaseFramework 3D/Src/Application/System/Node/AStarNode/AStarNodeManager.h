@@ -28,12 +28,10 @@ public:
 	// Nodeを検索
 	std::shared_ptr<AStarNode> FindNode(int id);
 
-	// const版
 	std::shared_ptr<const AStarNode> FindNode(int id) const;
 
 	// 全Node取得
-	const std::vector<std::shared_ptr<AStarNode>>&
-		GetNodes() const
+	const std::vector<std::shared_ptr<AStarNode>>& GetNodes() const
 	{
 		return m_nodes;
 	}

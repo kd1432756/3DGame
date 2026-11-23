@@ -45,11 +45,9 @@ public:
 	}
 
 	// いたずらされた
-	virtual void OnObjectDamaged(
-		const std::shared_ptr<InteractiveObject>& object, 
-		const InteractiveAction& action)
-	{}
-	
+	virtual void OnObjectDamaged(const std::shared_ptr<InteractiveObject>& object, 
+		const InteractiveAction& action){}
+
 	// 警察に確保された
 	virtual void OnArrested(const std::shared_ptr<Police>& police);
 
@@ -92,8 +90,8 @@ public:
 	bool IsHindering() const { return m_isHindering; }
 	void SetHindering(bool isHindering) { m_isHindering = isHindering; }
 
-	void ShowEmote(EmoteIcon::IconType type, float duration = 0.0f, bool force = false);
-	void HideEmote();
+	void ShowEmote(EmoteIcon::IconType type, float duration = 0.0f, bool force = false) const;
+	void HideEmote() const;
 
 	float GetBodyRadius() const { return m_bodyRadius; }
 	virtual bool IsGhost() const { return false; }
@@ -119,9 +117,9 @@ protected:
 
 	void CheckGround();
 
-	void SlideAlongWalls(Math::Vector3& move, float radius);
+	void SlideAlongWalls(Math::Vector3& move, float radius) const;
 
-	void CollectWallHits(float radius, std::vector<WallHit>& out);
+	void CollectWallHits(float radius, std::vector<WallHit>& out) const;
 	void ResolveCollision();
 
 	void ApplyGravity();
@@ -140,8 +138,8 @@ protected:
 
 	virtual void UpdateAnimation();
 
-	std::shared_ptr<KdModelWork>				m_spModel = nullptr;
-	std::shared_ptr<KdAnimator>					m_spAnimator = nullptr;
+	std::shared_ptr<KdModelWork>	 m_spModel = nullptr;
+	std::shared_ptr<KdAnimator> m_spAnimator = nullptr;
 
 	float m_sceneScale = 1.0f;
 

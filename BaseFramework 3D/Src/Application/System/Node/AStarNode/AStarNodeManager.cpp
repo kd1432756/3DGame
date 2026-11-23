@@ -1,7 +1,6 @@
 ﻿#include "AStarNodeManager.h"
 
-std::shared_ptr<AStarNode>
-AStarNodeManager::CreateNode(const Math::Vector3& pos)
+std::shared_ptr<AStarNode> AStarNodeManager::CreateNode(const Math::Vector3& pos)
 {
 	auto node = std::make_shared<AStarNode>();
 
@@ -13,30 +12,25 @@ AStarNodeManager::CreateNode(const Math::Vector3& pos)
 	return node;
 }
 
-std::shared_ptr<AStarNode>
-AStarNodeManager::CreateNode(
-	int id,
-	const Math::Vector3& pos)
+std::shared_ptr<AStarNode> AStarNodeManager::CreateNode(
+	int id, const Math::Vector3& pos)
 {
 	if (FindNode(id))
 	{
 		return nullptr;
 	}
 
-	auto node =
-		std::make_shared<AStarNode>();
+	auto node = std::make_shared<AStarNode>();
 
 	node->SetID(id);
 	node->SetPos(pos);
 
 	m_nodes.push_back(node);
 
-	m_nextID =
-		std::max(m_nextID, id + 1);
+	m_nextID = std::max(m_nextID, id + 1);
 
 	return node;
 }
-
 
 void AStarNodeManager::DeleteNode(int id)
 {
@@ -81,8 +75,7 @@ void AStarNodeManager::Clear()
 	m_isLoaded = false;
 }
 
-std::shared_ptr<AStarNode>
-AStarNodeManager::FindNode(int id)
+std::shared_ptr<AStarNode> AStarNodeManager::FindNode(int id)
 {
 	for (auto& node : m_nodes)
 	{
@@ -100,8 +93,7 @@ AStarNodeManager::FindNode(int id)
 	return nullptr;
 }
 
-std::shared_ptr<const AStarNode>
-AStarNodeManager::FindNode(int id) const
+std::shared_ptr<const AStarNode> AStarNodeManager::FindNode(int id) const
 {
 	for (auto& node : m_nodes)
 	{
@@ -120,8 +112,7 @@ AStarNodeManager::FindNode(int id) const
 }
 
 void AStarNodeManager::ConnectNodes(
-	int fromID,
-	int toID)
+	int fromID, int toID)
 {
 	auto from = FindNode(fromID);
 	auto to = FindNode(toID);
@@ -145,8 +136,7 @@ void AStarNodeManager::ConnectNodes(
 }
 
 void AStarNodeManager::DisconnectNodes(
-	int fromID,
-	int toID)
+	int fromID, int toID)
 {
 	auto from = FindNode(fromID);
 	auto to = FindNode(toID);

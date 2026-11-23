@@ -78,6 +78,8 @@ public:
 	DamageSource GetDamageSource() const { return m_damageSource; }
 	float GetDamagedTime() const { return m_damagedTime; }
 
+	const std::string& GetIconPath() const { return m_iconPath; }
+
 	bool CanBeTargetedBy(const CharacterBase* npc) const;
 	bool TryReserve(const std::shared_ptr<CharacterBase>& npc);
 	void ReleaseReservation(const CharacterBase* npc);
@@ -116,6 +118,8 @@ protected:
 
 	DamageSource m_damageSource = DamageSource::None;
 	float m_damagedTime = 0.0f;
+
+	std::string m_iconPath = "";
 
 	std::weak_ptr<CharacterBase> m_reservedBy;
 	float m_repairedTime = -100.0f;

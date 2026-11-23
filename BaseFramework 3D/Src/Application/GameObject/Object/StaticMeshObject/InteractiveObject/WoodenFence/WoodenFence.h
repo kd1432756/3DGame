@@ -22,7 +22,7 @@ public:
 
 private:
 
-	void OnAction(const InteractiveAction& action, const std::shared_ptr<Player>& player);
+	void OnAction(const InteractiveAction& action, const std::shared_ptr<Player>& player) override;
 
 	void RegisterCollider() override;
 };

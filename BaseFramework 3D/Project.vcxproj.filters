@@ -136,17 +136,11 @@
     <Filter Include="Src\Application\GameObject\Object\StaticMeshObject\Ground">
       <UniqueIdentifier>{7dd645fc-d3a8-4f7f-9f20-e82f19a38994}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Object\StaticMeshObject\Tree">
-      <UniqueIdentifier>{dc92db52-7ae8-49d7-bd4c-0241f6f884c7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject">
       <UniqueIdentifier>{6ad96bb7-80bd-49b4-85e6-b7364b427b5b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Flower">
       <UniqueIdentifier>{9d9315fd-34f0-4162-99a0-3e2e7f75be49}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Hose">
-      <UniqueIdentifier>{f4be8e89-7a4f-4c83-bdf7-f0dc6e713915}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\PaintCan">
       <UniqueIdentifier>{9330f97a-229b-4a76-8727-85ed4c31f036}</UniqueIdentifier>
@@ -351,6 +345,9 @@
     </Filter>
     <Filter Include="Src\Application\System\Stage">
       <UniqueIdentifier>{ca7dd073-ca54-4476-8ca5-2c0cece3b281}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\DamageDirectionUI">
+      <UniqueIdentifier>{61b2674b-c991-4b75-9da3-efe5071d38a8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -591,17 +588,11 @@
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\Ground\Ground.h">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\Ground</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\Tree\Tree.h">
-      <Filter>Src\Application\GameObject\Object\StaticMeshObject\Tree</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\Item\ItemSpawner.h">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\Item</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Flower\Flower.h">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Flower</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Hose\Hose.h">
-      <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Hose</Filter>
     </ClInclude>
     <ClInclude Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\PaintCan\PaintCan.h">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\PaintCan</Filter>
@@ -768,9 +759,6 @@
     <ClInclude Include="Src\Application\GameObject\UI\HinderUI\HinderUI.h">
       <Filter>Src\Application\GameObject\UI\HinderUI</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\UI\HomeDirectionUI\HomeDirectionUI.h">
-      <Filter>Src\Application\GameObject\UI\HomeDirectionUI</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Application\GameObject\UI\InteractionProgress\InteractionProgress.h">
       <Filter>Src\Application\GameObject\UI\IntaractionProgress</Filter>
     </ClInclude>
@@ -881,6 +869,12 @@
     </ClInclude>
     <ClInclude Include="Src\Application\System\Navigation\NavMesh\NavMeshBuilder.h">
       <Filter>Src\Application\System\Navigation\NavMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\DamageDirectionUI\DamageDirectionUI.h">
+      <Filter>Src\Application\GameObject\UI\DamageDirectionUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\HomeDirectionUI\HomeDirectionUI.h">
+      <Filter>Src\Application\GameObject\UI\HomeDirectionUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1085,17 +1079,11 @@
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\Ground\Ground.cpp">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\Ground</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\Tree\Tree.cpp">
-      <Filter>Src\Application\GameObject\Object\StaticMeshObject\Tree</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\Item\ItemSpawner.cpp">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\Item</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Flower\Flower.cpp">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Flower</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Hose\Hose.cpp">
-      <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\Hose</Filter>
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\PaintCan\PaintCan.cpp">
       <Filter>Src\Application\GameObject\Object\StaticMeshObject\InteractiveObject\PaintCan</Filter>
@@ -1259,9 +1247,6 @@
     <ClCompile Include="Src\Application\GameObject\UI\HinderUI\HinderUI.cpp">
       <Filter>Src\Application\GameObject\UI\HinderUI</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\UI\HomeDirectionUI\HomeDirectionUI.cpp">
-      <Filter>Src\Application\GameObject\UI\HomeDirectionUI</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Application\GameObject\UI\InteractionProgress\InteractionProgress.cpp">
       <Filter>Src\Application\GameObject\UI\IntaractionProgress</Filter>
     </ClCompile>
@@ -1363,6 +1348,12 @@
     </ClCompile>
     <ClCompile Include="Src\Application\System\Navigation\NavMesh\NavMeshBuilder.cpp">
       <Filter>Src\Application\System\Navigation\NavMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\DamageDirectionUI\DamageDirectionUI.cpp">
+      <Filter>Src\Application\GameObject\UI\DamageDirectionUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\HomeDirectionUI\HomeDirectionUI.cpp">
+      <Filter>Src\Application\GameObject\UI\HomeDirectionUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

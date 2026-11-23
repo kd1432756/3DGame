@@ -57,14 +57,14 @@ void CharacterBase::CheckGround()
 	float best = 0.0f;
 	Math::Vector3 groundPos;
 	std::shared_ptr<KdGameObject> groundObj;
-	for (auto& obj : SceneManager::Instance().GetObjList())
+	for (const auto& obj : SceneManager::Instance().GetObjList())
 	{
 		if (!obj || obj.get() == this) continue;
 
 		std::list<KdCollider::CollisionResult> objHits;
 		if (!obj->Intersects(ray, &objHits)) continue;
 
-		for (auto& r : objHits)
+		for (const auto& r : objHits)
 		{
 			if (!hit || r.m_overlapDistance > best)
 			{
@@ -83,7 +83,7 @@ void CharacterBase::CheckGround()
 
 	// 地面素材を更新
 	m_groundType = Ground::GroundType::None;
-	if (auto ground = std::dynamic_pointer_cast<Ground>(groundObj))
+	if (const auto ground = std::dynamic_pointer_cast<Ground>(groundObj))
 	{
 		m_groundType = ground->GetGroundType();
 	}
@@ -97,14 +97,14 @@ void CharacterBase::CheckGround()
 	m_gravity = 0.0f;
 }
 
-void CharacterBase::SlideAlongWalls(Math::Vector3& move, float radius)
+void CharacterBase::SlideAlongWalls(Math::Vector3& move, float radius) const
 {
 	std::vector<WallHit> walls;
 	CollectWallHits(radius, walls);
 
 	for (int pass = 0; pass < 2; ++pass)
 	{
-		for (auto& w : walls)
+		for (const auto& w : walls)
 		{
 			const float into = move.Dot(w.normal);
 			if (into < 0.0f)
@@ -115,7 +115,7 @@ void CharacterBase::SlideAlongWalls(Math::Vector3& move, float radius)
 	}
 }
 
-void CharacterBase::CollectWallHits(float radius, std::vector<WallHit>& out)
+void CharacterBase::CollectWallHits(float radius, std::vector<WallHit>& out) const
 {
 	out.clear();
 
@@ -126,10 +126,10 @@ void CharacterBase::CollectWallHits(float radius, std::vector<WallHit>& out)
 
 	std::list<KdCollider::CollisionResult> collisionList;
 
-	for (auto& obj : SceneManager::Instance().GetObjList())
+	for (const auto& obj : SceneManager::Instance().GetObjList())
 	{
 		if (!obj || obj.get() == this) { continue; }
-		if (auto mesh = std::dynamic_pointer_cast<StaticMeshObject>(obj))
+		if (const auto mesh = std::dynamic_pointer_cast<StaticMeshObject>(obj))
 		{
 			if (!mesh->IsCollisionEnabled()) { continue; }
 			if (mesh->IsGround()) { continue; }
@@ -137,15 +137,13 @@ void CharacterBase::CollectWallHits(float radius, std::vector<WallHit>& out)
 		obj->Intersects(sphere, &collisionList);
 	}
 
-	for (auto& c : collisionList)
+	for (const auto& c : collisionList)
 	{
 		if (c.m_overlapDistance <= 0.0f) { continue; }
 
 		Math::Vector3 n = c.m_hitNDir;
 		if (n.LengthSquared() <= 0.000001f) { continue; }
 		n.Normalize();
-
-		//if (n.y > 0.7f || n.y < -0.7f) { continue; }   // 床・天井は除外
 
 		n.y = 0.0f;
 		if (n.LengthSquared() <= 0.000001f) { continue; }
@@ -181,7 +179,7 @@ void CharacterBase::ResolveCollision()
 
 		// 最も深くめり込んでいる壁を1つだけ解消
 		const WallHit* deepest = &walls[0];
-		for (auto& w : walls)
+		for (const auto& w : walls)
 		{
 			if (w.overlap > deepest->overlap) { deepest = &w; }
 		}
@@ -212,8 +210,7 @@ void CharacterBase::ApplyGravity()
 	}
 }
 
-void CharacterBase::RotateToMoveDirection(
-	const Math::Vector3& dir)
+void CharacterBase::RotateToMoveDirection(const Math::Vector3& dir)
 {
 	Math::Vector3 toDir = dir;
 	toDir.y = 0.0f;
@@ -229,7 +226,7 @@ void CharacterBase::RotateToMoveDirection(
 	// 現在の向き
 	// =========================================
 
-	Math::Vector3 nowDir = GetFacingDir();
+	const Math::Vector3 nowDir = GetFacingDir();
 
 	// =========================================
 	// 内積から角度を求める
@@ -260,7 +257,7 @@ void CharacterBase::RotateToMoveDirection(
 	// 左右判定
 	// =========================================
 
-	Math::Vector3 cross = nowDir.Cross(toDir);
+	const Math::Vector3 cross = nowDir.Cross(toDir);
 
 	if (cross.y >= 0.0f)
 	{
@@ -329,7 +326,7 @@ void CharacterBase::UpdateFootstepByAnim(const KdAnimator& animator)
 
 	const bool looped = (phase < m_prevPhase);
 
-	for (float p : *phases)
+	for (const float p : *phases)
 	{
 		bool crossed;
 		if (!looped)
@@ -427,20 +424,17 @@ void CharacterBase::InitEmoteIcon()
 {
 	m_spEmoteIcon = std::make_shared<EmoteIcon>();
 	m_spEmoteIcon->Init();
-	m_spEmoteIcon->SetOwner(
-		std::dynamic_pointer_cast<CharacterBase>(shared_from_this()));
+	m_spEmoteIcon->SetOwner(std::dynamic_pointer_cast<CharacterBase>(shared_from_this()));
 
 	SceneManager::Instance().AddObject(m_spEmoteIcon);
 }
 
-void CharacterBase::ShowEmote(EmoteIcon::IconType type, float duration, bool force)
+void CharacterBase::ShowEmote(EmoteIcon::IconType type, float duration, bool force) const
 {
 	if (!m_spEmoteIcon) return;
 	if (!m_spEmoteIcon->SetIcon(type, duration, force)) return;
 
-	if (m_spEmoteIcon) m_spEmoteIcon->SetIcon(type, duration, force);
-
-	if (auto se = KdAudioManager::Instance().Play3D("Asset/Sound/SE/Icon_Pop.wav", m_pos))
+	if (const auto se = KdAudioManager::Instance().Play3D("Asset/Sound/SE/Icon_Pop.wav", m_pos))
 	{
 		se->SetVolume(0.2f);
 		se->SetPitch(0.3f);
@@ -448,7 +442,7 @@ void CharacterBase::ShowEmote(EmoteIcon::IconType type, float duration, bool for
 	}
 }
 
-void CharacterBase::HideEmote()
+void CharacterBase::HideEmote() const
 {
 	if (m_spEmoteIcon) m_spEmoteIcon->SetIcon(EmoteIcon::IconType::None);
 }

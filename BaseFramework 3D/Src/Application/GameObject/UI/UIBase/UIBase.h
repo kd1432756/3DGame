@@ -26,7 +26,6 @@ protected:
 	// 時間
 	static float DeltaTime() { return 1.0f / 60.0f; }
 
-
 	// マウス座標
 	static Math::Vector2 GetMousePos();
 

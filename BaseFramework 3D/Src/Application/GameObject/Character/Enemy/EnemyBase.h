@@ -2,9 +2,9 @@
 
 #include "../CharacterBase.h"
 
-class NavMeshManager;
-class NavMeshPathfinder;
 #include "../../../System/Navigation/NavMesh/NavMeshPathfinder.h"
+
+class NavMeshManager;
 
 enum class MoveResult
 {
@@ -31,14 +31,13 @@ protected:
 	// =========================================
 
 	virtual void UpdateBehavior() = 0;
-	virtual void UpdateExtra() {}
+	virtual void UpdateExtra()  const {}
 
 	// =========================================
 	// 移動方向を設定
 	// =========================================
 
-	void SetMoveDirection(
-		const Math::Vector3& dir);
+	void SetMoveDirection(const Math::Vector3& dir);
 
 	// =========================================
 	// 実際に移動する
@@ -66,8 +65,7 @@ protected:
 	// 現在の移動方向
 	// =========================================
 
-	Math::Vector3 m_moveDir =
-		Math::Vector3::Zero;
+	Math::Vector3 m_moveDir =	Math::Vector3::Zero;
 
 	static constexpr float kEnemyCollisionRadius = 0.3f;
 
@@ -128,10 +126,10 @@ private:
 	void UpdateStuck(bool wantMove, float movedDist);
 	void ResetStuck() { m_stuckTimer = 0.0f; }
 
-	bool  m_hitCharacter = false;   // このフレームにキャラに押し戻されたか
+	bool m_hitCharacter = false;   // このフレームにキャラに押し戻されたか
 	float m_stuckTimer = 0.0f;
 
-	bool  m_isGhost = false;
+	bool m_isGhost = false;
 	float m_ghostTimer = 0.0f;
 	float m_ghostCooldown = 0.0f;
 
@@ -144,7 +142,7 @@ private:
 
 	float m_blockedTimer = 0.0f;
 	float m_repathCooldown = 0.0f;
-	bool  m_needRepath = false;
+	bool m_needRepath = false;
 
 	static constexpr float kStuckToRepathTime = 0.5f;   // この時間進めなければ再探索
 	static constexpr float kRepathCooldownTime = 1.0f;  // 再探索の連発防止

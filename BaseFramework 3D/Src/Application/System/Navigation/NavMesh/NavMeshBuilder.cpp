@@ -11,7 +11,9 @@
 namespace
 {
 	void AppendObstacles(StaticMeshObject& obj,
-		std::vector<NavMeshPolygonBuilder::Obstacle>& out)
+		std::vector<NavMeshPolygonBuilder::Obstacle>& out,
+		float floorY,
+		float obstacleMaxHeight)
 	{
 		auto modelData = obj.GetModelData();
 
@@ -48,6 +50,9 @@ namespace
 			obstacle.minZ = worldAABB.Center.z - worldAABB.Extents.z;
 			obstacle.maxZ = worldAABB.Center.z + worldAABB.Extents.z;
 
+			const float minY = worldAABB.Center.y - worldAABB.Extents.y;
+			if (minY >= floorY + obstacleMaxHeight) continue;
+
 			out.push_back(obstacle);
 		}
 	}
@@ -70,6 +75,18 @@ int NavMeshBuilder::Build(	const ObjectList& objects,
 	input.tileSize = params.tileSize;
 	input.agentRadius = params.agentRadius;
 
+	float floorY = FLT_MAX;
+
+	for (auto& obj : objects)
+	{
+		if (auto ground = std::dynamic_pointer_cast<Ground>(obj))
+		{
+			floorY = std::min(floorY, ground->GetPos().y);
+		}
+	}
+
+	if (floorY == FLT_MAX) floorY = 0.0f;
+
 	for (auto& obj : objects)
 	{
 		if (!obj) continue;
@@ -89,7 +106,7 @@ int NavMeshBuilder::Build(	const ObjectList& objects,
 		{
 			if (mesh->GetCategory() == KdGameObject::ObjectCategory::Prop)
 			{
-				AppendObstacles(*mesh, input.obstacles);
+				AppendObstacles(*mesh, input.obstacles, floorY, params.obstacleMaxHeight);
 			}
 		}
 

@@ -4,11 +4,7 @@ std::shared_ptr<LocationPoint> LocationPointManager::CreatePoint(
 	LocationTag tag,
 	const Math::Vector3& pos)
 {
-	auto point =
-		std::make_shared<LocationPoint>(
-			m_nextID++,
-			tag,
-			pos);
+	auto point = std::make_shared<LocationPoint>(m_nextID++, tag, pos);
 
 	m_points.push_back(point);
 
@@ -20,11 +16,7 @@ std::shared_ptr<LocationPoint> LocationPointManager::CreatePointWithID(
 	LocationTag tag,
 	const Math::Vector3& pos)
 {
-	auto point =
-		std::make_shared<LocationPoint>(
-			id,
-			tag,
-			pos);
+	auto point = std::make_shared<LocationPoint>(id, tag, pos);
 
 	m_points.push_back(point);
 
@@ -38,15 +30,14 @@ std::shared_ptr<LocationPoint> LocationPointManager::CreatePointWithID(
 
 void LocationPointManager::DeletePoint(int id)
 {
-	m_points.erase(
-		std::remove_if(
+	m_points.erase(	std::remove_if(
 			m_points.begin(),
 			m_points.end(),
 			[id](const std::shared_ptr<LocationPoint>& p)
 			{
 				return p && p->GetID() == id;
-			}),
-		m_points.end());
+			}
+	),m_points.end());
 }
 
 void LocationPointManager::Clear()

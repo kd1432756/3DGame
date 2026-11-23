@@ -12,9 +12,7 @@
 #include "../GameObject/Character/Player/Player.h"
 #include "../GameObject/Character/Enemy/Neighbor/Neighbor.h"
 #include "../GameObject/Character/Enemy/Police/Police.h"
-#include "../GameObject/Object/StaticMeshObject/Tree/Tree.h"
 #include "../GameObject/Object/StaticMeshObject/InteractiveObject/Flower/Flower.h"
-#include "../GameObject/Object/StaticMeshObject/InteractiveObject/Hose/Hose.h"
 #include "../GameObject/Object/StaticMeshObject/InteractiveObject/PaintCan/PaintCan.h"
 #include "../GameObject/Object/StaticMeshObject/InteractiveObject/WoodenFence/WoodenFence.h"
 #include "../GameObject/Object/StaticMeshObject/InteractiveObject/Faucet/Faucet.h"
@@ -283,14 +281,6 @@ void SceneManager::RegisterGameObjects()
 	);
 
 	m_factory.RegisterCreateFunction(
-		"Tree",
-		[]()
-		{
-			return std::make_shared<Tree>();
-		}
-	);
-
-	m_factory.RegisterCreateFunction(
 		"Ground",
 		[]()
 		{
@@ -311,14 +301,6 @@ void SceneManager::RegisterGameObjects()
 		[]()
 		{
 			return std::make_shared<Flower>();
-		}
-	);
-
-	m_factory.RegisterCreateFunction(
-		"Hose",
-		[]()
-		{
-			return std::make_shared<Hose>();
 		}
 	);
 

@@ -8,7 +8,8 @@ public:
 	struct Params
 	{
 		float tileSize = 4.0f;
-		float agentRadius = 0.2f;
+		float agentRadius = 0.3f;
+		float obstacleMaxHeight = 3.0f;
 	};
 
 	using ObjectList = std::list<std::shared_ptr<KdGameObject>>;

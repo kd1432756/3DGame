@@ -41,6 +41,7 @@
 #include "../../GameObject/UI/HinderUI/HinderUI.h"
 #include "../../GameObject/UI/ReportUI/ReportUI.h"
 #include "../../GameObject/UI/DamageIndicatorUI/DamageIndicatorUI.h"
+#include "../../GameObject/UI/DamageDirectionUI/DamageDirectionUI.h"
 
 #include "../../GameObject/Effect/DeliveryPointEffect/DeliveryPointEffect.h"
 
@@ -124,22 +125,22 @@ void GameScene::Event()
 
 	{
 		static float time = 0.0f;
-		time += 1.0f / 60.0f;	// フレーム固定なら。dtが取れるならそちらを使う
+		time += 1.0f / 60.0f;	
 
-		// 1. 風の強さ: 周期の違う波を重ねて不規則にする
+		// 1. 風の強さ
 		float strength =
 			0.6f +
 			0.25f * sinf(time * 1.3f) +
 			0.15f * sinf(time * 3.1f + 1.7f) +
-			0.10f * sinf(time * 7.3f + 0.4f);	// 細かい揺らぎ(ブレ)
+			0.10f * sinf(time * 7.3f + 0.4f);
 
-		// 2. 突風: たまに強くなる
+		// 2. 突風
 		float gust = sinf(time * 0.35f);
 		gust = std::max(0.0f, gust);
-		gust = gust * gust * gust;				// 立ち上がりを鋭く
+		gust = gust * gust * gust;
 		strength += gust * 0.8f;
 
-		// 3. 風向き: ゆっくり回転 + 小さなブレ
+		// 3. 風向き
 		float angle = 0.6f + 0.5f * sinf(time * 0.2f) + 0.1f * sinf(time * 1.1f);
 
 		const float scale = SceneManager::Instance().GetSceneScale();
@@ -204,8 +205,6 @@ void GameScene::Start()
 
 	FootstepSystem::Instance().Init();
 
-	DamageDirector::SpawnInitialDamage(3);
-
 	// 風有効化
 	KdShaderManager::Instance().SetWindEnable(true);
 
@@ -234,11 +233,12 @@ void GameScene::Start()
 	m_objList.push_back(skyBox);
 
 	{
-/*		auto homeDirection = std::make_shared<HomeDirectionUI>();
-		homeDirection->Init();
-		homeDirection->SetName("HomeDirectionUI");
-		homeDirection->SetOwner(player);
-		m_objList.push_back(homeDirection);*/
+		auto damageUI = std::make_shared<DamageDirectionUI>();
+		damageUI->Init();
+		damageUI->SetName("DamageUI");
+		damageUI->SetPlayer(player);
+		player->SetDamageUI(damageUI);
+		m_objList.push_back(damageUI);
 
 		auto score = std::make_shared<ScoreUI>();
 		score->Init();
@@ -288,7 +288,7 @@ void GameScene::Start()
 
 		auto indicator = std::make_shared<DamageIndicatorUI>();
 		indicator->Init();
-		indicator->SetPlayer(std::dynamic_pointer_cast<Player>(shared_from_this()));
+		indicator->SetPlayer(player);
 		SceneManager::Instance().AddObject(indicator);
 	}
 
@@ -323,6 +323,8 @@ void GameScene::Start()
 		deliveryEffect->SetPlayer(player);
 		SceneManager::Instance().AddObject(deliveryEffect);
 	}
+
+	DamageDirector::SpawnInitialDamage(3);
 }
 
 void GameScene::Init()

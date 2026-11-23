@@ -80,7 +80,7 @@ public:
 	}
 
 	float GetAgentRadius() const { return m_navMeshAgentRadius; }
-
+	float GetObstacleMaxHeight() const { return m_navMeshObstacleMaxHeight; }
 
 private:
 
@@ -97,7 +97,8 @@ private:
 
 	NavMeshEditMode m_navMeshEditMode = NavMeshEditMode::None;
 
-	float m_navMeshAgentRadius = 0.2f;
+	float m_navMeshAgentRadius = 0.3f;
+	float m_navMeshObstacleMaxHeight = 3.0f;
 
 	Request m_request = Request::None;
 };

@@ -63,8 +63,7 @@ void EnemyBase::Update()
 	UpdateExtra();
 }
 
-void EnemyBase::SetMoveDirection(
-	const Math::Vector3& dir)
+void EnemyBase::SetMoveDirection(const Math::Vector3& dir)
 {
 	m_moveDir = dir;
 
@@ -122,7 +121,7 @@ void EnemyBase::ApplyMove()
 	moved.y = 0.0f;
 	const float movedDist = moved.Length();
 
-	// 動く意思があり、実際に動けたときだけ true（押されただけでは走りアニメにしない）
+	// 動く意思があり、実際に動けたときだけ true
 	m_isMoving = wantMove && (movedDist * movedDist > 0.00000001f);
 
 	UpdateStuck(wantMove, movedDist);
@@ -131,18 +130,19 @@ void EnemyBase::ApplyMove()
 //============================================================
 // キャラ同士の押し戻し（自分だけ退く）
 //============================================================
+
 void EnemyBase::ResolveCharacterCollision()
 {
 	if (m_isGhost || m_isArrested) return;
 
 	const float maxPush = kMaxCharaPush * m_sceneScale;
 
-	for (auto& obj : SceneManager::Instance().GetObjList())
+	for (const auto& obj : SceneManager::Instance().GetObjList())
 	{
 		if (obj->GetCategory() != KdGameObject::ObjectCategory::Character) continue;
-		auto other = std::dynamic_pointer_cast<CharacterBase>(obj);
+		const auto other = std::dynamic_pointer_cast<CharacterBase>(obj);
 		if (!other || other.get() == this) continue;
-		if (other->IsArrested() || other->IsGhost()) continue;   // 連行中の相手はここで除外
+		if (other->IsArrested() || other->IsGhost()) continue;   // 連行中は除外
 
 		Math::Vector3 diff = m_pos - other->GetPos();
 
@@ -158,7 +158,7 @@ void EnemyBase::ResolveCharacterCollision()
 		n.y = 0.0f;
 		n.Normalize();
 
-		// 瞬間移動を避けるため、1回の押し出し量に上限を付ける
+		// 押し出し量の上限
 		const float push = std::min(minDist - dist, maxPush);
 
 		m_pos += n * push;
@@ -168,10 +168,10 @@ void EnemyBase::ResolveCharacterCollision()
 
 bool EnemyBase::IsOverlappingCharacter() const
 {
-	for (auto& obj : SceneManager::Instance().GetObjList())
+	for (const auto& obj : SceneManager::Instance().GetObjList())
 	{
 		if (obj->GetCategory() != KdGameObject::ObjectCategory::Character) continue;
-		auto other = std::dynamic_pointer_cast<CharacterBase>(obj);
+		const auto other = std::dynamic_pointer_cast<CharacterBase>(obj);
 		if (!other || other.get() == this) continue;
 		if (other->IsArrested()) continue;
 
@@ -188,6 +188,7 @@ bool EnemyBase::IsOverlappingCharacter() const
 //============================================================
 // ゴースト（キャラ判定を一時的に無効化）
 //============================================================
+
 void EnemyBase::UpdateGhost()
 {
 	const float dt = 1.0f / 60.0f;
@@ -198,7 +199,7 @@ void EnemyBase::UpdateGhost()
 
 	m_ghostTimer -= dt;
 
-	// 最低継続時間を過ぎ、かつ誰とも重なっていなければ復帰
+	// 誰とも重なっていなければ復帰
 	if (m_ghostTimer <= 0.0f && !IsOverlappingCharacter())
 	{
 		m_isGhost = false;
@@ -211,12 +212,12 @@ void EnemyBase::UpdateGhost()
 //============================================================
 // スタック判定 → 一定時間でゴースト化
 //============================================================
+
 void EnemyBase::UpdateStuck(bool wantMove, float movedDist)
 {
 	const float dt = 1.0f / 60.0f;
 
-	const bool notProgressing =
-		wantMove && movedDist < m_moveSpeed * kStuckMoveRatio;
+	const bool notProgressing = wantMove && movedDist < m_moveSpeed * kStuckMoveRatio;
 
 	// ---- ① 原因を問わない詰まり → 経路再探索 ----
 	if (m_repathCooldown > 0.0f) m_repathCooldown -= dt;
@@ -249,9 +250,7 @@ void EnemyBase::UpdateStuck(bool wantMove, float movedDist)
 
 	m_stuckTimer += dt;
 
-	if (m_stuckTimer >= kStuckToGhostTime &&
-		!m_isGhost &&
-		m_ghostCooldown <= 0.0f &&
+	if (m_stuckTimer >= kStuckToGhostTime && !m_isGhost && m_ghostCooldown <= 0.0f &&
 		CanBecomeGhost())
 	{
 		m_isGhost = true;
@@ -293,9 +292,8 @@ MoveResult EnemyBase::FollowNavPath()
 	Math::Vector3 dir = m_navPath[m_navPathIndex] - m_pos;
 	dir.y = 0.0f;
 
-	// 1フレームの移動量より小さい到着半径だと、ウェイポイントの周りを回ってしまう
-	const float arrive =
-		std::max(kWaypointArriveDist * m_sceneScale, m_moveSpeed);
+	// 到着半径がちいさ過ぎると到着できない
+	const float arrive = std::max(kWaypointArriveDist * m_sceneScale, m_moveSpeed);
 
 	if (dir.LengthSquared() <= arrive * arrive)
 	{
@@ -319,38 +317,25 @@ MoveResult EnemyBase::FollowNavPath()
 // Snap To NavMesh
 //============================================================
 
-Math::Vector3 EnemyBase::SnapToNavMesh(
-	const Math::Vector3& point) const
+Math::Vector3 EnemyBase::SnapToNavMesh(const Math::Vector3& point) const
 {
 	const NavMeshManager navMeshManager = NavMeshManager::Instance();
 
-	//============================================================
 	// すでにNavMesh内ならそのまま
-	//============================================================
-
-	auto polygon =
-		navMeshManager.FindPolygonFromPoint(point);
+	const auto polygon = navMeshManager.FindPolygonFromPoint(point);
 
 	if (polygon)
 	{
 		return point;
 	}
 
-	//============================================================
 	// 範囲外 → 最近傍点へ補正
-	//============================================================
-
-	return navMeshManager.FindNearestPoint(
-		point,
-		kNavSnapRadius * m_sceneScale
-	);
+	return navMeshManager.FindNearestPoint(point, kNavSnapRadius * m_sceneScale);
 }
 
-std::vector<Math::Vector3> EnemyBase::FindNavPath(
-	const Math::Vector3& start, const Math::Vector3& goal) const
+std::vector<Math::Vector3> EnemyBase::FindNavPath(const Math::Vector3& start, const Math::Vector3& goal) const
 {
 	const NavMeshManager navMeshManager = NavMeshManager::Instance();
 
-	return m_navMeshPathfinder->FindPathPoints(
-		navMeshManager, SnapToNavMesh(start), SnapToNavMesh(goal));
+	return m_navMeshPathfinder->FindPathPoints(navMeshManager, SnapToNavMesh(start), SnapToNavMesh(goal));
 }

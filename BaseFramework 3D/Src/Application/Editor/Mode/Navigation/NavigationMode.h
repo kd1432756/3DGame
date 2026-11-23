@@ -24,6 +24,6 @@ private:
 	}
 
 	NavigationEditorWindow m_window;
-	NodeEditorTool         m_node;
-	NavMeshPreviewTool     m_navMesh;
+	NodeEditorTool	m_node;
+	NavMeshPreviewTool	m_navMesh;
 };

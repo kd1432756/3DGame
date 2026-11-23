@@ -11,12 +11,6 @@ public:
 	// Path
 	//============================================================
 
-	// StartからGoalまでの経路を探索
-	//
-	// 戻り値:
-	//   成功 → StartからGoalまでのNode ID
-	//   失敗 → 空
-	//
 	std::vector<int> FindPath(
 		const AStarNodeManager& manager,
 		int startID,

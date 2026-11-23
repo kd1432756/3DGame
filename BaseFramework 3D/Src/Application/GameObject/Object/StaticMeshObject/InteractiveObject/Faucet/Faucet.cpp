@@ -9,12 +9,14 @@ void Faucet::Init()
 {
 	SetModelPath("Asset/Models/Props/Faucet/Faucet.gltf");
 
+	m_iconPath = "Asset/Textures/Icon/Faucet.png";
+
 	RegisterAction({
 		InteractiveState::Normal,
 		InteractiveState::Damaged,
 		ItemAction::Wrench,
 		"Faucet",
-		3.0f,
+		10.0f,
 		300,
 		"Faucet Loosened!",
 		"Faucet has been Loosened!",
@@ -27,7 +29,7 @@ void Faucet::Init()
 		ItemAction::Repair,
 		"Faucet",
 		3.0f,
-		220,
+		300,
 		"Faucet Tightened!",
 		"",
 		""

@@ -4,7 +4,7 @@
 #include "../../../System/Stage/StageConst.h"
 #include "../../../System/Navigation/NavMesh/NavMeshBuilder.h"
 
-void NavMeshPreviewTool::Generate(float agentRadius)
+void NavMeshPreviewTool::Generate(float agentRadius, float obstacleMaxHeight)
 {
 	ClearPath();
 
@@ -12,6 +12,7 @@ void NavMeshPreviewTool::Generate(float agentRadius)
 	NavMeshBuilder::Params params;
 	params.tileSize = StageConst::GRID_SIZE;
 	params.agentRadius = agentRadius;
+	params.obstacleMaxHeight = obstacleMaxHeight;
 
 	NavMeshBuilder::Build(
 		SceneManager::Instance().GetObjList(),

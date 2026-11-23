@@ -103,17 +103,20 @@ private:
 
 	void UpdateDropTimer();
 
-	ItemMode m_mode = ItemMode::Spawned;
-
-	std::weak_ptr<ItemSpawner> m_spawner;
-
+	float m_collisionRadius = 0.2f;
+	float m_stepHeight = 0.0f;
+	float m_footOffset = 0.0f;
 	Math::Vector3 m_velocity = Math::Vector3::Zero;
 
 	float m_gravity = 0.0f;
-
 	float m_gravityPower = 0.015f;
 
-	bool m_isGround = false;
+	float m_lastGroundY = 0.0f;
+	bool m_hasLastGround = false;
+
+	ItemMode m_mode = ItemMode::Spawned;
+
+	std::weak_ptr<ItemSpawner> m_spawner;
 
 	float m_dropTimer = 0.0f;
 	float m_dropTime = 30.0f;

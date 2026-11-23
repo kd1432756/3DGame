@@ -23,6 +23,7 @@
 #include "../../UI/FloatingTextUI/FloatingTextUI.h"
 #include "../../UI/SlideTextUI/SlideTextUI.h"
 #include "../../UI/ShakeTextUI/ShakeTextUI.h"
+#include "../../UI/DamageDirectionUI/DamageDirectionUI.h"
 
 #include "../../../System/FootStep/FootStep.h"
 
@@ -38,15 +39,11 @@ void Player::Init()
 
 	SetDisplayName("You");
 
-	m_spModel->SetModelData(
-		"Asset/Models/Character/Player/Player.gltf"
-	);
+	m_spModel->SetModelData("Asset/Models/Character/Player/Player.gltf");
 
 	m_spAnimator = std::make_shared<KdAnimator>();
 	m_currentAnimName = "Armature|Idle";
-	m_spAnimator->SetAnimation(
-		m_spModel->GetAnimation(m_currentAnimName)
-	);
+	m_spAnimator->SetAnimation(m_spModel->GetAnimation(m_currentAnimName));
 
 	UpdateAnimation();
 
@@ -114,8 +111,6 @@ void Player::Update()
 
 void Player::PostUpdate()
 {
-	//ResolveCollision();
-
 	UpdateAnimation();
 
 	UpdateHandItem();
@@ -161,7 +156,7 @@ void Player::UpdateArrested()
 {
 	m_isMoving = false;
 
-	auto arrestCam = std::dynamic_pointer_cast<ArrestCamera>(m_camera.lock());
+	const auto arrestCam = std::dynamic_pointer_cast<ArrestCamera>(m_camera.lock());
 
 	if (arrestCam)
 	{
@@ -193,21 +188,22 @@ void Player::SwitchToArrestCamera()
 {
 	if (!m_fpsCamera) return;
 
-	auto cam = std::make_shared<ArrestCamera>();
+	const auto cam = std::make_shared<ArrestCamera>();
 	cam->Init();
 	cam->SetTarget(std::dynamic_pointer_cast<Player>(shared_from_this()));
 	cam->SetEyeHeight(0.8f * m_sceneScale);
 	cam->SetDegAng(m_fpsCamera->GetDegAng());
-	for (auto& obj : SceneManager::Instance().GetObjList())
+
+	for (const auto& obj : SceneManager::Instance().GetObjList())
 	{
 		if (!obj) continue;
 
-		// 自分自身は除外
 		if (obj.get() == this) continue;
 
-		// 地面・壁などを登録
+		// 地面登録
 		cam->RegistHitObject(obj);
 	}
+
 	CameraManager::Instance().SetCamera(cam);
 	SetCamera(cam);
 
@@ -229,11 +225,15 @@ void Player::UpdateNeglect()
 {
 	for (auto it = m_neglected.begin(); it != m_neglected.end();)
 	{
-		auto obj = it->obj.lock();
+		const auto obj = it->obj.lock();
 
-		// 消えた or 修復された
+		// 修復されたら消す
 		if (!obj || !obj->IsDamaged())
 		{
+			if (obj)
+			{
+				if (const auto ui = m_damageUI.lock()) ui->RemoveTarget(obj);
+			}
 			it = m_neglected.erase(it);
 			continue;
 		}
@@ -275,14 +275,19 @@ void Player::UpdateReport()
 		return;
 	}
 
-	if (!(GetAsyncKeyState('R') & 0x0001))
-	{
-		return;
-	}
+	bool pressed = GetAsyncKeyState('R') & 0x8000;
 
-	if (TryReport())
+	if (!pressed)
 	{
-		m_reportTimer = kReportCooldown;
+		m_isReportKeyPressed = false;
+	}
+	else if (!m_isReportKeyPressed)
+	{
+		m_isReportKeyPressed = true;
+		if (TryReport())
+		{
+			m_reportTimer = kReportCooldown;
+		}
 	}
 }
 
@@ -290,7 +295,7 @@ bool Player::IsVisibleFromCamera(
 	const Math::Vector3& targetPos,
 	const KdGameObject* ignore) const
 {
-	auto camera = m_camera.lock();
+	const auto camera = m_camera.lock();
 
 	if (!camera)
 	{
@@ -303,6 +308,7 @@ bool Player::IsVisibleFromCamera(
 
 	Math::Vector3 screen;
 
+	// カメラの画面内か
 	if (!camera->ConvertWorldToScreenDetail(targetPos, screen))
 	{
 		return false;	// カメラの後ろ
@@ -345,11 +351,12 @@ bool Player::IsVisibleFromCamera(
 
 	ray.m_range = std::max(distance - 0.05f * m_sceneScale, 0.001f);
 
-	for (auto& obj : SceneManager::Instance().GetObjList())
+	for (const auto& obj : SceneManager::Instance().GetObjList())
 	{
 		if (!obj) continue;
 
 		if (obj.get() == this) continue;
+		// 判定対象はのぞく
 		if (obj.get() == ignore) continue;
 
 		std::list<KdCollider::CollisionResult> hits;
@@ -365,7 +372,7 @@ bool Player::IsVisibleFromCamera(
 
 bool Player::FindReportPos(Math::Vector3& outPos) const
 {
-	auto camera = m_camera.lock();
+	const auto camera = m_camera.lock();
 
 	if (!camera)
 	{
@@ -378,16 +385,15 @@ bool Player::FindReportPos(Math::Vector3& outPos) const
 	float nearestSq = std::numeric_limits<float>::max();
 	bool found = false;
 
-	for (auto& ch : SceneManager::Instance().FindObjects<CharacterBase>())
+	for (const auto& ch : SceneManager::Instance().FindObjects<CharacterBase>())
 	{
 		if (!ch || ch.get() == this) continue;
 		if (ch->IsArrested() || !ch->IsPranking()) continue;
 
-		// 見えているかは、NPC本人の体で判定する
+		// レイで確認
 		if (!IsVisibleFromCamera(ch->GetPos(), ch.get())) continue;
 
-		// 歩いている途中だけ、プレイヤーから 5m 以内であること
-		// いたずらしてる最中は今まで通り、距離制限なし
+		// 向かっている場合、プレイヤーからの距離
 		if (!ch->IsDamaging())
 		{
 			Math::Vector3 diff = ch->GetPos() - m_pos;
@@ -402,7 +408,7 @@ bool Player::FindReportPos(Math::Vector3& outPos) const
 		if (sq < nearestSq)
 		{
 			nearestSq = sq;
-			outPos = ch->GetDamagePos();	// 通報地点はいたずらしてる現場
+			outPos = ch->GetDamagePos();		// 通報地点はいたずらしてる現場
 			found = true;
 		}
 	}
@@ -415,7 +421,7 @@ bool Player::FindReportPos(Math::Vector3& outPos) const
 	// ② 見えている「最近NPCにいたずらされた物」のうち、一番新しいもの
 	float best = kReportWindowSeconds;
 
-	for (auto& obj : SceneManager::Instance().FindObjects<InteractiveObject>())
+	for (const auto& obj : SceneManager::Instance().FindObjects<InteractiveObject>())
 	{
 		if (obj->GetDamageSource() != DamageSource::NPC) continue;
 
@@ -423,7 +429,7 @@ bool Player::FindReportPos(Math::Vector3& outPos) const
 
 		if (seconds > best) continue;
 
-		// 足元ではなく少し上を狙う(地面に隠れないように)
+		// 足元ではなく少し上
 		const Math::Vector3 target =
 			obj->GetPos() + Math::Vector3{ 0.0f, 0.3f * m_sceneScale, 0.0f };
 
@@ -437,9 +443,8 @@ bool Player::FindReportPos(Math::Vector3& outPos) const
 	return found;
 }
 
-bool Player::TryReport()
+bool Player::TryReport() const
 {
-	// 通報地点 = 壊している現場(またはその直後の現場)
 	Math::Vector3 reportPos;
 
 	if (!FindReportPos(reportPos))
@@ -448,7 +453,7 @@ bool Player::TryReport()
 			"No target in sight",
 			{ 530, -210 },
 			{ 0.8f, 0.8f, 0.8f, 1.0f },
-			FontID::Future24
+			FontID::Future16
 		);
 		return false;
 	}
@@ -457,7 +462,7 @@ bool Player::TryReport()
 	std::shared_ptr<Police> nearest;
 	float nearestSq = std::numeric_limits<float>::max();
 
-	for (auto& police : SceneManager::Instance().FindObjects<Police>())
+	for (const auto& police : SceneManager::Instance().FindObjects<Police>())
 	{
 		if (!police->CanDispatch()) continue;
 
@@ -479,7 +484,7 @@ bool Player::TryReport()
 			"No police available",
 			{ 530, -210 },
 			{ 0.8f, 0.8f, 0.8f, 1.0f },
-			FontID::Future24
+			FontID::Future16
 		);
 		return false;
 	}
@@ -493,7 +498,7 @@ bool Player::TryReport()
 		FontID::Future24
 	);
 
-	if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Call.wav"))
+	if (const auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Call.wav"))
 	{
 		se->SetVolume(0.1f);
 	}
@@ -508,7 +513,6 @@ void Player::UpdateHinder()
 		m_hinderCooldownTimer = std::max(0.0f, m_hinderCooldownTimer - 1 / 60.0f);
 	}
 
-	// クールダウン中は妨害を開始できない
 	if (!m_isHindering)
 	{
 		if (m_hinderCooldownTimer > 0.0f)
@@ -524,23 +528,22 @@ void Player::UpdateHinder()
 		return;
 	}
 
-	auto target = m_wpHinderTarget.lock();
+	const auto target = m_wpHinderTarget.lock();
 
-	// 対象が消えた／逮捕された／いたずらをやめた → 終了
+	// 対象が消えた／逮捕された／いたずらをやめた時終了
 	if (!target || target->IsArrested() || !target->IsDamaging())
 	{
 		EndHinder(true, false);
 		return;
 	}
 
-	// 連打で延長
 	if (GetAsyncKeyState(VK_SPACE) & 0x0001)
 	{
-		// 満タンのときは回復も減衰カウントも進めない（無駄押しで弱くならないように）
+		// 満タンのときは回復も減衰カウントも進めない
 		if (m_hinderRemaining < kHinderBaseTime)
 		{
-			const float extend =
-				kHhinderMashExtend * std::pow(kHinderMashDecay, static_cast<float>(m_hinderMashCount));
+			// 連打回数に応じて回復量を減衰させる
+			const float extend = kHinderMashExtend * std::pow(kHinderMashDecay, static_cast<float>(m_hinderMashCount));
 
 			m_hinderRemaining = std::min(m_hinderRemaining + extend, kHinderBaseTime);
 			m_hinderMashCount++;
@@ -559,7 +562,7 @@ bool Player::TryBeginHinder()
 {
 	if (m_isHinderCamReturning) return false;
 
-	auto nearest = FindHinderTarget();
+	const auto nearest = FindHinderTarget();
 	if (!nearest) return false;
 
 	// 自分のいたずら／修復中ならキャンセル
@@ -585,9 +588,10 @@ std::shared_ptr<CharacterBase> Player::FindHinderTarget() const
 	std::shared_ptr<CharacterBase> nearest;
 	float nearestSq = range * range;
 
-	for (auto& obj : SceneManager::Instance().GetObjList())
+	// 一定範囲内にいる最も近いいたずら中のNPC
+	for (const auto& obj : SceneManager::Instance().GetObjList())
 	{
-		auto ch = std::dynamic_pointer_cast<CharacterBase>(obj);
+		const auto ch = std::dynamic_pointer_cast<CharacterBase>(obj);
 		if (!ch || ch.get() == this) continue;
 		if (std::dynamic_pointer_cast<Police>(ch)) continue;
 		if (ch->IsArrested() || !ch->IsDamaging()) continue;
@@ -607,24 +611,26 @@ std::shared_ptr<CharacterBase> Player::FindHinderTarget() const
 
 void Player::EndHinder(bool restoreCamera, bool applyCooldown)
 {
-	if (auto target = m_wpHinderTarget.lock())
+	if (const auto target = m_wpHinderTarget.lock())
 	{
 		target->SetRestrained(false);
 	}
 
 	m_wpHinderTarget.reset();
-	m_hinderRemaining = 0.0f;	
+	m_hinderRemaining = 0.0f;
 	m_hinderMashCount = 0;
+
 	if (applyCooldown)
 	{
 		m_hinderCooldownTimer = kHinderCooldown;
 	}
+
 	m_isHindering = false;
 	m_isRestrained = false;
 
 	if (restoreCamera)
 	{
-		if (auto cam = std::dynamic_pointer_cast<ArrestCamera>(m_camera.lock()))
+		if (const auto cam = std::dynamic_pointer_cast<ArrestCamera>(m_camera.lock()))
 		{
 			cam->StartPushIn();
 			m_isHinderCamReturning = true;
@@ -643,7 +649,7 @@ void Player::BeginHinderCamera()
 
 void Player::UpdateHinderCamera()
 {
-	auto arrestCam = std::dynamic_pointer_cast<ArrestCamera>(m_camera.lock());
+	const auto arrestCam = std::dynamic_pointer_cast<ArrestCamera>(m_camera.lock());
 
 	if (!arrestCam)
 	{
@@ -669,20 +675,31 @@ void Player::OnRepairSuccess(int score, const std::string& message)
 	);
 }
 
-void Player::OnObjectDamaged(const std::shared_ptr<InteractiveObject>& object, const InteractiveAction& action)
+void Player::OnObjectDamaged(const std::shared_ptr<InteractiveObject>& obj, const InteractiveAction& action)
 {
 	NotificationManager::Instance().Push(action.ownerMessage);
 
-	if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Blip_Down.wav"))
+	if (const auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Blip_Down.wav"))
 	{
 		se->SetVolume(0.1f);
 	}
 
-	for (auto& e : m_neglected)
+	AddDamageTarget(obj);
+}
+
+void Player::AddDamageTarget(const std::shared_ptr<InteractiveObject>& obj)
+{
+	for (const auto& e : m_neglected)
 	{
-		if (e.obj.lock() == object) return;
+		if (e.obj.lock() == obj) return;
 	}
-	m_neglected.push_back({ object, 0.0f, 0.0f });
+
+	m_neglected.push_back({ obj, 0.0f, 0.0f });
+
+	if (const auto ui = m_damageUI.lock())
+	{
+		ui->AddTarget(obj);
+	}
 }
 
 void Player::EquipItem(const std::string& itemPath)
@@ -698,7 +715,6 @@ void Player::EquipItem(const std::string& itemPath)
 		return;
 	}
 
-	// 新しい手持ちアイテム生成
 	m_handItem = std::make_shared<Item>();
 	m_handItem->Init();
 	m_handItem->SetMode(ItemMode::InInventory);
@@ -720,7 +736,6 @@ void Player::OnItemsConfiscated()
 
 void Player::SelectInventory(int index)
 {
-	// 同じ番号を押したら解除
 	if (m_inventory.GetSelectIndex() == index && m_handItem)
 	{
 		ClearHandItem();
@@ -729,7 +744,7 @@ void Player::SelectInventory(int index)
 
 	m_inventory.SelectIndex(index);
 
-	auto item = m_inventory.GetCurrentItem();
+	const auto item = m_inventory.GetCurrentItem();
 	EquipItem(item ? item->itemPath : "");
 }
 
@@ -743,7 +758,7 @@ void Player::Move()
 	}
 
 	Math::Vector3 moveDir = {};
-	float moveSpeed = 0.15f * m_sceneScale;
+	const float moveSpeed = kMoveSpeed * m_sceneScale;
 
 	Math::Matrix camRotYMat = Math::Matrix::Identity;
 	if (m_camera.expired() == false)
@@ -767,12 +782,11 @@ void Player::Move()
 	Math::Vector3 move = moveDir * moveSpeed;
 
 	const float radius = WallRadius();
-	const float margin = 0.02f * m_sceneScale;   // 先読み距離
 
 	std::vector<WallHit> walls;
 	CollectWallHits(radius, walls);
 
-	// 壁に向かう成分を除去(角に備えて2周)
+	// 壁に向かう成分を除去
 	SlideAlongWalls(move, radius);
 
 	const Math::Vector3 before = m_pos;
@@ -783,7 +797,7 @@ void Player::Move()
 
 void Player::UpdateRotationByCamera()
 {
-	auto camera = m_camera.lock();
+	const auto camera = m_camera.lock();
 
 	if (!camera)
 	{
@@ -794,10 +808,10 @@ void Player::UpdateRotationByCamera()
 }
 
 void Player::UpdateFocusObject()
-{  
+{
 	ClearFocus();
 
-	auto camera = m_camera.lock();
+	const auto camera = m_camera.lock();
 
 	if (!camera)
 	{
@@ -818,7 +832,7 @@ void Player::UpdateFocusObject()
 
 	std::shared_ptr<KdGameObject> hitObj;
 
-	for (auto& obj : SceneManager::Instance().GetObjList())
+	for (const auto& obj : SceneManager::Instance().GetObjList())
 	{
 		if (!obj) continue;
 
@@ -828,7 +842,7 @@ void Player::UpdateFocusObject()
 
 		obj->Intersects(ray, &retList);
 
-		for (auto& ret : retList)
+		for (const auto& ret : retList)
 		{
 			if (ret.m_overlapDistance > maxOverlap)
 			{
@@ -842,7 +856,7 @@ void Player::UpdateFocusObject()
 	{
 		m_focusObject = hitObj;
 
-		auto usable = std::dynamic_pointer_cast<Usable>(hitObj);
+		const auto usable = std::dynamic_pointer_cast<Usable>(hitObj);
 
 		if (usable)
 		{
@@ -853,9 +867,9 @@ void Player::UpdateFocusObject()
 
 void Player::ClearFocus()
 {
-	if (auto old = m_focusObject.lock())
+	if (const auto old = m_focusObject.lock())
 	{
-		if (auto usable = std::dynamic_pointer_cast<Usable>(old))
+		if (const auto usable = std::dynamic_pointer_cast<Usable>(old))
 		{
 			usable->SetFocused(false);
 		}
@@ -877,24 +891,21 @@ void Player::TryInteract()
 
 	if (TryDeliver()) return;
 
-	auto obj = m_focusObject.lock();
+	const auto obj = m_focusObject.lock();
 
 	if (!obj)
 	{
 		return;
 	}
 
-	auto interact =
-		std::dynamic_pointer_cast<Interactable>(obj);
+	const auto interact = std::dynamic_pointer_cast<Interactable>(obj);
 
 	if (!interact)
 	{
 		return;
 	}
 
-	interact->Interact(
-		std::dynamic_pointer_cast<Player>(
-			shared_from_this()));
+	interact->Interact(std::dynamic_pointer_cast<Player>(shared_from_this()));
 }
 
 void Player::UpdateInventorySelect()
@@ -925,15 +936,14 @@ void Player::StartUse()
 		return;
 	}
 
-	auto obj = m_focusObject.lock();
+	const auto obj = m_focusObject.lock();
 
 	if (!obj)
 	{
 		return;
 	}
 
-	auto usable =
-		std::dynamic_pointer_cast<Usable>(obj);
+	const auto usable = std::dynamic_pointer_cast<Usable>(obj);
 
 	if (!usable)
 	{
@@ -951,12 +961,10 @@ void Player::StartUse()
 	m_useTimer = 0.0f;
 	m_useTotal = 0.0f;
 
-	// スキルチェック開始(種類は抽選)
+	// スキルチェック開始
 	m_skillResult = SkillResult::None;
 
-	m_skillCheck = SkillCheckFactory::Create(
-		m_lastSkillType,
-		DayCycle::Instance().GetTimeProgress());
+	m_skillCheck = SkillCheckFactory::Create(m_lastSkillType, DayCycle::Instance().GetTimeProgress());
 
 	m_lastSkillType = static_cast<int>(m_skillCheck->GetType());
 
@@ -974,7 +982,7 @@ void Player::UpdateUse()
 	}
 
 	// 対象が消えた / 他キャラに先に修復された等で使用不能になったら中断
-	auto obj = m_useObject.lock();
+	const auto obj = m_useObject.lock();
 
 	if (!obj || !obj->CanUse(std::dynamic_pointer_cast<Player>(shared_from_this())))
 	{
@@ -1030,7 +1038,7 @@ void Player::UpdateUse()
 				FontID::Future16
 			);
 
-			// 結果でカウント時間を補正(Perfect短縮 / Miss延長)
+			// スキルチェックの結果に応じて使用時間を決定
 			m_useTotal = m_useTime * TimeRate(m_skillResult);
 			m_useTimer = m_useTotal;
 			m_usePhase = UsePhase::Counting;
@@ -1047,7 +1055,7 @@ void Player::UpdateUse()
 			const int usedIndex = m_inventory.GetSelectIndex();
 
 			obj->Use(std::dynamic_pointer_cast<Player>(shared_from_this()));
-			
+
 			if (usedIndex >= 0)
 			{
 				ConsumeItem(usedIndex);
@@ -1075,9 +1083,7 @@ void Player::CancelUse()
 	GetAsyncKeyState(VK_LBUTTON);
 }
 
-void Player::SwapItem(
-	const std::shared_ptr<Item>& newItem,
-	int index)
+void Player::SwapItem(const std::shared_ptr<Item>& newItem, int index)
 {
 	if (!newItem)
 	{
@@ -1089,13 +1095,13 @@ void Player::SwapItem(
 		return;
 	}
 
-	auto camera = m_camera.lock();
+	const auto camera = m_camera.lock();
 
 	if (!camera)
 	{
 		return;
-	}	
-	
+	}
+
 	const std::string oldPath = m_inventory.GetItems()[index].itemPath;
 
 	// 拾う
@@ -1104,7 +1110,7 @@ void Player::SwapItem(
 	// 古い物を落とす
 	if (!oldPath.empty())
 	{
-		ItemManager::Instance().SpawnDropped(
+			ItemManager::Instance().SpawnDropped(
 			oldPath,
 			camera->GetMatrix().Translation(),
 			camera->GetMatrix().Backward());
@@ -1153,11 +1159,11 @@ void Player::TryDropItem()
 		return;
 	}
 
-	auto camera = m_camera.lock();
+	const auto camera = m_camera.lock();
 
-	std::string path = m_handItem->GetItemPath();
-	Math::Vector3 pos = camera->GetMatrix().Translation();
-	Math::Vector3 dir = camera->GetMatrix().Backward();
+	const std::string path = m_handItem->GetItemPath();
+	const Math::Vector3 pos = camera->GetMatrix().Translation() + Math::Vector3{ 0, -GetScale().y * 0.35f, 0 };
+	const Math::Vector3 dir = camera->GetMatrix().Backward();
 
 	ItemManager::Instance().SpawnDropped(path, pos, dir);
 
@@ -1166,25 +1172,17 @@ void Player::TryDropItem()
 	m_handItem->Destroy();
 	m_handItem.reset();
 
-/*	// 次のアイテムを装備
-	auto next = m_inventory.GetCurrentItem();
-
-	if (next)
-	{
-		EquipItem(next->itemPath);
-	}*/
-
 	ClearHandItem();
 }
 
-void Player::UpdateHandItem()
+void Player::UpdateHandItem() const
 {
 	if (!m_handItem)
 	{
 		return;
 	}
 
-	auto camera = m_camera.lock();
+	const auto camera = m_camera.lock();
 
 	if (!camera)
 	{
@@ -1192,24 +1190,21 @@ void Player::UpdateHandItem()
 	}
 
 	// カメラ基準の行列
-	Math::Matrix camMat = camera->GetMatrix();
+	const Math::Matrix camMat = camera->GetMatrix();
 
-	// ItemDataを取得
 	const ItemData& data = m_handItem->GetItemData();
 
-	Math::Matrix scale =
-		Math::Matrix::CreateScale(data.GetHandScale() * m_sceneScale);
+	const Math::Matrix scale = Math::Matrix::CreateScale(data.GetHandScale() * m_sceneScale);
 
-	Math::Matrix rot =
+	const Math::Matrix rot =
 		Math::Matrix::CreateFromYawPitchRoll(
 			DirectX::XMConvertToRadians(data.GetHandRotation().y),
 			DirectX::XMConvertToRadians(data.GetHandRotation().x),
 			DirectX::XMConvertToRadians(data.GetHandRotation().z));
 
-	Math::Matrix trans =
-		Math::Matrix::CreateTranslation(data.GetHandOffset() * SceneManager::Instance().GetSceneScale());
+	const Math::Matrix trans = Math::Matrix::CreateTranslation(data.GetHandOffset() * SceneManager::Instance().GetSceneScale());
 
-	Math::Matrix world = scale * rot * trans * camMat;
+	const Math::Matrix world = scale * rot * trans * camMat;
 
 	m_handItem->SetMatrix(world);
 }
@@ -1223,14 +1218,12 @@ void Player::PlayAnimation(const std::string& animName)
 
 	m_currentAnimName = animName;
 
-	m_spAnimator->SetAnimation(
-		m_spModel->GetAnimation(animName)
-	);
+	m_spAnimator->SetAnimation(m_spModel->GetAnimation(animName));
 }
 
-bool Player::CanHighlight() 
+bool Player::CanHighlight()
 {
-	auto obj = m_focusObject.lock();
+	const auto obj = m_focusObject.lock();
 
 	if (!obj)
 	{
@@ -1242,14 +1235,11 @@ bool Player::CanHighlight()
 		return true;
 	}
 
-	auto usable =
-		std::dynamic_pointer_cast<Usable>(obj);
+	const auto usable = std::dynamic_pointer_cast<Usable>(obj);
 
 	if (usable)
 	{
-		return usable->CanUse(
-			std::dynamic_pointer_cast<Player>(
-				shared_from_this()));
+		return usable->CanUse(std::dynamic_pointer_cast<Player>(shared_from_this()));
 	}
 
 	return false;
@@ -1262,52 +1252,45 @@ void Player::OnArrested(const std::shared_ptr<Police>& police)
 	m_isReleasing = false;
 	m_isHinderCamReturning = false;
 
-	// いたずら/インタラクト/スキルチェック中の状態をキャンセル
 	CancelUse();
 
 	// 妨害中なら解除
 	EndHinder(false, true);
 
-	// ===== 逮捕ペナルティ =====
+	// 逮捕ペナルティ
+	const float penaltyRate = 0.2f;
+
+	const int calculatedPenalty = static_cast<int>(GetScore() * penaltyRate);
+
+	// 0未満にしない
+	const int penalty = std::min(calculatedPenalty, GetScore());
+	if (penalty > 0)
 	{
-		const float penaltyRate = 0.2f;
+		AddScore(-penalty);
 
-		int calculatedPenalty = static_cast<int>(GetScore() * penaltyRate);
-
-		// 0未満にはしない（マイナススコアの救済、またはスコアが0のとき）
-		const int penalty = std::min(calculatedPenalty, GetScore());
-		if (penalty > 0)
-		{
-			AddScore(-penalty);
-
-			SpawnFloatingText(
-				"Arrest Penalty  -" + std::to_string(penalty),
-				{ 0, 160 },
-				{ 0.9f, 0.3f, 0.3f, 1.0f }
-			);
-		}
+		SpawnFloatingText(
+			"Arrest Penalty  -" + std::to_string(penalty),
+			{ 0, 160 },
+			{ 0.9f, 0.3f, 0.3f, 1.0f }
+		);
 	}
 
-	if (auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Arrested.wav"))
+	if (const auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Arrested.wav"))
 	{
 		se->SetVolume(0.2f);
 	}
 
 	ClearFocus();
 
-	{
-		auto shakeText = std::make_shared<ShakeTextUI>();
+	const auto shakeText = std::make_shared<ShakeTextUI>();
 
-		shakeText->Init();
+	shakeText->Init();
 
-		shakeText->SetText(
-			"ARRESTED!!"
-		);
+	shakeText->SetText("ARRESTED!!");
 
-		shakeText->SetPosition({ 0, 120 });
+	shakeText->SetPosition({ 0, 120 });
 
-		SceneManager::Instance().AddObject(shakeText);
-	}
+	SceneManager::Instance().AddObject(shakeText);
 
 	SelectInventory(-1);
 
@@ -1326,7 +1309,7 @@ bool Player::IsSuspicious() const
 		return false;
 	}
 
-	auto obj = std::dynamic_pointer_cast<InteractiveObject>(m_useObject.lock());
+	const auto obj = std::dynamic_pointer_cast<InteractiveObject>(m_useObject.lock());
 
 	if (!obj)
 	{
@@ -1346,7 +1329,7 @@ bool Player::CanDeliver() const
 {
 	if (CountDangerousItems() <= 0) return false;
 
-	auto point = LocationPointManager::Instance().FindByTag(LocationTag::DeliveryPoint);
+	const auto point = LocationPointManager::Instance().FindByTag(LocationTag::DeliveryPoint);
 	if (!point) return false;
 
 	Math::Vector3 diff = point->GetPos() - m_pos;
@@ -1361,9 +1344,32 @@ int Player::DeliverDangerousItems()
 	const int n = ConfiscateDangerousItems();
 	if (n <= 0) return 0;
 
+	// 初回ボーナス獲得時は時間を最大にする
+	if (m_bonusCount <= 0)
+	{
+		m_bonusTime = kBonusMaxTime;
+	}
+	else
+	{
+		m_bonusTime = std::min(m_bonusTime + kBonusExtend * n, kBonusMaxTime);
+	}
+
 	m_bonusCount = std::min(m_bonusCount + n, kBonusMaxCount);
-	m_bonusTime = std::min(m_bonusTime + kBonusExtend * n, kBonusMaxTime);
-	// FloatingText "Delivered x2  ×1.2" / SE / Effekseer
+
+	SpawnFloatingText(
+		"Turn in!  x" + std::to_string(n),
+		{ 0, 160 },
+		{ 0.3f, 1.0f, 0.5f, 1.0f },
+		FontID::Future48
+	);
+
+	if (const auto se = KdAudioManager::Instance().Play("Asset/Sound/SE/Delivery.wav"))
+	{
+		se->SetVolume(0.2f);
+	}
+
+	KdEffekseerManager::GetInstance().Play("interact.efkefc", m_pos, SceneManager::Instance().GetSceneScale() * 2.0f);
+
 	return n;
 }
 
@@ -1379,12 +1385,12 @@ void Player::UpdateRepairBonus()
 {
 	if (m_bonusTime <= 0.0f) return;
 	m_bonusTime -= 1 / 60.0f;
-	if (m_bonusTime <= 0.0f) { m_bonusTime = 0.0f; m_bonusCount = 0; }  // 一括リセット
+	if (m_bonusTime <= 0.0f) { m_bonusTime = 0.0f; m_bonusCount = 0; }
 }
 
-void Player::SpawnFloatingText(const std::string& text, const Math::Vector2& pos, const Math::Color& color, FontID font)
+void Player::SpawnFloatingText(const std::string& text, const Math::Vector2& pos, const Math::Color& color, FontID font) const
 {
-	auto floatingText = std::make_shared<FloatingTextUI>();
+	const auto floatingText = std::make_shared<FloatingTextUI>();
 	floatingText->Init();
 	floatingText->SetText(text);
 	floatingText->SetPosition(pos);

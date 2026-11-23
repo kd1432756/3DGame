@@ -35,7 +35,7 @@ void HomeDirectionUI::Update()
 	}
 
 	// --- 距離判定（ヒステリシス） ---
-	const Math::Vector3 playerPos = owner->GetPos();   // ★Playerの座標取得に合わせる
+	const Math::Vector3 playerPos = owner->GetPos();
 	m_distance = (m_homePos - playerPos).Length();
 
 	if (m_isVisible) { if (m_distance <= kHideDistance * m_sceneScale) m_isVisible = false; }
@@ -58,7 +58,7 @@ void HomeDirectionUI::Update()
 	const bool show = m_isVisible || alert;
 	const float targetAlpha = show ? 1.0f : 0.0f;
 	if (m_alpha < targetAlpha) m_alpha = (std::min)(m_alpha + kFadeSpeed * dt, targetAlpha);
-	else                       m_alpha = (std::max)(m_alpha - kFadeSpeed * dt, targetAlpha);
+	else m_alpha = (std::max)(m_alpha - kFadeSpeed * dt, targetAlpha);
 
 	// --- 色（通常：半透明の白、強調：赤く点滅） ---
 	if (alert)

@@ -12,8 +12,7 @@ bool AStarNodeSerializer::Save(
 
 	root["nodes"] = json::array();
 
-	for (const auto& node :
-		manager.GetNodes())
+	for (const auto& node : manager.GetNodes())
 	{
 		if (!node)
 		{
@@ -22,26 +21,19 @@ bool AStarNodeSerializer::Save(
 
 		json nodeJson;
 
-		nodeJson["id"] =
-			node->GetID();
+		nodeJson["id"] = node->GetID();
 
-		const auto& pos =
-			node->GetPos();
+		const auto& pos = node->GetPos();
 
-		nodeJson["position"]["x"] =
-			pos.x;
+		nodeJson["position"]["x"] = pos.x;
 
-		nodeJson["position"]["y"] =
-			pos.y;
+		nodeJson["position"]["y"] = pos.y;
 
-		nodeJson["position"]["z"] =
-			pos.z;
+		nodeJson["position"]["z"] = pos.z;
 
-		nodeJson["connections"] =
-			node->GetConnections();
+		nodeJson["connections"] = node->GetConnections();
 
-		root["nodes"].push_back(
-			nodeJson);
+		root["nodes"].push_back(nodeJson);
 	}
 
 	std::ofstream ofs(path);
@@ -93,24 +85,17 @@ bool AStarNodeSerializer::Load(
 	for (const auto& nodeJson :
 		root["nodes"])
 	{
-		int id =
-			nodeJson["id"];
+		int id = nodeJson["id"];
 
 		Math::Vector3 pos;
 
-		pos.x =
-			nodeJson["position"]["x"];
+		pos.x = nodeJson["position"]["x"];
 
-		pos.y =
-			nodeJson["position"]["y"];
+		pos.y = nodeJson["position"]["y"];
 
-		pos.z =
-			nodeJson["position"]["z"];
+		pos.z = nodeJson["position"]["z"];
 
-		auto node =
-			manager.CreateNode(
-				id,
-				pos);
+		auto node = manager.CreateNode(id, pos);
 
 		if (!node)
 		{
@@ -119,9 +104,7 @@ bool AStarNodeSerializer::Load(
 
 		if (nodeJson.contains("connections"))
 		{
-			node->SetConnections(
-				nodeJson["connections"]
-				.get<std::vector<int>>());
+			node->SetConnections(nodeJson["connections"].get<std::vector<int>>());
 		}
 	}
 
@@ -130,7 +113,7 @@ bool AStarNodeSerializer::Load(
 	return true;
 }
 
-bool AStarNodeSerializer::LoadWithScale(const std::string& path, AStarNodeManager& manager,	float scale)
+bool AStarNodeSerializer::LoadWithScale(const std::string& path, AStarNodeManager& manager, float scale)
 {
 	if (manager.IsLoaded())
 	{
@@ -165,26 +148,19 @@ bool AStarNodeSerializer::LoadWithScale(const std::string& path, AStarNodeManage
 	for (const auto& nodeJson :
 		root["nodes"])
 	{
-		int id =
-			nodeJson["id"];
+		int id = nodeJson["id"];
 
 		Math::Vector3 pos;
 
-		pos.x =
-			nodeJson["position"]["x"];
+		pos.x = nodeJson["position"]["x"];
 
-		pos.y =
-			nodeJson["position"]["y"];
+		pos.y = nodeJson["position"]["y"];
 
-		pos.z =
-			nodeJson["position"]["z"];
+		pos.z = nodeJson["position"]["z"];
 
 		pos *= scale;
 
-		auto node =
-			manager.CreateNode(
-				id,
-				pos);
+		auto node = manager.CreateNode(id, pos);
 
 		if (!node)
 		{
@@ -193,9 +169,7 @@ bool AStarNodeSerializer::LoadWithScale(const std::string& path, AStarNodeManage
 
 		if (nodeJson.contains("connections"))
 		{
-			node->SetConnections(
-				nodeJson["connections"]
-				.get<std::vector<int>>());
+			node->SetConnections(nodeJson["connections"].get<std::vector<int>>());
 		}
 	}
 
@@ -203,4 +177,3 @@ bool AStarNodeSerializer::LoadWithScale(const std::string& path, AStarNodeManage
 
 	return true;
 }
-

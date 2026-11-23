@@ -2,8 +2,6 @@
 
 #include "../EnemyBase.h"
 
-#include "../../../../System/Inventory/Inventory.h"
-
 class LocationPointManager;
 class LocationPoint;
 
@@ -12,6 +10,8 @@ class LocationPoint;
 class Item;
 
 #include "../../../Object/StaticMeshObject/Item/ItemData.h"
+
+#include "../../../../System/Inventory/Inventory.h"
 
 class InteractiveObject;
 
@@ -35,7 +35,6 @@ public:
 		return ObjectCategory::Character;
 	}
 
-
 	//============================================================
 	// FSM State
 	//============================================================
@@ -51,10 +50,10 @@ public:
 	{
 		switch (state)
 		{
-		case Neighbor::State::Task:       return "Task";
+		case Neighbor::State::Task: return "Task";
 		case Neighbor::State::SearchItem: return "SearchItem";
-		case Neighbor::State::Prank:      return "Prank";
-		default:                          return "Unknown";
+		case Neighbor::State::Prank: return "Prank";
+		default: return "Unknown";
 		}
 	}
 
@@ -73,10 +72,10 @@ public:
 	{
 		switch (action)
 		{
-		case Neighbor::Action::Task:       return "Task";
+		case Neighbor::Action::Task: return "Task";
 		case Neighbor::Action::SearchItem: return "SearchItem";
-		case Neighbor::Action::Prank:      return "Prank";
-		default:                           return "Unknown";
+		case Neighbor::Action::Prank: return "Prank";
+		default: return "Unknown";
 		}
 	}
 	
@@ -106,8 +105,9 @@ public:
 		bool hasPath = false;
 
 		float pathDistance = 0.0f;
-	};
 
+		Math::Vector3 approachPos = Math::Vector3::Zero;
+	};
 
 	//============================================================
 	// Model
@@ -166,7 +166,6 @@ protected:
 
 	void UpdateBehavior() override;
 
-
 private:
 
 	void Updatetimer();
@@ -183,9 +182,9 @@ private:
 
 	void UpdateUtility();
 
-	Action DecideAction();
+	Action DecideAction() const;
 
-	float EvaluateTask();
+	float EvaluateTask() const;
 
 	float EvaluateSearchItem();
 
@@ -203,8 +202,9 @@ private:
 
 	std::shared_ptr<LocationPoint> SelectTaskDestination();
 
-	std::shared_ptr<LocationPoint> SelectItemAreaPoint();
-	std::shared_ptr<LocationPoint> SelectRandomPoint();
+	std::shared_ptr<LocationPoint> SelectItemAreaPoint() const;
+	std::shared_ptr<LocationPoint> SelectHousePoint() const;
+	std::shared_ptr<LocationPoint> SelectRandomPoint() const;
 
 	//============================================================
 	// Search Item
@@ -212,13 +212,11 @@ private:
 
 	void UpdateSearchItem();
 
-	bool FindBestSearchItem(		SearchItemCandidate& outCandidate);
+	bool FindBestSearchItem(SearchItemCandidate& outCandidate);
 
-	float EvaluateSearchItemCandidate(
-		const std::shared_ptr<Item>& item,
-		float pathDistance);
+	float EvaluateSearchItemCandidate(const std::shared_ptr<Item>& item, float pathDistance) const;
 
-	void SelectSearchItemCandidate(		const SearchItemCandidate& candidate);
+	void SelectSearchItemCandidate(const SearchItemCandidate& candidate);
 
 	MoveResult MoveToSearchItem();
 
@@ -234,16 +232,18 @@ private:
 
 	void UpdatePrank();
 
-	bool FindBestPrankCandidate(
-		PrankCandidate& outCandidate);
+	bool FindBestPrankCandidate(PrankCandidate& outCandidate);
 
 	float EvaluatePrankCandidate(
 		const std::shared_ptr<InteractiveObject>& target,
 		const ItemData& itemData,
-		float pathDistance);
+		float pathDistance) const;
 
-	bool SelectPrankCandidate(
-		const PrankCandidate& candidate);
+	bool SelectPrankCandidate(const PrankCandidate& candidate);
+
+	bool FindPrankApproachPos(
+		const Math::Vector3& targetPos,
+		Math::Vector3& outApproachPos) const;
 
 	void ReleasePrankTarget();
 
@@ -254,8 +254,7 @@ private:
 	// Movement
 	//============================================================
 
-	MoveResult MoveToTaskDestination(
-		const std::shared_ptr<LocationPoint>& destPoint);
+	MoveResult MoveToTaskDestination(const std::shared_ptr<LocationPoint>& destPoint);
 
 	MoveResult MoveToPrankTarget();
 
@@ -269,8 +268,7 @@ private:
 	// State
 	//============================================================
 
-	void ChangeState(
-		State newState);
+	void ChangeState(State newState);
 
 	void ApplyStateSettings();
 
@@ -280,7 +278,7 @@ private:
 	// Model
 	//============================================================
 
-	std::string m_modelPath = "Asset/Models/Character/Neighbor/Neighbor.gltf"; // デフォルト
+	std::string m_modelPath = "Asset/Models/Character/Neighbor/Neighbor.gltf";	// デフォルト
 
 	//============================================================
 	// Utility
@@ -392,11 +390,20 @@ private:
 
 	static constexpr float kPrankSearchRadius = 25.0f;
 
-	static constexpr float kPrankInteractDistance = 3.0f;
+	static constexpr float kPrankApproachMaxDistance = 5.0f;
+	Math::Vector3 m_prankApproachPos = Math::Vector3::Zero;
+
+	static constexpr float kPrankInteractDistance = 1.0f;
 
 	static constexpr float kPrankCommitBonus = 15.0f;
 
+	static constexpr float kPrankChainChance = 0.5f;	// 再捜索する確率
+	static constexpr int   kMaxPrankChain = 3;		// 1回で連続できる上限
+
+	int m_prankChainCount = 0;
+
 	float m_prankCooldownTimer = 0.0f;
+
 	static constexpr float kPrankCooldownMax = 25.0f;	// 朝のクールダウン(秒)
 	static constexpr float kPrankCooldownMin = 8.0f;	// 夜のクールダウン(秒)
 

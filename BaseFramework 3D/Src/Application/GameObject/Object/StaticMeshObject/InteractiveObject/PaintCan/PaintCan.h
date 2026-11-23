@@ -19,22 +19,7 @@ public:
 	{
 		return ObjectCategory::Interactive;
 	}
-/*
-	bool CanUse(const std::shared_ptr<Player> player) override;
 
-	void Use(std::shared_ptr<Player> player) override;
-
-	float GetUseTime() const override;
-
-	std::string GetActionText(const std::shared_ptr<Player>& player) const override
-	{
-		if (IsOwner(player))
-		{
-			return "Clean";
-		}
-
-		return "Spill";
-	}*/
 
 private:
 

@@ -17,10 +17,7 @@ void StaticMeshObject::DrawLit()
 	if (!m_spModel) return;
 	if (!IsInView()) return;
 
-	KdShaderManager::Instance().m_StandardShader.DrawModel(
-		*m_spModel,
-		m_mWorld,
-		m_color);
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld, m_color);
 }
 
 void StaticMeshObject::GenerateDepthMapFromLight()
@@ -170,4 +167,3 @@ bool StaticMeshObject::IsInShadowRange() const
 
 	return (center - s_camPos).Length() - radius <= s_shadowDistance;
 }
-// ====================

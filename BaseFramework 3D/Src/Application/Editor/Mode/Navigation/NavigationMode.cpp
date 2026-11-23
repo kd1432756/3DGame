@@ -90,7 +90,7 @@ void NavigationMode::HandleRequest()
 	{
 	// 生成
 	case Request::Generate:
-		m_navMesh.Generate(m_window.GetAgentRadius());
+		m_navMesh.Generate(m_window.GetAgentRadius(), m_window.GetObstacleMaxHeight());
 		break;
 
 	// リセット

@@ -9,13 +9,15 @@ void WoodenFence::Init()
 {
 	SetModelPath("Asset/Models/Props/WoodFence/WoodFence_Repaired.gltf");
 
+	m_iconPath = "Asset/Textures/Icon/Wood.png";
+
 	RegisterAction({
 		InteractiveState::Normal,
 		InteractiveState::Damaged,
 		ItemAction::Break,
 		"WoodFence",
-		3.5f,
-		300,
+		10.0f,
+		240,
 		"Wood Fence Break!",
 		"Wood Fence has been Broken!",
 		"Asset/Models/Props/WoodFence/WoodFence_Broken.gltf"
@@ -27,7 +29,7 @@ void WoodenFence::Init()
 		ItemAction::Repair,
 		"WoodFence",
 		3.0f,
-		210,
+		240,
 		"Wood Fence Repair!",
 		"",
 		"Asset/Models/Props/WoodFence/WoodFence_Repaired.gltf"

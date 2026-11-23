@@ -10,6 +10,7 @@ class Interactable;
 class Usable;
 class FPSCamera;
 class ArrestCamera;
+class DamageDirectionUI;
 
 #include "../../../System/SkillCheck/SkillCheckBase.h"
 
@@ -19,9 +20,9 @@ public:
 
 	enum class UsePhase
 	{
-		None, 
-		SkillCheck, 
-		Counting 
+		None,
+		SkillCheck,
+		Counting
 	};
 
 	Player() {}
@@ -56,7 +57,7 @@ public:
 	}
 
 	void OnObjectDamaged(
-		const std::shared_ptr<InteractiveObject>& object,
+		const std::shared_ptr<InteractiveObject>& obj,
 		const InteractiveAction& action) override;
 
 	void SetCamera(std::shared_ptr<CameraBase> camera)
@@ -122,6 +123,11 @@ public:
 	{
 		return m_neglected.size();
 	}
+	void AddDamageTarget(const std::shared_ptr<InteractiveObject>& obj);
+	void SetDamageUI(const std::shared_ptr<DamageDirectionUI>& ui)
+	{
+		m_damageUI = ui;
+	}
 
 	// 妨害UI用
 	std::shared_ptr<CharacterBase> FindHinderTarget() const;
@@ -147,14 +153,14 @@ public:
 	}
 
 	bool CanDeliver() const;
-	float GetRepairBonusRate() const { return 1.0f + 0.1f * m_bonusCount; }
-	int   GetRepairBonusCount() const { return m_bonusCount; }
+	float GetRepairBonusRate() const { return 1.0f + 0.2f * m_bonusCount; }
+	int GetRepairBonusCount() const { return m_bonusCount; }
 	float GetRepairBonusTime() const { return m_bonusTime; }
 	float GetRepairBonusTimeRatio() const { return m_bonusTime / kBonusMaxTime; }
-	int   DeliverDangerousItems(); 
+	int DeliverDangerousItems();
 
-	bool IsGhost() const override 
-	{ 
+	bool IsGhost() const override
+	{
 		return m_isHindering;
 	}
 
@@ -189,7 +195,7 @@ private:
 	void UpdateNeglect();
 
 	void UpdateReport();
-	bool TryReport();
+	bool TryReport() const;
 	bool FindReportPos(Math::Vector3& outPos) const;
 	bool IsVisibleFromCamera(
 		const Math::Vector3& targetPos,
@@ -203,12 +209,12 @@ private:
 
 	bool TryDeliver();
 	void UpdateRepairBonus();
-	
+
 	void OnItemsConfiscated() override;
 	void SelectInventory(int index) override;
 	void TryDropItem();
 
-	void UpdateHandItem();
+	void UpdateHandItem() const;
 
 	void PlayAnimation(const std::string& animName);
 
@@ -216,7 +222,7 @@ private:
 		const std::string& text,
 		const Math::Vector2& pos,
 		const Math::Color& color,
-		FontID font = FontID::Future48);
+		FontID font = FontID::Future48) const;
 
 	static constexpr float TimeRate(SkillResult result)
 	{
@@ -230,6 +236,8 @@ private:
 	}
 
 	int m_score = 0;
+
+	static constexpr float kMoveSpeed = 0.15f;
 
 	std::string m_currentAnimName;
 
@@ -271,25 +279,27 @@ private:
 	};
 
 	std::vector<NeglectedEntry> m_neglected;
+	std::weak_ptr<DamageDirectionUI> m_damageUI;
 
 	static constexpr float kNeglectGrace = 10.0f;  // 猶予(秒)
-	static constexpr float kNeglectInterval = 1.0f;   // 減点間隔(秒)
+	static constexpr float kNeglectInterval = 2.0f;   // 減点間隔(秒)
 	static constexpr int   kNeglectPenalty = 1;      // 1回あたりの減点
 
 	// 通報
-	static constexpr float kReportCooldown = 30.0f;   // 初期値30秒
+	bool m_isReportKeyPressed = false;
+	static constexpr float kReportCooldown = 10.0f;   // 初期値10秒
 	float m_reportTimer = 0.0f;    // 残りクールダウン
-	static constexpr float kReportWindowSeconds = 60.0f;	// 通報の対象にする「最近壊された」の範囲(秒)
-	static constexpr float kReportPrankRange = 5.0f;	// 歩いている途中の Neighbor を通報できるプレイヤーからの距離(m)
+	static constexpr float kReportWindowSeconds = 60.0f;	// 通報の対象にする最近壊された時間
+	static constexpr float kReportPrankRange = 5.0f;	// 通報できるプレイヤーからの距離
 
 	// 妨害
 	std::weak_ptr<CharacterBase> m_wpHinderTarget;
 	float m_hinderRemaining = 0.0f;
 
 	static constexpr float kHinderBaseTime = 3.0f;    // 基本拘束時間
-	static constexpr float kHhinderMashExtend = 0.25f;   // 1回目の連打で延びる秒数
+	static constexpr float kHinderMashExtend = 0.25f;   // 1回目の連打で延びる秒数
 	static constexpr float kHinderMashDecay = 0.96f;   // 1回押すごとの減衰率（小さいほど早く伸びなくなる）
-	int   m_hinderMashCount = 0;       // 今回の妨害での連打回数
+	int m_hinderMashCount = 0;	// 今回の妨害での連打回数
 	static constexpr float kHinderRange = 2.0f;    // 妨害可能距離
 
 	static constexpr float kHinderCooldown = 5.0f;    // 妨害後のクールダウン（調整用）
@@ -297,9 +307,9 @@ private:
 
 	// 届
 	static constexpr float kDeliverRadius = 2.0f;
-	int   m_bonusCount = 0;
+	int m_bonusCount = 0;
 	float m_bonusTime = 0.0f;
-	static constexpr int   kBonusMaxCount = 5;       // ×(1.0 + 0.1 * 5)
-	static constexpr float kBonusExtend = 10.0f;
+	static constexpr int   kBonusMaxCount = 5;       // ×(1.0 + 0.2 * 5)
+	static constexpr float kBonusExtend = 20.0f;
 	static constexpr float kBonusMaxTime = 60.0f;
 };
