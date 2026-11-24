@@ -783,11 +783,8 @@ void Player::Move()
 
 	const float radius = WallRadius();
 
-	std::vector<WallHit> walls;
-	CollectWallHits(radius, walls);
-
-	// 壁に向かう成分を除去
-	SlideAlongWalls(move, radius);
+	CollectWallHits(radius, m_wallBuf);
+	SlideAlongWalls(move, m_wallBuf);
 
 	const Math::Vector3 before = m_pos;
 	m_pos += move;

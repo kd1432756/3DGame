@@ -61,10 +61,10 @@ void CharacterBase::CheckGround()
 	{
 		if (!obj || obj.get() == this) continue;
 
-		std::list<KdCollider::CollisionResult> objHits;
-		if (!obj->Intersects(ray, &objHits)) continue;
+		m_hitBuf.clear();
+		if (!obj->Intersects(ray, &m_hitBuf)) continue;
 
-		for (const auto& r : objHits)
+		for (const auto& r : m_hitBuf)
 		{
 			if (!hit || r.m_overlapDistance > best)
 			{
@@ -97,11 +97,14 @@ void CharacterBase::CheckGround()
 	m_gravity = 0.0f;
 }
 
-void CharacterBase::SlideAlongWalls(Math::Vector3& move, float radius) const
+void CharacterBase::SlideAlongWalls(Math::Vector3& move, float radius)
 {
-	std::vector<WallHit> walls;
-	CollectWallHits(radius, walls);
+	CollectWallHits(radius, m_wallBuf);
+	SlideAlongWalls(move, m_wallBuf);
+}
 
+void CharacterBase::SlideAlongWalls(Math::Vector3& move, const std::vector<WallHit>& walls) const
+{
 	for (int pass = 0; pass < 2; ++pass)
 	{
 		for (const auto& w : walls)
@@ -115,16 +118,15 @@ void CharacterBase::SlideAlongWalls(Math::Vector3& move, float radius) const
 	}
 }
 
-void CharacterBase::CollectWallHits(float radius, std::vector<WallHit>& out) const
+void CharacterBase::CollectWallHits(float radius, std::vector<WallHit>& out) 
 {
 	out.clear();
+	m_hitBuf.clear();
 
 	KdCollider::SphereInfo sphere;
 	sphere.m_sphere.Center = m_pos;
 	sphere.m_sphere.Radius = radius;
 	sphere.m_type = KdCollider::TypeBump;
-
-	std::list<KdCollider::CollisionResult> collisionList;
 
 	for (const auto& obj : SceneManager::Instance().GetObjList())
 	{
@@ -134,10 +136,10 @@ void CharacterBase::CollectWallHits(float radius, std::vector<WallHit>& out) con
 			if (!mesh->IsCollisionEnabled()) { continue; }
 			if (mesh->IsGround()) { continue; }
 		}
-		obj->Intersects(sphere, &collisionList);
+		obj->Intersects(sphere, &m_hitBuf);
 	}
 
-	for (const auto& c : collisionList)
+	for (const auto& c : m_hitBuf)
 	{
 		if (c.m_overlapDistance <= 0.0f) { continue; }
 
@@ -170,16 +172,14 @@ void CharacterBase::ResolveCollision()
 	const float skin = 0.001f * m_sceneScale;
 	const float maxPush = radius * 0.5f;   // 1回の最大押し出し
 
-	std::vector<WallHit> walls;
-
 	for (int i = 0; i < 8; ++i)
 	{
-		CollectWallHits(radius, walls);
-		if (walls.empty()) { break; }
+		CollectWallHits(radius, m_resolveBuf);
+		if (m_resolveBuf.empty()) { break; }
 
 		// 最も深くめり込んでいる壁を1つだけ解消
-		const WallHit* deepest = &walls[0];
-		for (const auto& w : walls)
+		const WallHit* deepest = &m_resolveBuf[0];
+		for (const auto& w : m_resolveBuf)
 		{
 			if (w.overlap > deepest->overlap) { deepest = &w; }
 		}

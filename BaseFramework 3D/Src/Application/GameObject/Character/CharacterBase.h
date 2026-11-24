@@ -31,7 +31,7 @@ public:
 	void Destroy() override
 	{
 		m_isExpired = true;
-		m_spEmoteIcon->Destroy();
+		if(m_spEmoteIcon) m_spEmoteIcon->Destroy();
 	}
 
 	// 表示用の名前（リザルト・通知UIなど）
@@ -78,7 +78,6 @@ public:
 	virtual bool IsPranking() const { return false; }
 	virtual Math::Vector3 GetDamagePos() const { return m_pos; }
 
-
 	// 警察に疑われる行動中(Player: 壊れて間もない物の修復中)
 	virtual bool IsSuspicious() const { return false; }
 
@@ -117,9 +116,10 @@ protected:
 
 	void CheckGround();
 
-	void SlideAlongWalls(Math::Vector3& move, float radius) const;
+	void SlideAlongWalls(Math::Vector3& move, float radius);
+	void SlideAlongWalls(Math::Vector3& move, const std::vector<WallHit>& walls) const;
 
-	void CollectWallHits(float radius, std::vector<WallHit>& out) const;
+	void CollectWallHits(float radius, std::vector<WallHit>& out);
 	void ResolveCollision();
 
 	void ApplyGravity();
@@ -195,4 +195,10 @@ protected:
 	float m_collisionRadius = 0.5f;
 
 	float WallRadius() const { return m_collisionRadius * m_sceneScale; }
+
+	// ===== buffer =====
+
+	std::vector<WallHit> m_wallBuf;
+	std::vector<WallHit> m_resolveBuf;
+	std::list<KdCollider::CollisionResult> m_hitBuf;	// 当たったリスト
 };

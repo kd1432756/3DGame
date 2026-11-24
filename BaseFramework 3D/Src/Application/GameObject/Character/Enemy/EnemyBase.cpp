@@ -97,13 +97,8 @@ void EnemyBase::ApplyMove()
 
 		// 壁の先読み
 		const float radius = WallRadius();
-		const float margin = 0.02f * m_sceneScale;
-
-		std::vector<WallHit> walls;
-		CollectWallHits(radius + margin, walls);
-
-		// 壁に向かう移動成分を除去（角に備えて2回）
-		SlideAlongWalls(moveVec, radius);
+		CollectWallHits(radius, m_wallBuf);
+		SlideAlongWalls(moveVec, m_wallBuf);
 
 		m_pos += moveVec;
 	}

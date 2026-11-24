@@ -65,6 +65,6 @@ private:
 	// タイルの４頂点の座標を取得
 	std::array<VertexId, 4> GetTileVertices(const Tile& tile, float tileSize) const;
 
-	// ２頂点から辺を生成
+	// 2頂点から辺を生成
 	Edge MakeEdge(VertexId a, VertexId b) const;
 };

@@ -39,7 +39,7 @@ void DamageDirectionUI::RemoveTarget(const std::shared_ptr<InteractiveObject>& o
 		m_markers.end());
 }
 
-void DamageDirectionUI::Update()
+void DamageDirectionUI::PostUpdate()
 {
 	// 削除済みを掃除
 	m_markers.erase(
@@ -102,6 +102,10 @@ void DamageDirectionUI::Update()
 
 void DamageDirectionUI::DrawSprite()
 {
+	auto player = LockPlayer();
+
+	if (!player) return;
+
 	auto& sprite = KdShaderManager::Instance().m_spriteShader;
 
 	for (const auto& m : m_markers)

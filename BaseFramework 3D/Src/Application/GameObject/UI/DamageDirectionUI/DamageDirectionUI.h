@@ -8,7 +8,7 @@ class DamageDirectionUI : public PlayerUIBase
 {
 public:
 	void Init() override;
-	void Update() override;
+	void PostUpdate() override;
 	void DrawSprite() override;
 
 	void AddTarget(const std::shared_ptr<InteractiveObject>& obj);
@@ -19,7 +19,7 @@ private:
 	struct Marker
 	{
 		std::weak_ptr<InteractiveObject> obj;
-		Math::Vector3 pos = Math::Vector3::Zero;	// 毎フレーム更新
+		Math::Vector3 pos = Math::Vector3::Zero;
 
 		float alpha = 0.0f;
 		float alertTimer = 0.0f;		// 生成時の赤点滅

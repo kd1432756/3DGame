@@ -12,6 +12,8 @@
 
 void InteractiveObject::DrawLit()
 {
+	if (!m_spModel) return;
+
 	auto player = SceneManager::Instance().FindObject<Player>();
 	bool canUse = CanUse(player);
 
@@ -96,7 +98,6 @@ const InteractiveAction* InteractiveObject::FindNPCAction(
 		if (!action.npcCanUse) continue;
 		if (!action.needItem) continue;
 		if (!item.FindUse(action.action, action.target)) continue;
-		const bool isRepair = (action.action == ItemAction::Repair);
 		if (action.action == ItemAction::Repair) continue;
 		return &action;
 	}
@@ -111,7 +112,6 @@ const InteractiveAction* InteractiveObject::FindNPCBareAction(const std::string&
 		if (action.fromState != m_state) continue;
 		if (!action.npcCanUse) continue;
 		if (action.needItem) continue;
-		const bool isRepair = (action.action == ItemAction::Repair);
 		if (action.action == ItemAction::Repair) continue;
 		return &action;
 	}
@@ -240,13 +240,9 @@ float InteractiveObject::GetNPCUseTime(const ItemData& itemData, const std::stri
 
 void InteractiveObject::NPCUse(const ItemData& item, const std::shared_ptr<Neighbor>& npc)
 {
+	if (!npc) return;
 	const auto* action = FindNPCAction(item, npc->GetName());
-
-	if (!action)
-	{
-		return;
-	}
-
+	if (!action) return;
 	ExecuteNPCAction(*action, npc);
 }
 
@@ -263,6 +259,7 @@ float InteractiveObject::GetNPCUseTimeBare(const std::string& npcName) const
 
 void InteractiveObject::NPCUseBare(const std::shared_ptr<Neighbor>& npc)
 {
+	if (!npc) return;
 	const auto* action = FindNPCBareAction(npc->GetName());
 	if (!action) return;
 	ExecuteNPCAction(*action, npc);
@@ -282,7 +279,7 @@ void InteractiveObject::OnStateChanged(DamageSource source)
 	else
 	{
 		m_damageSource = DamageSource::None;
-		m_repairedTime = now;	// 修復された時間
+		m_repairedTime = now;
 	}
 }
 

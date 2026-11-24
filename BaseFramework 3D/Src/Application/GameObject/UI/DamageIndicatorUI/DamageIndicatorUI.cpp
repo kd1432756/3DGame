@@ -41,6 +41,10 @@ void DamageIndicatorUI::Update()
 
 void DamageIndicatorUI::DrawSprite()
 {
+	auto player = LockPlayer();
+
+	if (!player) return;
+
 	auto& sprite = KdShaderManager::Instance().m_spriteShader;
 
 	// 家アイコン

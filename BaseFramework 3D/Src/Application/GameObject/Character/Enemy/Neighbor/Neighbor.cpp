@@ -126,7 +126,7 @@ void Neighbor::OnItemsConfiscated()
 
 void Neighbor::UpdateBehavior()
 {
-	Updatetimer();
+	UpdateTimer();
 
 	//============================================================
 	// 不要アイテムを削除
@@ -192,7 +192,7 @@ void Neighbor::UpdateBehavior()
 	}
 }
 
-void Neighbor::Updatetimer()
+void Neighbor::UpdateTimer()
 {
 	if (m_prankCooldownTimer > 0.0f)
 	{

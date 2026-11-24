@@ -153,10 +153,13 @@ void Item::RegisterCollider()
 		m_pCollider = std::make_unique<KdCollider>();
 	}
 
-	m_pCollider->RegisterCollisionShape(
-		"Item",
-		m_spModel,
-		KdCollider::TypeEditor | KdCollider::TypeInteract);
+	if (m_spModel)
+	{
+		m_pCollider->RegisterCollisionShape(
+			"Item",
+			m_spModel,
+			KdCollider::TypeEditor | KdCollider::TypeInteract);
+	}
 }
 
 void Item::UpdateGravity()
@@ -217,11 +220,11 @@ void Item::CheckGround()
 	// レイ
 	KdCollider::RayInfo ray;
 	ray.m_pos = m_pos;
-	float enableStepHigh = 0.1f * SceneManager::Instance().GetSceneScale();
-	ray.m_pos.y += enableStepHigh;
+	float enableStepHeight = 0.1f * SceneManager::Instance().GetSceneScale();
+	ray.m_pos.y += enableStepHeight;
 	ray.m_dir = { 0,-1,0 };
 	const float raySafetyMargin = 0.05f;    // 誤差
-	ray.m_range = -m_gravity + -m_velocity.y + enableStepHigh + raySafetyMargin;
+	ray.m_range = -m_gravity + -m_velocity.y + enableStepHeight + raySafetyMargin;
 	ray.m_type = KdCollider::TypeGround;
 
 	std::list<KdCollider::CollisionResult>retRayList;

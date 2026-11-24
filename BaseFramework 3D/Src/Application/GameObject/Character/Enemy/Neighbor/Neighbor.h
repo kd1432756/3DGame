@@ -168,7 +168,7 @@ protected:
 
 private:
 
-	void Updatetimer();
+	void UpdateTimer();
 
 	//============================================================
 	// Model
@@ -278,7 +278,7 @@ private:
 	// Model
 	//============================================================
 
-	std::string m_modelPath = "Asset/Models/Character/Neighbor/Neighbor.gltf";	// デフォルト
+	std::string m_modelPath = "Asset/Models/Character/Neighbor/Neighbor.gltf";	// デフォルトのパス
 
 	//============================================================
 	// Utility
@@ -426,7 +426,7 @@ private:
 		float taskDestinationDistance = 0.0f;
 		std::string taskMoveStatus = "Idle";
 
-		// Prank候補の探索ログ（直近フレーム分だけ保持）
+		// Prank候補の探索ログ
 		struct PrankLog
 		{
 			std::string itemPath;

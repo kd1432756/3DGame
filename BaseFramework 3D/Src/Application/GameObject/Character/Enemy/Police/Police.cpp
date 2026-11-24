@@ -35,6 +35,12 @@ void Police::Init()
 	InitEmoteIcon();
 
 	//============================================================
+	// Perception
+	//============================================================
+
+	m_perceptionTimer = KdRandom::GetInt(0, 11) / 60.0f;
+
+	//============================================================
 	// State
 	//============================================================
 
@@ -58,6 +64,8 @@ void Police::Release() const
 void Police::UpdateBehavior()
 {
 	UpdateTimers();
+
+	UpdatePerception();
 
 	switch (m_state)
 	{
@@ -117,6 +125,22 @@ void Police::UpdateTimers()
 	{
 		m_investigateCooldown -= 1.0f / 60.0f;
 	}
+}
+
+void Police::UpdatePerception()
+{
+	m_senseValid = false;
+	m_senseTarget.reset();
+	m_senseSound = false;
+
+	if (!IsPerceiving()) return;
+
+	m_perceptionTimer -= 1.0f / 60.0f;
+	if (m_perceptionTimer > 0.0f) return;
+	m_perceptionTimer = kPerceptionInterval;
+
+	m_senseValid = true;
+	ScanSurroundings();
 }
 
 void Police::UpdatePatrol()
@@ -633,40 +657,9 @@ void Police::UpdateInvestigate()
 
 bool Police::DetectDamageSound()
 {
-	const float range = kHearRange * m_sceneScale;
-	const float rangeSq = range * range;
+	if (!m_senseValid || !m_senseSound) return false;
 
-	float nearestDistSq = rangeSq;
-	Math::Vector3 nearestPos = Math::Vector3::Zero;
-	bool found = false;
-
-	for (const auto& obj : SceneManager::Instance().GetObjList())
-	{
-		if (obj->GetCategory() != KdGameObject::ObjectCategory::Character) continue;
-		const auto character = std::dynamic_pointer_cast<CharacterBase>(obj);
-		if (!character || character.get() == this) continue;
-		if (std::dynamic_pointer_cast<Police>(character)) continue;
-		if (character->IsArrested()) continue;
-		if (!character->IsDamaging()) continue;
-
-		const Math::Vector3 p = character->GetDamagePos();
-		Math::Vector3 diff = p - m_pos;
-		diff.y = 0.0f;
-
-		const float distSq = diff.LengthSquared();
-		if (distSq > nearestDistSq) continue;
-
-		nearestDistSq = distSq;
-		nearestPos = p;
-		found = true;
-	}
-
-	if (!found)
-	{
-		return false;
-	}
-
-	m_investigatePos = nearestPos;
+	m_investigatePos = m_sensePos;
 	return true;
 }
 
@@ -937,53 +930,60 @@ void Police::OnRepathRequested()
 	}
 }
 
-bool Police::SearchTarget()
+void Police::ScanSurroundings()
 {
-	const auto& objList = SceneManager::Instance().GetObjList();
+	const float hearRange = kHearRange * m_sceneScale;
+	float nearestDistSq = hearRange * hearRange;
 
-	for (const auto& obj : objList)
+	bool sightDone = false;
+
+	for (const auto& obj : SceneManager::Instance().GetObjList())
 	{
+		if (!obj) continue;
 		if (obj->GetCategory() != KdGameObject::ObjectCategory::Character) continue;
 
 		const auto character = std::dynamic_pointer_cast<CharacterBase>(obj);
-
-		if (!character) continue;
-
-		// 自分自身
-		if (character.get() == this) continue;
-
-		// Policeは対象外
+		if (!character || character.get() == this) continue;
 		if (std::dynamic_pointer_cast<Police>(character)) continue;
+		if (character->IsArrested()) continue;
 
-		// すでに確保されている相手は対象外
-		if (character->IsArrested())continue;
-
-		// 確保対象でない相手は対象外
-		if (!IsWanted(character))continue;
-
-		//========================================================
-		// 視認できるか
-		//========================================================
-
-		if (!CanSeeTarget(character))
+		// 聴覚
+		if (character->IsDamaging())
 		{
-			continue;
+			const Math::Vector3 p = character->GetDamagePos();
+			Math::Vector3 diff = p - m_pos;
+			diff.y = 0.0f;
+
+			const float distSq = diff.LengthSquared();
+			if (distSq <= nearestDistSq)
+			{
+				nearestDistSq = distSq;
+				m_sensePos = p;
+				m_senseSound = true;
+			}
 		}
 
-		//========================================================
-		// Target発見
-		//========================================================
-
-		m_wpTarget = character;
-
-		m_chasingForCrime = character->IsDamaging() || character->IsSuspicious();
-
-		m_lastTargetPos = character->GetPos();
-
-		return true;
+		// 視認
+		if (!sightDone && IsWanted(character) && CanSeeTarget(character))
+		{
+			m_senseTarget = character;
+			sightDone = true;
+		}
 	}
+}
 
-	return false;
+bool Police::SearchTarget()
+{
+	if (!m_senseValid) return false;
+
+	const auto character = m_senseTarget.lock();
+	if (!character) return false;
+
+	m_wpTarget = character;
+	m_chasingForCrime = character->IsDamaging() || character->IsSuspicious();
+	m_lastTargetPos = character->GetPos();
+
+	return true;
 }
 
 bool Police::CanSeeTarget(const std::shared_ptr<CharacterBase>& target) const
@@ -1030,7 +1030,7 @@ bool Police::CanSeeTarget(const std::shared_ptr<CharacterBase>& target) const
 
 	toTarget.Normalize();
 
-	const float cosViewAngle = std::cos(DirectX::XMConvertToRadians(kSightAngleDeg / 2.0f));
+	static const float cosViewAngle = std::cos(DirectX::XMConvertToRadians(kSightAngleDeg / 2.0f));
 
 	float dot = backward.Dot(toTarget);
 
@@ -1075,30 +1075,16 @@ bool Police::CanSeeTarget(const std::shared_ptr<CharacterBase>& target) const
 
 	for (const auto& obj : SceneManager::Instance().GetObjList())
 	{
-		if (!obj)
-		{
-			continue;
-		}
-
-		// Target自身は遮蔽物にしない
-		if (obj.get() == target.get())
-		{
-			continue;
-		}
-
-		// 自分自身も除外
-		if (obj.get() == this)
-		{
-			continue;
-		}
-
+		if (!obj) continue;
+		
+		if (obj.get() == target.get()) continue;
+		
+		if (obj.get() == this) continue;
+		
 		obj->Intersects(ray, &retRayList);
-	}
 
-	// 遮蔽物あり
-	if (!retRayList.empty())
-	{
-		return false;
+		// 遮蔽物あり
+		if (!retRayList.empty()) return false;
 	}
 
 	return true;

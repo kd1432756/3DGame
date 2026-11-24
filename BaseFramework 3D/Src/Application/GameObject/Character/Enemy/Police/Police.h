@@ -71,58 +71,28 @@ protected:
 private:
 
 	//============================================================
-	// Timer
+	// Update
 	//============================================================
 
 	void UpdateTimers();
 
-	//============================================================
-	// Patrol
-	//============================================================
-
 	void UpdatePatrol();
-
-	//============================================================
-	// Chase
-	//============================================================
 
 	void UpdateChase();
 
-	//============================================================
-	// Arrest
-	//============================================================
-
 	void UpdateArrest();
-
-	//============================================================
-	// Escort
-	//============================================================
 
 	void UpdateEscort();
 
-	//============================================================
-	// Last Seen
-	//============================================================
-
 	void UpdateLastSeen();
-
-	//============================================================
-	// Search
-	//============================================================
 
 	void UpdateSearch();
 
-	//============================================================
-	// Return
-	//============================================================
-
 	void UpdateReturn();
 
-	//============================================================
-	// Investigate
-	//============================================================
-
 	void UpdateInvestigate();
+
+	void UpdatePerception();
 
 	//============================================================
 	// Path
@@ -139,6 +109,27 @@ private:
 	void OnRepathRequested() override;
 
 	//============================================================
+	// Perception
+	//============================================================
+
+	bool IsPerceiving() const
+	{
+		switch (m_state)
+		{
+		case State::Patrol:
+		case State::LastSeen:
+		case State::Search:
+		case State::Return:
+		case State::Investigate:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	void ScanSurroundings();
+
+	//============================================================
 	// Search
 	//============================================================
 
@@ -149,7 +140,7 @@ private:
 	bool IsWanted(const std::shared_ptr<CharacterBase>& c) const
 	{
 		// 妨害中は追跡対象にしない
-		if (c->IsHindering()) return false;
+		if (!c || c->IsHindering()) return false;
 
 		return c->HasDangerousItem() ||
 			c->IsDamaging() ||
@@ -211,9 +202,18 @@ private:
 	AStarPathfinder m_pathfinder;
 
 	//============================================================
-	// Sight
+	// Perception
 	//============================================================
 	
+	static constexpr float kPerceptionInterval = 0.2f;
+
+	float m_perceptionTimer = 0.0f;
+
+	bool m_senseValid = false;		// 今フレーム調べたか
+	std::weak_ptr<CharacterBase> m_senseTarget;
+	bool m_senseSound = false;
+	Math::Vector3 m_sensePos = Math::Vector3::Zero;
+
 	static constexpr float kSightDistance = 8.0f;
 	static constexpr float kSightAngleDeg = 90.0f;	// 全角
 

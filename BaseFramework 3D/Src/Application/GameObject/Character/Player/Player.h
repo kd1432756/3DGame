@@ -62,6 +62,7 @@ public:
 
 	void SetCamera(std::shared_ptr<CameraBase> camera)
 	{
+		if (!camera) return;
 		camera->SetTarget(std::dynamic_pointer_cast<Player>(shared_from_this()));
 		m_camera = camera;
 		auto fpsCamera = std::dynamic_pointer_cast<FPSCamera>(camera);

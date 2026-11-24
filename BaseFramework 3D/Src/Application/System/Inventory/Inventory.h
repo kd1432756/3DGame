@@ -14,6 +14,7 @@ class Inventory
 {
 public:
 
+	// 最大所持数
 	static constexpr int MaxItem = 3;
 
 	bool AddItem(const std::string& itemPath);
@@ -42,11 +43,13 @@ public:
 
 	int GetItemCount() const;
 
+	// 全部空
 	bool IsEmpty() const
 	{
 		return GetItemCount() == 0;
 	}
 
+	// 空きがある
 	bool HasEmptySlot() const
 	{
 		return GetItemCount() < MaxItem;

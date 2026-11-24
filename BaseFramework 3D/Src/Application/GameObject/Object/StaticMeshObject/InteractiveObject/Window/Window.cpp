@@ -71,8 +71,11 @@ void Window::RegisterCollider()
 		m_pCollider = std::make_unique<KdCollider>();
 	}
 
-	m_pCollider->RegisterCollisionShape(
-		"Window",
-		m_spModel,
-		KdCollider::TypeEditor | KdCollider::TypeBump | KdCollider::TypeInteract);
+	if (m_spModel)
+	{
+		m_pCollider->RegisterCollisionShape(
+			"Window",
+			m_spModel,
+			KdCollider::TypeEditor | KdCollider::TypeBump | KdCollider::TypeInteract);
+	}
 }

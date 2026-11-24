@@ -120,8 +120,10 @@ void GameScene::PostUpdate()
 
 void GameScene::Event()
 {
-	auto player = SceneManager::Instance().FindObject<Player>();
-	FootstepSystem::Instance().SetListenerPos(player->GetPos());
+	if (auto player = SceneManager::Instance().FindObject<Player>())
+	{
+		FootstepSystem::Instance().SetListenerPos(player->GetPos());
+	}
 
 	{
 		static float time = 0.0f;

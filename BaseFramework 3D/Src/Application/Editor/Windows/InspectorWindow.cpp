@@ -141,8 +141,7 @@ void InspectorWindow::DrawItem(std::shared_ptr<Item> obj)
 	// AssetBrowserからドラッグ&ドロップ
 	if (ImGui::BeginDragDropTarget())
 	{
-		if (const ImGuiPayload* payload =
-			ImGui::AcceptDragDropPayload("ITEM_PATH"))
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ITEM_PATH"))
 		{
 			const char* path = (const char*)payload->Data;
 

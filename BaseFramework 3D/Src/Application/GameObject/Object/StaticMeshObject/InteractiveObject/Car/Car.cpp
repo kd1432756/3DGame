@@ -45,26 +45,27 @@ void Car::Update()
 	if (m_state == InteractiveState::Damaged)
 	{
 		Math::Vector3 pos = m_pos;
+
+		if (!m_spModel) return;
+
 		if (const KdModelData::Node* pNode = m_spModel->FindNode("PancturePoint"))
 		{
 			pos = (pNode->m_worldTransform * m_mWorld).Translation();
 		}
 
-		// 車の回転だけを取り出す(拡大・移動は除く)
+		// 車の回転
 		Math::Vector3 carScale, carTrans;
 		Math::Quaternion carRot;
 		m_mWorld.Decompose(carScale, carRot, carTrans);
 
 		const float effectScale = SceneManager::Instance().GetSceneScale() * 1.5f;
 
-		// 拡大 → 車から見て右へ90度 → 車の向き → 位置
 		Math::Matrix mEffect =
 			Math::Matrix::CreateScale(effectScale) *
 			Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(-90.0f)) *
 			Math::Matrix::CreateFromQuaternion(carRot) *
 			Math::Matrix::CreateTranslation(pos);
 
-		// 再生していなければ再生する
 		auto spEffect = m_wpEffect.lock();
 		if (!spEffect || !spEffect->IsPlaying())
 		{
@@ -117,8 +118,11 @@ void Car::RegisterCollider()
 		m_pCollider = std::make_unique<KdCollider>();
 	}
 
-	m_pCollider->RegisterCollisionShape(
-		"Car",
-		m_spModel,
-		KdCollider::TypeEditor | KdCollider::TypeBump | KdCollider::TypeInteract);
+	if (m_spModel)
+	{
+		m_pCollider->RegisterCollisionShape(
+			"Car",
+			m_spModel,
+			KdCollider::TypeEditor | KdCollider::TypeBump | KdCollider::TypeInteract);
+	}
 }
