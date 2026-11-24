@@ -25,9 +25,9 @@ private:
 	ScoreManager() = default;
 
 	// ランクの区切り
-	static constexpr int kRankS = 3000;
-	static constexpr int kRankA = 2000;
-	static constexpr int kRankB = 1000;
+	static constexpr int kRankS = 6000;
+	static constexpr int kRankA = 4000;
+	static constexpr int kRankB = 2000;
 
 public:
 

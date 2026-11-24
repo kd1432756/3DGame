@@ -672,13 +672,11 @@ bool Police::DetectDamageSound()
 
 bool Police::CanDispatch() const
 {
-	// 追跡・確保・連行・最後の目撃地点へ移動中は呼べない
+	// パトロール中の警察のみ呼べる
 	switch (m_state)
 	{
 	case State::Patrol:
 	case State::Return:
-	case State::Search:
-	case State::Investigate:
 		return true;
 	default:
 		return false;

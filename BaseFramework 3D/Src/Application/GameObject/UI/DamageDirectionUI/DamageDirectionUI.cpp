@@ -61,14 +61,6 @@ void DamageDirectionUI::Update()
 
 	const Math::Matrix view = camera->GetMatrix().Invert();
 
-	// 一番近いもの
-	const Marker* nearest = nullptr;
-	for (auto& m : m_markers)
-	{
-		m.distance = (m.pos - owner->GetPos()).Length();
-		if (!nearest || m.distance < nearest->distance) nearest = &m;
-	}
-
 	for (auto& m : m_markers)
 	{
 		const Math::Vector3 v = Math::Vector3::Transform(m.pos, view);
@@ -99,8 +91,8 @@ void DamageDirectionUI::Update()
 			m.uiPos = dir * (std::min)(sx, sy);
 		}
 
-		// 距離と向きによって透明度を変える
-		const bool bright = (&m == nearest) || (m.facing >= kFacingLimit);
+		// 透明度を変える
+		const bool bright = (m.facing >= kFacingLimit);
 		const float target = bright ? kBrightAlpha : kDimAlpha;
 		m.alpha += (target - m.alpha) * (std::min)(dt * 10.0f, 1.0f);
 

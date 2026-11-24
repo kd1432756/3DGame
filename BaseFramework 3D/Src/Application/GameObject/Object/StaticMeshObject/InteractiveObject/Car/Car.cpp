@@ -32,7 +32,9 @@ void Car::Init()
 		300,
 		"Tire Inflated!",
 		"",
-		"Asset/Models/Props/Car/Car.gltf"
+		"Asset/Models/Props/Car/Car.gltf",
+		false,
+		"Inflate Tire"
 		});
 
 	StaticMeshObject::Init();

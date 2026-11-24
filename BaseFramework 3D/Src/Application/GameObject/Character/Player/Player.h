@@ -255,14 +255,14 @@ private:
 
 	float m_useTimer = 0.0f;
 	float m_useTime = 0.0f;
-	float m_useTotal = 0.0f;	// 補正後のカウント全体時間
+	float m_useTotal = 0.0f;		// 補正後のカウント全体時間
 
 	std::weak_ptr<Usable> m_useObject;
 
 	UsePhase m_usePhase = UsePhase::None;
 	std::unique_ptr<SkillCheckBase> m_skillCheck;
 	SkillResult m_skillResult = SkillResult::None;
-	int m_lastSkillType = -1;	// 直前の種類(連続同種を避ける)
+	int m_lastSkillType = -1;	// 直前の種類
 
 	bool m_isReleasing = false;
 
@@ -281,13 +281,13 @@ private:
 	std::vector<NeglectedEntry> m_neglected;
 	std::weak_ptr<DamageDirectionUI> m_damageUI;
 
-	static constexpr float kNeglectGrace = 10.0f;  // 猶予(秒)
-	static constexpr float kNeglectInterval = 2.0f;   // 減点間隔(秒)
+	static constexpr float kNeglectGrace = 10.0f;  // 猶予
+	static constexpr float kNeglectInterval = 1.0f;   // 減点間隔
 	static constexpr int   kNeglectPenalty = 1;      // 1回あたりの減点
 
 	// 通報
 	bool m_isReportKeyPressed = false;
-	static constexpr float kReportCooldown = 10.0f;   // 初期値10秒
+	static constexpr float kReportCooldown = 10.0f;
 	float m_reportTimer = 0.0f;    // 残りクールダウン
 	static constexpr float kReportWindowSeconds = 60.0f;	// 通報の対象にする最近壊された時間
 	static constexpr float kReportPrankRange = 5.0f;	// 通報できるプレイヤーからの距離
@@ -298,7 +298,7 @@ private:
 
 	static constexpr float kHinderBaseTime = 3.0f;    // 基本拘束時間
 	static constexpr float kHinderMashExtend = 0.25f;   // 1回目の連打で延びる秒数
-	static constexpr float kHinderMashDecay = 0.96f;   // 1回押すごとの減衰率（小さいほど早く伸びなくなる）
+	static constexpr float kHinderMashDecay = 0.96f;   // 1回押すごとの減衰率
 	int m_hinderMashCount = 0;	// 今回の妨害での連打回数
 	static constexpr float kHinderRange = 2.0f;    // 妨害可能距離
 
@@ -309,7 +309,7 @@ private:
 	static constexpr float kDeliverRadius = 2.0f;
 	int m_bonusCount = 0;
 	float m_bonusTime = 0.0f;
-	static constexpr int   kBonusMaxCount = 5;       // ×(1.0 + 0.2 * 5)
+	static constexpr int   kBonusMaxCount = 5;
 	static constexpr float kBonusExtend = 20.0f;
 	static constexpr float kBonusMaxTime = 60.0f;
 };

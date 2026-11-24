@@ -24,8 +24,7 @@ public:
 	float GetTimeProgress() const
 	{
 		// 6:00 ～ 22:00 を 0.0 ～ 1.0 に変換
-		float progress =
-			(m_currentTime - StartTime) / (EndTime - StartTime);
+		float progress = (m_currentTime - StartTime) / (EndTime - StartTime);
 
 		return std::clamp(progress, 0.0f, 1.0f);
 	}

@@ -30,7 +30,7 @@ void SkyBox::Init()
 	m_eveningAlpha = CalcAlpha(time, 15.0f, 16.5f, 18.0f, 19.5f);
 	m_nightAlpha = CalcAlpha(time, 18.0f, 19.5f, 22.0f, 22.0f);
 
-	// 初回Updateを待たずにワールド行列も設定
+	// ワールド行列も設定
 	UpdateWorldMatrix();
 }
 

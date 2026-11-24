@@ -6,7 +6,7 @@ void GameStateUI::Init()
 {
 	m_timer = 0.0f;
 	m_count = 3;
-	m_displayState = DisplayState::CountDown;
+	m_displayState = DisplayState::WaitClick;
 }
 
 void GameStateUI::Update()
@@ -22,6 +22,16 @@ void GameStateUI::Update()
 
 	switch (m_displayState)
 	{
+	case DisplayState::WaitClick:
+
+		if (GetAsyncKeyState(VK_LBUTTON) & 0x0001)
+		{
+			m_displayState = DisplayState::CountDown;
+			m_timer = 0.0f;
+			m_count = 3;
+		}
+
+		break;
 	case DisplayState::CountDown:
 
 		if (m_timer >= 1.0f)
@@ -102,9 +112,19 @@ void GameStateUI::Update()
 void GameStateUI::DrawSprite()
 {
 	std::string text;
+	FontID font = FontID::Future128;
+	Math::Vector2 pos = {};
 
 	switch (m_displayState)
 	{
+	case DisplayState::WaitClick:
+
+		text = "Click to Start";
+		font = FontID::Future48;
+		pos = { 0,-60 };
+
+		break;
+
 	case DisplayState::CountDown:
 
 		text = std::to_string(m_count);
@@ -131,5 +151,5 @@ void GameStateUI::DrawSprite()
 	// 画面を少し暗く
 	DrawFullScreenBox(Math::Color{ 0.0f, 0.0f, 0.0f, 0.5f });
 
-	DrawLabel(Math::Vector2{ 0, 0 }, kWhiteColor, FontID::Future128, text.c_str());
+	DrawLabel(pos, kWhiteColor, font, text.c_str());
 }

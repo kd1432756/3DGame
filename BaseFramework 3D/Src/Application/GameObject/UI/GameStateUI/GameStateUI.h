@@ -21,6 +21,7 @@ public:
 
 	enum class DisplayState
 	{
+		WaitClick,
 		CountDown,
 		Start,
 		Finish,
@@ -39,7 +40,7 @@ private:
 	float m_timer = 0.0f;
 	int m_count = 3;
 
-	DisplayState m_displayState = DisplayState::CountDown;
+	DisplayState m_displayState = DisplayState::WaitClick;
 
 	std::shared_ptr<KdSoundInstance> m_bgm;
 };

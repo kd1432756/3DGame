@@ -968,8 +968,8 @@ void Player::StartUse()
 
 	m_lastSkillType = static_cast<int>(m_skillCheck->GetType());
 
-	// 難易度は1.0で標準
-	m_skillCheck->Start(1.0f);
+	// 難易度
+	m_skillCheck->Start(1.0f + DayCycle::Instance().GetTimeProgress() * 0.5f);
 
 	m_usePhase = UsePhase::SkillCheck;
 }
@@ -981,7 +981,6 @@ void Player::UpdateUse()
 		return;
 	}
 
-	// 対象が消えた / 他キャラに先に修復された等で使用不能になったら中断
 	const auto obj = m_useObject.lock();
 
 	if (!obj || !obj->CanUse(std::dynamic_pointer_cast<Player>(shared_from_this())))
@@ -990,7 +989,7 @@ void Player::UpdateUse()
 		return;
 	}
 
-	// キャンセル操作(右クリック)。警察が来たら逃げる、の駆け引き用
+	// キャンセル
 	if (GetAsyncKeyState(VK_RBUTTON) & 0x0001)
 	{
 		CancelUse();
@@ -1249,6 +1248,8 @@ void Player::OnArrested(const std::shared_ptr<Police>& police)
 {
 	CharacterBase::OnArrested(police);
 
+	const bool wasSuspicious = IsSuspicious();
+
 	m_isReleasing = false;
 	m_isHinderCamReturning = false;
 
@@ -1282,15 +1283,23 @@ void Player::OnArrested(const std::shared_ptr<Police>& police)
 
 	ClearFocus();
 
-	const auto shakeText = std::make_shared<ShakeTextUI>();
+	{
+		const auto shakeText = std::make_shared<ShakeTextUI>();
+		shakeText->Init();
+		shakeText->SetText("ARRESTED!!");
+		shakeText->SetPosition({ 0, 120 });
+		SceneManager::Instance().AddObject(shakeText);
+	}
 
-	shakeText->Init();
-
-	shakeText->SetText("ARRESTED!!");
-
-	shakeText->SetPosition({ 0, 120 });
-
-	SceneManager::Instance().AddObject(shakeText);
+	if (wasSuspicious)
+	{
+		const auto shakeText = std::make_shared<ShakeTextUI>();
+		shakeText->Init();
+		shakeText->SetText("Mistaken for the culprit!");
+		shakeText->SetPosition({ 0, 40 });
+		shakeText->SetFont(FontID::Future48);
+		SceneManager::Instance().AddObject(shakeText);
+	}
 
 	SelectInventory(-1);
 
