@@ -1866,6 +1866,7 @@ void Neighbor::PlayAnimation(const std::string& animName)
 
 void Neighbor::DrawDebugUI()
 {
+	return;
 	if (ImGui::Begin("Neighbor AI Debug"))
 	{
 		ImGui::PushID(this);

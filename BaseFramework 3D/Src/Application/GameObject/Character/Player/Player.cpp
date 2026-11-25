@@ -256,8 +256,9 @@ void Player::UpdateNeglect()
 
 					SpawnFloatingText(
 						"-" + std::to_string(penalty),
-						{ 500, 270 },
-						{ 0.9f, 0.3f, 0.3f, 1.0f }
+						{ 500, 280 },
+						{ 0.9f, 0.3f, 0.3f, 1.0f },
+						FontID::Future32
 					);
 				}
 			}
@@ -1363,8 +1364,8 @@ int Player::DeliverDangerousItems()
 	m_bonusCount = std::min(m_bonusCount + n, kBonusMaxCount);
 
 	SpawnFloatingText(
-		"Turn in!  x" + std::to_string(n),
-		{ 0, 160 },
+		"Turn in  x  " + std::to_string(n) + "!",
+		{ 0, 130 },
 		{ 0.3f, 1.0f, 0.5f, 1.0f },
 		FontID::Future48
 	);

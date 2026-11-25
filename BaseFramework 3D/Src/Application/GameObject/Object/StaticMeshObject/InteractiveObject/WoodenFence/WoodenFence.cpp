@@ -17,7 +17,7 @@ void WoodenFence::Init()
 		ItemAction::Break,
 		"WoodFence",
 		10.0f,
-		240,
+		220,
 		"Wood Fence Break!",
 		"Wood Fence has been Broken!",
 		"Asset/Models/Props/WoodFence/WoodFence_Broken.gltf"
@@ -29,7 +29,7 @@ void WoodenFence::Init()
 		ItemAction::Repair,
 		"WoodFence",
 		3.0f,
-		240,
+		220,
 		"Wood Fence Repair!",
 		"",
 		"Asset/Models/Props/WoodFence/WoodFence_Repaired.gltf"

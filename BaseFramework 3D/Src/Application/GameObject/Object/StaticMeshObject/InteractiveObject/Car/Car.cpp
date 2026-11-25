@@ -17,7 +17,7 @@ void Car::Init()
 		ItemAction::Pierce,
 		"Car",
 		6.0f,
-		300,
+		200,
 		"Car Punctured!",
 		"Car was Punctured!",
 		"Asset/Models/Props/Car/CarPanctured.gltf"
@@ -29,7 +29,7 @@ void Car::Init()
 		ItemAction::Repair,
 		"Car",
 		3.0f,
-		300,
+		200,
 		"Tire Inflated!",
 		"",
 		"Asset/Models/Props/Car/Car.gltf",

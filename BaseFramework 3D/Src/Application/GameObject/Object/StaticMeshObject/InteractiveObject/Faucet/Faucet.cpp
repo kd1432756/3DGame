@@ -17,7 +17,7 @@ void Faucet::Init()
 		ItemAction::Wrench,
 		"Faucet",
 		10.0f,
-		300,
+		180,
 		"Faucet Loosened!",
 		"Faucet has been Loosened!",
 		""
@@ -29,7 +29,7 @@ void Faucet::Init()
 		ItemAction::Repair,
 		"Faucet",
 		3.0f,
-		300,
+		180,
 		"Faucet Tightened!",
 		"",
 		""
